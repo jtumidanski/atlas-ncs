@@ -33,6 +33,8 @@ public final class ModelFactory {
             body.getAttributes().gender(),
             body.getAttributes().jobId(),
             body.getAttributes().face(),
-            Arrays.stream(body.getAttributes().sp().split(",")).mapToInt(Integer::parseInt).sum());
+            body.getAttributes().hair(),
+            Arrays.stream(body.getAttributes().sp().split(",")).mapToInt(Integer::parseInt).sum(),
+            body.getAttributes().meso());
    }
 }

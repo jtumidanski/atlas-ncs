@@ -1,9 +1,12 @@
 package com.atlas.ncs.processor;
 
 import java.awt.*;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import com.atlas.ncs.NPCScriptRegistry;
@@ -11,6 +14,9 @@ import com.atlas.ncs.configuration.Configuration;
 import com.atlas.ncs.event.producer.ChangeMapCommandProducer;
 import com.atlas.ncs.event.producer.CharacterEnableActionsProducer;
 import com.atlas.ncs.event.producer.CharacterExperienceGainProducer;
+import com.atlas.ncs.event.producer.GainMesoProducer;
+import com.atlas.ncs.event.producer.ServerNoticeProducer;
+import com.atlas.ncs.event.producer.NpcTalkCommandProducer;
 import com.atlas.ncs.model.Alliance;
 import com.atlas.ncs.model.GuildCharacter;
 import com.atlas.ncs.model.MapObject;
@@ -37,15 +43,19 @@ public class NPCConversationManager {
 
    private final boolean itemScript;
 
-   public NPCConversationManager(int characterId, int npc) {
-      this(characterId, npc, -1, "", false);
+   public NPCConversationManager(int worldId, int channelId, int mapId, int characterId, int npc) {
+      this(worldId, channelId, mapId, characterId, npc, -1, "", false);
    }
 
-   public NPCConversationManager(int characterId, int npc, String scriptName) {
-      this(characterId, npc, -1, scriptName, false);
+   public NPCConversationManager(int worldId, int channelId, int mapId, int characterId, int npc, String scriptName) {
+      this(worldId, channelId, mapId, characterId, npc, -1, scriptName, false);
    }
 
-   public NPCConversationManager(int characterId, int npcId, int oid, String scriptName, boolean itemScript) {
+   public NPCConversationManager(int worldId, int channelId, int mapId, int characterId, int npcId, int oid, String scriptName,
+                                 boolean itemScript) {
+      this.worldId = worldId;
+      this.channelId = channelId;
+      this.mapId = mapId;
       this.characterId = characterId;
       this.npcId = npcId;
       this.npcOid = oid;
@@ -67,25 +77,37 @@ public class NPCConversationManager {
    }
 
    public String evaluateToken(String token, Object... replacements) {
-      return "";
+      ResourceBundle bundle = ResourceBundle.getBundle("MessageBundle", Locale.US);
+      String message = bundle.getString(token);
+      if (replacements == null || replacements.length == 0) {
+         return new MessageFormat(message, Locale.US).format(replacements);
+      } else {
+         return message;
+      }
    }
 
-   public void sendSimple(String text, Object... replacements) {
+   public void sendSimple(String token, Object... replacements) {
+      NpcTalkCommandProducer.sendSimple(characterId, npcId, evaluateToken(token, replacements));
    }
 
    public void sendNext(String token, Object... replacements) {
+      NpcTalkCommandProducer.sendNext(characterId, npcId, evaluateToken(token, replacements));
    }
 
    public void sendNextSpeaker(String token, byte speaker) {
+      NpcTalkCommandProducer.sendNext(characterId, npcId, evaluateToken(token), speaker);
    }
 
    public void sendNextPrev(String token, Object... replacements) {
+      NpcTalkCommandProducer.sendNextPrevious(characterId, npcId, evaluateToken(token, replacements));
    }
 
    public void sendNextPrevSpeaker(String token, byte speaker) {
+      NpcTalkCommandProducer.sendNextPrevious(characterId, npcId, evaluateToken(token), speaker);
    }
 
    public void sendYesNo(String token, Object... replacements) {
+      NpcTalkCommandProducer.sendYesNo(characterId, npcId, evaluateToken(token, replacements));
    }
 
    /**
@@ -142,9 +164,11 @@ public class NPCConversationManager {
    }
 
    public void sendPrev(String token, Object... replacements) {
+      NpcTalkCommandProducer.sendPrevious(characterId, npcId, evaluateToken(token, replacements));
    }
 
    public void sendOk(String token, Object... replacements) {
+      NpcTalkCommandProducer.sendOk(characterId, npcId, evaluateToken(token, replacements));
    }
 
    public void lockUI() {
@@ -169,18 +193,43 @@ public class NPCConversationManager {
    }
 
    public void gainMeso(int meso) {
+      GainMesoProducer.command(characterId, meso);
    }
 
+   /**
+    * Gets the meso amount of the current character.
+    *
+    * @return the current meso
+    */
    public int getMeso() {
-      return 0;
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .meso();
    }
 
+   /**
+    * Gets the level of the current character.
+    *
+    * @return the characters level
+    */
    public int getLevel() {
-      return 0;
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .level();
    }
 
+   /**
+    * Gets the job identifier for the current character.
+    *
+    * @return the job identifier
+    */
    public int getJobId() {
-      return 0;
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .jobId();
    }
 
    /**
@@ -278,8 +327,15 @@ public class NPCConversationManager {
    public void setHair(int hair) {
    }
 
+   /**
+    * Gets the hair of the current character.
+    * @return the hair
+    */
    public int getHair() {
-      return 0;
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .hair();
    }
 
    /**
@@ -319,6 +375,7 @@ public class NPCConversationManager {
    }
 
    public void sendAcceptDecline(String token, Object... replacements) {
+      NpcTalkCommandProducer.sendAcceptDecline(characterId, npcId, evaluateToken(token, replacements));
    }
 
    public void removeAll(int itemId) {
@@ -469,6 +526,7 @@ public class NPCConversationManager {
    }
 
    public void sendSimpleYesNo(String text) {
+      NpcTalkCommandProducer.sendYesNo(characterId, npcId, text);
    }
 
    public String numberWithCommas(int number) {
@@ -490,12 +548,12 @@ public class NPCConversationManager {
       return false;
    }
 
-   public void sendPinkText(String token) {
-
+   public void sendPinkText(String token, Object... replacements) {
+      characterSendPinkText(characterId, token, replacements);
    }
 
-   public void characterSendPinkText(int characterId, String token) {
-
+   public void characterSendPinkText(int characterId, String token, Object... replacements) {
+      ServerNoticeProducer.sendPinkText(characterId, evaluateToken(token, replacements));
    }
 
    public Pet getPet(int index) {
@@ -932,7 +990,15 @@ public class NPCConversationManager {
    public void displayGuildRanks() {
    }
 
+   /**
+    * Sends a pink text message to all characters in the map.
+    *
+    * @param token        the token of the message to send
+    * @param replacements any replacement values in the tokenized message.
+    */
    public void sendPinkTextToMap(String token, Object... replacements) {
+      MapProcessor.getCharacterIdsInMap(worldId, channelId, mapId)
+            .thenAccept(ids -> ids.forEach(id -> characterSendPinkText(id, token, replacements)));
    }
 
    public void levelUp(boolean takeExperience) {
@@ -1020,7 +1086,15 @@ public class NPCConversationManager {
 
    }
 
+   /**
+    * Sends a light blue text message to all characters in the map.
+    *
+    * @param token        the token of the message to send
+    * @param replacements any replacement values in the tokenized message
+    */
    public void sendBlueTextToMap(String token, Object... replacements) {
+      MapProcessor.getCharacterIdsInMap(worldId, channelId, mapId)
+            .thenAccept(ids -> ids.forEach(id -> characterSendBlueText(id, token, replacements)));
    }
 
    public void characterSetMarriageItemId(int characterId, int itemId) {
@@ -1030,7 +1104,15 @@ public class NPCConversationManager {
 
    }
 
+   /**
+    * Sends a light blue text message to the given character.
+    *
+    * @param characterId  the character identifier
+    * @param token        the token of the message to send
+    * @param replacements any replacement values in the tokenized message
+    */
    public void characterSendBlueText(int characterId, String token, Object... replacements) {
+      ServerNoticeProducer.sendLightBlueText(characterId, evaluateToken(token, replacements));
    }
 
    public boolean isMarried() {
@@ -1086,11 +1168,12 @@ public class NPCConversationManager {
    }
 
    /**
-    * Sends notice to player
+    * Sends notice to current character
     *
-    * @param s
+    * @param message the message to send
     */
-   public void sendNotice(String s) {
+   public void sendNotice(String message) {
+      ServerNoticeProducer.sendNotice(characterId, message);
    }
 
    public boolean isLeaderExpedition(ExpeditionType expeditionType) {

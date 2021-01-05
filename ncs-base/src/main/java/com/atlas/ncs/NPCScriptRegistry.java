@@ -96,29 +96,29 @@ public class NPCScriptRegistry {
       return engine;
    }
 
-   public boolean start(int characterId, int npc) {
-      return start(characterId, npc, -1);
+   public boolean start(int worldId, int channelId, int mapId, int characterId, int npc) {
+      return start(worldId, channelId, mapId, characterId, npc, -1);
    }
 
-   public boolean start(int characterId, int npc, int oid) {
-      return start(characterId, npc, oid, null);
+   public boolean start(int worldId, int channelId, int mapId, int characterId, int npc, int oid) {
+      return start(worldId, channelId, mapId, characterId, npc, oid, null);
    }
 
-   public boolean start(int characterId, int npc, String fileName) {
-      return start(characterId, npc, -1, fileName);
+   public boolean start(int worldId, int channelId, int mapId, int characterId, int npc, String fileName) {
+      return start(worldId, channelId, mapId, characterId, npc, -1, fileName);
    }
 
-   public boolean start(int characterId, int npc, int oid, String fileName) {
-      return start(characterId, npc, oid, fileName, false, "cm");
+   public boolean start(int worldId, int channelId, int mapId, int characterId, int npc, int oid, String fileName) {
+      return start(worldId, channelId, mapId, characterId, npc, oid, fileName, false, "cm");
    }
 
-   public boolean start(int characterId, ScriptedItem scriptItem) {
-      return start(characterId, scriptItem.npcId(), -1, scriptItem.script(), true, "im");
+   public boolean start(int worldId, int channelId, int mapId, int characterId, ScriptedItem scriptItem) {
+      return start(worldId, channelId, mapId, characterId, scriptItem.npcId(), -1, scriptItem.script(), true, "im");
    }
 
-   public void start(String filename, int characterId, int npc, List<Integer> partyCharacters) {
+   public void start(int worldId, int channelId, int mapId, String filename, int characterId, int npc, List<Integer> partyCharacters) {
       try {
-         NPCConversationManager cm = new NPCConversationManager(characterId, npc);
+         NPCConversationManager cm = new NPCConversationManager(worldId, channelId, mapId, characterId, npc);
          cm.dispose();
          if (cms.containsKey(characterId)) {
             return;
@@ -148,9 +148,10 @@ public class NPCScriptRegistry {
       }
    }
 
-   private boolean start(int characterId, int npc, int oid, String fileName, boolean itemScript, String engineName) {
+   private boolean start(int worldId, int channelId, int mapId, int characterId, int npc, int oid, String fileName,
+                         boolean itemScript, String engineName) {
       try {
-         NPCConversationManager cm = new NPCConversationManager(characterId, npc, oid, fileName, itemScript);
+         NPCConversationManager cm = new NPCConversationManager(worldId, channelId, mapId, characterId, npc, oid, fileName, itemScript);
          if (cms.containsKey(characterId)) {
             dispose(characterId);
          }

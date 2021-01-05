@@ -1,16 +1,19 @@
 package com.atlas.ncs;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import com.atlas.cos.command.ChangeMapCommand;
+import com.atlas.cos.command.GainMesoCommand;
 import com.atlas.csrv.command.EnableActionsCommand;
+import com.atlas.csrv.command.NpcTalkCommand;
+import com.atlas.csrv.command.ServerNoticeCommand;
 import com.atlas.kafka.KafkaProducerFactory;
 import com.atlas.ncs.event.producer.CharacterExperienceGainProducer;
 import com.atlas.ncs.processor.TopicDiscoveryProcessor;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 public class EventProducerRegistry {
    private static final Object lock = new Object();
@@ -42,6 +45,12 @@ public class EventProducerRegistry {
       producerMap.put(ChangeMapCommand.class,
             KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
       producerMap.put(CharacterExperienceGainProducer.class,
+            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
+      producerMap.put(ServerNoticeCommand.class,
+            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
+      producerMap.put(GainMesoCommand.class,
+            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
+      producerMap.put(NpcTalkCommand.class,
             KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
       topicMap = new HashMap<>();
    }
