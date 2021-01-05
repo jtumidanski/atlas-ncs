@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC2010002 {
    NPCConversationManager cm
@@ -34,12 +35,12 @@ class NPC2010002 {
                faceNew = []
                if (cm.getGender() == 0) {
                   for (int i = 0; i < maleFace.length; i++) {
-                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, maleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, maleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                if (cm.getGender() == 1) {
                   for (int i = 0; i < femaleFace.length; i++) {
-                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, femaleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, femaleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                cm.sendStyle("I can totally transform your face into something new... how about giving us a try? For #b#t5152005##k, you can get the face of your liking...take your time in choosing the face of your preference.", faceNew)

@@ -1,16 +1,20 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.ExpeditionCharacter
+import com.atlas.ncs.processor.EventInstanceManager
+import com.atlas.ncs.processor.EventManager
+import com.atlas.ncs.processor.Expedition
+import com.atlas.ncs.processor.ExpeditionType
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2030013 {
    NPCConversationManager cm
    int status = 0
    int sel = -1
-   MapleExpedition expedition
-   List<Map.Entry<Integer, String>> expeditionMembers
-   MapleCharacter player
+   Expedition expedition
+   List<ExpeditionCharacter> expeditionMembers
    EventManager em
-   MapleExpeditionType expeditionType = MapleExpeditionType.ZAKUM
+   ExpeditionType expeditionType = ExpeditionType.ZAKUM
    String expeditionName = "Zakum"
    String expeditionBoss = "Zakum"
    String expeditionMap = "Zakum's Altar"
@@ -23,9 +27,8 @@ class NPC2030013 {
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-      player = cm.getPlayer()
       expedition = cm.getExpedition(expeditionType)
-      em = cm.getEventManager("ZakumBattle")
+      em = cm.getEventManager("ZakumBattle").orElseThrow()
 
       if (mode == -1) {
          cm.dispose()
@@ -36,13 +39,13 @@ class NPC2030013 {
          }
 
          if (status == 0) {
-            if (player.getLevel() < expeditionType.getMinLevel() || player.getLevel() > expeditionType.getMaxLevel()) {
+            if (cm.getLevel() < expeditionType.getMinLevel() || cm.getLevel() > expeditionType.getMaxLevel()) {
                cm.sendOk("2030013_DO_NOT_MEET_CRITERIA", expeditionBoss)
                cm.dispose()
             } else if (expedition == null) { //Start an expedition
                cm.sendSimple("2030013_LIKE_TO_ASSEMBLE_A_TEAM", expeditionName, em.getProperty("party"), expeditionBoss)
                status = 1
-            } else if (expedition.isLeader(player)) { //If you're the leader, manage the expedition
+            } else if (expedition.isLeader(cm.getCharacterId())) { //If you're the leader, manage the expedition
                if (expedition.isInProgress()) {
                   cm.sendOk("2030013_EXPEDITION_IN_PROGRESS_ALREADY")
                   cm.dispose()
@@ -51,18 +54,18 @@ class NPC2030013 {
                   status = 2
                }
             } else if (expedition.isRegistering()) { //If the expedition is registering
-               if (expedition.contains(player)) { //If you're in it but it hasn't started, be patient
-                  cm.sendOk("2030013_ALREADY_REGISTERED", expedition.getLeader().getName())
+               if (expedition.contains(cm.getCharacterId())) { //If you're in it but it hasn't started, be patient
+                  cm.sendOk("2030013_ALREADY_REGISTERED", expedition.getLeaderName())
                   cm.dispose()
                } else { //If you aren't in it, you're going to get added
-                  cm.sendOk(expedition.addMember(cm.getPlayer()))
+                  cm.sendOk(expedition.addMember(cm.getCharacterId()))
                   cm.dispose()
                }
             } else if (expedition.isInProgress()) { //Only if the expedition is in progress
-               if (expedition.contains(player)) { //If you're registered, warp you in
-                  EventInstanceManager eim = em.getInstance(expeditionName + player.getClient().getChannel())
+               if (expedition.contains(cm.getCharacterId())) { //If you're registered, warp you in
+                  EventInstanceManager eim = em.getInstance(expeditionName + cm.getChannelId())
                   if (eim.getIntProperty("canJoin") == 1) {
-                     eim.registerPlayer(player)
+                     eim.registerPlayer(cm.getCharacterId())
                   } else {
                      cm.sendOk("2030013_ALREADY_STARTED", expeditionBoss)
                   }
@@ -117,9 +120,9 @@ class NPC2030013 {
                   return
                }
                String text = "The following members make up your expedition (Click on them to expel them):\r\n"
-               text += "\r\n\t\t1." + expedition.getLeader().getName()
+               text += "\r\n\t\t1." + expedition.getLeaderName()
                for (int i = 1; i < size; i++) {
-                  text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).getValue() + "#l\n"
+                  text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).name() + "#l\n"
                }
                cm.sendSimple(text)
                status = 6
@@ -136,7 +139,7 @@ class NPC2030013 {
                cm.sendOk("2030013_EXPEDITION_WILL_BEGIN", expeditionMap)
                status = 4
             } else if (selection == 3) {
-               MessageBroadcaster.getInstance().sendMapServerNotice(player.getMap(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("EXPEDITION_ENDED_BY").with(expedition.getLeader().getName()))
+               cm.sendBlueTextToMap("EXPEDITION_ENDED_BY", expedition.getLeaderName())
                cm.endExpedition(expedition)
                cm.sendOk("2030013_EXPEDITION_ENDED")
                cm.dispose()
@@ -148,8 +151,8 @@ class NPC2030013 {
                return
             }
 
-            em.setProperty("leader", player.getName())
-            em.setProperty("channel", player.getClient().getChannel())
+            em.setProperty("leader", cm.getCharacterName())
+            em.setProperty("channel", cm.getChannelId())
             if (!em.startInstance(expedition)) {
                cm.sendOk("2030013_ANOTHER_ALREADY_STARTED", expeditionBoss)
                cm.dispose()
@@ -159,9 +162,9 @@ class NPC2030013 {
             cm.dispose()
          } else if (status == 6) {
             if (selection > 0) {
-               Map.Entry<Integer, String> banned = expeditionMembers.get(selection - 1)
+               ExpeditionCharacter banned = expeditionMembers.get(selection - 1)
                expedition.ban(banned)
-               cm.sendOk("2030013_YOU_HAVE_BANNED", banned.getValue())
+               cm.sendOk("2030013_YOU_HAVE_BANNED", banned.name())
                cm.dispose()
             } else {
                cm.sendSimple(list)

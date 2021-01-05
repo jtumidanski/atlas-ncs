@@ -32,7 +32,7 @@ class NPC9209000 {
          if (status == 0) {
             String greeting = "Hello, I'm #p9209000#, the Skill & Mastery Book announcer! "
 
-            if (cm.getPlayer().isCygnus()) {
+            if (cm.isCygnus()) {
                cm.sendOk(greeting + "There are no skill or mastery books available for Cygnus Knights.")
                cm.dispose()
                return

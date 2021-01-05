@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9270036 {
    NPCConversationManager cm
@@ -28,11 +29,11 @@ class NPC9270036 {
             hairNew = []
             if (cm.getGender() == 0) {
                for (int i = 0; i < maleHair.length; i++) {
-                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
             } else {
                for (int i = 0; i < femaleHair.length; i++) {
-                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
             }
             cm.sendStyle("I can completely change the look of your hair. Aren't you ready for a change? With #b#t5150033##k, I'll take care of the rest for you. Choose the style of your liking!", hairNew)
@@ -41,7 +42,7 @@ class NPC9270036 {
             hairColor = []
             int current = (cm.getHair() / 10).intValue() * 10
             for (int i = 0; i < 8; i++) {
-               hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
             }
             cm.sendStyle("I can completely change the look of your hair. Aren't you ready for a change? With #b#t5151028##k, I'll take care of the rest. Choose the color of your liking!", hairColor)
          } else if (status == 2) {

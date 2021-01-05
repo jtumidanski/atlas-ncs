@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201005 {
@@ -29,11 +31,10 @@ class NPC9201005 {
       return mapId >= 680000100 && mapId <= 680000500
    }
 
-   static def hasSuitForWedding(MapleCharacter player) {
-      int baseId = (player.getGender() == 0) ? 1050131 : 1051150
-
+   def hasSuitForWedding(int characterId) {
+      int baseId = cm.characterGender(characterId) ? 1050131 : 1051150
       for (int i = 0; i < 4; i++) {
-         if (player.haveItemWithId(baseId + i, true)) {
+         if (cm.characterHasItem(characterId, baseId + i, true)) {
             return true
          }
       }
@@ -42,11 +43,9 @@ class NPC9201005 {
    }
 
    def getMarriageInstance(int weddingId) {
-      EventManager em = cm.getEventManager(weddingEventName)
-
+      EventManager em = cm.getEventManager(weddingEventName).orElseThrow()
       for (Iterator<EventInstanceManager> iterator = em.getInstances().iterator(); iterator.hasNext();) {
          EventInstanceManager eim = iterator.next()
-
          if (eim.getIntProperty("weddingId") == weddingId) {
             return eim
          }
@@ -55,10 +54,10 @@ class NPC9201005 {
       return null
    }
 
-   static def hasWeddingRing(MapleCharacter player) {
+   def hasWeddingRing(int characterId) {
       int[] rings = [1112806, 1112803, 1112807, 1112809]
       for (int i = 0; i < rings.length; i++) {
-         if (player.haveItemWithId(rings[i], true)) {
+         if (cm.characterHasItem(characterId, rings[i], true)) {
             return true
          }
       }
@@ -119,38 +118,32 @@ class NPC9201005 {
                               cm.sendOk("9201005_WEDDING_START_TIME", placeTime)
 
                            } else {
-                              MapleCharacter partner = world.getPlayerStorage().getCharacterById(cm.getPlayer().getPartnerId()).get()
-                              if (partner == null) {
+                              if (!cm.hasPartner()) {
                                  cm.sendOk("9201005_PARTNER_OFFLINE")
-
                                  cm.dispose()
                                  return
                               }
 
-                              if (hasWeddingRing(cm.getPlayer()) || hasWeddingRing(partner)) {
+                              if (hasWeddingRing(cm.getCharacterId()) || hasWeddingRing(cm.getPartnerId())) {
                                  cm.sendOk("9201005_YOU_OR_YOUR_PARTNER_ALREADY_MARRIED")
-
                                  cm.dispose()
                                  return
                               }
 
-                              if (cm.getMap() != partner.getMap()) {
+                              if (!cm.partnerInMap()) {
                                  cm.sendOk("9201005_PARTNER_MUST_REGISTER")
-
                                  cm.dispose()
                                  return
                               }
 
-                              if (!cm.canHold(weddingSendTicket, 15) || !partner.canHold(weddingSendTicket, 15)) {
+                              if (!cm.canHold(weddingSendTicket, 15) || !cm.characterCanHold(cm.getPartnerId(), weddingSendTicket, 15)) {
                                  cm.sendOk("9201005_YOU_OR_PARTNER_NEED_FREE_ETC_SPACE")
-
                                  cm.dispose()
                                  return
                               }
 
                               if (!cm.getUnclaimedMarriageGifts().isEmpty() || !partner.getAbstractPlayerInteraction().getUnclaimedMarriageGifts().isEmpty()) {
                                  cm.sendOk("9201005_SOMETHING_DOES_NOT_SEEM_RIGHT")
-
                                  cm.dispose()
                                  return
                               }
@@ -174,36 +167,30 @@ class NPC9201005 {
 
                                     String wedType = weddingType ? "Premium" : "Regular"
                                     cm.sendOk("9201005_BOTH_RECEIVED_TICKETS", wedType, placeTime)
+                                    cm.characterSendBlueText(cm.getCharacterId(), "MARRIAGE_WEDDING_ASSISTANT", wedType, placeTime)
+                                    cm.characterSendBlueText(cm.getPartnerId(), "MARRIAGE_WEDDING_ASSISTANT", wedType, placeTime)
 
-
-                                    MessageBroadcaster.getInstance().sendServerNotice(player, ServerNoticeType.LIGHT_BLUE, I18nMessage.from("MARRIAGE_WEDDING_ASSISTANT").with(wedType, placeTime))
-                                    MessageBroadcaster.getInstance().sendServerNotice(partner, ServerNoticeType.LIGHT_BLUE, I18nMessage.from("MARRIAGE_WEDDING_ASSISTANT").with(wedType, placeTime))
-
-                                    if (!hasSuitForWedding(player)) {
-                                       MessageBroadcaster.getInstance().sendServerNotice(player, ServerNoticeType.PINK_TEXT, I18nMessage.from("MARRIAGE_WEDDING_ASSISTANT_GARMENT"))
+                                    if (!hasSuitForWedding(cm.getCharacterId())) {
+                                       cm.characterSendPinkText(cm.getCharacterId(), "MARRIAGE_WEDDING_ASSISTANT_GARMENT")
                                     }
 
-                                    if (!hasSuitForWedding(partner)) {
-                                       MessageBroadcaster.getInstance().sendServerNotice(partner, ServerNoticeType.PINK_TEXT, I18nMessage.from("MARRIAGE_WEDDING_ASSISTANT_GARMENT"))
+                                    if (!hasSuitForWedding(cm.getPartnerId())) {
+                                       cm.characterSendPinkText(cm.getPartnerId(), "MARRIAGE_WEDDING_ASSISTANT_GARMENT")
                                     }
                                  } else {
                                     cm.sendOk("9201005_PLEASE_TRY_AGAIN_LATER")
-
                                  }
                               } else {
                                  cm.sendOk("9201005_BEFORE_TRYING_TO_REGISTER", weddingEntryTicketCommon)
-
                               }
                            }
                         } else {
                            cm.sendOk("9201005_ENCOUNTERED_ERROR_DURING_RESERVATION")
-
                         }
 
                         cm.dispose()
                      } else {
                         cm.sendOk("9201005_NEED_ENGAGEMENT_RING")
-
                         cm.dispose()
                      }
                      break
@@ -216,25 +203,20 @@ class NPC9201005 {
                               EventInstanceManager eim = getMarriageInstance(wid)
                               if (eim != null) {
                                  cm.sendOk("9201005_ENJOY_THE_WEDDING")
-
                               } else {
                                  cm.sendOk("9201005_PLEASE_WAIT_A_MOMENT")
-
                                  cm.dispose()
                               }
                            } else {
                               cm.sendOk("9201005_YOU_ARE_NOT_INVITED")
-
                               cm.dispose()
                            }
                         } else {
                            cm.sendOk("9201005_NO_WEDDING_BOOKED")
-
                            cm.dispose()
                         }
                      } else {
                         cm.sendOk("9201005_YOU_NEED_TICKET", weddingGuestTicket)
-
                         cm.dispose()
                      }
                      break
@@ -249,11 +231,9 @@ class NPC9201005 {
                            cm.gainItem(weddingSendTicket, (short) 3, false, true, expirationTime)
                         } else {
                            cm.sendOk("9201005_NEED_ETC_SPACE")
-
                         }
                      } else {
                         cm.sendOk("9201005_NOT_CURRENTLY_BOOKED")
-
                      }
 
                      cm.dispose()
@@ -263,10 +243,9 @@ class NPC9201005 {
 
                if (eim != null) {
                   cm.gainItem(weddingGuestTicket, (short) -1)
-                  eim.registerPlayer(cm.getPlayer())     //cm.warp(680000210, 0);
+                  eim.registerPlayer(cm.getCharacterId())     //cm.warp(680000210, 0);
                } else {
                   cm.sendOk("9201005_MARRIAGE_COULD_NOT_BE_FOUND")
-
                }
 
                cm.dispose()
@@ -285,16 +264,13 @@ class NPC9201005 {
                if (eim.getIntProperty("weddingStage") == 0) {
                   if (!isMarrying) {
                      cm.sendOk("9201005_WELCOME", cm.getMapId())
-
                   } else {
                      cm.sendOk("9201005_WELCOME_SHORT", cm.getMapId())
-
                   }
 
                   cm.dispose()
                } else {
                   cm.sendYesNo("9201005_BRIDE_AND_GROOM_READY")
-
                }
             } else if (status == 1) {
                cm.warp(weddingAltarMapId, "sp")

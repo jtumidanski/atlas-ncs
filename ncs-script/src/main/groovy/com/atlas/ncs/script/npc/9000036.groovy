@@ -18,14 +18,12 @@ class NPC9000036 {
    int maxEqp = 0
 
    def start() {
-      if (!YamlConfig.config.server.USE_ENABLE_CUSTOM_NPC_SCRIPT) {
+      if (!cm.getConfiguration().enableCustomNpcScript()) {
          cm.sendOk("9000036_HELLO", cm.getNpcId())
-
          cm.dispose()
          return
       }
 
-      cm.getPlayer().setCS(true)
       String selStr = "Hello, I am the #bAccessory NPC Crafter#k! My works are widely recognized to be too fine, up to the point at which all my items mimic not only the appearance but too the attributes of them! Everything I charge is some 'ingredients' to make them and, of course, a fee for my services. On what kind of equipment are you interested?#b"
       String[] options = ["Pendants", "Face accessories", "Eye accessories", "Belts & medals", "Rings"/*,"#t4032496#"*/]
       for (int i = 0; i < options.length; i++) {
@@ -170,7 +168,6 @@ class NPC9000036 {
       } else if (status == 2) {
          if (cm.getMeso() < (cost * qty)) {
             cm.sendOk("9000036_FEE")
-
          } else {
             boolean complete = true
 
@@ -182,7 +179,6 @@ class NPC9000036 {
 
             if (!complete) {
                cm.sendOk("9000036_ARE_YOU_SURE")
-
             } else {
                if (cm.canHold(item, qty)) {
                   for (int i = 0; i < mats.length; i++) {
@@ -190,13 +186,10 @@ class NPC9000036 {
                   }
 
                   cm.gainMeso(-(cost * qty))
-
                   cm.gainItem(item, (short) qty)
                   cm.sendOk("9000036_ITEM_IS_DONE")
-
                } else {
                   cm.sendOk("9000036_NO_FREE_SPACE")
-
                }
             }
          }

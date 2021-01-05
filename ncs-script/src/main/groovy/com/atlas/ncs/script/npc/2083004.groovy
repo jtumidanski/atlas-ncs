@@ -1,5 +1,10 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.ExpeditionCharacter
+import com.atlas.ncs.processor.EventInstanceManager
+import com.atlas.ncs.processor.EventManager
+import com.atlas.ncs.processor.Expedition
+import com.atlas.ncs.processor.ExpeditionType
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2083004 {
@@ -7,11 +12,10 @@ class NPC2083004 {
    int status = 0
    int sel = -1
 
-   MapleExpedition expedition
-   List<Map.Entry<Integer, String>> expeditionMembers
-   MapleCharacter player
+   Expedition expedition
+   List<ExpeditionCharacter> expeditionMembers
    EventManager em
-   MapleExpeditionType expeditionType = MapleExpeditionType.HORNTAIL
+   ExpeditionType expeditionType = ExpeditionType.HORNTAIL
    String expeditionName = "Horntail"
    String expeditionBoss = "mighty Horntail"
 
@@ -23,7 +27,7 @@ class NPC2083004 {
 
    def action(Byte mode, Byte type, Integer selection) {
       expedition = cm.getExpedition(expeditionType)
-      em = cm.getEventManager("HorntailBattle")
+      em = cm.getEventManager("HorntailBattle").orElseThrow()
 
       if (mode == -1) {
          cm.dispose()
@@ -42,7 +46,7 @@ class NPC2083004 {
                cm.sendSimple("2083004_EXPEDITION_INTRO", expeditionName, em.getProperty("party"), expeditionBoss)
 
                status = 1
-            } else if (expedition.isLeader(player)) { //If you're the leader, manage the expedition
+            } else if (expedition.isLeader(cm.getCharacterId())) { //If you're the leader, manage the expedition
                if (expedition.isInProgress()) {
                   cm.sendOk("2083004_EXPEDITION_ALREADY_IN_PROGRESS")
 
@@ -52,28 +56,26 @@ class NPC2083004 {
                   status = 2
                }
             } else if (expedition.isRegistering()) { //If the expedition is registering
-               if (expedition.contains(player)) { //If you're in it but it hasn't started, be patient
-                  cm.sendOk("2083004_ALREADY_REGISTERED", expedition.getLeader().getName())
+               if (expedition.contains(cm.getCharacterId())) { //If you're in it but it hasn't started, be patient
+                  cm.sendOk("2083004_ALREADY_REGISTERED", expedition.getLeaderName())
 
                   cm.dispose()
                } else { //If you aren't in it, you're going to get added
-                  cm.sendOk(expedition.addMember(cm.getPlayer()))
+                  cm.sendOk(expedition.addMember(cm.getCharacterId()))
                   cm.dispose()
                }
             } else if (expedition.isInProgress()) { //Only if the expedition is in progress
-               if (expedition.contains(player)) { //If you're registered, warp you in
-                  EventInstanceManager eim = em.getInstance(expeditionName + player.getClient().getChannel())
+               if (expedition.contains(cm.getCharacterId())) { //If you're registered, warp you in
+                  EventInstanceManager eim = em.getInstance(expeditionName + cm.getChannelId())
                   if (eim.getIntProperty("canJoin") == 1) {
-                     eim.registerPlayer(player)
+                     eim.registerPlayer(cm.getCharacterId())
                   } else {
                      cm.sendOk("2083004_ALREADY_STARTED", expeditionBoss)
-
                   }
 
                   cm.dispose()
                } else { //If you're not in by now, tough luck
                   cm.sendOk("2083004_ANOTHER_EXPEDITION_HAS_STARTED", expeditionBoss)
-
                   cm.dispose()
                }
             }
@@ -82,7 +84,6 @@ class NPC2083004 {
                expedition = cm.getExpedition(expeditionType)
                if (expedition != null) {
                   cm.sendOk("2083004_SOMEONE_ALREADY_LEADER")
-
                   cm.dispose()
                   return
                }
@@ -90,26 +91,21 @@ class NPC2083004 {
                int res = cm.createExpedition(expeditionType)
                if (res == 0) {
                   cm.sendOk("2083004_EXPEDITION_CREATED", expeditionBoss)
-
                } else if (res > 0) {
                   cm.sendOk("2083004_QUOTA_LIMIT")
-
                } else {
                   cm.sendOk("2083004_UNEXPECTED_ERROR")
-
                }
 
                cm.dispose()
             } else if (selection == 2) {
                cm.sendOk("2083004_NOT_UP_TO_CHALLENGE", expeditionBoss)
-
                cm.dispose()
             }
          } else if (status == 2) {
             if (selection == 1) {
                if (expedition == null) {
                   cm.sendOk("2083004_COULD_NOT_BE_LOADED")
-
                   cm.dispose()
                   return
                }
@@ -117,14 +113,13 @@ class NPC2083004 {
                int size = expeditionMembers.size()
                if (size == 1) {
                   cm.sendOk("2083004_NEED_MORE_MEMBERS")
-
                   cm.dispose()
                   return
                }
                String text = "The following members make up your expedition (Click on them to expel them):\r\n"
-               text += "\r\n\t\t1." + expedition.getLeader().getName()
+               text += "\r\n\t\t1." + expedition.getLeaderName()
                for (int i = 1; i < size; i++) {
-                  text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).getValue() + "#l\n"
+                  text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).name() + "#l\n"
                }
                cm.sendSimple(text)
                status = 6
@@ -134,34 +129,29 @@ class NPC2083004 {
                int size = expedition.getMemberList().size()
                if (size < min) {
                   cm.sendOk("2083004_MINIMUM_PLAYERS", min)
-
                   cm.dispose()
                   return
                }
 
                cm.sendOk("2083004_GOOD_LUCK")
-
                status = 4
             } else if (selection == 3) {
-               MessageBroadcaster.getInstance().sendMapServerNotice(player.getMap(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("EXPEDITION_ENDED_BY").with(expedition.getLeader().getName()))
+               cm.sendBlueTextToMap("EXPEDITION_ENDED_BY", expedition.getLeaderName())
                cm.endExpedition(expedition)
                cm.sendOk("2083004_EXPEDITION_ENDED")
-
                cm.dispose()
             }
          } else if (status == 4) {
             if (em == null) {
                cm.sendOk("2083004_COULD_NOT_BE_INITIALIZED")
-
                cm.dispose()
                return
             }
 
-            em.setProperty("leader", player.getName())
-            em.setProperty("channel", player.getClient().getChannel())
+            em.setProperty("leader", cm.getCharacterName())
+            em.setProperty("channel", cm.getChannelId())
             if (!em.startInstance(expedition)) {
                cm.sendOk("2083004_ANOTHER_EXPEDITION_HAS_STARTED", expeditionBoss)
-
                cm.dispose()
                return
             }
@@ -169,10 +159,9 @@ class NPC2083004 {
             cm.dispose()
          } else if (status == 6) {
             if (selection > 0) {
-               Map.Entry<Integer, String> banned = expeditionMembers.get(selection - 1)
+               ExpeditionCharacter banned = expeditionMembers.get(selection - 1)
                expedition.ban(banned)
-               cm.sendOk("2083004_YOU_HAVE_BANNED", banned.getValue())
-
+               cm.sendOk("2083004_YOU_HAVE_BANNED", banned.name())
                cm.dispose()
             } else {
                cm.sendSimple(list)

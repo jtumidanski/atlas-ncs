@@ -44,7 +44,7 @@ class NPC1061010 {
             }
 
             if (mapId != exitId) {
-               cm.getPlayer().changeMap(exitId)
+               cm.warp(exitId)
             }
             cm.dispose()
          }

@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1032008 {
@@ -9,8 +10,8 @@ class NPC1032008 {
 
    def start() {
       if (cm.haveItem(4031045)) {
-         EventManager em = cm.getEventManager("Boats")
-         if (em.getProperty("entry") == "true") {
+         Optional<EventManager> eventManager = cm.getEventManager("Boats")
+         if (eventManager.isPresent() && eventManager.get().getProperty("entry") == "true") {
             cm.sendYesNo("1032008_GO_TO_ORBIS")
          } else {
             cm.sendOk("1032008_ALREADY_TRAVELLING")
@@ -28,8 +29,8 @@ class NPC1032008 {
          cm.dispose()
          return
       }
-      EventManager em = cm.getEventManager("Boats")
-      if (em.getProperty("entry") == "true") {
+      Optional<EventManager> eventManager = cm.getEventManager("Boats")
+      if (eventManager.isPresent() && eventManager.get().getProperty("entry") == "true") {
          cm.warp(101000301)
          cm.gainItem(4031045, (short) -1)
          cm.dispose()

@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 /*

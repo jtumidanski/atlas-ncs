@@ -9,9 +9,8 @@ class NPC9010021 {
 
    def start() {
       status = -1
-      if (!YamlConfig.config.server.USE_REBIRTH_SYSTEM) {
+      if (!cm.getConfiguration().useRebirthSystem()) {
          cm.sendOk("9010021_ASSIST_THE_FIGHT")
-
          cm.dispose()
          return
       }
@@ -26,30 +25,24 @@ class NPC9010021 {
          return
       }
       if (status == 0) {
-         cm.sendNext("9010021_REBORN", cm.getChar().getReborns())
-
+         cm.sendNext("9010021_REBORN", cm.countRebirths())
       } else if (status == 1) {
          cm.sendSimple("9010021_WHAT_DO_YOU_WANT_ME_TO_DO")
-
       } else if (status == 2) {
          if (selection == 0) {
-            if (cm.getChar().getLevel() == 200) {
+            if (cm.getLevel() == 200) {
                cm.sendYesNo("9010021_ARE_YOU_SURE")
-
             } else {
                cm.sendOk("9010021_NOT_LEVEL_200")
-
                cm.dispose()
             }
          } else if (selection == 1) {
             cm.sendOk("9010021_BYE")
-
             cm.dispose()
          }
       } else if (status == 3 && type == 1) {
-         cm.getChar().executeReborn()
-         cm.sendOk("9010021_REBORN_SUCCESS", cm.getChar().getReborns())
-
+         cm.executeRebirth()
+         cm.sendOk("9010021_REBORN_SUCCESS", cm.countRebirths())
          cm.dispose()
       }
    }

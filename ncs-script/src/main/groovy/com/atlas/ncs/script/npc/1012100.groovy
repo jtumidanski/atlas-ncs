@@ -13,7 +13,7 @@ class NPC1012100 {
    int jobType = 3
 
    def start() {
-      if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(GameConstants.getHallOfFameMapId(cm.getJob()))) {
+      if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(cm.getHallOfFameMapId(cm.getJobId()))) {
          spawnPlayerNpc = true
          if (spawnPlayerNpcFee > 0) {
             cm.sendYesNo("1012100_HALL_OF_FAME_FEE", cm.numberWithCommas(spawnPlayerNpcFee))
@@ -71,7 +71,7 @@ class NPC1012100 {
                   return
                }
 
-               if (MaplePlayerNPC.spawnPlayerNPC(GameConstants.getHallOfFameMapId(cm.getJob()), cm.getPlayer())) {
+               if (cm.spawnPlayerNPC(cm.getHallOfFameMapId(cm.getJobId()))) {
                   cm.sendOk("1012100_HALL_OF_FAME_SPAWN")
                   cm.gainMeso(-spawnPlayerNpcFee)
                } else {
@@ -105,7 +105,7 @@ class NPC1012100 {
          } else if (status == 1) {
             if (cm.canHold(1452051) && cm.canHold(2070000)) {
                if (cm.getJobId() == 0) {
-                  cm.changeJobById(300)
+                  cm.changeJob(300)
                   cm.gainItem(1452051, (short) 1)
                   cm.gainItem(2060000, (short) 1000)
                   cm.resetStats()
@@ -166,7 +166,7 @@ class NPC1012100 {
 
             cm.sendNext("1012100_2ND_JOB_ALRIGHT", job == 310 ? "#bHunter#k" : "#bCrossbowman#k", job == 310 ? "#bHunter#k" : "#bCrossbowman#k")
             if (cm.getJobId() != job) {
-               cm.changeJobById(job)
+               cm.changeJob(job)
             }
          } else if (status == 4) {
             cm.sendNextPrev("1012100_GIVEN_BOOK", job == 310 ? "hunter" : "crossbowman")

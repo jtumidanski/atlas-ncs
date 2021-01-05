@@ -17,7 +17,6 @@ class NPC1012002 {
    int qty = 1
 
    def start() {
-      cm.getPlayer().setCS(true)
       String selStr = cm.evaluateToken("1012002_HELLO")
       String[] options = ["1012002_CREATE_BOW", "1012002_CREATE_CROSSBOW", "1012002_MAKE_GLOVE", "1012002_UPGRADE_GLOVE", "1012002_CREATE_MATERIALS", "1012002_CREATE_ARROWS"]
       for (int i = 0; i < options.length; i++) {

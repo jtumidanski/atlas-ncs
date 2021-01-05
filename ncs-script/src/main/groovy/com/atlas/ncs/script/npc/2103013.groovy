@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.model.Party
+import com.atlas.ncs.model.PartyCharacter
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2103013 {
@@ -105,18 +106,17 @@ class NPC2103013 {
                      cm.dispose()
                      return
                   } else {
-                     if (optionalParty.get().getMembers().size() < 2) {
+                     if (optionalParty.get().members().size() < 2) {
                         cm.sendOk("2103013_GET_MORE_MEMBERS")
-
                         cm.dispose()
                         return
                      } else {
                         int i = 0
-                        for (MaplePartyCharacter partyCharacter : optionalParty.get().getMembers()) {
+                        for (PartyCharacter partyCharacter : optionalParty.get().members()) {
                            if (i > 1) {
                               break
                            }
-                           if (partyCharacter != null && partyCharacter.getMapId() == 926010000) {
+                           if (partyCharacter != null && partyCharacter.mapId() == 926010000) {
                               i++
                            }
                         }
@@ -182,7 +182,7 @@ class NPC2103013 {
          }
       } else {
          cm.warp(926010000)
-         cm.getPlayer().setPartyQuest(null)
+         cm.setPartyQuest(null)
          cm.dispose()
       }
    }

@@ -27,11 +27,10 @@ class NPC2082014 {
          }
 
          if (status == 0) {
-            if (YamlConfig.config.server.USE_ENABLE_CUSTOM_NPC_SCRIPT) {
+            if (cm.getConfiguration().enableCustomNpcScript()) {
                cm.openShopNPC(2082014)
             } else if (cm.isQuestStarted(3749)) {
                cm.sendOk("2082014_ULTIMATE_WEAPON")
-
             } else {
                cm.sendDefault()
             }

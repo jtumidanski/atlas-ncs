@@ -24,9 +24,8 @@ class NPC9000041 {
       }
 
       if (status == 0) {
-         if (!YamlConfig.config.server.USE_ENABLE_CUSTOM_NPC_SCRIPT) {
+         if (!cm.getConfiguration().enableCustomNpcScript()) {
             cm.sendOk("9000041_MEDAL_RANKING_UNAVAILABLE")
-
             cm.dispose()
             return
          }
@@ -46,10 +45,8 @@ class NPC9000041 {
 
          if (res > -1) {
             cm.sendOk("9000041_COMPLETE", cm.numberWithCommas(res))
-
          } else {
             cm.sendOk("9000041_NOT_IN_INVENTORY", name, options[selectedType])
-
          }
 
          cm.dispose()

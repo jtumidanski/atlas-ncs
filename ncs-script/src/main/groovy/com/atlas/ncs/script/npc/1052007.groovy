@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1052007 {
@@ -17,7 +18,7 @@ class NPC1052007 {
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-      em = cm.getEventManager("Subway")
+      em = cm.getEventManager("Subway").orElseThrow()
 
       if (mode == -1) {
          cm.dispose()
@@ -30,8 +31,8 @@ class NPC1052007 {
       }
       if (status == 1) {
          if (selection == 0) {
-            EventManager em = cm.getEventManager("KerningTrain")
-            if (!em.startInstance(cm.getPlayer())) {
+            EventManager em = cm.getEventManager("KerningTrain").orElseThrow()
+            if (!em.startInstance(cm.getCharacterId())) {
                cm.sendOk("1052007_ALREADY_FULL")
             }
             cm.dispose()

@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2020008 {
@@ -18,16 +20,16 @@ class NPC2020008 {
             return
          }
 
-         EventManager em = cm.getEventManager("ElnathPQ")
+         EventManager em = cm.getEventManager("ElnathPQ").orElseThrow()
          if (em == null) {
             cm.sendOk("2020008_PQ_ENCOUNTERED_ERROR")
             cm.dispose()
             return
          }
 
-         MaplePartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
+         PartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
          if (eli.size() > 0) {
-            if (!em.startInstance(cm.getParty().orElseThrow(), cm.getPlayer().getMap(), 1)) {
+            if (!em.startInstance(cm.getParty().orElseThrow(), cm.getMapId(), 1)) {
                cm.sendOk("2020008_ANOTHER_PARTY_IS_CHALLENGING")
             }
          } else {
@@ -85,7 +87,7 @@ class NPC2020008 {
             }
             if (cm.getJobId() % 10 == 0) {
                cm.gainItem(4031058, (short) -1)
-               cm.changeJobById(cm.getJobId() + 1)
+               cm.changeJob(cm.getJobId() + 1)
                cm.removePartyQuestItem("JBQ")
             }
 
@@ -138,7 +140,7 @@ class NPC2020008 {
                if (!(cm.isQuestStarted(100200) || cm.isQuestCompleted(100200))) {
                   cm.startQuest(100200)
                }
-               if (YamlConfig.config.server.USE_ENABLE_SOLO_EXPEDITIONS && !cm.isQuestCompleted(100201)) {
+               if (cm.getConfiguration().enableSoloExpeditions() && !cm.isQuestCompleted(100201)) {
                   cm.completeQuest(100201)
                }
             } else {

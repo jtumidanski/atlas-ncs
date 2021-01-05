@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9270038 {
@@ -22,10 +23,8 @@ class NPC9270038 {
       if (status == 0) {
          if (selection == 0) {
             cm.sendYesNo("9270038_TICKET_COST")
-
          } else if (selection == 1) {
             cm.sendYesNo("9270038_GO_IN_NOW")
-
          }
          oldSelection = selection
       } else if (status == 1) {
@@ -35,31 +34,26 @@ class NPC9270038 {
                   cm.gainMeso(-5000)
                   cm.gainItem(4031732)
                   cm.sendOk("9270038_THANK_YOU")
-
                   cm.dispose()
                } else {
                   cm.sendOk("9270038_NEED_ETC_SPACE")
-
                   cm.dispose()
                }
             } else {
                cm.sendOk("9270038_NOT_ENOUGH_MESOS")
-
                cm.dispose()
             }
          } else if (oldSelection == 1) {
             if (cm.itemQuantity(4031732) > 0) {
-               EventManager em = cm.getEventManager("AirPlane")
+               EventManager em = cm.getEventManager("AirPlane").orElseThrow()
                if (em.getProperty("entry") == "true") {
                   cm.warp(540010001)
                   cm.gainItem(4031732, (short) -1)
                } else {
                   cm.sendOk("9270038_WAIT_A_FEW_MINUTES")
-
                }
             } else {
                cm.sendOk("9270038_NEED_A_TICKET")
-
             }
          }
          cm.dispose()

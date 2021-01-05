@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201047 {
@@ -43,32 +44,23 @@ class NPC9201047 {
                   if (cm.haveItem(4031595, 1)) {
                      cm.gainItem(4031595, (short) -1)
                      eim.setIntProperty("statusStg" + stage, 1)
-
                      cm.sendOk("9201047_SPLENDID")
-
-                  } else if (st < 1 && cm.getMap().countMonsters() == 0) {
+                  } else if (st < 1 && cm.getMapMonsterCount() == 0) {
                      eim.setIntProperty("statusStg" + stage, 1)
-
-                     MapleMap mapObj = cm.getMap()
-                     mapObj.toggleDrops()
-
-                     MapleLifeFactory.getMonster(9400518).ifPresent({ mobObj ->
-                        mapObj.spawnMonsterOnGroundBelow(mobObj, new Point(-245, 810))
+                     cm.toggleDrops()
+                     cm.getMonster(9400518).ifPresent({ mobObj ->
+                        cm.spawnMonsterOnGroundBelow(mobObj, -245, 810)
                         cm.sendOk("9201047_DEFEAT_IT")
-
                      })
                   } else {
                      if (st < 1) {
                         cm.sendOk("9201047_YOUR_TASK")
-
                      } else {
                         cm.sendOk("9201047_YOUR_TASK_SHORT")
-
                      }
                   }
                } else {
                   cm.sendOk("9201047_YOUR_TASK_LONG_NON_LEADER")
-
                }
 
                cm.dispose()

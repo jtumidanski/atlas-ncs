@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2042005 {
@@ -35,18 +36,18 @@ class NPC2042005 {
                status = 10
                cm.sendOk("2042005_NEED_TO_BE_IN_A_PARTY")
 
-            } else if (!cm.isLeader()) {
+            } else if (!cm.isPartyLeader()) {
                status = 10
                cm.sendOk("2042005_LEADER_MUST_START")
 
             } else {
                int leaderMapId = cm.getMapId()
-               MaplePartyCharacter[] party = cm.getParty().orElseThrow().getMembers()
+               PartyCharacter[] party = cm.getParty().orElseThrow().members()
                int inMap = cm.partyMembersInMap()
                int lvlOk = 0
                int isOutMap = 0
                for (def i = 0; i < party.size(); i++) {
-                  if (party[i].getLevel() >= cpqMinLvl && party[i].getLevel() <= cpqMaxLvl) {
+                  if (party[i].level() >= cpqMinLvl && party[i].level() <= cpqMaxLvl) {
                      lvlOk++
 
                      if (!party[i].inMap(leaderMapId)) {
@@ -70,7 +71,6 @@ class NPC2042005 {
                } else {
                   if (!cm.sendCPQMapLists2()) {
                      cm.sendOk("2042005_ALL_FIELDS_CURRENTLY_FULL")
-
                      cm.dispose()
                   }
                }
@@ -86,13 +86,11 @@ class NPC2042005 {
                   cm.dispose()
                }
             } else {
-               MaplePartyCharacter[] party = cm.getParty().orElseThrow().getMembers()
-               if ((selection == 0 || selection == 1) && party.size() < (YamlConfig.config.server.USE_ENABLE_SOLO_EXPEDITIONS ? 1 : 2)) {
+               PartyCharacter[] party = cm.getParty().orElseThrow().members()
+               if ((selection == 0 || selection == 1) && party.size() < (cm.getConfiguration().enableSoloExpeditions() ? 1 : 2)) {
                   cm.sendOk("2042005_NEED_AT_LEAST_2_PLAYERS")
-
-               } else if ((selection == 2) && party.size() < (YamlConfig.config.server.USE_ENABLE_SOLO_EXPEDITIONS ? 1 : 3)) {
+               } else if ((selection == 2) && party.size() < (cm.getConfiguration().enableSoloExpeditions() ? 1 : 3)) {
                   cm.sendOk("2042005_NEED_AT_LEAST_3_PLAYERS")
-
                } else {
                   cm.cpqLobby2(selection)
                }

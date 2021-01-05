@@ -55,17 +55,17 @@ class NPC9000011 {
                     cm.sendSimple("9000011_MANY_GAMES")
 
                 } else if (selection == 2) {
-                    String data = QuestProcessor.getInstance().getCustomDataOrDefault(cm.getPlayer(), 100295, "0")
+                    String data = cm.getQuestCustomDataOrDefault(cm.getCharacterId(), 100295, "0")
                     int dat = data.toInteger()
 
-                    if (dat + 3600000 >= cm.getCurrentTime()) {
+                    if (dat + 3600000 >= System.currentTimeMillis()) {
                         cm.sendNext("9000011_YOU_HAVE_ENTERED_THE_EVENT_ALREADY")
                     } else if (!cm.canHold(4031019)) {
                         cm.sendNext("9000011_SAVE_INVENTORY_SPACE")
                     } else if (cm.getClient().getChannelServer().getEvent() > -1 && !cm.haveItem(4031019)) {
                         cm.saveLocation("EVENT")
-                        cm.getPlayer().setChalkboard(null)
-                        QuestProcessor.getInstance().setCustomData(cm.getPlayer(), 100295, "" + cm.getCurrentTime())
+                        cm.removeChalkboard()
+                        cm.setCustomData(cm.getCharacterId(), 100295, "" + System.currentTimeMillis())
                         int eventMapId = cm.getClient().getChannelServer().getEvent().getMapId()
                         if (eventMapId == 109080000 || eventMapId == 109080010) {
                             cm.warp(eventMapId, 0)

@@ -8,7 +8,7 @@ class NPC2022004 {
    int sel = -1
 
    def start() {
-      cm.sendNext("2022004_GREAT_JOB", cm.getPlayer().getName())
+      cm.sendNext("2022004_GREAT_JOB", cm.getCharacterName())
    }
 
    def action(Byte mode, Byte type, Integer selection) {

@@ -22,7 +22,6 @@ class NPC2040014 {
    int[] costSet = [10000, 25000, 25000, 25000, 25000, 25000, 25000]
 
    def start() {
-      cm.getPlayer().setCS(true)
       String selStr = "Hey there! My name is #p2040014#, and I am a specialist in mini-games. What kind of mini-game you want me to make? #b"
       String[] options = ["#i4080100# #t4080100#", "#i4080006# #t4080006#", "#i4080007# #t4080007#", "#i4080008# #t4080008#", "#i4080009# #t4080009#", "#i4080010# #t4080010#", "#i4080011# #t4080011#"]
       for (int i = 0; i < options.length; i++) {

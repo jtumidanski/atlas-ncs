@@ -34,7 +34,7 @@ class NPC9201126 {
             }
 
             if (status == 0) {
-                if (cm.getJob().getId() == MapleJob.BEGINNER.getId()) {
+                if (cm.getJobId() == MapleJob.BEGINNER.getId()) {
                     if (cm.getLevel() >= 10 && cm.canGetFirstJob(jobType)) {
                         cm.sendYesNo("9201126_DO_YOU_WANT_TO_GO", map, job)
                     } else {

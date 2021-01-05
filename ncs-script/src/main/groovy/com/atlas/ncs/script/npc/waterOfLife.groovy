@@ -63,16 +63,10 @@ class NPCWaterOfLife {
 
             if (sPet != null) {
                cm.sendNext("waterOfLife_REAWAKEN")
-
-
-               Item it = cm.getPlayer().getInventory(MapleInventoryType.CASH).getItem(sPet.position())
-               it = it.expiration(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 90))
-               cm.getPlayer().forceUpdateItem(it)
-
+               cm.setItemExpiration("CASH", sPet.slot(), System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 90))
                cm.gainItem(5180000, (short) -1)
             } else {
                cm.sendNext("waterOfLife_GOOD_BYE")
-
             }
 
             cm.dispose()

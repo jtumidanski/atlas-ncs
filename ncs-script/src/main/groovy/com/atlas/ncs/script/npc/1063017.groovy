@@ -29,11 +29,11 @@ class NPC1063017 {
          if (status == 0) {
             cm.sendYesNo("1063017_READY_TO_FACE")
          } else {
-            if (cm.getClient().getChannelServer().getMapFactory().getMap(925020010).getCharacters().size() > 0) {
+            if (cm.countCharactersInMap(925020010) > 0) {
                cm.sendOk("1063017_SOMEONE_IS_ALREADY_CHALLENGING")
             } else {
-               MapleLifeFactory.getMonster(9300346).ifPresent({ monster ->
-                  cm.getWarpMap(910510202).spawnMonsterOnGroundBelow(monster, new Point(95, 200))
+               cm.getMonster(9300346).ifPresent({ monster ->
+                  cm.spawnMonsterOnGroundBelow(910510202, monster, 95, 200)
                   cm.warp(910510202, 0)
                })
             }

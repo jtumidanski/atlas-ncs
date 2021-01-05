@@ -27,37 +27,37 @@ class NPC2010007 {
          if (status == 1) {
             sel = selection
             if (selection == 0) {
-               if (cm.getPlayer().getGuildId() > 0) {
+               if (cm.getGuildId() > 0) {
                   cm.sendOk("2010007_CANNOT_CREATE_GUILD_WHEN_IN_ONE")
                   cm.dispose()
                } else {
                   cm.sendYesNo("2010007_COST_CONFIRMATION")
                }
             } else if (selection == 1) {
-               if (cm.getPlayer().getGuildId() < 1 || cm.getPlayer().getGuildRank() != 1) {
+               if (cm.getGuildId() < 1 || cm.getGuildRank() != 1) {
                   cm.sendOk("2010007_MUST_BE_LEADER_TO_DISBAND")
                   cm.dispose()
                } else {
                   cm.sendYesNo("2010007_DISBAND_CONFIRMATION")
                }
             } else if (selection == 2) {
-               if (cm.getPlayer().getGuildId() < 1 || cm.getPlayer().getGuildRank() != 1) {
+               if (cm.getGuildId() < 1 || cm.getGuildRank() != 1) {
                   cm.sendOk("2010007_MUST_BE_LEADER_TO_INCREASE_CAPACITY")
                   cm.dispose()
                } else {
-                  cm.sendYesNo("2010007_CAPACITY_INCREASE_CONFIRMATION", MapleGuildProcessor.getInstance().getIncreaseGuildCost(cm.getPlayer().getGuild().get().getCapacity()))
+                  cm.sendYesNo("2010007_CAPACITY_INCREASE_CONFIRMATION", cm.getIncreaseGuildCost(cm.getGuildCapacity()))
                }
             }
          } else if (status == 2) {
-            if (sel == 0 && cm.getPlayer().getGuildId() <= 0) {
-               cm.getPlayer().genericGuildMessage(1)
+            if (sel == 0 && cm.getGuildId() <= 0) {
+               cm.genericGuildMessage(1)
                cm.dispose()
-            } else if (cm.getPlayer().getGuildId() > 0 && cm.getPlayer().getGuildRank() == 1) {
+            } else if (cm.getGuildId() > 0 && cm.getGuildRank() == 1) {
                if (sel == 1) {
-                  cm.getPlayer().disbandGuild()
+                  cm.disbandGuild()
                   cm.dispose()
                } else if (sel == 2) {
-                  MapleGuildProcessor.getInstance().increaseGuildCapacity(cm.getPlayer())
+                  cm.increaseGuildCapacity()
                   cm.dispose()
                }
             }

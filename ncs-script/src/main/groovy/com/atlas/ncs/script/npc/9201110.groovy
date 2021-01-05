@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201110 {
@@ -21,27 +22,23 @@ class NPC9201110 {
             if (cm.isAllReactorState(6108004, 1)) {
                EventInstanceManager eim = cm.getEventInstance()
                int stgStatus = eim.getIntProperty("glpq5_room")
-               int jobNiche = cm.getPlayer().getJob().getJobNiche()
+               int jobNiche = cm.getJobNiche()
 
                if ((stgStatus >> jobNiche) % 2 == 0) {
                   if (cm.canHold(4001256, 1)) {
                      cm.gainItem(4001256, (short) 1)
                      cm.sendOk("9201110_GOOD_JOB")
 
-
                      stgStatus += (1 << jobNiche)
                      eim.setIntProperty("glpq5_room", stgStatus)
                   } else {
                      cm.sendOk("9201110_MAKE_ETC_ROOM")
-
                   }
                } else {
                   cm.sendOk("9201110_ALREADY_BEEN_RETRIEVED")
-
                }
             } else {
                cm.sendOk("9201110_DESTROY_ALL")
-
             }
             break
       }
@@ -49,7 +46,6 @@ class NPC9201110 {
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-
    }
 }
 

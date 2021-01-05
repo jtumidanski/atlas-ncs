@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9040001 {
@@ -27,9 +28,8 @@ class NPC9040001 {
          EventInstanceManager eim = cm.getEventInstance()
 
          if (eim != null && eim.isEventCleared()) {
-            if (!eim.giveEventReward(cm.getPlayer())) {
+            if (!eim.giveEventReward(cm.getCharacterId())) {
                cm.sendNext("9040001_NEED_FREE_SLOT")
-
             } else {
                cm.warp(101030104)
             }

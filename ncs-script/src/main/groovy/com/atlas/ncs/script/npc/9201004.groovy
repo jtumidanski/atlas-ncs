@@ -11,9 +11,9 @@ class NPC9201004 {
    int divorceFee = 500000
    Ring ringObj
 
-   def getWeddingRingItemId(MapleCharacter player) {
+   def getWeddingRingItemId(int characterId) {
       for (int i = 0; i < rings.length; i++) {
-         if (player.haveItemWithId(rings[i], false)) {
+         if (cm.characterHasItem(characterId, rings[i], false)) {
             return rings[i]
          }
       }
@@ -21,9 +21,9 @@ class NPC9201004 {
       return null
    }
 
-   def hasEquippedWeddingRing(MapleCharacter player) {
+   def hasEquippedWeddingRing(int characterId) {
       for (int i = 0; i < rings.length; i++) {
-         if (player.haveItemEquipped(rings[i])) {
+         if (cm.characterHasItemEquipped(characterId, rings[i])) {
             return true
          }
       }
@@ -53,7 +53,7 @@ class NPC9201004 {
          if (status == 0) {
             String[] questionStr = ["How can I engage someone?", "How can I marry?", "How can I divorce?"]
 
-            if (!(!cm.getPlayer().isMarried() && getWeddingRingItemId(cm.getPlayer()))) {
+            if (!(!cm.isMarried() && getWeddingRingItemId(cm.getCharacterId()))) {
                questionStr << "I want a divorce..."
             } else {
                questionStr << "I wanna remove my old wedding ring..."
@@ -64,37 +64,28 @@ class NPC9201004 {
             switch (selection) {
                case 0:
                   cm.sendOk("9201004_PROCESS_IS_STRAIGHT_FORWARD")
-
                   cm.dispose()
                   break
-
                case 1:
                   cm.sendOk("9201004_MUST_ALREADY_BE_ENGAGED")
-
                   cm.dispose()
                   break
-
                case 2:
                   cm.sendOk("9201004_DIVORCE_IS_POSSIBLE", divorceFee)
-
                   cm.dispose()
                   break
-
                case 3:
                   ringObj = cm.getPlayer().getMarriageRing()
                   if (ringObj == null) {
-                     Object itemId = getWeddingRingItemId(cm.getPlayer())
+                     Object itemId = getWeddingRingItemId(cm.getCharacterId())
 
                      if (itemId != null) {
                         cm.sendOk("9201004_DIVOCE_SUCCESS")
-
                         cm.gainItem((int) itemId, (short) -1)
-                     } else if (hasEquippedWeddingRing(cm.getPlayer())) {
+                     } else if (hasEquippedWeddingRing(cm.getCharacterId())) {
                         cm.sendOk("9201004_TAKE_RING_OFF")
-
                      } else {
                         cm.sendOk("9201004_YOU_ARE_NOT_MARRIED")
-
                      }
 
                      cm.dispose()
@@ -102,18 +93,15 @@ class NPC9201004 {
                   }
 
                   cm.sendYesNo("9201004_DIVORCE_CONFIRMATION")
-
                   break
             }
          } else if (status == 2) {
             if (cm.getMeso() < divorceFee) {
                cm.sendOk("9201004_NEED_DIVORCE_FEE", divorceFee)
-
                cm.dispose()
                return
             } else if (ringObj.equipped()) {
                cm.sendOk("9201004_TAKE_OFF_YOUR_RING")
-
                cm.dispose()
                return
             }
@@ -121,9 +109,7 @@ class NPC9201004 {
             cm.gainMeso(-divorceFee)
             RingActionHandler.breakMarriageRing(cm.getPlayer(), ringObj.itemId())
             cm.gainItem(ringObj.itemId(), (short) -1)
-
             cm.sendOk("9201004_DIVORCED_YOUR_PARTNER")
-
             cm.dispose()
          }
       }

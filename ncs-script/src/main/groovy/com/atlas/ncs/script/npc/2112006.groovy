@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2112006 {
@@ -63,7 +64,7 @@ class NPC2112006 {
                      eim.giveEventPlayersStageReward(4)
                      eim.setIntProperty("statusStg4", 1)
 
-                     cm.getMap().killAllMonsters()
+                     cm.killAllMonsters()
                      cm.getMap().getReactorByName("rnj3_out3").hitReactor(cm.getClient())
                   } else {
                      cm.sendOk("2112006_LET_YOUR_LEADER_PASS")
@@ -73,7 +74,6 @@ class NPC2112006 {
                   cm.dispose()
                } else {
                   cm.sendYesNo("2112006_MUST_KEEP_FIGHTING")
-
                }
             } else {
                cm.warp(926100700, 0)
@@ -83,15 +83,12 @@ class NPC2112006 {
             if (status == 0) {
                if (eim.getIntProperty("escortFail") == 0) {
                   cm.sendNext("2112006_FINALLY")
-
                } else {
                   cm.sendNext("2112006_THANKS_TO_YOUR_EFFORTS")
-
                   status = 2
                }
             } else if (status == 1) {
                cm.sendNext("2112006_RECEIVE_THIS_GIFT")
-
             } else if (status == 2) {
                if (cm.canHold(4001159)) {
                   cm.gainItem(4001159, (short) 1)
@@ -103,7 +100,6 @@ class NPC2112006 {
                   }
                } else {
                   cm.sendOk("2112006_MAKE_ETC_SPACE")
-
                }
 
                cm.dispose()

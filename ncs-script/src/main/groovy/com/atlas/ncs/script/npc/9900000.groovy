@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9900000 {
    NPCConversationManager cm
@@ -20,13 +21,13 @@ class NPC9900000 {
    int price = 100000
 
    def start() {
-      if (cm.getPlayer().gmLevel() < 1) {
+      if (cm.gmLevel() < 1) {
          cm.sendOk("9900000_WASSUP")
          cm.dispose()
          return
       }
 
-      if (cm.getPlayer().isMale()) {
+      if (cm.isMale()) {
          cm.sendSimple("9900000_CHANGE_YOUR_LOOK", price)
       } else {
          cm.sendSimple("9900000_CHANGE_YOUR_LOOK_2", price)
@@ -46,26 +47,25 @@ class NPC9900000 {
                cm.sendStyle("Pick one?", skin)
             } else if (selection == 1 || selection == 5) {
                (selection == 1 ? hair : femaleHair).each { int key, int value ->
-                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, value, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, value, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
                cm.sendStyle("Pick one?", hairNew)
             } else if (selection == 2) {
                int baseHair = (cm.getHair() / 10).intValue() * 10
                for (int k = 0; k < 8; k++) {
-                  hairColor = ScriptUtils.pushItemIfTrue(hairColor, baseHair + k, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairColor = ScriptUtils.pushItemIfTrue(hairColor, baseHair + k, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
                cm.sendStyle("Pick one?", hairColor)
             } else if (selection == 3 || selection == 6) {
                (selection == 3 ? face : femaleFace).each { int key, int value ->
-                  faceNew = ScriptUtils.pushItemIfTrue(faceNew, value, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
-
+                  faceNew = ScriptUtils.pushItemIfTrue(faceNew, value, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
 
                cm.sendStyle("Pick one?", faceNew)
             } else if (selection == 4) {
                int baseFace = (cm.getFace() / 1000).intValue() * 1000 + (cm.getFace() % 100).intValue()
                for (int i = 0; i < 9; i++) {
-                  colors = ScriptUtils.pushItemIfTrue(colors, baseFace + (i * 100), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  colors = ScriptUtils.pushItemIfTrue(colors, baseFace + (i * 100), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
                cm.sendStyle("Pick one?", colors)
             }

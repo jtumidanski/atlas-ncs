@@ -29,7 +29,7 @@ class NPC1061018 {
          if (status == 0) {
             if (cm.getEventInstance().isEventCleared()) {
                cm.sendOk("1061018_DEFEATED_BALROG")
-            } else if (cm.getPlayer().getMap().getCharacters().size() > 1) {
+            } else if (cm.countCharactersInMap(cm.getMapId()) > 1) {
                cm.sendYesNo("1061018_REALLY_GOING_TO_LEAVE")
             } else {
                cm.sendYesNo("1061018_YOU_ARE_A_COWARD")

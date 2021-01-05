@@ -17,11 +17,11 @@ class NPC9201025 {
    int[] questItems = [4000001, 4000037, 4000215, 4000026, 4000070, 4000128]
    int[] questExp = [2000, 5000, 10000, 17000, 22000, 30000]
 
-   static def hasProofOfLoves(MapleCharacter player) {
+   def hasProofOfLoves(int characterId) {
       int count = 0
 
       for (int i = 4031367; i <= 4031372; i++) {
-         if (player.haveItem(i)) {
+         if (cm.characterHasItem(characterId, i)) {
             count++
          }
       }

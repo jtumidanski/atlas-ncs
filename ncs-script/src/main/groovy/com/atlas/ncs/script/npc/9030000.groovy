@@ -26,11 +26,9 @@ class NPC9030000 {
          } else {
             if (cm.hasMerchant()) {
                cm.sendOk("9030000_MERCHANT_OPEN")
-
                cm.dispose()
             } else {
                cm.sendOk("9030000_NO_ITEMS_OR_MESOS")
-
                cm.dispose()
             }
          }

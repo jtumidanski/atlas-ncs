@@ -2,6 +2,8 @@ package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
 
+import java.awt.Point
+
 class NPC9209100 {
    NPCConversationManager cm
    int status = -1
@@ -31,12 +33,10 @@ class NPC9209100 {
          }
 
          if (status == 0) {
-            if (playerNearby(cm.getPlayer().position(), cm.getMap().getPortal("chimney01").getPosition())) {
+            if (playerNearby(cm.characterPosition(cm.getCharacterId()), cm.getMapPortalPosition("chimney01"))) {
                cm.sendOk("9209100_DO_YOU")
-
             } else {
                cm.sendOk("9209100_HAVE_A_GREAT_YEAR")
-
             }
          } else {
             cm.dispose()

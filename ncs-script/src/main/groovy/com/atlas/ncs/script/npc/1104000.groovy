@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1104000 {
@@ -25,9 +26,9 @@ class NPC1104000 {
       if (status == 0) {
          cm.sendNext("1104000_YOU_DO_NOT_BELONG")
       } else if (status == 1) {
-         EventManager puppet = cm.getEventManager("Puppeteer")
-         puppet.setProperty("player", cm.getPlayer().getName())
-         puppet.startInstance(cm.getPlayer())
+         EventManager puppet = cm.getEventManager("Puppeteer").orElseThrow()
+         puppet.setProperty("player", cm.getCharacterName())
+         puppet.startInstance(cm.getCharacterId())
          cm.dispose()
       }
    }

@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2041023 {
@@ -37,7 +39,7 @@ class NPC2041023 {
                return
             }
 
-            em = cm.getEventManager("ElementalBattle")
+            em = cm.getEventManager("ElementalBattle").orElseThrow()
             if (em == null) {
                cm.sendOk("2041023_ENCOUNTERED_ERROR")
 
@@ -48,7 +50,7 @@ class NPC2041023 {
                return
             }
 
-            cm.sendSimple("2041023_HELLO", em.getProperty("party"), (cm.getPlayer().isRecvPartySearchInviteEnabled() ? "disable" : "enable"))
+            cm.sendSimple("2041023_HELLO", em.getProperty("party"), (cm.isRecvPartySearchInviteEnabled() ? "disable" : "enable"))
 
          } else if (status == 1) {
             if (selection == 0) {
@@ -56,14 +58,14 @@ class NPC2041023 {
                   cm.sendOk("2041023_MUST_BE_IN_PARTY")
 
                   cm.dispose()
-               } else if (!cm.isLeader()) {
+               } else if (!cm.isPartyLeader()) {
                   cm.sendOk("2041023_MUST_BE_LEADER")
 
                   cm.dispose()
                } else {
-                  MaplePartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
+                  PartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
                   if (eli.size() > 0) {
-                     if (!em.startInstance(cm.getParty().orElseThrow(), cm.getPlayer().getMap(), 1)) {
+                     if (!em.startInstance(cm.getParty().orElseThrow(), cm.getMapId(), 1)) {
                         cm.sendOk("2041023_ANOTHER_PARTY_CHALLENGING")
 
                      }
@@ -75,9 +77,8 @@ class NPC2041023 {
                   cm.dispose()
                }
             } else if (selection == 1) {
-               boolean psState = cm.getPlayer().toggleRecvPartySearchInvite()
-               cm.sendOk("2041023_PARTY_SEARCH_STATUS", (psState ? "enabled" : "disabled")
-
+               boolean psState = cm.toggleRecvPartySearchInvite()
+               cm.sendOk("2041023_PARTY_SEARCH_STATUS", psState ? "enabled" : "disabled")
                cm.dispose()
             } else {
                cm.sendOk("2041023_HELLO_SHORT")

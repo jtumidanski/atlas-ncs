@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9103002 {
@@ -26,12 +27,10 @@ class NPC9103002 {
          }
          if (status == 0) {
             cm.sendYesNo("9103002_STELLAR_EFFORT")
-
          } else if (status == 1) {
             EventInstanceManager eim = cm.getEventInstance()
-            if (!eim.giveEventReward(cm.getPlayer())) {
+            if (!eim.giveEventReward(cm.getCharacterId())) {
                cm.sendNext("9103002_NEED_FREE_SLOT")
-
             } else {
                cm.warp(809050017)
             }

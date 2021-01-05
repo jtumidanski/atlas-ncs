@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 /*
@@ -29,8 +30,8 @@ class NPC1052125 {
       if (status == 0) {
          if (selection == 0) {
             if (cm.isQuestStarted(2286) || cm.isQuestStarted(2287) || cm.isQuestStarted(2288)) {
-               EventManager em = cm.getEventManager("RockSpirit")
-               if (!em.startInstance(cm.getPlayer())) {
+               EventManager em = cm.getEventManager("RockSpirit").orElseThrow()
+               if (!em.startInstance(cm.getCharacterId())) {
                   cm.sendOk("1052125_ROOMS_CROWDED")
                }
                cm.dispose()

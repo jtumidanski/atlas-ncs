@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9040000 {
@@ -45,7 +47,7 @@ class NPC9040000 {
          }
 
          if (status == 0) {
-            em = cm.getEventManager("GuildQuest")
+            em = cm.getEventManager("GuildQuest").orElseThrow()
             if (em == null) {
                cm.sendOk("9040000_ENCOUNTERED_ERROR")
 
@@ -73,22 +75,20 @@ class NPC9040000 {
                   }
                }
             } else if (selection == 1) {
-               if (cm.getPlayer().getGuildId() > 0) {
-                  EventInstanceManager eim = findLobby(cm.getPlayer().getGuildId())
+               if (cm.getGuildId() > 0) {
+                  EventInstanceManager eim = findLobby(cm.getGuildId())
                   if (eim == null) {
                      cm.sendOk("9040000_NOT_CURRENTLY")
-
                   } else {
-                     if (cm.isLeader()) {
+                     if (cm.isPartyLeader()) {
                         em.getEligibleParty(cm.getParty().orElseThrow())
-                        eim.registerParty(cm.getPlayer())
+                        eim.registerParty(cm.getCharacterId())
                      } else {
-                        eim.registerPlayer(cm.getPlayer())
+                        eim.registerPlayer(cm.getCharacterId())
                      }
                   }
                } else {
                   cm.sendOk("9040000_NEED_TO_BE_IN_GUILD")
-
                }
 
                cm.dispose()
@@ -106,16 +106,13 @@ class NPC9040000 {
             }
          } else if (status == 2) {
             if (sel == 0) {
-               byte entry = em.addGuildToQueue(cm.getPlayer().getGuildId(), cm.getCharacterId())
+               byte entry = em.addGuildToQueue(cm.getGuildId(), cm.getCharacterId())
                if (entry > 0) {
                   cm.sendOk("9040000_REGISTERED_SUCCESSFULLY")
-
                } else if (entry == ((byte) 0)) {
                   cm.sendOk("9040000_QUEUE_FULL")
-
                } else {
                   cm.sendOk("9040000_ALREADY_QUEUED")
-
                }
             }
 

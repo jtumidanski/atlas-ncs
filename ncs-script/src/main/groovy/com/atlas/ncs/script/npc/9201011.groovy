@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201011 {
@@ -12,11 +13,11 @@ class NPC9201011 {
    String weddingEventName = "WeddingChapel"
    boolean cathedralWedding = false
    boolean weddingIndoors
-   int weddingBlessingExp = YamlConfig.config.server.WEDDING_BLESS_EXP
+   int weddingBlessingExp = cm.getConfiguration().weddingBlessingExperience()
 
-   static def detectPlayerItemId(MapleCharacter player) {
+   def detectPlayerItemId(int characterId) {
       for (int x = 4031357; x <= 4031364; x++) {
-         if (player.haveItem(x)) {
+         if (cm.characterHasItem(characterId, x)) {
             return x
          }
       }
@@ -28,18 +29,18 @@ class NPC9201011 {
       return boxItemId == 4031357 ? 1112803 : (boxItemId == 4031359 ? 1112806 : (boxItemId == 4031361 ? 1112807 : (boxItemId == 4031363 ? 1112809 : -1)))
    }
 
-   static def isSuitedForWedding(MapleCharacter player, equipped) {
-      int baseId = (player.getGender() == 0) ? 1050131 : 1051150
+   def isSuitedForWedding(int characterId, equipped) {
+      int baseId = (cm.characterGender(characterId) == 0) ? 1050131 : 1051150
 
       if (equipped) {
          for (int i = 0; i < 4; i++) {
-            if (player.haveItemEquipped(baseId + i)) {
+            if (cm.characterHasItemEquipped(characterId, baseId + i)) {
                return true
             }
          }
       } else {
          for (int i = 0; i < 4; i++) {
-            if (player.haveItemWithId(baseId + i, true)) {
+            if (cm.characterHasItem(characterId, baseId + i, true)) {
                return true
             }
          }
@@ -48,24 +49,24 @@ class NPC9201011 {
       return false
    }
 
-   static def getWeddingPreparationStatus(MapleCharacter player, MapleCharacter partner) {
-      if (!player.haveItem(4000313)) {
+   def getWeddingPreparationStatus(int characterId, int partnerId) {
+      if (!cm.characterHasItem(characterId, 4000313)) {
          return -3
       }
-      if (!partner.haveItem(4000313)) {
+      if (!cm.characterHasItem(partnerId, 4000313)) {
          return 3
       }
 
-      if (!isSuitedForWedding(player, true)) {
+      if (!isSuitedForWedding(characterId, true)) {
          return -4
       }
-      if (!isSuitedForWedding(partner, true)) {
+      if (!isSuitedForWedding(partnerId, true)) {
          return 4
       }
 
       boolean hasEngagement = false
       for (int x = 4031357; x <= 4031364; x++) {
-         if (player.haveItem(x)) {
+         if (cm.characterHasItem(characterId, x)) {
             hasEngagement = true
             break
          }
@@ -76,7 +77,7 @@ class NPC9201011 {
 
       hasEngagement = false
       for (int x = 4031357; x <= 4031364; x++) {
-         if (partner.haveItem(x)) {
+         if (cm.characterHasItem(partnerId, x)) {
             hasEngagement = true
             break
          }
@@ -85,21 +86,20 @@ class NPC9201011 {
          return -2
       }
 
-      if (!player.canHold(1112803)) {
+      if (!cm.characterCanHold(characterId, 1112803)) {
          return 1
       }
-      if (!partner.canHold(1112803)) {
+      if (!cm.characterCanHold(partnerId, 1112803)) {
          return 2
       }
 
       return 0
    }
 
-   def giveCoupleBlessings(EventInstanceManager eim, MapleCharacter player, MapleCharacter partner) {
+   def giveCoupleBlessings(EventInstanceManager eim, int characterId, int partnerId) {
       int blessCount = eim.gridSize()
-
-      player.gainExp(blessCount * weddingBlessingExp)
-      partner.gainExp(blessCount * weddingBlessingExp)
+      cm.characterGainExp(characterId, blessCount * weddingBlessingExp)
+      cm.characterGainExp(partnerId, blessCount * weddingBlessingExp)
    }
 
    def start() {
@@ -135,50 +135,42 @@ class NPC9201011 {
 
                if (weddingStage == 2) {
                   cm.sendYesNo("9201011_SHOULD_I")
-
                   state = 1
                } else if (weddingStage == 1) {
                   cm.sendOk("9201011_WAIT_A_BIT")
-
                   cm.dispose()
                } else {
                   cm.sendOk("9201011_FESTIVAL_NOW_COMPLETE")
-
                   cm.dispose()
                }
             } else {
                int weddingStage = eim.getIntProperty("weddingStage")
                if (weddingStage == 1) {
-                  if (eim.gridCheck(cm.getPlayer()) != -1) {
+                  if (eim.gridCheck(cm.getCharacterId()) != -1) {
                      cm.sendOk("9201011_SHAKE_THIS_PLACE_UP")
-
                      cm.dispose()
                   } else {
                      if (eim.getIntProperty("guestBlessings") == 1) {
                         cm.sendYesNo("9201011_WILL_YOU")
-
                         state = 0
                      } else {
                         cm.sendOk("9201011_NICE_PARTY")
-
                         cm.dispose()
                      }
                   }
                } else if (weddingStage == 3) {
                   cm.sendOk("9201011_GET_READY")
-
                   cm.dispose()
                } else {
                   cm.sendOk("9201011_ALL_OVER_THE_PLACE")
-
                   cm.dispose()
                }
             }
          } else if (status == 1) {
             if (state == 0) {    // give player blessings
-               eim.gridInsert(cm.getPlayer(), 1)
+               eim.gridInsert(cm.getCharacterId(), 1)
 
-               if (YamlConfig.config.server.WEDDING_BLESSER_SHOWFX) {
+               if (cm.getConfiguration().weddingBlesserShowFx()) {
                   MapleCharacter target = cm.getPlayer()
                   PacketCreator.announce(target, new ShowSpecialEffect(9))
                   MasterBroadcaster.getInstance().sendToAllInMap(target.getMap(), new ShowForeignEffect(target.getId(), 9), false, target)
@@ -193,114 +185,85 @@ class NPC9201011 {
                }
 
                cm.sendOk("9201011_WAY_TO_GO")
-
                cm.dispose()
             } else {            // couple wants to complete the wedding
                int weddingStage = eim.getIntProperty("weddingStage")
 
                if (weddingStage == 2) {
-                  int pid = cm.getPlayer().getPartnerId()
+                  int pid = cm.getPartnerId()
                   if (pid <= 0) {
                      cm.sendOk("9201011_WHAT_HAPPENED")
-
                      cm.dispose()
                      return
                   }
 
-                  MapleCharacter player = cm.getPlayer()
-                  MapleCharacter partner = cm.getMap().getCharacterById(cm.getPlayer().getPartnerId())
-                  if (partner != null) {
-                     state = getWeddingPreparationStatus(player, partner)
+                  if (cm.hasPartner()) {
+                     state = getWeddingPreparationStatus(cm.getCharacterId(), cm.getPartnerId())
 
                      switch (state) {
                         case 0:
                            pid = eim.getIntProperty("confirmedVows")
                            if (pid != -1) {
-                              if (pid == player.getId()) {
+                              if (pid == cm.getCharacterId()) {
                                  cm.sendOk("9201011_ALREADY_CONFIRMED")
-
                               } else {
                                  eim.setIntProperty("weddingStage", 3)
-                                 AbstractPlayerInteraction cmPartner = partner.getAbstractPlayerInteraction()
-
-                                 int playerItemId = detectPlayerItemId(player)
+                                 int playerItemId = detectPlayerItemId(cm.getCharacterId())
                                  int partnerItemId = (playerItemId % 2 == 1) ? playerItemId + 1 : playerItemId - 1
-
                                  int marriageRingId = getRingId((playerItemId % 2 == 1) ? playerItemId : partnerItemId)
-
                                  cm.gainItem(playerItemId, (short) -1)
-                                 cmPartner.gainItem(partnerItemId, (short) -1)
+                                 cm.characterGainItem(cm.getPartnerId(), partnerItemId, (short) -1)
 
                                  RingActionHandler.giveMarriageRings(player, partner, marriageRingId)
-                                 player.setMarriageItemId(marriageRingId)
-                                 partner.setMarriageItemId(marriageRingId)
+                                 cm.characterSetMarriageItemId(cm.getCharacterId(), marriageRingId)
+                                 cm.characterSetMarriageItemId(cm.getPartnerId(), marriageRingId)
 
                                  //var marriageId = eim.getIntProperty("weddingId");
                                  //player.announce(Wedding.OnMarriageResult(marriageId, player, true));
                                  //partner.announce(Wedding.OnMarriageResult(marriageId, player, true));
 
-                                 giveCoupleBlessings(eim, player, partner)
-
-                                 MessageBroadcaster.getInstance().sendMapServerNotice(cm.getMap(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("MARRIAGE_WEDDING_WAYNE"))
+                                 giveCoupleBlessings(eim, cm.getCharacterId(), cm.getPartnerId())
+                                 cm.sendBlueTextToMap("MARRIAGE_WEDDING_WAYNE")
                                  eim.schedule("showMarriedMsg", 2 * 1000)
                               }
                            } else {
-                              eim.setIntProperty("confirmedVows", player.getId())
-                              MessageBroadcaster.getInstance().sendMapServerNotice(cm.getMap(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("MARRIAGE_WEDDING_ONE_LAST_STEP").with(player.getName()))
+                              eim.setIntProperty("confirmedVows", cm.getCharacterId())
+                              cm.sendBlueTextToMap("MARRIAGE_WEDDING_ONE_LAST_STEP", cm.getCharacterName())
                            }
-
                            break
-
                         case -1:
                            cm.sendOk("9201011_MISSING_RING_BOX")
-
                            break
-
                         case -2:
                            cm.sendOk("9201011_PARTNER_MISSING_RING_BOX")
-
                            break
-
                         case -3:
                            cm.sendOk("9201011_PLEASE_FIND_IT")
-
                            break
-
                         case -4:
                            cm.sendOk("9201011_FASHIONABLE_CLOTHES")
-
                            break
-
                         case 1:
                            cm.sendOk("9201011_MAKE_EQUIP_SLOT")
-
                            break
-
                         case 2:
                            cm.sendOk("9201011_PARTNER_MAKE_EQUIP_SLOT")
-
                            break
-
                         case 3:
                            cm.sendOk("9201011_PARTNER_PLEASE_FIND_IT")
-
                            break
-
                         case 4:
                            cm.sendOk("9201011_PARTNER_FASHIONABLE_CLOTHES")
-
                            break
                      }
 
                      cm.dispose()
                   } else {
                      cm.sendOk("9201011_PARTNER_NOT_HERE")
-
                      cm.dispose()
                   }
                } else {
                   cm.sendOk("9201011_OFFICIALLY_ONE_COUPLE")
-
                   cm.dispose()
                }
             }

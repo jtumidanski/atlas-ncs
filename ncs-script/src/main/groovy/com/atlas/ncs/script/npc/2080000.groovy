@@ -25,7 +25,6 @@ class NPC2080000 {
    int cd_cost = 25000
 
    def start() {
-      cm.getPlayer().setCS(true)
       String selStr = "A dragon's power is not to be underestimated. If you like, I can add its power to one of your weapons. However, the weapon must be powerful enough to hold its potential...#b"
       String[] options = ["What's a stimulator?", "Create a Warrior weapon", "Create a Bowman weapon", "Create a Magician weapon", "Create a Thief weapon", "Create a Pirate Weapon",
                           "Create a Warrior weapon with a Stimulator", "Create a Bowman weapon with a Stimulator", "Create a Magician weapon with a Stimulator", "Create a Thief weapon with a Stimulator", "Create a Pirate Weapon with a Stimulator"]

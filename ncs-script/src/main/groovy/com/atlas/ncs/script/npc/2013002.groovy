@@ -37,7 +37,7 @@ class NPC2013002 {
             if (status == 0) {
                cm.sendNext("2013002_THANK_YOU")
             } else if (status == 1) {
-               if (cm.getEventInstance().giveEventReward(cm.getPlayer())) {
+               if (cm.getEventInstance().giveEventReward(cm.getCharacterId())) {
                   cm.warp(200080101, 0)
                   cm.dispose()
                } else {

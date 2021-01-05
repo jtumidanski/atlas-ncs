@@ -16,13 +16,11 @@ class NPC1104002 {
       if (mode == -1) {
          cm.dispose()
       } else {
-         MapleMap map = cm.getMap()
-
          if (mode == 0 && type > 0) {
-            MapleLifeFactory.getMonster(9001010).ifPresent({ monster ->
+            cm.getMonster(9001010).ifPresent({ monster ->
                cm.sendPinkText("ELEANOR_STILL_CHALLENGING")
-               map.spawnMonsterOnGroundBelow(monster, new Point(850, 0))
-               map.destroyNPC(1104002)
+               cm.spawnMonsterOnGroundBelow(monster, 850, 0)
+               cm.destroyNPC(1104002)
             })
 
             cm.dispose()

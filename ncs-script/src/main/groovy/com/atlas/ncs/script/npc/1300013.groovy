@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.Party
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 /*
@@ -41,20 +43,19 @@ class NPC1300013 {
             cm.sendSimple("1300013_MUSHROOM_KINGDOM_BOSS_FIGHTS")
          } else if (status == 1) {
             if (selection == 0) {
-               EventManager pepe = cm.getEventManager("KingPepeAndYetis")
-               pepe.setProperty("player", cm.getPlayer().getName())
-               pepe.startInstance(cm.getPlayer())
+               EventManager pepe = cm.getEventManager("KingPepeAndYetis").orElseThrow()
+               pepe.setProperty("player", cm.getCharacterName())
+               pepe.startInstance(cm.getCharacterId())
                cm.dispose()
             } else if (selection == 1) {
-               EventManager em = cm.getEventManager("MK_PrimeMinister2")
-
-               Optional<MapleParty> party = cm.getPlayer().getParty()
+               EventManager em = cm.getEventManager("MK_PrimeMinister2").orElseThrow()
+               Optional<Party> party = cm.getParty()
                if (party.isPresent()) {
-                  if (!em.startInstance(party.get(), cm.getMap(), 1)) {
+                  if (!em.startInstance(party.get(), cm.getMapId(), 1)) {
                      cm.sendOk("1300013_ANOTHER_PARTY_IS_CHALLENGING")
                   }
                } else {
-                  if (!em.startInstance(cm.getPlayer())) {
+                  if (!em.startInstance(cm.getCharacterId())) {
                      cm.sendOk("1300013_ANOTHER_PARTY_IS_CHALLENGING")
                   }
                }
@@ -74,9 +75,9 @@ class NPC1300013 {
             cm.sendSimple("1300013_FIGHT_PEPE_OR_YETI")
          } else if (status == 1) {
             if (selection == 1) {
-               EventManager pepe = cm.getEventManager("KingPepeAndYetis")
-               pepe.setProperty("player", cm.getPlayer().getName())
-               pepe.startInstance(cm.getPlayer())
+               EventManager pepe = cm.getEventManager("KingPepeAndYetis").orElseThrow()
+               pepe.setProperty("player", cm.getCharacterName())
+               pepe.startInstance(cm.getCharacterId())
                cm.dispose()
             }
          }

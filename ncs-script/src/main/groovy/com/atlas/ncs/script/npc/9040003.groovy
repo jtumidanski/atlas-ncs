@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9040003 {
@@ -15,7 +16,6 @@ class NPC9040003 {
    static def clearStage(int stage, EventInstanceManager eim) {
       eim.setProperty("stage" + stage + "clear", "true")
       eim.showClearEffect(true)
-
       eim.giveEventPlayersStageReward(stage)
    }
 
@@ -29,8 +29,7 @@ class NPC9040003 {
             cm.dispose()
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
-
+         EventInstanceManager eim = cm.getEventInstance()
          if (eim.getProperty("stage4clear") != null && eim.getProperty("stage4clear") == "true") {
             cm.sendOk("9040003_IMMORTAL_SLEEP")
 
@@ -41,16 +40,12 @@ class NPC9040003 {
          if (status == 0) {
             if (cm.isEventLeader()) {
                cm.sendNext("9040003_IMMORTAL_SLEEP_WILL_NOW")
-
-
                clearStage(4, eim)
-               MapleGuildProcessor.getInstance().gainGP(cm.getGuild(), 30)
-               cm.getPlayer().getMap().getReactorByName("ghostgate").forceHitReactor((byte) 1)
-
+               cm.gainGP(cm.getGuildId(), 30)
+               cm.forceHitReactor("ghostgate", (byte) 1)
                cm.dispose()
             } else {
                cm.sendOk("9040003_LEADER_MUST_SPEAK")
-
                cm.dispose()
             }
          }

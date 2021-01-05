@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2141002 {
@@ -30,7 +31,6 @@ class NPC2141002 {
          if (!eim.isEventCleared()) {
             if (status == 0) {
                cm.sendYesNo("2141002_WANT_TO_GET_OUT")
-
             } else if (status == 1) {
                cm.warp(270050000, 0)
                cm.dispose()
@@ -39,13 +39,11 @@ class NPC2141002 {
          } else {
             if (status == 0) {
                cm.sendYesNo("2141002_PINK_BEAN_DEFEATED")
-
             } else if (status == 1) {
-               if (eim.giveEventReward(cm.getPlayer(), 1)) {
+               if (eim.giveEventReward(cm.getCharacterId(), 1)) {
                   cm.warp(270050000)
                } else {
                   cm.sendOk("2141002_NEED_INVENTORY_ROOM")
-
                }
 
                cm.dispose()

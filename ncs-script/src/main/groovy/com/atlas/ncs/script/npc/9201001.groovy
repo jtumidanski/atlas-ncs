@@ -24,11 +24,11 @@ class NPC9201001 {
       action((byte) 1, (byte) 0, 0)
    }
 
-   static def hasProofOfLoves(MapleCharacter player) {
+   def hasProofOfLoves(int characterId) {
       int count = 0
 
       for (int i = 4031367; i <= 4031372; i++) {
-         if (player.haveItem(i)) {
+         if (cm.characterHasItem(characterId, i)) {
             count++
          }
       }
@@ -36,9 +36,8 @@ class NPC9201001 {
       return count >= 4
    }
 
-   def getNanaLocation(MapleCharacter player) {
-      int mapId = player.getMap().getId()
-
+   def getNanaLocation(int characterId) {
+      int mapId = cm.characterGetMap(characterId)
       for (int i = 0; i < mapIds.length; i++) {
          if (mapId == mapIds[i]) {
             return i
@@ -53,17 +52,13 @@ class NPC9201001 {
          if (cm.canHold(4031367 + nanaLoc, 1)) {
             cm.gainItem(questItems[nanaLoc], (short) -50)
             cm.gainItem(4031367 + nanaLoc, (short) 1)
-
             cm.sendOk("9201001_THANK_YOU")
-
             return true
          } else {
             cm.sendOk("9201001_NEED_ETC_SPACE")
-
          }
       } else {
          cm.sendOk("9201001_PLEASE_GATHER", questItems[nanaLoc])
-
       }
 
       return false
@@ -91,10 +86,9 @@ class NPC9201001 {
                return
             }
 
-            nanaLoc = getNanaLocation(cm.getPlayer())
+            nanaLoc = getNanaLocation(cm.getCharacterId())
             if (nanaLoc == -1) {
                cm.sendOk("9201001_HELLO")
-
                cm.dispose()
                return
             }
@@ -103,7 +97,6 @@ class NPC9201001 {
                if (cm.isQuestCompleted(100401 + nanaLoc)) {
                   state = 1
                   cm.sendAcceptDecline("9201001_DID_YOU_LOSE", questItems[nanaLoc])
-
                } else if (cm.isQuestStarted(100401 + nanaLoc)) {
                   if (processNanaQuest()) {
                      cm.gainExp(questExp[nanaLoc] * cm.getExpRate())
@@ -114,19 +107,15 @@ class NPC9201001 {
                } else {
                   state = 0
                   cm.sendAcceptDecline("9201001_ARE_YOU_SEARCHING")
-
                }
             } else {
                cm.sendOk("9201001_HEY_THERE")
-
                cm.dispose()
             }
          } else if (status == 1) {
             if (state == 0) {
                cm.startQuest(100401 + nanaLoc)
-
                cm.sendOk("9201001_COLLECT", questItems[nanaLoc])
-
                cm.dispose()
             } else {
                processNanaQuest()

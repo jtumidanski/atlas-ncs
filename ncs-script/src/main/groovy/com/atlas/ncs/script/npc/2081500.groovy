@@ -46,7 +46,7 @@ class NPC2081500 {
          } else if (status == 1) {
             if (mode >= 1 && cm.getJobId() % 100 % 10 != 2) {
                if (cm.canHold(2280003, 1)) {
-                  cm.changeJobById(cm.getJobId() + 1)
+                  cm.changeJob(cm.getJobId() + 1)
                   if (cm.getJobId() == 512) {
                      cm.teachSkill(5121001, (byte) 0, (byte) 10, -1)
                      cm.teachSkill(5121002, (byte) 0, (byte) 10, -1)
@@ -65,32 +65,32 @@ class NPC2081500 {
                }
             } else if (mode >= 1 && cm.getJobId() % 100 % 10 == 2) {
                if (cm.getJobId() == 512) {
-                  if (cm.getPlayer().getSkillLevel(5121003) == 0) {
+                  if (cm.getSkillLevel(5121003) == 0) {
                      cm.teachSkill(5121003, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(5121004) == 0) {
+                  if (cm.getSkillLevel(5121004) == 0) {
                      cm.teachSkill(5121004, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(5121005) == 0) {
+                  if (cm.getSkillLevel(5121005) == 0) {
                      cm.teachSkill(5121005, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(5121010) == 0) {
+                  if (cm.getSkillLevel(5121010) == 0) {
                      cm.teachSkill(5121010, (byte) 0, (byte) 10, -1)
                   }
                } else if (cm.getJobId() == 522) {
-                  if (cm.getPlayer().getSkillLevel(5221006) == 0) {
+                  if (cm.getSkillLevel(5221006) == 0) {
                      cm.teachSkill(5221006, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(5221007) == 0) {
+                  if (cm.getSkillLevel(5221007) == 0) {
                      cm.teachSkill(5221007, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(5221008) == 0) {
+                  if (cm.getSkillLevel(5221008) == 0) {
                      cm.teachSkill(5221008, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(5221009) == 0) {
+                  if (cm.getSkillLevel(5221009) == 0) {
                      cm.teachSkill(5221009, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(5221003) == 0) {
+                  if (cm.getSkillLevel(5221003) == 0) {
                      cm.teachSkill(5221003, (byte) 0, (byte) 10, -1)
                   }
                }

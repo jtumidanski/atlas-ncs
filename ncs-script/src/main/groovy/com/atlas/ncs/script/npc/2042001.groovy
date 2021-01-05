@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2042001 {
@@ -27,13 +28,12 @@ class NPC2042001 {
    def start() {
       status = -1
 
-      if (!YamlConfig.config.server.USE_CPQ) {
-         if (YamlConfig.config.server.USE_ENABLE_CUSTOM_NPC_SCRIPT) {
+      if (!cm.getConfiguration().useCPQ()) {
+         if (cm.getConfiguration().enableCustomNpcScript()) {
             status = 0
             action((byte) 1, (byte) 0, 4)
          } else {
             cm.sendOk("2042001_CARNIVAL_UNAVAILABLE")
-
             cm.dispose()
          }
 
@@ -59,12 +59,11 @@ class NPC2042001 {
          if (cm.getMapId() == 980000010) {
             if (status == 0) {
                cm.sendNext("2042001_HOPE_YOU_HAD_FUN")
-
             } else if (status > 0) {
                cm.warp(980000000, 0)
                cm.dispose()
             }
-         } else if (cm.getChar().getMap().isCPQLoserMap()) {
+         } else if (cm.isCPQLoserMap()) {
             if (status == 0) {
                if (cm.getParty() != null) {
                   String shiu = ""
@@ -117,7 +116,7 @@ class NPC2042001 {
                      break
                }
             }
-         } else if (cm.getChar().getMap().isCPQWinnerMap()) {
+         } else if (cm.isCPQWinnerMap()) {
             if (status == 0) {
                if (cm.getParty() != null) {
                   String shi = ""
@@ -176,17 +175,17 @@ class NPC2042001 {
                   status = 10
                   cm.sendOk("2042001_MUST_CREATE_A_PARTY")
 
-               } else if (!cm.isLeader()) {
+               } else if (!cm.isPartyLeader()) {
                   status = 10
                   cm.sendOk("2042001_LEADER_MUST_START")
 
                } else {
-                  MaplePartyCharacter[] party = cm.getParty().orElseThrow().getMembers()
+                  PartyCharacter[] party = cm.getParty().orElseThrow().members()
                   int inMap = cm.partyMembersInMap()
                   int lvlOk = 0
                   int isOutMap = 0
                   for (int i = 0; i < party.size(); i++) {
-                     if (party[i].getLevel() >= cpqMinLvl && party[i].getLevel() <= cpqMaxLvl) {
+                     if (party[i].level() >= cpqMinLvl && party[i].level() <= cpqMaxLvl) {
                         lvlOk++
 
                         if (!party[i].inMap(cpqMap)) {
@@ -198,19 +197,15 @@ class NPC2042001 {
                   if (party >= 1) {
                      status = 10
                      cm.sendOk("2042001_NOT_ENOUGH_PEOPLE", cpqMinAmt, cpqMaxAmt)
-
                   } else if (lvlOk != inMap) {
                      status = 10
                      cm.sendOk("2042001_LEVEL_RANGE", cpqMinLvl, cpqMaxLvl)
-
                   } else if (isOutMap > 0) {
                      status = 10
                      cm.sendOk("2042001_PARTY_MEMBERS_NOT_IN_MAP")
-
                   } else {
                      if (!cm.sendCPQMapLists()) {
                         cm.sendOk("2042001_FIELDS_ARE_ALL_FULL")
-
                         cm.dispose()
                      }
                   }
@@ -222,17 +217,14 @@ class NPC2042001 {
                      cm.dispose()
                   } else {
                      cm.sendOk("2042001_ROOM_IS_FULL")
-
                      cm.dispose()
                   }
                } else {
-                  MaplePartyCharacter[] party = cm.getParty().orElseThrow().getMembers()
-                  if ((selection >= 0 && selection <= 3) && party.size() < (YamlConfig.config.server.USE_ENABLE_SOLO_EXPEDITIONS ? 1 : 2)) {
+                  PartyCharacter[] party = cm.getParty().orElseThrow().members()
+                  if ((selection >= 0 && selection <= 3) && party.size() < (cm.getConfiguration().enableSoloExpeditions() ? 1 : 2)) {
                      cm.sendOk("2042001_NEED_AT_LEAST_2_PLAYERS")
-
-                  } else if ((selection >= 4 && selection <= 5) && party.size() < (YamlConfig.config.server.USE_ENABLE_SOLO_EXPEDITIONS ? 1 : 3)) {
+                  } else if ((selection >= 4 && selection <= 5) && party.size() < (cm.getConfiguration().enableSoloExpeditions() ? 1 : 3)) {
                      cm.sendOk("2042001_NEED_AT_LEAST_3_PLAYERS")
-
                   } else {
                      cm.cpqLobby(selection)
                   }
@@ -244,39 +236,34 @@ class NPC2042001 {
          } else {
             if (status == 0) {
                String talk = "What would you like to do? If you have never participate in the Monster Carnival, you will need to know a few things before participating! \r\n#b#L0# Go to the Monster Carnival 1.#l \r\n#L3# Go to the Monster Carnival 2.#l \r\n#L1# Learn about the Monster Carnival.#l\r\n#L2# Trade #t4001129#.#l"
-               if (YamlConfig.config.server.USE_ENABLE_CUSTOM_NPC_SCRIPT) {
+               if (cm.getConfiguration().enableCustomNpcScript()) {
                   talk += "\r\n#L4# ... Can I just refine my ores?#l"
                }
                cm.sendSimple(talk)
             } else if (status == 1) {
                if (selection == 0) {
                   if ((cm.getLevel() > 29 && cm.getLevel() < 51) || cm.isGM()) {
-                     cm.getChar().saveLocation("MONSTER_CARNIVAL")
+                     cm.saveLocation("MONSTER_CARNIVAL")
                      cm.warp(980000000, 0)
                      cm.dispose()
                   } else if (cm.getLevel() < 30) {
                      cm.sendOk("2042001_MUST_BE_AT_LEAST_LEVEL_30")
-
                      cm.dispose()
                   } else {
                      cm.sendOk("2042001_SORRY_LEVEL_RANGE")
-
                      cm.dispose()
                   }
                } else if (selection == 1) {
                   status = 60
                   cm.sendSimple("2042001_WHAT_WOULD_YOU_LIKE_TO_DO")
-
                } else if (selection == 2) {
                   cm.sendSimple("2042001_REMEMBER", n1, n2)
-
                } else if (selection == 3) {
-                  cm.getChar().saveLocation("MONSTER_CARNIVAL")
+                  cm.saveLocation("MONSTER_CARNIVAL")
                   cm.warp(980030000, 0)
                   cm.dispose()
                } else if (selection == 4) {
                   String selStr = "Very well, instead I offer a steadfast #bore refining#k service for you, taxing #r" + ((feeMultiplier * 100) | 0) + "%#k over the usual fee to synthesize them. What will you do?#b"
-
                   String[] options = ["Refine mineral ores", "Refine jewel ores"]
                   if (refineCrystals) {
                      options << "Refine crystal ores"
@@ -290,7 +277,6 @@ class NPC2042001 {
                   }
 
                   cm.sendSimple(selStr)
-
                   status = 76
                }
             } else if (status == 2) {
@@ -302,7 +288,6 @@ class NPC2042001 {
                      cm.dispose()
                   } else {
                      cm.sendOk("2042001_MISSING_SOMETHING_OR_EQUIP_IS_FULL")
-
                      cm.dispose()
                   }
                } else if (select == 1) {
@@ -312,34 +297,27 @@ class NPC2042001 {
                      cm.dispose()
                   } else {
                      cm.sendOk("2042001_MISSING_SOMETHING_OR_USE_IS_FULL")
-
                      cm.dispose()
                   }
                } else if (select == 2) {//S2 Warrior 26 S3 Magician 6 S4 Bowman 6 S5 Thief 8
                   status = 10
                   cm.sendSimple("2042001_PLEASE_MAKE_SURE", n3, n3, n4, n4, n5, n5, n3, n3, n4, n4, n5, n5)
-
                } else if (select == 3) {
                   status = 20
                   cm.sendSimple("2042001_SELECT_THE_WEAPON_TO_TRADE", n3, n3, n4, n4, n5, n5)
-
                } else if (select == 4) {
                   status = 30
                   cm.sendSimple("2042001_SELECT_THE_WEAPON_TO_TRADE_2", n3, n4, n5, n3, n4, n5)
-
                } else if (select == 5) {
                   status = 40
                   cm.sendSimple("2042001_SELECT_THE_WEAPON_TO_TRADE_3", n3, n4, n5, n3, n4, n4, n5, n5)
-
                } else if (select == 6) {
                   status = 50 //pirate rewards
                   cm.sendSimple("2042001_SELECT_THE_WEAPON_TO_TRADE_4", n3, n4, n5, n3, n4, n5)
-
                }
             } else if (status == 11) {
                if (selection == 12) {
                   cm.sendSimple("2042001_SELECT_THE_WEAPON_TO_TRADE_5", n3, n3, n4, n4, n5, n5, n3, n3, n4, n4, n5, n5)
-
                } else {
                   int[] item = [1302004, 1402006, 1302009, 1402007, 1302010, 1402003, 1312006, 1412004, 1312007, 1412005, 1312008, 1412003]
                   int[] cost = [n3, n3, n4, n4, n5, n5, n3, n3, n4, n4, n5]
@@ -349,7 +327,6 @@ class NPC2042001 {
                      cm.dispose()
                   } else {
                      cm.sendOk("2042001_NOT_ENOUGH_OR_INVENTORY_IS_FULL")
-
                      cm.dispose()
                   }
                }
@@ -357,7 +334,6 @@ class NPC2042001 {
                if (selection == 12) {
                   status = 10
                   cm.sendSimple("2042001_MAKE_SURE_2", n3, n3, n4, n4, n5, n5, n3, n3, n4, n4, n5, n5)
-
                } else {
                   int[] item = [1322015, 1422008, 1322016, 1422007, 1322017, 1422005, 1432003, 1442003, 1432005, 1442009, 1442005, 1432004]
                   int[] cost = [n3, n3, n4, n4, n5, n5, n3, n3, n4, n4, n5, n5]
@@ -367,7 +343,6 @@ class NPC2042001 {
                      cm.dispose()
                   } else {
                      cm.sendOk("2042001_NOT_ENOUGH_OR_INVENTORY_IS_FULL")
-
                      cm.dispose()
                   }
                }
@@ -380,7 +355,6 @@ class NPC2042001 {
                   cm.dispose()
                } else {
                   cm.sendOk("2042001_NOT_ENOUGH_OR_INVENTORY_IS_FULL")
-
                   cm.dispose()
                }
             } else if (status == 31) {
@@ -392,7 +366,6 @@ class NPC2042001 {
                   cm.dispose()
                } else {
                   cm.sendOk("2042001_NOT_ENOUGH_OR_INVENTORY_IS_FULL")
-
                   cm.dispose()
                }
             } else if (status == 41) {
@@ -404,7 +377,6 @@ class NPC2042001 {
                   cm.dispose()
                } else {
                   cm.sendOk("2042001_NOT_ENOUGH_OR_INVENTORY_IS_FULL")
-
                   cm.dispose()
                }
             } else if (status == 51) {
@@ -416,73 +388,56 @@ class NPC2042001 {
                   cm.dispose()
                } else {
                   cm.sendOk("2042001_NOT_ENOUGH_OR_INVENTORY_IS_FULL")
-
                   cm.dispose()
                }
             } else if (status == 61) {
                select = selection
                if (selection == 0) {
                   cm.sendNext("2042001_HELLO")
-
                } else if (selection == 1) {
                   cm.sendNext("2042001_MONSTER_CARNIVAL_INFO")
-
                } else if (selection == 2) {
                   cm.sendNext("2042001_EASY_RIGHT")
-
                } else {
                   cm.dispose()
                }
             } else if (status == 62) {
                if (select == 0) {
                   cm.sendNext("2042001_WHAT_IS_IT")
-
                } else if (select == 1) {
                   cm.sendNext("2042001_HOW_TO")
-
                } else if (select == 2) {
                   cm.sendNext("2042001_COMMANDS")
-
                }
             } else if (status == 63) {
                if (select == 0) {
                   cm.sendNext("2042001_I_KNOW_IT_IS_TOO_DANGEROUS")
-
                } else if (select == 1) {
                   cm.sendNext("2042001_3_WAYS_TO_DISTRACT")
-
                } else if (select == 2) {
                   cm.sendNext("2042001_SUMMONING")
-
                }
             } else if (status == 64) {
                if (select == 0) {
                   cm.sendNext("2042001_OF_COURSE")
-
                   cm.dispose()
                } else if (select == 1) {
                   cm.sendNext("2042001_PLEASE_REMEMBER")
-
                } else if (select == 2) {
                   cm.sendNext("2042001_ABILITY")
-
                }
             } else if (status == 65) {
                if (select == 1) {
                   cm.sendNext("2042001_DO_NOT_LOSE_EXP_WHEN_DEAD")
-
                   cm.dispose()
                } else if (select == 2) {
                   cm.sendNext("2042001_PROTECTOR")
-
                }
             } else if (status == 66) {
                cm.sendNext("2042001_CANNOT_USE_ITEMS")
-
                cm.dispose()
             } else if (status == 77) {
                boolean allDone
-
                if (selection == 0) {
                   allDone = refineItems(0) // minerals
                } else if (selection == 1) {
@@ -495,10 +450,8 @@ class NPC2042001 {
 
                if (allDone) {
                   cm.sendOk("2042001_DONE")
-
                } else {
                   cm.sendOk("2042001_DONE_BUT_LACK_ETC_SPACE")
-
                }
                cm.dispose()
             }

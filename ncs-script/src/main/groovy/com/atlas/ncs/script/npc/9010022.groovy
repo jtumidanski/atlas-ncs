@@ -28,7 +28,6 @@ class NPC9010022 {
          if (status == 0) {
             if (cm.getLevel() < 20) {
                cm.sendDimensionalMirror("9010022_NO_PLACE_TO_TRANSPORT")
-
                cm.dispose()
             } else {
                String selStr = ""

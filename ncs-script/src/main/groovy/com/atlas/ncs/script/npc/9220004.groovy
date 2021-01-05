@@ -31,26 +31,23 @@ class NPC9220004 {
 
          } else if (status == 1) {
             if (selection == 0) {
-               if (cm.getMap().getMonsters().size() > 1) {  //reactor as a monster? wtf
+               if (cm.getMapMonsterCount() > 1) {  //reactor as a monster? wtf
                   cm.sendOk("9220004_ELIMINATE_ALL")
-
                   cm.dispose()
                   return
                }
 
-               cm.getMap().spawnMonsterOnGroundBelow(9500317, 1700, 80)
+               cm.spawnMonsterOnGroundBelow(9500317, 1700, 80)
             } else if (selection == 1) {
-               if (cm.getMap().getMonsters().size() > 6) {  //reactor as a monster? wtf
+               if (cm.getMapMonsterCount() > 6) {  //reactor as a monster? wtf
                   cm.sendOk("9220004_TOO_CROWDED")
-
                   cm.dispose()
                   return
                }
 
-               cm.getMap().spawnMonsterOnGroundBelow(9500320, 1700, 80)
+               cm.spawnMonsterOnGroundBelow(9500320, 1700, 80)
             } else {
                cm.sendOk("9220004_FINE_THEN")
-
             }
 
             cm.dispose()

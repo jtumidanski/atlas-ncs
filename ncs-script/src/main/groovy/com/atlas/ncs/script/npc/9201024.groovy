@@ -39,11 +39,11 @@ class NPC9201024 {
       return false
    }
 
-   static def hasProofOfLoves(MapleCharacter player) {
+   def hasProofOfLoves(int characterId) {
       int count = 0
 
       for (int i = 4031367; i <= 4031372; i++) {
-         if (player.haveItem(i)) {
+         if (cm.characterHasItem(characterId, i)) {
             count++
          }
       }

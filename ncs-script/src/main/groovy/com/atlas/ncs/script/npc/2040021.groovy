@@ -20,7 +20,6 @@ class NPC2040021 {
    int stimulatorId = 4130001
 
    def start() {
-      cm.getPlayer().setCS(true)
       String selStr = "Hello, and welcome to the Ludibrium Shoe Store. How can I help you today??#b"
       String[] options = ["What's a stimulator?", "Create Warrior shoes", "Create Bowman shoes", "Create Magician shoes", "Create Thief shoes", "Create Warrior shoes with a Stimulator", "Create Bowman shoes with a Stimulator", "Create Magician shoes with a Stimulator", "Create Thief shoes with a Stimulator"]
       for (int i = 0; i < options.length; i++) {

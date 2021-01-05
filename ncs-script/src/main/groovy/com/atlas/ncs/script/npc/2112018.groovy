@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2112018 {
@@ -31,17 +32,14 @@ class NPC2112018 {
          if (status == 0) {
             if (eim.getIntProperty("escortFail") == 1) {
                cm.sendNext("2112018_THANK_YOU")
-
             } else {
                cm.sendNext("2112018_THANK_YOU_LONG")
-
             }
          } else {
-            if (eim.giveEventReward(cm.getPlayer())) {
+            if (eim.giveEventReward(cm.getCharacterId())) {
                cm.warp((eim.getIntProperty("isAlcadno") == 0) ? 261000011 : 261000021)
             } else {
                cm.sendOk("2112018_FREE_A_SLOT")
-
             }
 
             cm.dispose()

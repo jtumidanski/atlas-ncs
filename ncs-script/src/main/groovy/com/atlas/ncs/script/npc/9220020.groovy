@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9220020 {
@@ -29,7 +30,6 @@ class NPC9220020 {
          if (status == 0) {
             if (!cm.isEventLeader()) {
                cm.sendNext("9220020_PARTY_LEADER_MUST_TALK")
-
                cm.dispose()
                return
             }
@@ -41,16 +41,13 @@ class NPC9220020 {
             } else {
                if (cm.haveItem(4032118, 15)) {
                   cm.gainItem(4032118, (short) -15)
-
                   eim.setIntProperty("statusStg1", 1)
                   eim.showClearEffect()
                   eim.giveEventPlayersStageReward(1)
-
                   cm.sendNext("9220020_BE_PREPARED")
 
                } else {
                   cm.sendNext("9220020_HAND_ME")
-
                }
             }
 

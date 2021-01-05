@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2030008 {
@@ -44,7 +46,7 @@ class NPC2030008 {
             return
          }
 
-         em = cm.getEventManager("ZakumPQ")
+         em = cm.getEventManager("ZakumPQ").orElseThrow()
          if (em == null) {
             cm.sendOk("2030008_PQ_ERROR")
             cm.dispose()
@@ -58,13 +60,13 @@ class NPC2030008 {
                if (cm.getParty().isEmpty()) {
                   cm.sendOk("2030008_NEED_TO_BE_IN_PARTY")
                   cm.dispose()
-               } else if (!cm.isLeader()) {
+               } else if (!cm.isPartyLeader()) {
                   cm.sendOk("2030008_PARTY_LEADER_MUST_START")
                   cm.dispose()
                } else {
-                  MaplePartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
+                  PartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
                   if (eli.size() > 0) {
-                     if (!em.startInstance(cm.getParty().orElseThrow(), cm.getPlayer().getMap(), 1)) {
+                     if (!em.startInstance(cm.getParty().orElseThrow(), cm.getMapId(), 1)) {
                         cm.sendOk("2030008_ANOTHER_PARTY_HAS_ENTERED")
                      }
                   } else {

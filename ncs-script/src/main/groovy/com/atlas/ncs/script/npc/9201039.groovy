@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9201039 {
    NPCConversationManager cm
@@ -36,11 +37,11 @@ class NPC9201039 {
          hairNew = []
          if (cm.getGender() == 0) {
             for (int i = 0; i < maleHair.length; i++) {
-               hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i], { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i], { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
             }
          } else {
             for (int j = 0; j < femaleHair.length; j++) {
-               hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[j], { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[j], { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
             }
          }
          cm.sendNext("9201039_HERE_WE_GO")

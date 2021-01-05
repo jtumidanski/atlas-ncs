@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1012112 {
@@ -30,8 +32,8 @@ class NPC1012112 {
 
          if (cm.getMapId() == 100000200) {
             if (status == 0) {
-               em = cm.getEventManager("HenesysPQ")
-               if (em == null) {
+               Optional<EventManager> eventManager = cm.getEventManager("HenesysPQ")
+               if (eventManager.isEmpty()) {
                   cm.sendOk("1012112_PQ_ERROR")
                   cm.dispose()
                   return
@@ -39,18 +41,19 @@ class NPC1012112 {
                   action((byte) 1, (byte) 0, 0)
                   return
                }
+               em = eventManager.get()
 
-               cm.sendSimple("1012112_HELLO", em.getProperty("party"), (cm.getPlayer().isRecvPartySearchInviteEnabled() ? "disable" : "enable"))
+               cm.sendSimple("1012112_HELLO", em.getProperty("party"), (cm.isRecvPartySearchInviteEnabled() ? "disable" : "enable"))
             } else if (status == 1) {
                if (selection == 0) {
                   if (cm.getParty().isEmpty()) {
                      cm.sendOk("1012112_HELLO_NO_PARTY")
                      cm.dispose()
-                  } else if (!cm.isLeader()) {
+                  } else if (!cm.isPartyLeader()) {
                      cm.sendOk("1012112_HELLO_NOT_LEADER")
                      cm.dispose()
                   } else {
-                     MaplePartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
+                     PartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
                      if (eli.size() > 0) {
                         if (!em.startInstance(cm.getParty().orElseThrow(), cm.getMapId(), 1)) {
                            cm.sendOk("1012112_SOMEONE_ALREADY_ATTEMPTING")
@@ -62,8 +65,8 @@ class NPC1012112 {
                      cm.dispose()
                   }
                } else if (selection == 1) {
-                  boolean psState = cm.getPlayer().toggleRecvPartySearchInvite()
-                  cm.sendOk(I18nMessage.from("1012112_PARTY_SEARCH_TOGGLE").with(psState ? "enabled" : "disabled"))
+                  boolean psState = cm.toggleRecvPartySearchInvite()
+                  cm.sendOk("1012112_PARTY_SEARCH_TOGGLE", psState ? "enabled" : "disabled")
                   cm.dispose()
                } else if (selection == 2) {
                   cm.sendOk("1012112_MISSION_INFO")
@@ -88,7 +91,7 @@ class NPC1012112 {
             if (status == 0) {
                cm.sendYesNo("1012112_THANK_YOU")
             } else if (status == 1) {
-               if (cm.getEventInstance().giveEventReward(cm.getPlayer())) {
+               if (cm.getEventInstance().giveEventReward(cm.getCharacterId())) {
                   cm.warp(100000200)
                } else {
                   cm.sendOk("1012112_CHECK_INVENTORY_SPACE")
@@ -101,7 +104,7 @@ class NPC1012112 {
             } else if (status == 1) {
                if (cm.getEventInstance() == null) {
                   cm.warp(100000200)
-               } else if (cm.getEventInstance().giveEventReward(cm.getPlayer())) {
+               } else if (cm.getEventInstance().giveEventReward(cm.getCharacterId())) {
                   cm.warp(100000200)
                } else {
                   cm.sendOk("1012112_CHECK_INVENTORY_SPACE")

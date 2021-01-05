@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2133001 {
@@ -39,7 +40,7 @@ class NPC2133001 {
                EventInstanceManager eim = cm.getEventInstance()
 
                if (eim.getIntProperty("statusStg4") == 0) {
-                  eim.showClearEffect(cm.getMap().getId())
+                  eim.showClearEffect(cm.getMapId())
                   eim.setIntProperty("statusStg4", 1)
                }
 
@@ -48,31 +49,26 @@ class NPC2133001 {
                if (cm.haveItem(4001169, 20)) {
                   if (cm.isEventLeader()) {
                      cm.sendNext("2133001_SHALL_WE_PROCEED")
-
                   } else {
                      cm.sendOk("2133001_LET_THE_LEADER_HAND_ME")
-
                      cm.dispose()
                   }
                } else {
-                  if (cm.getEventInstance().gridCheck(cm.getPlayer()) != 1) {
+                  if (cm.getEventInstance().gridCheck(cm.getCharacterId()) != 1) {
                      cm.sendNext(ellinStr)
-
-                     cm.getEventInstance().gridInsert(cm.getPlayer(), 1)
+                     cm.getEventInstance().gridInsert(cm.getCharacterId(), 1)
                      status = -1
                   } else {
-                     int mobs = cm.getMap().countMonsters()
+                     int mobs = cm.getMapMonsterCount()
 
                      if (mobs > 0) {
                         if (!cm.haveItem(2270004)) {
                            if (cm.canHold(2270004, 10)) {
                               cm.gainItem(2270004, (short) 10)
                               cm.sendOk("2133001_USE_THE_ITEM_TO_CAPTURE")
-
                               cm.dispose()
                            } else {
                               cm.sendOk("2133001_MAKE_USE_SPACE")
-
                               cm.dispose()
                            }
                         } else {
@@ -80,7 +76,6 @@ class NPC2133001 {
                         }
                      } else {
                         cm.sendYesNo("2133001_PARTY_MEMBER_OPTIONS")
-
                      }
                   }
                }
@@ -112,22 +107,16 @@ class NPC2133001 {
       switch (mapId) {
          case 930000000:
             return "Welcome to the Forest of Poison Haze. Proceed by entering the portal."
-
          case 930000100:
             return "The #b#o9300172##k have taken the area. We have to eliminate all these contaminated monsters to proceed further."
-
          case 930000200:
             return "A great spine has blocked the way ahead. To remove this barrier we must retrieve the poison the #b#o9300173##k carries to deter the overgrown spine. However, the poison in natural state can't be handled, as it is way too concentrated. Use the #bfountain#k over there to dilute it."
-
          case 930000300:
             return "Oh great, you have reached me. We can now proceed further inside the forest."
-
          case 930000400:
             return "The #b#o9300175##k took over this area. However they are not ordinary monsters, then regrow pretty fast, #rnormal weapon and magic does no harm to it#k at all. We have to purify all these contaminated monsters, using #b#t2270004##k! Let your group leader get me 20 Monster Marbles from them."
-
          case 930000600:
             return "The root of all problems of the forest! Place the obtained Magic Stone on the Altar and prepare yourselves!"
-
          case 930000700:
             return "This is it, you guys did it! Thank you so much for purifying the forest!!"
 

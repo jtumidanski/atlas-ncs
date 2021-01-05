@@ -34,7 +34,7 @@ class NpcCommands {
 
          if (status == 0) {
             String sendStr = "There are all available commands for you:\r\n\r\n#b"
-            for (int i = 0; i <= cm.getPlayer().gmLevel(); i++ ) {
+            for (int i = 0; i <= cm.gmLevel(); i++ ) {
                sendStr += "#L" + i + "#" + levels[i] + "#l\r\n"
             }
 

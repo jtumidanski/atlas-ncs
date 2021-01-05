@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 /*
@@ -13,14 +14,14 @@ class NPC1061009 {
    int sel = -1
 
    def start() {
-      if (canEnterDimensionMap(cm.getMapId(), cm.getJob().getId()) && cm.getPlayer().gotPartyQuestItem("JBP") && !cm.haveItem(4031059)) {
-         String js = jobString(cm.getPlayer().getJob().getJobNiche())
+      if (canEnterDimensionMap(cm.getMapId(), cm.getJobId()) && cm.gotPartyQuestItem("JBP") && !cm.haveItem(4031059)) {
+         String js = jobString(cm.getJobNiche())
 
-         EventManager em = cm.getEventManager("3rdJob_" + js)
+         EventManager em = cm.getEventManager("3rdJob_" + js).orElseThrow()
          if (em == null) {
             cm.sendOk("1061009_CLOSED", js)
          } else {
-            if (!em.startInstance(cm.getPlayer())) {
+            if (!em.startInstance(cm.getCharacterId())) {
                cm.sendOk("1061009_ALREADY_CHALLENGING")
             }
 

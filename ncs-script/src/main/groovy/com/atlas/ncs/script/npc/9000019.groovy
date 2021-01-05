@@ -27,14 +27,13 @@ class NPC9000019 {
          }
 
          if (status == 0) {
-            if (cm.getPlayer().getInventory(MapleInventoryType.ETC).getNumFreeSlot() < 1) {
+            if (cm.countFreeInventorySlot("ETC") < 1) {
                cm.sendNext("9000019_NEED_ETC_SPACE")
-
                cm.dispose()
                return
             }
 
-            PacketCreator.announce(cm.getClient(), new OpenRPSNPC())
+            cm.openRPSNpc()
             cm.dispose()
          }
       }

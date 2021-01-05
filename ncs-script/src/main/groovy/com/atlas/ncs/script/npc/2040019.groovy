@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC2040019 {
    NPCConversationManager cm
@@ -34,12 +35,12 @@ class NPC2040019 {
                faceNew = []
                if (cm.getGender() == 0) {
                   for (int i = 0; i < maleFace.length; i++) {
-                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, maleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, maleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                if (cm.getGender() == 1) {
                   for (int i = 0; i < femaleFace.length; i++) {
-                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, femaleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, femaleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                cm.sendYesNo("2040019_REGULAR_COUPON_INFO")

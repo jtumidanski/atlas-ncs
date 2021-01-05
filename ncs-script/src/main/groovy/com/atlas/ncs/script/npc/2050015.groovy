@@ -28,17 +28,16 @@ class NPC2050015 {
 
          if (status == 0) {
             if (cm.isQuestStarted(3421)) {
-               int meteoriteId = cm.getNpc() - 2050014
+               int meteoriteId = cm.getNpcId() - 2050014
 
                int progress = cm.getQuestProgressInt(3421, 1)
                if ((progress >> meteoriteId) % 2 == 0 || (progress == 63 && !cm.haveItem(4031117, 6))) {
                   if (cm.canHold(4031117, 1)) {
                      progress |= (1 << meteoriteId)
-
                      cm.gainItem(4031117, (short) 1)
                      cm.setQuestProgress(3421, 1, progress)
                   } else {
-                     MessageBroadcaster.getInstance().sendServerNotice(cm.getPlayer(), ServerNoticeType.POP_UP, I18nMessage.from("HAVE_A_ETC_SLOT_AVAILABLE"))
+                     cm.sendPopUp("HAVE_A_ETC_SLOT_AVAILABLE")
                   }
                }
             }

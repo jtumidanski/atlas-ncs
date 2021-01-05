@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2040040 {
@@ -18,7 +19,6 @@ class NPC2040040 {
    static def clearStage(int stage, EventInstanceManager eim, int curMap) {
       eim.setProperty(stage + "stageclear", "true")
       eim.showClearEffect(true)
-
       eim.linkToNextStage(stage, "lpq", curMap)  //opens the portal to the next map
    }
 
@@ -34,12 +34,12 @@ class NPC2040040 {
             status--
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
+         EventInstanceManager eim = cm.getEventInstance()
 
          if (eim.getProperty(stage.toString() + "stageclear") != null) {
             cm.sendNext("2040040_GO_TO_NEXT_STAGE")
          } else {
-            if (eim.isEventLeader(cm.getPlayer())) {
+            if (eim.isEventLeader(cm.getCharacterId())) {
                int state = eim.getIntProperty("statusStg" + stage)
 
                if (state == -1) {           // preamble

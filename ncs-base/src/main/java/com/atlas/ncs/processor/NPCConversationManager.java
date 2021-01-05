@@ -1,16 +1,32 @@
 package com.atlas.ncs.processor;
 
-import com.atlas.ncs.NPCScriptRegistry;
-import com.atlas.ncs.event.producer.CharacterEnableActionsProducer;
-import com.atlas.ncs.model.Party;
-import com.atlas.ncs.model.Pet;
-
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import com.atlas.ncs.NPCScriptRegistry;
+import com.atlas.ncs.configuration.Configuration;
+import com.atlas.ncs.event.producer.ChangeMapCommandProducer;
+import com.atlas.ncs.event.producer.CharacterEnableActionsProducer;
+import com.atlas.ncs.event.producer.CharacterExperienceGainProducer;
+import com.atlas.ncs.model.Alliance;
+import com.atlas.ncs.model.GuildCharacter;
+import com.atlas.ncs.model.MapObject;
+import com.atlas.ncs.model.Monster;
+import com.atlas.ncs.model.NPC;
+import com.atlas.ncs.model.Party;
+import com.atlas.ncs.model.Pet;
+import com.atlas.ncs.model.Portal;
 
 public class NPCConversationManager {
+   private final int worldId;
+
+   private final int channelId;
+
+   private final int mapId;
+
    private final int characterId;
 
    private final int npcId;
@@ -72,13 +88,57 @@ public class NPCConversationManager {
    public void sendYesNo(String token, Object... replacements) {
    }
 
+   /**
+    * Warps the set of characters to the identified map and default portal.
+    *
+    * @param characterIds the characters to warp
+    * @param mapId        the map identifier
+    */
+   public void warp(List<Integer> characterIds, int mapId) {
+      characterIds.forEach(id -> warp(id, mapId, 0));
+   }
+
+   /**
+    * Warps the given character to the identified map and portal.
+    *
+    * @param characterId the character to warp
+    * @param mapId       the map identifier
+    * @param portalId    the portal identifier
+    */
+   public void warp(int characterId, int mapId, int portalId) {
+      ChangeMapCommandProducer.changeMap(worldId, channelId, characterId, mapId, portalId);
+   }
+
+   /**
+    * Warps the current character to the identified map and portal.
+    *
+    * @param mapId    the map identifier
+    * @param portalId the portal identifier
+    */
    public void warp(int mapId, int portalId) {
+      warp(characterId, mapId, portalId);
    }
 
+   /**
+    * Warps the current character to the identified map and portal.
+    *
+    * @param mapId      the map identifier
+    * @param portalName the portal name
+    */
    public void warp(int mapId, String portalName) {
+      PortalProcessor.getMapPortalByName(mapId, portalName)
+            .thenApply(Portal::id)
+            .exceptionally(fn -> 0)
+            .thenAccept(id -> warp(mapId, id));
    }
 
+   /**
+    * Warps the current character to the identified map and default portal.
+    *
+    * @param mapId the map identifier
+    */
    public void warp(int mapId) {
+      warp(mapId, 0);
    }
 
    public void sendPrev(String token, Object... replacements) {
@@ -123,7 +183,50 @@ public class NPCConversationManager {
       return 0;
    }
 
-   public void saveLocation(String location) {
+   /**
+    * Saves a location of interest for the character.
+    *
+    * @param type the type of location
+    */
+   public void saveLocation(String type) {
+      CompletableFuture<Point> fromFuture = CharacterProcessor.getCharacter(characterId)
+            .thenApply(character -> new Point(character.x(), character.y()))
+            .exceptionally(fn -> new Point(0, 0));
+      CompletableFuture<List<Portal>> portalsFuture = PortalProcessor.getMapPortals(mapId);
+
+      fromFuture.thenCombine(portalsFuture, this::findClosest)
+            .thenApply(Optional::get)
+            .thenApply(Portal::id)
+            .exceptionally(fn -> 0)
+            .thenAccept(id -> CharacterProcessor.saveLocation(characterId, type, mapId, id));
+   }
+
+   /**
+    * Finds the portal closest to the reference point.
+    *
+    * @param from    the reference point
+    * @param portals the portals to consider
+    * @return the closest portal (if one exists).
+    */
+   protected Optional<Portal> findClosest(Point from, List<Portal> portals) {
+      return portals.stream()
+            .filter(PortalProcessor::isSpawnPoint)
+            .min((o1, o2) -> compareDistanceFromPoint(from, o1, o2));
+   }
+
+   /**
+    * Compares the distance between the two points, from a point of interest.
+    *
+    * @param from the point of interest
+    * @param o1   the first point
+    * @param o2   the second point
+    * @return the value 0 if o1 is equal distance to the point of interest as d2; a value less than 0 if o1 is closer
+    * than o2 to the point of interest; and a value greater than 0 if o1 is further than d2 from the point of interest.
+    */
+   protected static int compareDistanceFromPoint(Point from, Portal o1, Portal o2) {
+      double o1Distance = new Point(o1.x(), o1.y()).distanceSq(from);
+      double o2Distance = new Point(o2.x(), o2.y()).distanceSq(from);
+      return Double.compare(o1Distance, o2Distance);
    }
 
    public int getBuddyListCapacity() {
@@ -131,6 +234,10 @@ public class NPCConversationManager {
    }
 
    public boolean hasItem(int itemId, int quantity) {
+      return false;
+   }
+
+   public boolean hasItem(int itemId, boolean checkEquipped) {
       return false;
    }
 
@@ -175,8 +282,13 @@ public class NPCConversationManager {
       return 0;
    }
 
+   /**
+    * Gets the characters gender.
+    *
+    * @return 0 if male, 1 if female.
+    */
    public int getGender() {
-      return 0;
+      return characterGender(characterId);
    }
 
    public void sendStyle(String token, int[] ints) {
@@ -186,7 +298,7 @@ public class NPCConversationManager {
    }
 
    public int getMapId() {
-      return 0;
+      return mapId;
    }
 
    public boolean isQuestNotStarted(int questId) {
@@ -196,10 +308,14 @@ public class NPCConversationManager {
    public void forceCompleteQuest(int questId) {
    }
 
-   public void changeJobById(int jobId) {
+   public void changeJob(int jobId) {
    }
 
    public void completeQuest(int questId) {
+      completeQuest(questId, npcId);
+   }
+
+   public void completeQuest(int questId, int npcId) {
    }
 
    public void sendAcceptDecline(String token, Object... replacements) {
@@ -208,8 +324,16 @@ public class NPCConversationManager {
    public void removeAll(int itemId) {
    }
 
-   public int getSavedLocation(String location) {
-      return 0;
+   /**
+    * Returns the mapId for the saved location.
+    *
+    * @param type the type of location to retrieve.
+    * @return the map identifier
+    */
+   public int getSavedLocation(String type) {
+      int location = CharacterProcessor.getSavedLocation(characterId, type);
+      CharacterProcessor.saveLocation(characterId, type, 0, 0);
+      return location;
    }
 
    public void earnTitle(String title) {
@@ -243,6 +367,11 @@ public class NPCConversationManager {
    public void gainFame(int amount) {
    }
 
+   /**
+    * Shows effect to player
+    *
+    * @param path
+    */
    public void showEffect(String path) {
    }
 
@@ -266,16 +395,38 @@ public class NPCConversationManager {
    public void killAllMonstersNotFriendly() {
    }
 
+   /**
+    * Gets the characters current face.
+    *
+    * @return the face
+    */
    public int getFace() {
-      return 0;
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .face();
    }
 
-   public int peekSavedLocation(String location) {
-      return 0;
+   /**
+    * Returns the mapId for the saved location.
+    *
+    * @param type the type of location to retrieve.
+    * @return the map identifier
+    */
+   public int peekSavedLocation(String type) {
+      return CharacterProcessor.getSavedLocation(characterId, type);
    }
 
+   /**
+    * Gets the characters remaining sp total.
+    *
+    * @return the number of sp remaining
+    */
    public int getRemainingSp() {
-      return 0;
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .remainingSp();
    }
 
    public boolean isGM() {
@@ -287,6 +438,14 @@ public class NPCConversationManager {
    }
 
    public int getMapMonsterCount() {
+      return getMapMonsterCount(getMapId());
+   }
+
+   public int getMapMonsterCount(int mapId) {
+      return 0;
+   }
+
+   public int getMapMonsterCount(int mapId, int area) {
       return 0;
    }
 
@@ -295,11 +454,11 @@ public class NPCConversationManager {
    }
 
    public double getExpRate() {
-      return 0.0;
+      return 1.0;
    }
 
    public double getMesoRate() {
-      return 0;
+      return 1;
    }
 
    public void sendGetNumber(String token, Object... replacements) {
@@ -335,7 +494,11 @@ public class NPCConversationManager {
 
    }
 
-   public Pet getPet(int integer) {
+   public void characterSendPinkText(int characterId, String token) {
+
+   }
+
+   public Pet getPet(int index) {
       return null;
    }
 
@@ -356,5 +519,800 @@ public class NPCConversationManager {
 
    public List<Pet> getDriedPets() {
       return Collections.emptyList();
+   }
+
+   public int getHallOfFameMapId(int jobId) {
+      //      if (isCygnus(jobId)) {
+      //         return 130000100;
+      //      } else if (isAran(jobId)) {
+      //         return 140010110;
+      //      } else {
+      //         if (job.isA(MapleJob.WARRIOR)) {
+      //            return 102000004;
+      //         } else if (job.isA(MapleJob.MAGICIAN)) {
+      //            return 101000004;
+      //         } else if (job.isA(MapleJob.BOWMAN)) {
+      //            return 100000204;
+      //         } else if (job.isA(MapleJob.THIEF)) {
+      //            return 103000008;
+      //         } else if (job.isA(MapleJob.PIRATE)) {
+      //            return 120000105;
+      //         } else {
+      //            return 130000110;   // beginner explorers are allotted with the Cygnus, available map lul
+      //         }
+      //      }
+      return 0;
+   }
+
+   public boolean canSpawnPlayerNpc(int mapId) {
+      return false;
+   }
+
+   public boolean spawnPlayerNPC(int mapId) {
+      return false;
+   }
+
+   public void cosmeticExistsAndIsNotEquipped(int itemId) {
+
+   }
+
+   public void isRecvPartySearchInviteEnabled() {
+   }
+
+   public Optional<EventManager> getEventManager(String eventName) {
+      return Optional.empty();
+   }
+
+   public boolean isUsingOldPqNpcStyle() {
+      return false;
+   }
+
+   public boolean isPartyLeader() {
+      return false;
+   }
+
+   public boolean toggleRecvPartySearchInvite() {
+      return false;
+   }
+
+   public EventInstanceManager getEventInstance() {
+      return null;
+   }
+
+   public boolean isEventLeader() {
+      return false;
+   }
+
+   /**
+    * Counts the characters in the given map.
+    *
+    * @param mapId the map identifier
+    * @return the total number of characters
+    */
+   public int countCharactersInMap(int mapId) {
+      return MapProcessor
+            .countCharactersInMap(worldId, channelId, mapId)
+            .join();
+   }
+
+   public void evolvePet(byte petIndex, int newPetId) {
+   }
+
+   public void removeFromSlot(String type, short slot, short quantity, boolean fromDrop) {
+
+   }
+
+   public Optional<Monster> getMonster(int monsterId) {
+      return Optional.empty();
+   }
+
+   public void spawnMonsterOnGroundBelow(int mapId, Monster monster, int x, int y) {
+   }
+
+   public void spawnMonsterOnGroundBelow(int monsterId, int x, int y) {
+      getMonster(monsterId).ifPresent(monster -> spawnMonsterOnGroundBelow(getMapId(), monster, x, y));
+   }
+
+   public void spawnMonsterOnGroundBelow(Monster monster, int x, int y) {
+      spawnMonsterOnGroundBelow(getMapId(), monster, x, y);
+   }
+
+   /**
+    * The current characters gains the given amount of experience.
+    *
+    * @param amount the amount to gain
+    */
+   public void gainExp(double amount) {
+      CharacterExperienceGainProducer.gainExperience(characterId, (int) Math.round(Math.floor(amount)));
+   }
+
+   public int getItemQuantity(int itemId) {
+      return 0;
+   }
+
+   public String getText() {
+      return "";
+   }
+
+   public boolean start_PyramidSubway(Integer integer) {
+      return false;
+   }
+
+   public boolean bonus_PyramidSubway(Integer integer) {
+      return false;
+   }
+
+   public String getQuestCustomDataOrDefault(int characterId, int questId, String def) {
+      return def;
+   }
+
+   public int countFreeInventorySlot(String type) {
+      return 0;
+   }
+
+   public String getQuestProgress(int questId) {
+      return "";
+   }
+
+   public int getQuestProgressInt(int questId) {
+      return 0;
+   }
+
+   public int getQuestProgressInt(int questId, int infoNumber) {
+      return 0;
+   }
+
+   public int getNpcObjectId() {
+      return npcOid;
+   }
+
+   public void setQuestProgress(int questId, int infoNumber, int progress) {
+   }
+
+   public void setQuestProgress(int questId, int progress) {
+   }
+
+   public void setQuestProgress(int questId, String progress) {
+   }
+
+   public void teachSkill(int skillId, byte level, byte masterLevel, long expiration) {
+   }
+
+   public void unlockUI() {
+   }
+
+   public void sendShop(int shopId) {
+
+   }
+
+   public void useItem(int itemId) {
+
+   }
+
+   public boolean isCygnus() {
+      return false;
+   }
+
+   public int getJobBranch(int jobId) {
+      return 0;
+   }
+
+   /**
+    * Gets the current characters name.
+    *
+    * @return the name
+    */
+   public String getCharacterName() {
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .name();
+   }
+
+   public void destroyNPC(int npcId) {
+
+   }
+
+   public MapObject getMapObject(int id) {
+      return null;
+   }
+
+   public Optional<NPC> getNpcById(int npcId) {
+      return Optional.empty();
+   }
+
+   public void spawnNpc(int npcId, int x, int y) {
+
+   }
+
+   public boolean containsAreaInfo(short area, String info) {
+      return false;
+   }
+
+   public void updateAreaInfo(short area, String info) {
+   }
+
+   public void spawnGuide() {
+   }
+
+   public int getGuildId() {
+      return 0;
+   }
+
+   public int getGuildRank() {
+      return 0;
+   }
+
+   public void genericGuildMessage(int messageId) {
+   }
+
+   public void disbandGuild() {
+   }
+
+   public void increaseGuildCapacity() {
+   }
+
+   public int getGuildCapacity() {
+      return 0;
+   }
+
+   public String getIncreaseGuildCost(int capacity) {
+      return "";
+   }
+
+   public int getAllianceId() {
+      return 0;
+   }
+
+   public Optional<GuildCharacter> getGuildCharacter() {
+      return Optional.empty();
+   }
+
+   public int getAllianceRank() {
+      return 0;
+   }
+
+   public int getAllianceCapacity() {
+      return 0;
+   }
+
+   public void upgradeAlliance() {
+   }
+
+   public boolean hasGuild() {
+      return false;
+   }
+
+   public void disbandAlliance(int allianceId) {
+
+   }
+
+   public boolean canBeUsedAllianceName(String allianceName) {
+      return false;
+   }
+
+   public Optional<Alliance> createAlliance(String allianceName) {
+      return Optional.empty();
+   }
+
+   /**
+    * Plays sound for all players in map.
+    *
+    * @param path
+    */
+   public void playSoundInMap(String path) {
+   }
+
+   /**
+    * Plays sound for player.
+    *
+    * @param path
+    */
+   public void playSound(String path) {
+   }
+
+   public int getMapItemCount() {
+      return 0;
+   }
+
+   /**
+    * Hits reactor in map by name.
+    *
+    * @param name
+    * @param hits
+    */
+   public void forceHitReactor(String name, byte hits) {
+   }
+
+   /**
+    * Gets reactor state in map by name.
+    *
+    * @param name
+    * @return
+    */
+   public int getReactorState(String name) {
+      return 0;
+   }
+
+   public int gmLevel() {
+      return 0;
+   }
+
+   public int partyMembersInMap() {
+      return 0;
+   }
+
+   public void sendPopUp(String token) {
+   }
+
+   public boolean haveItemEquipped(int itemId) {
+      return false;
+   }
+
+   public int getSkillLevel(int skillId) {
+      return 0;
+   }
+
+   public void openShopNPC(int shopId) {
+   }
+
+   /**
+    * Kills all monsters in map
+    */
+   public void killAllMonsters() {
+   }
+
+   /**
+    * Set state of reactor in map
+    */
+   public void setReactorState() {
+   }
+
+   /**
+    * Changes music for character.
+    *
+    * @param path
+    */
+   public void changeMusic(String path) {
+
+   }
+
+   /**
+    * Changes music for map.
+    *
+    * @param path
+    */
+   public void changeMusicInMap(String path) {
+
+   }
+
+   public void openUI(Byte ui) {
+   }
+
+   public void showInfoText(String text) {
+
+   }
+
+   /**
+    * Set party quest for character.
+    *
+    * @param o
+    */
+   public void setPartyQuest(Object o) {
+   }
+
+   public int itemQuantity(int itemId) {
+      return 0;
+   }
+
+   public void removeNpc(Integer... npcIds) {
+   }
+
+   public void forceStartReactor(Integer... reactorIds) {
+   }
+
+   public void setCustomData(int characterId, int questId, String customData) {
+   }
+
+   public boolean hasMerchant() {
+      return false;
+   }
+
+   public boolean hasMerchantItems() {
+      return false;
+   }
+
+   public void showFredrick() {
+   }
+
+   public void gainGP(int guildId, int amount) {
+
+   }
+
+   public void displayGuildRanks() {
+   }
+
+   public void sendPinkTextToMap(String token, Object... replacements) {
+   }
+
+   public void levelUp(boolean takeExperience) {
+   }
+
+   /**
+    * Dictates whether the current character is male (or not).
+    *
+    * @return true if the character is male
+    */
+   public boolean isMale() {
+      return getGender() == 0;
+   }
+
+   public int[] getAvailableSkillBooks() {
+      return new int[0];
+   }
+
+   public int[] getAvailableMasteryBooks() {
+      return new int[0];
+   }
+
+   public String getSkillBookInfo(int skillId) {
+      return "";
+   }
+
+   public String[] getNamesWhoDropsItem(int itemId) {
+      return new String[0];
+   }
+
+   public int getQuestStatus(int questId) {
+      return 0;
+   }
+
+   public boolean characterHasItem(int characterId, int itemId) {
+      return false;
+   }
+
+   public boolean characterHasItem(int characterId, int itemId, boolean checkEquipped) {
+      return false;
+   }
+
+   /**
+    * Returns the gender of the given character.
+    *
+    * @param characterId the character identifier
+    * @return 0 if male, 1 if female
+    */
+   public int characterGender(int characterId) {
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .gender();
+   }
+
+   public boolean characterHasItemEquipped(int characterId, int itemId) {
+      return false;
+   }
+
+   public int getPartnerId() {
+      return 0;
+   }
+
+   public boolean characterCanHold(int characterId, int itemId) {
+      return characterCanHold(characterId, itemId, 1);
+   }
+
+   public boolean characterCanHold(int characterId, int itemId, int amount) {
+      return false;
+   }
+
+   public boolean hasPartner() {
+      return false;
+   }
+
+   public boolean partnerInMap() {
+      return false;
+   }
+
+   public void characterGainExp(int characterId, int amount) {
+
+   }
+
+   public void characterGainItem(int characterId, int itemId, short amount) {
+
+   }
+
+   public void sendBlueTextToMap(String token, Object... replacements) {
+   }
+
+   public void characterSetMarriageItemId(int characterId, int itemId) {
+   }
+
+   public void characterNpcTalk(int characterId, int npcId, String message) {
+
+   }
+
+   public void characterSendBlueText(int characterId, String token, Object... replacements) {
+   }
+
+   public boolean isMarried() {
+      return false;
+   }
+
+   /**
+    * Gets the map the given character is in.
+    *
+    * @param characterId the character identifier
+    * @return the map identifier
+    */
+   public int characterGetMap(int characterId) {
+      return CharacterProcessor.getCharacter(characterId)
+            .join()
+            .mapId();
+   }
+
+   public void openNpc(int npcId) {
+
+   }
+
+   public void openNpc(int npcId, String script) {
+
+   }
+
+   public boolean isGuildLeader() {
+      return false;
+   }
+
+   /**
+    * Gets the channel identifier the character is in.
+    *
+    * @return the channel identifier
+    */
+   public int getChannelId() {
+      return channelId;
+   }
+
+   public void endExpedition(Expedition mapleExpedition) {
+   }
+
+   public Expedition getExpedition(ExpeditionType expeditionType) {
+      return null;
+   }
+
+   public int createExpedition(ExpeditionType expeditionType) {
+      return 0;
+   }
+
+   public void removeNPC(int npcId) {
+
+   }
+
+   /**
+    * Sends notice to player
+    *
+    * @param s
+    */
+   public void sendNotice(String s) {
+   }
+
+   public boolean isLeaderExpedition(ExpeditionType expeditionType) {
+      return false;
+   }
+
+   public String getExpeditionMemberNames(ExpeditionType expeditionType) {
+      return null;
+   }
+
+   public void setItemExpiration(String inventoryType, int slot, long expiration) {
+   }
+
+   public void sendDirectionInfo(int integer1, int integer2) {
+      throw new UnsupportedOperationException();
+   }
+
+   public void sendDirectionInfo(String path, int integer1, int integer2, int integer3, int integer4, int integer5) {
+      throw new UnsupportedOperationException();
+   }
+
+   public void updateInfo(String s1, String s2) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Configuration getConfiguration() {
+      return null;
+   }
+
+   public boolean isCPQLoserMap() {
+      return false;
+   }
+
+   public boolean isCPQWinnerMap() {
+      return false;
+   }
+
+   public boolean sendCPQMapLists() {
+      return false;
+   }
+
+   public boolean fieldTaken(int fieldId) {
+      return false;
+   }
+
+   public boolean fieldLobbied(int fieldId) {
+      return false;
+   }
+
+   public void challengeParty(int fieldId) {
+   }
+
+   public void cpqLobby(int fieldId) {
+   }
+
+   public boolean sendCPQMapLists2() {
+      return false;
+   }
+
+   public boolean fieldTaken2(int fieldId) {
+      return false;
+   }
+
+   public boolean fieldLobbied2(int fieldId) {
+      return false;
+   }
+
+   public void challengeParty2(int fieldId) {
+   }
+
+   public void cpqLobby2(int fieldId) {
+   }
+
+   public void sendDefault() {
+   }
+
+   public void setDojoStage(int stage) {
+
+   }
+
+   public boolean hasFinishedDojoTutorial() {
+      return false;
+   }
+
+   public int getDojoStage() {
+      return 0;
+   }
+
+   public void resetDojoEnergy() {
+
+   }
+
+   public void resetPartyDojoEnergy() {
+   }
+
+   public int getDojoPoints() {
+      return 0;
+   }
+
+   public void setDojoPoints(int amount) {
+   }
+
+   public int getVanquisherStage() {
+      return 0;
+   }
+
+   public int getVanquisherKills() {
+      return 0;
+   }
+
+   public void setVanquisherStage(int stage) {
+
+   }
+
+   public void setVanquisherKills(int amount) {
+   }
+
+   /**
+    * Reset dojo map for channel.
+    *
+    * @param mapId
+    */
+   public void resetDojoMap(int mapId) {
+
+   }
+
+   /**
+    * Returns if characters are in the supplied map.
+    *
+    * @param mapId the map identifier
+    * @return true if characters are present
+    */
+   public boolean hasCharactersInMap(int mapId) {
+      return countCharactersInMap(mapId) > 0;
+   }
+
+   public void clearMapObjects() {
+   }
+
+   /**
+    * Gives each member of the party experience.
+    *
+    * @param amount       the amount of experience
+    * @param characterIds the characters to reward
+    */
+   public void givePartyExp(int amount, List<Integer> characterIds) {
+      characterIds.forEach(id -> gainExp(amount));
+   }
+
+   /**
+    * Removes chalkboard for player
+    */
+   public void removeChalkboard() {
+   }
+
+   public void openRPSNpc() {
+      //PacketCreator.announce(cm.getClient(), new OpenRPSNPC())
+   }
+
+   public int countRebirths() {
+      return 0;
+   }
+
+   public void executeRebirth() {
+   }
+
+   public void sendDimensionalMirror(String token) {
+   }
+
+   public Point characterPosition(int characterId) {
+      return null;
+   }
+
+   public void delayedHitReactor(int reactorId, int delay) {
+
+   }
+
+   public void setPortalState(String portalName, boolean state) {
+
+   }
+
+   public int countItem(int itemId) {
+      return 0;
+   }
+
+   public Rectangle getMapArea(int areaId) {
+      return null;
+   }
+
+   /**
+    * Dictates whether or not the character is alive.
+    *
+    * @param characterId the character identifier
+    * @return true if the character is alive
+    */
+   public boolean characterIsAlive(int characterId) {
+      return CharacterProcessor
+            .getCharacter(characterId)
+            .join()
+            .hp() > 0;
+   }
+
+   /**
+    * Toggle drops in map.
+    */
+   public void toggleDrops() {
+
+   }
+
+   public boolean isAllReactorState(int reactorId, int state) {
+      return false;
+   }
+
+   public Point getMapPortalPosition(String portalName) {
+      return null;
+   }
+
+   public void changeCharacterName(String newName) {
+
+   }
+
+   public boolean canCreateChar(String proposedName) {
+      return false;
    }
 }

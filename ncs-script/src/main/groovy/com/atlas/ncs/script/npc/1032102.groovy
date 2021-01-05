@@ -97,7 +97,7 @@ class NPC1032102 {
                 }
             } else if (status == 2) {
                 if (selection == 0) {
-                    MapleInventoryManipulator.removeFromSlot(cm.getClient(), MapleInventoryType.CASH, (short) 1, (short) 1, true)
+                    cm.removeFromSlot("CASH", (short) 1, (short) 1, true)
                     cm.sendOk("1032102_FIRSTCASH_SLOT_REMOVED")
                 } else if (selection == 1) {
                     if (cm.haveItem(5000029, 2)) {

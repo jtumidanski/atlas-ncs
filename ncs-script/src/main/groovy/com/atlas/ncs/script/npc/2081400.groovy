@@ -46,7 +46,7 @@ class NPC2081400 {
          } else if (status == 1) {
             if (mode >= 1 && cm.getJobId() % 100 % 10 != 2) {
                if (cm.canHold(2280003, 1)) {
-                  cm.changeJobById(cm.getJobId() + 1)
+                  cm.changeJob(cm.getJobId() + 1)
                   if (cm.getJobId() == 412) {
                      cm.teachSkill(4120002, (byte) 0, (byte) 10, -1)
                      cm.teachSkill(4120005, (byte) 0, (byte) 10, -1)
@@ -63,17 +63,17 @@ class NPC2081400 {
                }
             } else if (mode >= 1 && cm.getJobId() % 100 % 10 == 2) {
                if (cm.getJobId() == 412) {
-                  if (cm.getPlayer().getSkillLevel(4121008) == 0) {
+                  if (cm.getSkillLevel(4121008) == 0) {
                      cm.teachSkill(4121008, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(4121004) == 0) {
+                  if (cm.getSkillLevel(4121004) == 0) {
                      cm.teachSkill(4121004, (byte) 0, (byte) 10, -1)
                   }
                } else if (cm.getJobId() == 422) {
-                  if (cm.getPlayer().getSkillLevel(4221004) == 0) {
+                  if (cm.getSkillLevel(4221004) == 0) {
                      cm.teachSkill(4221004, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(4221001) == 0) {
+                  if (cm.getSkillLevel(4221001) == 0) {
                      cm.teachSkill(4221001, (byte) 0, (byte) 10, -1)
                   }
                }

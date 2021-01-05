@@ -1,5 +1,8 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.ExpeditionCharacter
+import com.atlas.ncs.processor.Expedition
+import com.atlas.ncs.processor.ExpeditionType
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2101017 {
@@ -7,9 +10,9 @@ class NPC2101017 {
    int status = 0
    int sel = -1
 
-   MapleExpeditionType expeditionType
-   MapleExpedition expedition
-   List<Map.Entry<Integer, String>> expeditionMembers
+   ExpeditionType expeditionType
+   Expedition expedition
+   List<ExpeditionCharacter> expeditionMembers
 
    def start() {
       status = -1
@@ -28,14 +31,14 @@ class NPC2101017 {
 
          if (cm.getMapId() == 980010100 || cm.getMapId() == 980010200 || cm.getMapId() == 980010300) {
             if (cm.getMapId() == 980010100) {
-               expeditionType = MapleExpeditionType.ARIANT
+               expeditionType = ExpeditionType.ARIANT
                expedition = cm.getExpedition(expeditionType)
 
             } else if (cm.getMapId() == 980010200) {
-               expeditionType = MapleExpeditionType.ARIANT1
+               expeditionType = ExpeditionType.ARIANT1
                expedition = cm.getExpedition(expeditionType)
             } else {
-               expeditionType = MapleExpeditionType.ARIANT2
+               expeditionType = ExpeditionType.ARIANT2
                expedition = cm.getExpedition(expeditionType)
             }
 
@@ -71,21 +74,19 @@ class NPC2101017 {
                      return
                   }
                   String text = "The following members make up your expedition (Click on them to expel them):\r\n"
-                  text += "\r\n\t\t1." + expedition.getLeader().getName()
+                  text += "\r\n\t\t1." + expedition.getLeaderName()
                   for (int i = 1; i < size; i++) {
-                     text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).getValue() + "#l\n"
+                     text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).name() + "#l\n"
                   }
                   cm.sendSimple(text)
                   status = 6
                } else if (selection == 3) {
-                  if (expedition.getMembers().size() < 1) {
+                  if (expedition.getMemberList().size() < 1) {
                      cm.sendOk("2101017_NEED_MORE_PLAYERS")
-
                      cm.dispose()
                   } else {
                      if (cm.getParty() != null) {
                         cm.sendOk("2101017_CANNOT_ENTER_AS_PARTY")
-
                         cm.dispose()
                         return
                      }
@@ -98,17 +99,16 @@ class NPC2101017 {
                      cm.dispose()
                   }
                } else if (selection == 4) {
-                  MessageBroadcaster.getInstance().sendMapServerNotice(cm.getMapId(), ServerNoticeType.PINK_TEXT, I18nMessage.from("ARENA_LEADER_LEFT"))
-                  expedition.warpExpeditionTeam(980010000)
+                  cm.sendPinkTextToMap("ARENA_LEADER_LEFT")
+                  expedition.warpTeam(980010000)
                   cm.endExpedition(expedition)
                   cm.dispose()
                }
             } else if (status == 6) {
                if (selection > 0) {
-                  Map.Entry<Integer, String> banned = expeditionMembers.get(selection - 1)
+                  ExpeditionCharacter banned = expeditionMembers.get(selection - 1)
                   expedition.ban(banned)
-                  cm.sendOk("2101017_YOU_HAVE_BANNED", banned.getValue())
-
+                  cm.sendOk("2101017_YOU_HAVE_BANNED", banned.name())
                   cm.dispose()
                } else {
                   cm.sendSimple(list)
@@ -117,37 +117,33 @@ class NPC2101017 {
             }
          } else if (GameConstants.isAriantColiseumArena(cm.getMapId())) {
             if (cm.getMapId() == 980010101) {
-               expeditionType = MapleExpeditionType.ARIANT
+               expeditionType = ExpeditionType.ARIANT
                expedition = cm.getExpedition(expeditionType)
             } else if (cm.getMapId() == 980010201) {
-               expeditionType = MapleExpeditionType.ARIANT1
+               expeditionType = ExpeditionType.ARIANT1
                expedition = cm.getExpedition(expeditionType)
             } else {
-               expeditionType = MapleExpeditionType.ARIANT2
+               expeditionType = ExpeditionType.ARIANT2
                expedition = cm.getExpedition(expeditionType)
             }
             if (status == 0) {
                String gotTheBombs = expedition.getProperty("gotBomb" + cm.getCharacterId())
                if (gotTheBombs != null) {
                   cm.sendOk("2101017_ALREADY_GAVE_BOMB")
-
                   cm.dispose()
                } else if (cm.canHoldAll([2270002, 2100067], [50, 5])) {
                   cm.sendOk("2101017_I_HAVE_GIVEN_YOU")
-
                   expedition.setProperty("gotBomb" + cm.getCharacterId(), "1")
                   cm.gainItem(2270002, (short) 50)
                   cm.gainItem(2100067, (short) 5)
                   cm.dispose()
                } else {
                   cm.sendOk("2101017_INVENTORY_IS_FULL")
-
                   cm.dispose()
                }
             }
          } else {
             cm.sendOk("2101017_HELLO")
-
             cm.dispose()
          }
       }

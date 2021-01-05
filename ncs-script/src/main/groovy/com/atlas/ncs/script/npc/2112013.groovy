@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2112013 {
@@ -42,14 +43,12 @@ class NPC2112013 {
          }
       } else {
          cm.sendNext("2112013_NOTHING_HERE")
-
       }
 
       cm.dispose()
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-
    }
 }
 

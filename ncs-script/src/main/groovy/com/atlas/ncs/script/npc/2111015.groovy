@@ -7,7 +7,7 @@ class NPC2111015 {
    int status = -1
    int sel = -1
 
-   static def isPillUsed(ch) {
+   static def isPillUsed(int characterId) {
       return ch.getBuffSource(MapleBuffStat.HP_RECOVERY) == 2022198
    }
 
@@ -31,7 +31,7 @@ class NPC2111015 {
          }
 
          if (status == 0) {
-            if (cm.isQuestStarted(3314) && !cm.haveItem(2022198, 1) && !isPillUsed(cm.getPlayer())) {
+            if (cm.isQuestStarted(3314) && !cm.haveItem(2022198, 1) && !isPillUsed(cm.getCharacterId())) {
                if (cm.canHold(2022198, 1)) {
                   cm.gainItem(2022198, (short) 1)
                   cm.sendOk("You took the pills that were laying on the desk.", (byte) 2)

@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9000004 {
@@ -7,7 +9,6 @@ class NPC9000004 {
    int status = 0
    int sel = -1
 
-   MaplePartyCharacter[] party
    String preamble
    String mobCount
 
@@ -27,10 +28,9 @@ class NPC9000004 {
          } else {
             status--
          }
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
+         EventInstanceManager eim = cm.getEventInstance()
          String nthText = "last"
          if (status == 0) {
-            party = eim.getPlayers() as MaplePartyCharacter[]
             preamble = eim.getProperty("leader" + nthText + "preamble")
             mobCount = eim.getProperty("leader" + nthText + "mobcount")
             if (preamble == null) {
@@ -41,7 +41,6 @@ class NPC9000004 {
                if (!isLeader()) {
                   if (mobCount == null) {
                      cm.sendOk("9000004_PARTY_LEADER_MUST_TALK")
-
                      cm.dispose()
                   } else {
                      cm.warp(109020001, 0)
@@ -50,29 +49,23 @@ class NPC9000004 {
                }
                if (mobCount == null) {
                   cm.sendYesNo("9000004_FINISHED")
-
                }
             }
          } else if (status == 1) {
             //if (cm.mobCount(600010000)==0) {
-            if (cm.countMonster() == 0) {
+            if (cm.getMapMonsterCount() == 0) {
                cm.sendOk("9000004_GOOD_JOB")
-
             } else {
                cm.sendOk("9000004_KILL_THOSE_CREATURES")
-
                cm.dispose()
             }
          } else if (status == 2) {
             cm.sendOk("9000004_YOU_MAY_CONTINUE")
-
          } else if (status == 3) {
-            cm.getMap().clearMapObjects()
+            cm.clearMapObjects()
             eim.setProperty("leader" + nthText + "mobcount", "done")
-            MapleMap map = eim.getMapInstance(109020001)
-            MapleCharacter[] members = eim.getPlayers()
-            cm.warpMembers(map, members)
-            cm.givePartyExp(2500, eim.getPlayers())
+            cm.warp(eim.getCharacterIds(), 109020001)
+            cm.givePartyExp(2500, eim.getCharacterIds())
             cm.dispose()
          } else if (status == 10) {
             eim.setProperty("leader" + nthText + "preamble", "done")
@@ -88,7 +81,7 @@ class NPC9000004 {
       if (cm.getParty() == null) {
          return false
       } else {
-         return cm.isLeader()
+         return cm.isPartyLeader()
       }
    }
 }

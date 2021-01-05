@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9270026 {
    NPCConversationManager cm
@@ -31,7 +32,7 @@ class NPC9270026 {
                beauty = 2
                current = cm.getFace() % 100 + 20000 + cm.getGender() * 1000
                int[] temp = [current + 200, current + 300, current + 400, current + 700]
-               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                cm.sendStyle("With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking.", colors)
             } else if (selection == 3) {
                beauty = 3
@@ -45,7 +46,7 @@ class NPC9270026 {
                colors = []
                for (int i = 0; i < 8; i++) {
                   if (cm.haveItem(5152100 + i)) {
-                     colors = ScriptUtils.pushItemIfTrue(colors, current + 100 * i, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     colors = ScriptUtils.pushItemIfTrue(colors, current + 100 * i, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
 

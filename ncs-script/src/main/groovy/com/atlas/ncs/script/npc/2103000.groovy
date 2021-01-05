@@ -7,7 +7,7 @@ class NPC2103000 {
    int status = -1
    int sel = -1
 
-   static def isTigunMorphed(ch) {
+   static def isTigunMorphed(int characterId) {
       return ch.getBuffSource(MapleBuffStat.MORPH) == 2210005
    }
 
@@ -31,7 +31,7 @@ class NPC2103000 {
                cm.setQuestProgress(3900, "5")
             } else if (cm.isQuestCompleted(3938)) {
                if (cm.canHold(2210005)) {
-                  if (!cm.haveItem(2210005) && !isTigunMorphed(cm.getPlayer())) {
+                  if (!cm.haveItem(2210005) && !isTigunMorphed(cm.getCharacterId())) {
                      cm.gainItem(2210005, (short) 1)
                      cm.sendOk("You found a lock of hair (probably Tigun's) floating by the water and caught it. Remembering how #bJano#k made it last time, you crafted a new #t2210005#", (byte) 2)
                   }
@@ -40,7 +40,7 @@ class NPC2103000 {
                }
             } else if (cm.isQuestStarted(3934) || (cm.isQuestCompleted(3934) && !cm.isQuestCompleted(3935))) {
                if (cm.canHold(2210005)) {
-                  if (!cm.haveItem(2210005) && !isTigunMorphed(cm.getPlayer())) {
+                  if (!cm.haveItem(2210005) && !isTigunMorphed(cm.getCharacterId())) {
                      cm.gainItem(2210005, (short) 1)
                      cm.sendOk("You managed to find a strange flask floating on the river. It seems like a transformation bottle mimicking one of the guards of the castle, maybe with it you will be able to roam inside freely.", (byte) 2)
                   }

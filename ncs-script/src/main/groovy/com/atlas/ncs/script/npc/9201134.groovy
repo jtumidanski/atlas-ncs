@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201134 {
@@ -30,7 +31,6 @@ class NPC9201134 {
          if (!eim.isEventCleared()) {
             if (status == 0) {
                cm.sendYesNo("9201134_ARE_YOU_SURE")
-
             } else if (status == 1) {
                cm.warp(551030100, 2)
                cm.dispose()
@@ -38,11 +38,9 @@ class NPC9201134 {
          } else {
             if (status == 0) {
                cm.sendNext("9201134_PRIZE_FOR_BRAVERY")
-
             } else if (status == 1) {
-               if (!eim.giveEventReward(cm.getPlayer())) {
+               if (!eim.giveEventReward(cm.getCharacterId())) {
                   cm.sendNext("9201134_MAKE_INVENTORY_ROOM")
-
                } else {
                   cm.warp(551030100, 2)
                }

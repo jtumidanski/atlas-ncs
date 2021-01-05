@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201044 {
@@ -14,16 +15,15 @@ class NPC9201044 {
       int[] spawnPosX
       int[] spawnPosY
 
-      MapleMap mapObj = cm.getMap()
       if (stage == 2) {
          spawnPosX = [619, 299, 47, -140, -471]
          spawnPosY = [-840, -840, -840, -840, -840]
 
          for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 2; j++) {
-               MapleLifeFactory.getMonster(9400515).ifPresent({ mobObj1 -> mapObj.spawnMonsterOnGroundBelow(mobObj1, new Point(spawnPosX[i], spawnPosY[i])) })
-               MapleLifeFactory.getMonster(9400516).ifPresent({ mobObj2 -> mapObj.spawnMonsterOnGroundBelow(mobObj2, new Point(spawnPosX[i], spawnPosY[i])) })
-               MapleLifeFactory.getMonster(9400517).ifPresent({ mobObj3 -> mapObj.spawnMonsterOnGroundBelow(mobObj3, new Point(spawnPosX[i], spawnPosY[i])) })
+               cm.getMonster(9400515).ifPresent({ mobObj1 -> cm.spawnMonsterOnGroundBelow(mobObj1, spawnPosX[i], spawnPosY[i]) })
+               cm.getMonster(9400516).ifPresent({ mobObj2 -> cm.spawnMonsterOnGroundBelow(mobObj2, spawnPosX[i], spawnPosY[i]) })
+               cm.getMonster(9400517).ifPresent({ mobObj3 -> cm.spawnMonsterOnGroundBelow(mobObj3, spawnPosX[i], spawnPosY[i]) })
             }
          }
       } else {
@@ -33,8 +33,7 @@ class NPC9201044 {
          for (int i = 0; i < maxSpawn; i++) {
             int rndMob = 9400519 + Math.floor(Math.random() * 4).intValue()
             int rndPos = Math.floor(Math.random() * 5).intValue()
-
-            MapleLifeFactory.getMonster(rndMob).ifPresent({ mobObj -> mapObj.spawnMonsterOnGroundBelow(mobObj, new Point(spawnPosX[rndPos], spawnPosY[rndPos])) })
+            cm.getMonster(rndMob).ifPresent({ mobObj -> cm.spawnMonsterOnGroundBelow(mobObj, spawnPosX[rndPos], spawnPosY[rndPos]) })
          }
       }
    }
@@ -91,12 +90,10 @@ class NPC9201044 {
          eim.showClearEffect(true)
          eim.linkToNextStage(stage, "apq", curMap)  //opens the portal to the next map
       } else {
-         cm.getMap().getPortal("go01").setPortalState(false)
-
+         cm.setPortalState("go01", false)
          int val = Math.floor(Math.random() * 3).intValue()
          eim.showClearEffect(670010200, "gate" + val, 2)
-
-         cm.getMap().getPortal("go0" + val).setPortalState(true)
+         cm.setPortalState("go0" + val, true)
          eim.linkPortalToScript(stage, "go0" + val, "apq0" + val, curMap)
       }
    }
@@ -120,25 +117,21 @@ class NPC9201044 {
             status--
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
-
+         EventInstanceManager eim = cm.getEventInstance()
          if (eim.getProperty(stage.toString() + "stageclear") != null) {
             cm.sendNext("9201044_PORTAL_IS_ALREADY_OPOEN")
 
          } else {
-            if (eim.isEventLeader(cm.getPlayer())) {
+            if (eim.isEventLeader(cm.getCharacterId())) {
                int state = eim.getIntProperty("statusStg" + stage)
 
                if (state == -1) {           // preamble
                   if (stage == 1) {
                      cm.sendOk("9201044_WELCOME", stage)
-
                   } else if (stage == 2) {
                      cm.sendOk("9201044_WELCOME_CLIMB", stage)
-
                   } else if (stage == 3) {
                      cm.sendOk("9201044_WELCOME_CLIMB_2", stage)
-
                   }
 
                   int st = (autoPass) ? 2 : 0
@@ -151,7 +144,6 @@ class NPC9201044 {
                      return
                   }
 
-                  MapleMap map = cm.getPlayer().getMap()
                   if (stage == 1) {
                      if (eim.getIntProperty("statusStg" + stage) == 1) {
                         clearStage(stage, eim, curMap)
@@ -160,13 +152,14 @@ class NPC9201044 {
 
                      }
                   } else if (stage == 2 || stage == 3) {
-                     if (map.countMonsters() == 0) {
+                     if (cm.getMapMonsterCount() == 0) {
                         int[] objectSet = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                         int playersOnCombo = 0
-                        MapleCharacter[] party = cm.getEventInstance().getPlayers()
+                        List<Integer> party = cm.getEventInstance().getCharacterIds()
                         for (int i = 0; i < party.size(); i++) {
+                           MapleMap map = cm.getPlayer().getMap()
                            for (int y = 0; y < map.getAreas().size(); y++) {
-                              if (map.getArea(y).contains(party[i].position())) {
+                              if (map.getArea(y).contains(cm.characterPosition(party[i]))) {
                                  playersOnCombo++
                                  objectSet[y] += 1
                                  break
@@ -207,7 +200,7 @@ class NPC9201044 {
                               }
                            } else {
                               for (int i = 0; i < objectSet.length; i++) {
-                                 int ci = cm.getPlayer().countItem(4000000 + i)
+                                 int ci = cm.countItem(4000000 + i)
 
                                  if (ci != (combo[i]).toInteger()) {
                                     correctCombo = false
@@ -234,22 +227,18 @@ class NPC9201044 {
 
                                  if (guessedRight == 6) { //6 unused slots on this stage
                                     cm.sendNext("9201044_WEIGH_DIFFERENTLY")
-
-                                    MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("9201044_ALL_WEIGH_DIFFERENTLY"))
+                                    cm.sendPinkTextToMap("9201044_ALL_WEIGH_DIFFERENTLY")
                                  } else {
                                     cm.sendNext("9201044_THINK_YOUR_NEXT_COURSE")
-
-                                    MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("9201044_ONE_WEIGH_SAME"))
+                                    cm.sendPinkTextToMap("9201044_ONE_WEIGH_SAME")
                                  }
                               } else {
                                  spawnMobs(playersRight)
                                  eim.setIntProperty("missCount", 0)
                                  if (stage == 2) {
                                     eim.setProperty("stage2combo", "")
-
                                     cm.sendNext("9201044_FAILED_TO_DISCOVER")
-
-                                    MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("9201044_WRONG_COMBINATION"))
+                                    cm.sendPinkTextToMap("9201044_WRONG_COMBINATION")
                                  }
                               }
 
@@ -259,23 +248,19 @@ class NPC9201044 {
                         } else {
                            if (stage == 2) {
                               cm.sendNext("9201044_HOW_TO")
-
                            } else {
                               cm.sendNext("9201044_HOW_TO_2")
-
                            }
 
                            cm.dispose()
                         }
                      } else {
                         cm.sendNext("9201044_DEFEAT_ALL_MOBS")
-
                      }
                   }
                }
             } else {
                cm.sendNext("9201044_PARTY_LEADER_MUST_TALK")
-
             }
          }
 

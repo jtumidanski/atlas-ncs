@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9040006 {
@@ -10,19 +11,17 @@ class NPC9040006 {
    static def clearStage(int stage, EventInstanceManager eim) {
       eim.setProperty("stage" + stage + "clear", "true")
       eim.showClearEffect(true)
-
       eim.giveEventPlayersStageReward(stage)
    }
 
    def start() {
-      if (cm.getPlayer().getMap().getReactorByName("watergate").getState() > 0) {
+      if (cm.getReactorState("watergate") > 0) {
          cm.sendOk("9040006_EXCELLENT_WORK")
-
          cm.dispose()
          return
       }
 
-      EventInstanceManager eim = cm.getPlayer().getEventInstance()
+      EventInstanceManager eim = cm.getEventInstance()
       if (eim == null) {
          cm.warp(990001100)
       } else {
@@ -41,13 +40,11 @@ class NPC9040006 {
                Integer guess = getGroundItems()
                if (guess != null) {
                   if (combo == guess) {
-                     cm.getPlayer().getMap().getReactorByName("watergate").forceHitReactor((byte) 1)
+                     cm.forceHitReactor("watergate", (byte) 1)
                      clearStage(3, eim)
-                     MapleGuildProcessor.getInstance().gainGP(cm.getGuild(), 25)
-
+                     cm.gainGP(cm.getGuildId(), 25)
                      removeGroundItems()
                      cm.sendOk("9040006_EXCELLENT_WORK")
-
                   } else {
                      if (attempt < 7) {
                         int[] comboItems = [0, 0, 0, 0]
@@ -116,9 +113,8 @@ class NPC9040006 {
                         string += " attempt."
 
                         //spawn one black and one myst knight
-                        spawnMob(9300036, -350, 150, cm.getPlayer().getMap())
-                        spawnMob(9300037, 400, 150, cm.getPlayer().getMap())
-
+                        spawnMob(9300036, -350, 150, cm.getMapId())
+                        spawnMob(9300037, 400, 150, cm.getMapId())
                         cm.sendOk(string)
                         eim.setProperty("stage3attempt", attempt + 1)
                      } else {
@@ -126,11 +122,10 @@ class NPC9040006 {
                         eim.setProperty("stage3combo", "reset")
                         cm.sendOk("9040006_FAILED")
 
-
                         for (int i = 0; i < 6; i++) {
                            //keep getting new monsters, lest we spawn the same monster five times o.o!
-                           spawnMob(9300036, (int) randX(), 150, cm.getPlayer().getMap())
-                           spawnMob(9300037, (int) randX(), 150, cm.getPlayer().getMap())
+                           spawnMob(9300036, (int) randX(), 150, cm.getMapId())
+                           spawnMob(9300037, (int) randX(), 150, cm.getMapId())
                         }
                      }
 
@@ -219,8 +214,8 @@ class NPC9040006 {
       return -350 + Math.floor(Math.random() * 750)
    }
 
-   static def spawnMob(int id, int x, y, map) {
-      MapleLifeFactory.getMonster(id).ifPresent({ mob -> map.spawnMonsterOnGroundBelow(mob, new Point(x, y)) })
+   def spawnMob(int id, int x, y, int mapId) {
+      cm.getMonster(id).ifPresent({ mob -> cm.spawnMonsterOnGroundBelow(mapId, mob, x, y) })
    }
 
    def action(Byte mode, Byte type, Integer selection) {

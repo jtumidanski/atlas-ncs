@@ -34,13 +34,13 @@ class NPC1032114 {
 
          String selStr = cm.evaluateToken("1032114_WOULD_YOU_LIKE_TO_GO")
          for (def i = 0; i < num; i++ ) {
-            selStr += "\r\n#b#L" + i + "#Training Center " + i + " (" + cm.getPlayerCount(map + i) + "/" + maxPlayerCount + ")#l#k"
+            selStr += "\r\n#b#L" + i + "#Training Center " + i + " (" + cm.countCharactersInMap(map + i) + "/" + maxPlayerCount + ")#l#k"
          }
          cm.sendSimple(selStr)
       } else if (status == 1) {
          if (selection < 0 || selection >= num) {
             cm.dispose()
-         } else if (cm.getPlayerCount(map + selection) >= maxPlayerCount) {
+         } else if (cm.countCharactersInMap(map + selection) >= maxPlayerCount) {
             cm.sendNext("1032114_FULL")
             status = -1
          } else {

@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2041000 {
@@ -9,7 +10,7 @@ class NPC2041000 {
 
    def start() {
       if (cm.haveItem(4031045)) {
-         EventManager em = cm.getEventManager("Trains")
+         EventManager em = cm.getEventManager("Trains").orElseThrow()
          if (em.getProperty("entry") == "true") {
             cm.sendYesNo("2041000_DO_YOU_WANT_TO")
 
@@ -33,7 +34,7 @@ class NPC2041000 {
          return
       }
 
-      EventManager em = cm.getEventManager("Trains")
+      EventManager em = cm.getEventManager("Trains").orElseThrow()
       if (em.getProperty("entry") == "true") {
          cm.warp(220000111)
          cm.gainItem(4031045, (short) -1)

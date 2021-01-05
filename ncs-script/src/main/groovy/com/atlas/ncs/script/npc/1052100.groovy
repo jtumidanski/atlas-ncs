@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC1052100 {
    NPCConversationManager cm
@@ -37,12 +38,12 @@ class NPC1052100 {
                hairNew = []
                if (cm.getGender() == 0) {
                   for (int i = 0; i < maleHair.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).toInteger(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).toInteger(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                if (cm.getGender() == 1) {
                   for (int i = 0; i < femaleHair.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).toInteger(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).toInteger(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                cm.sendStyle("I can totally change up your hairstyle and make it look so good. Why don't you change it up a bit? If you have #b#t5150003##k I'll change it for you. Choose the one to your liking~.", hairNew)
@@ -51,7 +52,7 @@ class NPC1052100 {
                hairColor = []
                int current = (cm.getHair() / 10).intValue() * 10
                for (int i = 0; i < 8; i++) {
-                  hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
                cm.sendStyle("I can totally change your hair color and make it look so good. Why don't you change it up a bit? With #b#t5151003##k I'll change it for you. Choose the one to your liking.", hairColor)
             }

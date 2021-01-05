@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2090005 {
@@ -15,7 +16,7 @@ class NPC2090005 {
 
    def start() {
       status = -1
-      hak = cm.getEventManager("Hak")
+      hak = cm.getEventManager("Hak").orElseThrow()
       action((byte) 1, (byte) 0, 0)
    }
 
@@ -82,8 +83,8 @@ class NPC2090005 {
                      cm.warp(250000100, 0)
                      cm.dispose()
                   } else {
-                     EventManager em = cm.getEventManager("Hak")
-                     if (!em.startInstance(cm.getPlayer())) {
+                     EventManager em = cm.getEventManager("Hak").orElseThrow()
+                     if (!em.startInstance(cm.getCharacterId())) {
                         cm.sendOk("2090005_TRY_AGAIN_IN_A_BIT")
 
                         cm.dispose()

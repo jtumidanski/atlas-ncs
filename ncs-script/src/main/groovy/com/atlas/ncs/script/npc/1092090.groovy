@@ -18,19 +18,16 @@ class NPC1092090 {
          cm.sendNext("1092090_ONE_THIRD_FULL")
          cm.gainItem(4031847, (short) -1)
          cm.gainItem(4031848, (short) 1)
-
          cm.setQuestProgress(2180, 1, 1)
       } else if (cm.canHold(4031849, 1) && cm.haveItem(4031848)) {
          cm.sendNext("1092090_TWO_THIRDS_FULL")
          cm.gainItem(4031848, (short) -1)
          cm.gainItem(4031849, (short) 1)
-
          cm.setQuestProgress(2180, 1, 1)
       } else if (cm.canHold(4031850) && cm.haveItem(4031849)) {
          cm.sendNext("1092090_FULL")
          cm.gainItem(4031849, (short) -1)
          cm.gainItem(4031850, (short) 1)
-
          cm.setQuestProgress(2180, 1, 1)
       } else {
          cm.sendNext("1092090_INVENTORY_FULL")

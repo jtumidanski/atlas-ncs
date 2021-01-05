@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201012 {
@@ -17,18 +19,18 @@ class NPC9201012 {
       action((byte) 1, (byte) 0, 0)
    }
 
-   static def isSuitedForWedding(MapleCharacter player, equipped) {
-      int baseId = (player.getGender() == 0) ? 1050131 : 1051150
+   def isSuitedForWedding(int characterId, equipped) {
+      int baseId = (cm.characterGender(characterId) == 0) ? 1050131 : 1051150
 
       if (equipped) {
          for (int i = 0; i < 4; i++) {
-            if (player.haveItemEquipped(baseId + i)) {
+            if (cm.characterHasItemEquipped(characterId, baseId + i)) {
                return true
             }
          }
       } else {
          for (int i = 0; i < 4; i++) {
-            if (player.haveItemWithId(baseId + i, true)) {
+            if (cm.characterHasItem(characterId, baseId + i, true)) {
                return true
             }
          }
@@ -37,12 +39,11 @@ class NPC9201012 {
       return false
    }
 
-   def getMarriageInstance(MapleCharacter player) {
-      EventManager em = cm.getEventManager(weddingEventName)
-
+   def getMarriageInstance(int characterId) {
+      EventManager em = cm.getEventManager(weddingEventName).orElseThrow()
       for (Iterator<EventInstanceManager> iterator = em.getInstances().iterator(); iterator.hasNext();) {
          EventInstanceManager eim = iterator.next()
-         if (eim.isEventLeader(player)) {
+         if (eim.isEventLeader(characterId)) {
             return eim
          }
       }
@@ -91,82 +92,69 @@ class NPC9201012 {
 
             if (channel.isWeddingReserved(wid)) {
                if (wid == channel.getOngoingWedding(cathedralWedding)) {
-                  MapleCharacter partner = channel.getPlayerStorage().getCharacterById(cm.getPlayer().getPartnerId()).get()
-                  if (!(partner == null || cm.getMap() != partner.getMap())) {
+                  if (!(!cm.hasPartner() || !cm.partnerInMap())) {
+                     int partnerId = cm.getPartnerId()
                      if (!cm.canHold(4000313)) {
                         cm.sendOk("9201012_NEED_ETC_SPACE")
-
                         cm.dispose()
                         return
-                     } else if (!partner.canHold(4000313)) {
+                     } else if (!cm.characterCanHold(partnerId, 4000313)) {
                         cm.sendOk("9201012_PARTNER_NEED_ETC_SPACE")
-
                         cm.dispose()
                         return
-                     } else if (!isSuitedForWedding(cm.getPlayer(), false)) {
+                     } else if (!isSuitedForWedding(cm.getCharacterId(), false)) {
                         cm.sendOk("9201012_FASHIONABLE_CLOTHES")
-
                         cm.dispose()
                         return
-                     } else if (!isSuitedForWedding(partner, false)) {
+                     } else if (!isSuitedForWedding(partnerId, false)) {
                         cm.sendOk("9201012_PARTNER_FASHIONABLE_CLOTHES")
-
                         cm.dispose()
                         return
                      }
 
                      cm.sendOk("9201012_ALRIGHT")
-
                   } else {
                      cm.sendOk("9201012_PARTNER_ELSEWHERE")
-
                      cm.dispose()
                   }
                } else {
                   String placeTime = channel.getWeddingReservationTimeLeft(wid)
 
                   cm.sendOk("9201012_WEDDING_TIME", placeTime)
-
                   cm.dispose()
                }
             } else {
                cm.sendOk("9201012_NO_RESERVATIONS")
-
                cm.dispose()
             }
          } else if (status == 2) {
             Channel channel = cm.getClient().getChannelServer()
             boolean weddingIsOnGoing = channel.getOngoingWeddingType(cathedralWedding)
 
-            MapleCharacter partner = channel.getPlayerStorage().getCharacterById(cm.getPlayer().getPartnerId()).get()
-            if (!(partner == null || cm.getMap() != partner.getMap())) {
+            if (!(!cm.hasPartner() || !cm.partnerInMap())) {
                if (channel.acceptOngoingWedding(cathedralWedding)) {
                   int wid = cm.getClient().getWorldServer().getRelationshipId(cm.getCharacterId())
                   if (wid > 0) {
-                     EventManager em = cm.getEventManager(weddingEventName)
-                     if (em.startInstance(cm.getPlayer())) {
-                        eim = getMarriageInstance(cm.getPlayer())
+                     EventManager em = cm.getEventManager(weddingEventName).orElseThrow()
+                     if (em.startInstance(cm.getCharacterId())) {
+                        eim = getMarriageInstance(cm.getCharacterId())
                         if (eim != null) {
                            eim.setIntProperty("weddingId", wid)
                            eim.setIntProperty("groomId", cm.getCharacterId())
-                           eim.setIntProperty("brideId", cm.getPlayer().getPartnerId())
+                           eim.setIntProperty("brideId", cm.getPartnerId())
                            eim.setIntProperty("isPremium", weddingIsOnGoing ? 1 : 0)
-
-                           eim.registerPlayer(partner)
+                           eim.registerPlayer(cm.getPartnerId())
                         } else {
                            cm.sendOk("9201012_UNEXPECTED_ERROR")
-
                         }
 
                         cm.dispose()
                      } else {
                         cm.sendOk("9201012_UNEXPECTED_ERROR_DURING_PREPARATIONS")
-
                         cm.dispose()
                      }
                   } else {
                      cm.sendOk("9201012_UNEXPECTED_ERROR_DURING_PREPARATIONS")
-
                      cm.dispose()
                   }
                } else {    // partner already decided to start
@@ -174,7 +162,6 @@ class NPC9201012 {
                }
             } else {
                cm.sendOk("9201012_PARTNER_ELSEWHERE")
-
                cm.dispose()
             }
          }

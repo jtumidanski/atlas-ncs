@@ -35,14 +35,14 @@ class NPC1012118 {
          } else {
             String selStr = ""
             for (def i = 0; i < num; i++ ) {
-               selStr += "\r\n#b#L" + i + "#Training Center " + i + " (" + cm.getPlayerCount(map + i) + "/" + maxPlayerCount + ")#l#k"
+               selStr += "\r\n#b#L" + i + "#Training Center " + i + " (" + cm.countCharactersInMap(map + i) + "/" + maxPlayerCount + ")#l#k"
             }
             cm.sendSimple("1012118_WOULD_YOU_LIKE_TO_GO", selStr)
          }
       } else if (status == 1) {
          if (selection < 0 || selection >= num) {
             cm.dispose()
-         } else if (cm.getPlayerCount(map + selection) >= maxPlayerCount) {
+         } else if (cm.countCharactersInMap(map + selection) >= maxPlayerCount) {
             cm.sendNext("1012118_MAP_FULL")
             status = -1
          } else {

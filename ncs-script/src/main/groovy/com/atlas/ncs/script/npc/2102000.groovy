@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2102000 {
@@ -9,18 +10,15 @@ class NPC2102000 {
 
    def start() {
       if (cm.haveItem(4031045)) {
-         EventManager em = cm.getEventManager("Genie")
+         EventManager em = cm.getEventManager("Genie").orElseThrow()
          if (em.getProperty("entry") == "true") {
             cm.sendYesNo("2102000_NOT_A_SHORT_FLIGHT")
-
          } else {
             cm.sendOk("2102000_READY_FOR_TAKEOFF")
-
             cm.dispose()
          }
       } else {
          cm.sendOk("2102000_NEED_A_TICKET")
-
          cm.dispose()
       }
    }
@@ -28,18 +26,16 @@ class NPC2102000 {
    def action(Byte mode, Byte type, Integer selection) {
       if (mode <= 0) {
          cm.sendOk("2102000_IF_YOU_CHANGE_YOUR_MIND")
-
          cm.dispose()
          return
       }
 
-      EventManager em = cm.getEventManager("Genie")
+      EventManager em = cm.getEventManager("Genie").orElseThrow()
       if (em.getProperty("entry") == "true") {
          cm.warp(260000110)
          cm.gainItem(4031045, (short) -1)
       } else {
          cm.sendOk("2102000_HAVE_TO_GO_ON_THE_NEXT_RIDE")
-
       }
 
       cm.dispose()

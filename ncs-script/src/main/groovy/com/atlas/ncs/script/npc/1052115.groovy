@@ -41,7 +41,7 @@ class NPC1052115 {
         } else if (status == 2) {
             section = selection
             if (selection == 1) {
-                if (cm.getLevel() < 25 || cm.getLevel() > 30 || !cm.isLeader()) {
+                if (cm.getLevel() < 25 || cm.getLevel() > 30 || !cm.isPartyLeader()) {
                     cm.sendOk("1052115_LEVEL_RANGE")
                 } else {
                     if (!cm.start_PyramidSubway(-1)) {
@@ -60,7 +60,7 @@ class NPC1052115 {
                     cm.sendOk("1052115_NEED_BOARDING_PASS")
                 }
             } else if (selection == 3) {
-                String data = QuestProcessor.getInstance().getCustomDataOrDefault(cm.getPlayer(), 7662, "0")
+                String data = cm.getQuestCustomDataOrDefault(cm.getCharacterId(), 7662, "0")
                 int mons = data.toInteger()
                 if (mons < 10000) {
                     cm.sendOk("Please defeat at least 10,000 monsters in the Station and look for me again. Kills : " + mons)

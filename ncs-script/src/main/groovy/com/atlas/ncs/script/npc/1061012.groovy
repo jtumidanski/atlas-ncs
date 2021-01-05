@@ -1,5 +1,8 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.Party
+import com.atlas.ncs.model.PartyCharacter
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1061012 {
@@ -19,15 +22,15 @@ class NPC1061012 {
          } else if (ret == 2) {
             cm.sendOk("1061012_MEMBER_LEVEL_REQUIREMENT")
          } else {
-            EventManager em = cm.getEventManager("s4aWorld")
+            EventManager em = cm.getEventManager("s4aWorld").orElseThrow()
             if (em == null) {
                cm.sendOk("1061012_UNKNOWN_REASON")
             } else if (em.getProperty("started") == "true") {
                cm.sendOk("1061012_SOMEONE_ELSE_ALREADY_ATTEMPTING")
             } else {
-               MaplePartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
+               PartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
                if (eli.size() > 0) {
-                  if (!em.startInstance(cm.getParty().orElseThrow(), cm.getPlayer().getMap(), 1)) {
+                  if (!em.startInstance(cm.getParty().orElseThrow(), cm.getMapId(), 1)) {
                      cm.sendOk("1061012_PARTY_MEMBER_ALREADY_REGISTERED")
                   }
                } else {
@@ -46,7 +49,7 @@ class NPC1061012 {
    }
 
    def checkJob() {
-      Optional<MapleParty> party = cm.getParty()
+      Optional<Party> party = cm.getParty()
 
       if (party.isEmpty()) {
          return -1
@@ -54,13 +57,13 @@ class NPC1061012 {
       //    if (party.getMembers().size() != 2) {
       //	return 0;
       //    }
-      Iterator it = party.get().getMembers().iterator()
+      Iterator it = party.get().members().iterator()
 
       while (it.hasNext()) {
-         MaplePartyCharacter cPlayer = it.next()
+         PartyCharacter cPlayer = it.next()
 
-         if (cPlayer.getJobId() == 312 || cPlayer.getJobId() == 322 || cPlayer.getJobId() == 900) {
-            if (cPlayer.getLevel() < 120) {
+         if (cPlayer.jobId() == 312 || cPlayer.jobId() == 322 || cPlayer.jobId() == 900) {
+            if (cPlayer.level() < 120) {
                return 2
             }
          } else {

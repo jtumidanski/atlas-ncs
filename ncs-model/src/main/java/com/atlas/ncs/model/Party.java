@@ -1,4 +1,6 @@
 package com.atlas.ncs.model;
 
-public record Party() {
+import java.util.List;
+
+public record Party(int leaderId, List<PartyCharacter> members) {
 }

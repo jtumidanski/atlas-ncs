@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201010 {
@@ -64,15 +65,12 @@ class NPC9201010 {
                   if (eim.getIntProperty("weddingStage") == 3) {
                      if (!isMarrying) {
                         cm.sendYesNo("9201010_THEY_WILL_START_SOON")
-
                      } else {
                         cm.sendOk("9201010_TOTALLY_ROCKED")
-
                         cm.dispose()
                      }
                   } else {
                      cm.sendYesNo("9201010_SKIPPING_BONUS")
-
                   }
                }
             }

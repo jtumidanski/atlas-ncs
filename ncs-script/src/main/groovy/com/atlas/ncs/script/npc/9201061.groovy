@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9201061 {
    NPCConversationManager cm
@@ -36,7 +37,7 @@ class NPC9201061 {
                   current = cm.getFace() % 100 + 21000
                }
                int[] temp = [current + 100, current + 200, current + 300, current + 400, current + 500, current + 600, current + 700]
-               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                cm.sendYesNo("9201061_REG_CONFIRM")
 
             }

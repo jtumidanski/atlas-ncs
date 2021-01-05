@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201006 {
@@ -46,35 +47,28 @@ class NPC9201006 {
             if (cm.haveItem(4000313) && isMarrying) {
                if (eim.getIntProperty("weddingStage") == 3) {
                   cm.sendOk("9201006_CONGRATULATIONS")
-
                   cm.dispose()
                } else if (hasEngagement) {
                   if (!cm.createMarriageWishList()) {
                      cm.sendOk("9201006_ALREADY_SENT_WISH_LIST")
-
                   }
                   cm.dispose()
                } else {
                   cm.sendOk("9201006_MISSING_REQUIRED_ITEM")
-
                }
             } else {
                if (eim.getIntProperty("weddingStage") == 3) {
                   if (!isMarrying) {
                      cm.sendYesNo("9201006_WAIT_HERE_FOR_THEM")
-
                   } else {
                      cm.sendOk("9201006_CONGRATULATIONS")
-
                      cm.dispose()
                   }
                } else {
                   cm.sendYesNo("9201006_ARE_YOU_SURE")
-
                }
             }
             break
-
          case 1:
             cm.warp(680000000, 0)
             cm.dispose()

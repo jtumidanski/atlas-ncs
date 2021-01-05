@@ -33,17 +33,14 @@ class NPC1032109 {
       if (status == 0) {
          cm.sendOk("1032109_A_LOT_OF_ANGRY_MONSTERS_SUMMONED")
       } else if (status == 1) {
-         MapleCharacter player = cm.getPlayer()
-         MapleMap map = player.getMap()
-
          for (def i = 0; i < 10; i++) {
-            MapleLifeFactory.getMonster(mobId).ifPresent({ monster -> map.spawnMonsterOnGroundBelow(monster, new Point(117, 183)) })
+            cm.getMonster(mobId).ifPresent({ monster -> cm.spawnMonsterOnGroundBelow(monster, 117, 183) })
          }
          for (def i = 0; i < 10; i++) {
-            MapleLifeFactory.getMonster(mobId).ifPresent({ monster -> map.spawnMonsterOnGroundBelow(monster, new Point(4, 183)) })
+            cm.getMonster(mobId).ifPresent({ monster -> cm.spawnMonsterOnGroundBelow(monster, 4, 183) })
          }
          for (def i = 0; i < 10; i++) {
-            MapleLifeFactory.getMonster(mobId).ifPresent({ monster -> map.spawnMonsterOnGroundBelow(monster, new Point(-109, 183)) })
+            cm.getMonster(mobId).ifPresent({ monster -> cm.spawnMonsterOnGroundBelow(monster, -109, 183) })
          }
 
          cm.completeQuest(20718, 1103003)

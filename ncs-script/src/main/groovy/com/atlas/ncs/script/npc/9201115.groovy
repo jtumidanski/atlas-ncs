@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201115 {
@@ -15,14 +16,12 @@ class NPC9201115 {
       EventInstanceManager eim = cm.getEventInstance()
       if (eim != null && eim.getIntProperty("glpq6") == 3) {
          cm.sendOk("9201115_WELL_PLAYED")
-
          cm.dispose()
          return
       }
 
       if (!cm.isEventLeader()) {
          cm.sendNext("9201115_LEADER_MUST_TALK")
-
          cm.dispose()
          return
       }
@@ -37,14 +36,11 @@ class NPC9201115 {
          if (eim.getIntProperty("glpq6") == 0) {
             if (status == 0) {
                cm.sendNext("9201115_WELCOME")
-
             } else if (status == 1) {
                cm.sendNext("9201115_TONIGHT_WE_FEAST")
-
             } else if (status == 2) {
                cm.sendNext("9201115_ESCORT")
-
-               MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("MASTER_GUARDIANS_APPROACH"))
+               cm.sendBlueTextToMap("MASTER_GUARDIANS_APPROACH")
                for (int i = 0; i < 10; i++) {
                   eim.getMonster(9400594).ifPresent({ mob -> cm.getMap().spawnMonsterOnGroundBelow(mob, new Point(-1337 + (Math.random() * 1337).intValue(), 276)) })
                }
@@ -55,14 +51,12 @@ class NPC9201115 {
                cm.dispose()
             }
          } else if (eim.getIntProperty("glpq6") == 1) {
-            if (cm.getMap().countMonsters() == 0) {
+            if (cm.getMapMonsterCount() == 0) {
                if (status == 0) {
                   cm.sendOk("9201115_WHAT_IS_THIS")
-
                } else if (status == 1) {
                   cm.sendNext("9201115_NO_MATTER")
-
-                  MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("TWISTED_MASTERS_APPROACH"))
+                  cm.sendBlueTextToMap("TWISTED_MASTERS_APPROACH")
 
                   //Margana
                   eim.getMonster(9400590).ifPresent({ mob -> cm.getMap().spawnMonsterOnGroundBelow(mob, new Point(-22, 1)) })
@@ -81,29 +75,23 @@ class NPC9201115 {
                }
             } else {
                cm.sendOk("9201115_PAY_NO_ATTENTION")
-
                cm.dispose()
             }
          } else if (eim.getIntProperty("glpq6") == 2) {
-            if (cm.getMap().countMonsters() == 0) {
+            if (cm.getMapMonsterCount() == 0) {
                cm.sendOk("9201115_CANNOT_BE_HAPPENING")
-
-               MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("9201115_NEXT_STAGE_OPENED"))
+               cm.sendPinkTextToMap("9201115_NEXT_STAGE_OPENED")
                eim.setIntProperty("glpq6", 3)
-
                eim.showClearEffect(true)
                eim.giveEventPlayersStageReward(6)
-
                eim.clearPQ()
                cm.dispose()
             } else {
                cm.sendOk("9201115_PAY_NO_ATTENTION_TWISTED_MASTERS")
-
                cm.dispose()
             }
          } else {
             cm.sendOk("9201115_WELL_PLAYED")
-
             cm.dispose()
          }
       } else {

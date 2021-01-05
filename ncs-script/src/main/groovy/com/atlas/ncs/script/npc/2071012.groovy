@@ -34,20 +34,16 @@ class NPC2071012 {
 
             if (!cm.haveItem(4031793, 1)) {
                cm.sendOk("2071012_I_LOST_IN_THE_WOODS")
-
                cm.dispose()
                return
             }
 
             cm.sendYesNo("2071012_I_LOST_IN_THE_WOODS_LONG")
-
          } else if (status == 1) {
             cm.sendNext("2071012_REWARD")
-
             cm.gainItem(4031793, (short) -1)
             cm.gainFame(-5)
             cm.setQuestProgress(23647, 1, 1)
-
             cm.dispose()
          }
       }

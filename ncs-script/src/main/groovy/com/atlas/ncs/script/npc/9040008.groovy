@@ -13,7 +13,6 @@ class NPC9040008 {
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-
    }
 }
 

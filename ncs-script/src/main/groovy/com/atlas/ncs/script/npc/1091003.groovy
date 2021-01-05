@@ -18,7 +18,6 @@ class NPC1091003 {
    String prompt
 
    def start() {
-      cm.getPlayer().setCS(true)
       status = -1
       action((byte) 1, (byte) 0, 0)
    }

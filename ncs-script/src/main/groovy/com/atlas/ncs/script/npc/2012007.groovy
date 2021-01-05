@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC2012007 {
    NPCConversationManager cm
@@ -34,11 +35,11 @@ class NPC2012007 {
                hairNew = []
                if (cm.getGender() == 0) {
                   for (int i = 0; i < maleHair.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                } else {
                   for (int i = 0; i < femaleHair.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                cm.sendYesNo("2012007_DRT_COUPON_EXPLANATION")
@@ -47,11 +48,11 @@ class NPC2012007 {
                hairNew = []
                if (cm.getGender() == 0) {
                   for (int i = 0; i < maleHairRoyal.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHairRoyal[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHairRoyal[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                } else {
                   for (int i = 0; i < femaleHairRoyal.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHairRoyal[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHairRoyal[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                cm.sendYesNo("2012007_REG_COUPON_EXPLANATION")
@@ -60,11 +61,11 @@ class NPC2012007 {
                hairNew = []
                if (cm.getGender() == 0) {
                   for (int i = 0; i < maleHairExperimental.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHairExperimental[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHairExperimental[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                } else {
                   for (int i = 0; i < femaleHairExperimental.length; i++) {
-                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHairExperimental[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHairExperimental[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                cm.sendYesNo("2012007_EXP_COUPON_EXPLANATION")
@@ -73,7 +74,7 @@ class NPC2012007 {
                hairColor = []
                int current = (cm.getHair() / 10) | 0
                for (int i = 0; i < 8; i++) {
-                  hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
                cm.sendYesNo("2012007_REG_COLOR_COUPON_EXPLANATION")
             }

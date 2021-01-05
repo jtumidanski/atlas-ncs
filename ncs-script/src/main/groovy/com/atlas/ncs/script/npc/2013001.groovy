@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 /*
@@ -89,7 +90,7 @@ class NPC2013001 {
                break
             case 920010300: //storage
                if (eim.getIntProperty("statusStg2") != 1) {
-                  if (cm.getMap().countMonsters() == 0 && cm.getMap().countItems() == 0) {
+                  if (cm.getMapMonsterCount() == 0 && cm.getMapItemCount() == 0) {
                      if (cm.canHold(4001045)) {
                         cm.sendOk("2013001_2ND_STATUE_PIECE")
                         cm.gainItem(4001045, (short) 1)
@@ -111,7 +112,7 @@ class NPC2013001 {
                if (eim.getIntProperty("statusStg3") == -1) {
                   cm.sendOk("2013001_PLACE_IT_ON_THE_MUSIC_PLAYER")
                } else if (eim.getIntProperty("statusStg3") == 0) {
-                  cm.getMap().getReactorByName("stone3").forceHitReactor((byte) 1)
+                  cm.forceHitReactor("stone3", (byte) 1)
                   cm.sendOk("2013001_RETRIEVE_THE_STATUE_PART_FROM_BOX")
                   eim.giveEventPlayersExp(3500)
                   clearStage(3, eim)
@@ -138,7 +139,7 @@ class NPC2013001 {
                   int[] players = []
                   int total = 0
                   for (def i = 0; i < 3; i++) {
-                     int z = cm.getMap().getNumPlayersInArea(i)
+                     int z = cm.getMapMonsterCount(cm.getMapId(), i)
                      players << z
                      total += z
                   }
@@ -153,7 +154,7 @@ class NPC2013001 {
                      }
                      if (num_correct == 3) {
                         cm.sendOk("2013001_RIGHT_COMBINATION_BOX_APPEARED")
-                        cm.getMap().getReactorByName("stone4").forceHitReactor((byte) 1)
+                        cm.forceHitReactor("stone4", (byte) 1)
                         eim.giveEventPlayersExp(3500)
                         clearStage(4, eim)
                      } else {
@@ -225,7 +226,7 @@ class NPC2013001 {
                   String react = ""
                   int total = 0
                   for (def i = 1; i <= 5; i++) {
-                     if (cm.getMap().getReactorByName("" + i).getState() > 0) {
+                     if (cm.getReactorState("" + i) > 0) {
                         react += "1"
                         total += 1
                      } else {
@@ -248,7 +249,7 @@ class NPC2013001 {
                      }
                      if (num_correct == 5) {
                         cm.sendOk("2013001_RIGHT_COMBINATION")
-                        cm.getMap().getReactorByName("stone6").forceHitReactor((byte) 1)
+                        cm.forceHitReactor("stone6", (byte) 1)
                         eim.giveEventPlayersExp(3500)
                         clearStage(6, eim)
                      } else {
@@ -275,7 +276,7 @@ class NPC2013001 {
                }
                break
             case 920011000:
-               if (cm.getMap().countMonsters() > 0) {
+               if (cm.getMapMonsterCount() > 0) {
                   cm.sendNext("2013001_ELIMINATE_MONSTERS_TO_GAIN_ACCESS")
                } else {
                   cm.warp(920011100, "st00")
@@ -288,7 +289,7 @@ class NPC2013001 {
 
    def isStatueComplete() {
       for (def i = 1; i <= 6; i++) {
-         if (cm.getMap().getReactorByName("scar" + i).getState() < 1) {
+         if (cm.getReactorState("scar" + i) < 1) {
             return false
          }
       }

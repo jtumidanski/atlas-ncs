@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 /*
@@ -16,7 +17,7 @@ class NPC2040002 {
 
    def start() {
       if (cm.isQuestStarted(3230)) {
-         em = cm.getEventManager("DollHouse")
+         em = cm.getEventManager("DollHouse").orElseThrow()
 
          if (em.getProperty("noEntry") == "false") {
             cm.sendNext("2040002_PENDULUM_INSIDE")
@@ -38,8 +39,8 @@ class NPC2040002 {
          if (status == 1) {
             cm.sendYesNo("2040002_ARE_YOU_READY")
          } else if (status == 2) {
-            em = cm.getEventManager("DollHouse")
-            if (!em.startInstance(cm.getPlayer())) {
+            em = cm.getEventManager("DollHouse").orElseThrow()
+            if (!em.startInstance(cm.getCharacterId())) {
                cm.sendOk("2040002_ALREADY_BEING_CHALLENGED")
             }
 

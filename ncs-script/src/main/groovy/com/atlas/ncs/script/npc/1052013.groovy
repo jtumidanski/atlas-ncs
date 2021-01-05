@@ -1,5 +1,8 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
+import com.atlas.ncs.processor.EventInstanceManager
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1052013 {
@@ -51,7 +54,7 @@ class NPC1052013 {
                      cm.sendYesNo("1052013_COUPON_REQUIREMENT_MEMBER", couponsNeeded)
                   }
                } else {
-                  if (!eim.giveEventReward(cm.getPlayer())) {
+                  if (!eim.giveEventReward(cm.getCharacterId())) {
                      cm.sendOk("1052013_MAKE_ETC_INVENTORY_ROOM")
                      cm.dispose()
                   } else {
@@ -66,7 +69,7 @@ class NPC1052013 {
          } else {
             String[] levels = ["#m190000000#", "#m191000000#", "#m192000000#", "#m195000000#", "#m196000000#", "#m197000000#"]
             if (status == 0) {
-               String sendStr = I18nMessage.from("1052013_PREMIUM_ROAD").to(cm.getClient()).evaluate()
+               String sendStr = cm.evaluateToken("1052013_PREMIUM_ROAD")
                for (def i = 0; i < 6; i++) {
                   sendStr += "#L" + i + "#" + levels[i] + "#l\r\n"
                }
@@ -86,19 +89,19 @@ class NPC1052013 {
                   return
                }
 
-               cm.sendSimple("1052013_OPERATES_DIFFERENTLY", levels[selection], em.getProperty("party"), (cm.getPlayer().isRecvPartySearchInviteEnabled() ? "disable" : "enable"))
+               cm.sendSimple("1052013_OPERATES_DIFFERENTLY", levels[selection], em.getProperty("party"), (cm.isRecvPartySearchInviteEnabled() ? "disable" : "enable"))
             } else if (status == 2) {
                if (selection == 0) {
                   if (cm.getParty().isEmpty()) {
                      cm.sendOk("1052013_MUST_BE_IN_PARTY")
                      cm.dispose()
-                  } else if (!cm.isLeader()) {
+                  } else if (!cm.isPartyLeader()) {
                      cm.sendOk("1052013_PARTY_LEADER_MUST_START")
                      cm.dispose()
                   } else {
-                     MaplePartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
+                     PartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
                      if (eli.size() > 0) {
-                        if (!em.startInstance(cm.getParty().orElseThrow(), cm.getPlayer().getMap(), 1)) {
+                        if (!em.startInstance(cm.getParty().orElseThrow(), cm.getMapId(), 1)) {
                            cm.sendOk("1052013_ANOTHER_PARTY_INSIDE")
                         }
                      } else {
@@ -108,7 +111,7 @@ class NPC1052013 {
                      cm.dispose()
                   }
                } else if (selection == 1) {
-                  boolean psState = cm.getPlayer().toggleRecvPartySearchInvite()
+                  boolean psState = cm.toggleRecvPartySearchInvite()
                   cm.sendOk("1052013_PARTY_SEARCH_STATUS", psState ? "enabled" : "disabled")
                   cm.dispose()
                } else {

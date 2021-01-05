@@ -1,6 +1,9 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
+
+import java.awt.Rectangle
 
 class NPC9020001 {
    NPCConversationManager cm
@@ -50,11 +53,10 @@ class NPC9020001 {
    static def clearStage(int stage, EventInstanceManager eim, int curMap) {
       eim.setProperty(stage + "stageclear", "true")
       eim.showClearEffect(true)
-
       eim.linkToNextStage(stage, "kpq", curMap)  //opens the portal to the next map
    }
 
-   static def rectangleStages(EventInstanceManager eim, String property, int[][] areaCombos, Rectangle[] areaRects) {
+   def rectangleStages(EventInstanceManager eim, String property, int[][] areaCombos, Rectangle[] areaRects) {
       String c = eim.getProperty(property)
       if (c == null) {
          c = Math.floor(Math.random() * areaCombos.length)
@@ -64,12 +66,10 @@ class NPC9020001 {
       }
 
       // get player placement
-      MapleCharacter[] players = eim.getPlayers()
       int[] playerPlacement = [0, 0, 0, 0, 0, 0]
-
-      for (int i = 0; i < eim.getPlayerCount(); i++) {
+      for (int i = 0; i < eim.getCharacterIds().size(); i++) {
          for (int j = 0; j < areaRects.length; j++) {
-            if (areaRects[j].contains(players[i].position())) {
+            if (areaRects[j].contains(cm.characterPosition(eim.getCharacterIds()[i]))) {
                playerPlacement[j] += 1
                break
             }
@@ -110,37 +110,30 @@ class NPC9020001 {
             if (eim.getProperty(stage.toString() + "stageclear") != null) {
                if (stage < 5) {
                   cm.sendNext("9020001_PLEASE_HURRY")
-
                   cm.dispose()
                } else {
                   cm.sendNext("9020001_INCREDIBLE")
-
                }
             } else if (curMap == 103000800) {   // stage 1
                if (cm.isEventLeader()) {
-                  int numberOfPasses = eim.getPlayerCount() - 1     // minus leader
-
+                  int numberOfPasses = eim.getCharacterIds().size() - 1     // minus leader
                   if (cm.hasItem(4001008, numberOfPasses)) {
                      cm.sendNext("9020001_CONGRATULATIONS", numberOfPasses)
-
                      clearStage(stage, eim, curMap)
                      eim.gridClear()
                      cm.gainItem(4001008, (short) -numberOfPasses)
                   } else {
                      cm.sendNext("9020001_SHORT_PASSES", numberOfPasses)
-
                   }
                } else {
-                  int data = eim.gridCheck(cm.getPlayer())
+                  int data = eim.gridCheck(cm.getCharacterId())
 
                   if (data == 0) {
                      cm.sendNext("9020001_THANK_YOU")
-
                   } else if (data == -1) {
                      data = Math.floor(Math.random() * stage1Questions.length).intValue() + 1
                      //data will be counted from 1
-                     eim.gridInsert(cm.getPlayer(), data)
-
+                     eim.gridInsert(cm.getCharacterId(), data)
                      String question = stage1Questions[data - 1]
                      cm.sendNext(question)
                   } else {
@@ -148,12 +141,11 @@ class NPC9020001 {
 
                      if (cm.itemQuantity(4001007) == answer) {
                         cm.sendNext("9020001_RIGHT_ANSWER")
-
                         cm.gainItem(4001007, (short) -answer)
                         cm.gainItem(4001008, (short) 1)
-                        eim.gridInsert(cm.getPlayer(), 0)
+                        eim.gridInsert(cm.getCharacterId(), 0)
                      } else {
-                        String question = stage1Questions[eim.gridCheck(cm.getPlayer()) - 1]
+                        String question = stage1Questions[eim.gridCheck(cm.getCharacterId()) - 1]
                         cm.sendNext("I'm sorry, but that is not the right answer!\r\n" + question)
                      }
                   }
@@ -167,12 +159,10 @@ class NPC9020001 {
 
                String nthText = "2nd", nthObject = "ropes", nthVerb = "hang", nthPosition = "hang on the ropes too low"
 
-               if (!eim.isEventLeader(cm.getPlayer())) {
+               if (!eim.isEventLeader(cm.getCharacterId())) {
                   cm.sendOk("9020001_FOLLOW_INSTRUCTIONS")
-
                } else if (eim.getProperty(stgProperty) == null) {
                   cm.sendNext("9020001_WELCOME", nthText, nthObject, nthObject, nthObject, nthVerb, nthPosition, nthObject, nthObject, nthVerb, nthObject, nthVerb)
-
                   int c = Math.floor(Math.random() * stgCombos.length).intValue()
                   eim.setProperty(stgProperty, c.toString())
                } else {
@@ -181,11 +171,9 @@ class NPC9020001 {
                   if (accept) {
                      clearStage(stage, eim, curMap)
                      cm.sendNext("9020001_PLEASE_HURRY")
-
                   } else {
                      eim.showWrongEffect()
                      cm.sendNext("9020001_YOU_HAVE_NOT_FOUND", nthObject, nthObject, nthVerb, nthObject, nthPosition)
-
                   }
                }
 
@@ -197,12 +185,10 @@ class NPC9020001 {
 
                String nthText = "3rd", nthObject = "platforms", nthVerb = "stand", nthPosition = "stand too close to the edges"
 
-               if (!eim.isEventLeader(cm.getPlayer())) {
+               if (!eim.isEventLeader(cm.getCharacterId())) {
                   cm.sendOk("9020001_FOLLOW_INSTRUCTIONS")
-
                } else if (eim.getProperty(stgProperty) == null) {
                   cm.sendNext("9020001_WELCOME", nthText, nthObject, nthObject, nthObject, nthVerb, nthPosition, nthObject, nthObject, nthVerb, nthObject, nthVerb)
-
                   int c = Math.floor(Math.random() * stgCombos.length).toInteger()
                   eim.setProperty(stgProperty, c.toString())
                } else {
@@ -211,11 +197,9 @@ class NPC9020001 {
                   if (accept) {
                      clearStage(stage, eim, curMap)
                      cm.sendNext("9020001_PLEASE_HURRY")
-
                   } else {
                      eim.showWrongEffect()
                      cm.sendNext("9020001_YOU_HAVE_NOT_FOUND", nthObject, nthObject, nthVerb, nthObject, nthPosition)
-
                   }
                }
 
@@ -227,9 +211,8 @@ class NPC9020001 {
 
                String nthText = "4th", nthObject = "barrels", nthVerb = "stand", nthPosition = "stand too close to the edges"
 
-               if (!eim.isEventLeader(cm.getPlayer())) {
+               if (!eim.isEventLeader(cm.getCharacterId())) {
                   cm.sendOk("9020001_FOLLOW_INSTRUCTIONS")
-
                } else if (eim.getProperty(stgProperty) == null) {
                   cm.sendNext("9020001_WELCOME", nthText, nthObject, nthObject, nthObject, nthVerb, nthPosition, nthObject, nthObject, nthVerb, nthObject, nthVerb)
 
@@ -241,39 +224,32 @@ class NPC9020001 {
                   if (accept) {
                      clearStage(stage, eim, curMap)
                      cm.sendNext("9020001_PLEASE_HURRY")
-
                   } else {
                      eim.showWrongEffect()
                      cm.sendNext("9020001_YOU_HAVE_NOT_FOUND", nthObject, nthObject, nthVerb, nthObject, nthPosition)
-
                   }
                }
 
                cm.dispose()
             } else if (curMap == 103000804) {
-               if (eim.isEventLeader(cm.getPlayer())) {
+               if (eim.isEventLeader(cm.getCharacterId())) {
                   if (cm.haveItem(4001008, 10)) {
                      cm.sendNext("9020001_LAST_BONUS_STAGE")
-
                      cm.gainItem(4001008, (short) -10)
-
                      clearStage(stage, eim, curMap)
                      eim.clearPQ()
                   } else {
                      cm.sendNext("9020001_FINAL_STAGE")
-
                   }
                } else {
                   cm.sendNext("9020001_WELCOME_FINAL_STAGE")
-
                }
 
                cm.dispose()
             }
          } else if (status == 1) {
-            if (!eim.giveEventReward(cm.getPlayer())) {
+            if (!eim.giveEventReward(cm.getCharacterId())) {
                cm.sendNext("9020001_MAKE_INVENTORY_ROOM")
-
             } else {
                cm.warp(103000805, "st00")
             }

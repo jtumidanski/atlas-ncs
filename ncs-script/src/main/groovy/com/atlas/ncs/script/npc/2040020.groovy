@@ -20,8 +20,6 @@ class NPC2040020 {
    int stimulatorId = 4130000
 
    def start() {
-      cm.getPlayer().setCS(true)
-
       String selStr = "Hello, and welcome to the Ludibrium Glove Store. How can I help you today?#b"
       String[] options = ["What's a stimulator?", "Create a Warrior glove", "Create a Bowman glove", "Create a Magician glove", "Create a Thief glove",
                           "Create a Warrior glove with a Stimulator", "Create a Bowman glove with a Stimulator", "Create a Magician glove with a Stimulator", "Create a Thief glove with a Stimulator"]

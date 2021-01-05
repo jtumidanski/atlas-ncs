@@ -24,7 +24,7 @@ class NPC9000049 {
             status--
          }
          if (status == 0 && mode == 1) {
-            if (cm.getPlayer().isGM()) {
+            if (cm.isGM()) {
                String event = "CLOSED"
                int
                stage = cm.getClient().getChannelServer().getStoredVar(9000049)
@@ -49,7 +49,7 @@ class NPC9000049 {
                }
                cm.dispose()
             }
-         } else if (status == 1 && cm.getPlayer().isGM()) {
+         } else if (status == 1 && cm.isGM()) {
             if (selection == 0) {
                int stage = cm.getClient().getChannelServer().getStoredVar(9000049)
                if (stage == 0) {

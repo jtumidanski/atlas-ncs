@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9040010 {
@@ -8,7 +9,7 @@ class NPC9040010 {
    int sel = -1
 
    def start() {
-      EventInstanceManager eim = cm.getPlayer().getEventInstance()
+      EventInstanceManager eim = cm.getEventInstance()
       if (eim != null) {
          if (cm.isEventLeader()) {
             if (cm.haveItem(4001024)) {
@@ -23,17 +24,15 @@ class NPC9040010 {
                      points = 100
                   }
 
-                  MapleGuildProcessor.getInstance().gainGP(cm.getGuild(), points)
+                  cm.gainGP(cm.getGuildId(), points)
                }
 
                eim.clearPQ()
             } else {
                cm.sendOk("9040010_FINAL_CHALLENGE")
-
             }
          } else {
             cm.sendOk("9040010_FINAL_CHALLENGE_LEADER")
-
          }
       } else {
          cm.warp(990001100)

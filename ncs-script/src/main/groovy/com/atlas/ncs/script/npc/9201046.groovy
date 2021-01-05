@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201046 {
@@ -29,36 +30,29 @@ class NPC9201046 {
             status--
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
+         EventInstanceManager eim = cm.getEventInstance()
          if (curMap == 670010750) {
             if (cm.haveItem(4031597, 35)) {
                if (cm.canHold(1102101) && eim.getIntProperty("marriedGroup") == 0) {
                   eim.setIntProperty("marriedGroup", 1)
-
                   int baseId = (cm.getGender() == 0) ? 1102101 : 1102104
                   int rnd = Math.floor(Math.random() * 3).intValue()
                   cm.gainItem(baseId + rnd)
-
                   cm.sendNext("9201046_BRAVO")
-
                   cm.gainItem(4031597, (short) -35)
                   cm.gainExp(4000 * cm.getExpRate())
                } else if (eim.getIntProperty("marriedGroup") == 0) {
                   cm.sendNext("9201046_NEED_SLOT_SPACE")
-
                } else {
                   cm.sendNext("9201046_NICELY_DONE")
-
                   cm.gainItem(4031597, (short) -35)
                   cm.gainExp(4000 * cm.getExpRate())
                }
             } else {
                cm.sendNext("9201046_CLAIM_A_PRIZE")
-
             }
          } else {
             cm.sendNext("9201046_HURRY_UP")
-
          }
 
          cm.dispose()

@@ -29,7 +29,7 @@ class NPC2081009 {
             cm.dispose()
          }
       } else if (status == 1) {
-         if (cm.getPlayer().haveItemEquipped(1092041)) {
+         if (cm.haveItemEquipped(1092041)) {
             cm.sendNext("2081009_SHIELD_EQUIPPED")
 
          } else {

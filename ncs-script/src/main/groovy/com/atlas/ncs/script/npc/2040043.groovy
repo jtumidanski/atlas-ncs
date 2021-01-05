@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2040043 {
@@ -33,7 +34,7 @@ class NPC2040043 {
       }
 
       String returnString = ""
-      for (int i = 0; i < positions.length; i++ ) {
+      for (int i = 0; i < positions.length; i++) {
          returnString += positions[i]
          if (i != positions.length - 1) {
             returnString += ","
@@ -46,7 +47,6 @@ class NPC2040043 {
    static def clearStage(int stage, EventInstanceManager eim, int curMap) {
       eim.setProperty(stage + "stageclear", "true")
       eim.showClearEffect(true)
-
       eim.linkToNextStage(stage, "lpq", curMap)  //opens the portal to the next map
    }
 
@@ -62,13 +62,13 @@ class NPC2040043 {
             status--
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
+         EventInstanceManager eim = cm.getEventInstance()
 
          if (eim.getProperty(stage.toString() + "stageclear") != null) {
             cm.sendNext("2040043_GO_TO")
 
          } else {
-            if (eim.isEventLeader(cm.getPlayer())) {
+            if (eim.isEventLeader(cm.getCharacterId())) {
                int state = eim.getIntProperty("statusStg" + stage)
 
                if (state == -1) {           // preamble
@@ -89,8 +89,8 @@ class NPC2040043 {
                   int playersOnCombo = 0
                   MapleMap map = cm.getPlayer().getMap()
                   MapleCharacter[] party = cm.getEventInstance().getPlayers()
-                  for (int i = 0; i < party.size(); i++ ) {
-                     for (int y = 0; y < map.getAreas().size(); y++ ) {
+                  for (int i = 0; i < party.size(); i++) {
+                     for (int y = 0; y < map.getAreas().size(); y++) {
                         if (map.getArea(y).contains(party[i].position())) {
                            playersOnCombo++
                            boxSet[y] = 1
@@ -100,7 +100,7 @@ class NPC2040043 {
                      }
                   }
 
-                  if (playersOnCombo == 5 || cm.getPlayer().gmLevel() > 1) {
+                  if (playersOnCombo == 5 || cm.gmLevel() > 1) {
                      String comboStr = eim.getProperty("stage" + stage + "combo")
                      if (comboStr == null) {
                         comboStr = generateCombo()
@@ -115,7 +115,7 @@ class NPC2040043 {
                            correctCombo = false
                         }
                      }
-                     if (correctCombo || cm.getPlayer().gmLevel() > 1) {
+                     if (correctCombo || cm.gmLevel() > 1) {
                         eim.setProperty("statusStg" + stage, 1)
                         clearStage(stage, eim, curMap)
                         cm.dispose()

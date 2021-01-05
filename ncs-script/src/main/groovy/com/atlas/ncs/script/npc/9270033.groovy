@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9270033 {
@@ -32,16 +33,13 @@ class NPC9270033 {
          if (status == 0) {
             if (!eim.isEventCleared()) {
                cm.sendYesNo("9270033_READY_TO_LEAVE")
-
             } else {
                cm.sendYesNo("9270033_DEFEATED")
-
             }
          } else if (status == 1) {
             if (eim.isEventCleared()) {
-               if (!eim.giveEventReward(cm.getPlayer())) {
+               if (!eim.giveEventReward(cm.getCharacterId())) {
                   cm.sendOk("9270033_MAKE_INVENTORY_ROOM")
-
                   cm.dispose()
                   return
                }

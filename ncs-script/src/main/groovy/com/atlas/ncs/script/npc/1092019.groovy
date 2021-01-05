@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1092019 {
@@ -73,8 +74,8 @@ class NPC1092019 {
                cm.dispose()
             }
          } else if (status == 3) {
-            EventManager em = cm.getEventManager("4jaerial")
-            if (!em.startInstance(cm.getPlayer())) {
+            EventManager em = cm.getEventManager("4jaerial").orElseThrow()
+            if (!em.startInstance(cm.getCharacterId())) {
                cm.sendOk("1092019_ANOTHER_PLAYER_TAKING_CHALLENGE")
             }
 

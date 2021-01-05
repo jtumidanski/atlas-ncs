@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2032002 {
@@ -27,7 +28,7 @@ class NPC2032002 {
             status--
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
+         EventInstanceManager eim = cm.getEventInstance()
 
          if (status == 0) {
             if (!eim.isEventCleared()) {
@@ -64,12 +65,12 @@ class NPC2032002 {
                }
             } else {
                if (eim.getProperty("gotDocuments") == 1) {
-                  if (eim.gridCheck(cm.getPlayer()) == -1) {
+                  if (eim.gridCheck(cm.getCharacterId()) == -1) {
                      if (cm.canHoldAll([2030007, 4031061], [5, 1])) {
                         cm.gainItem(2030007, (short) 5)
                         cm.gainItem(4031061, (short) 1)
 
-                        eim.gridInsert(cm.getPlayer(), 1)
+                        eim.gridInsert(cm.getCharacterId(), 1)
                      } else {
                         cm.sendOk("2032002_MAKE_INVENTORY_ROOM")
                      }
@@ -77,11 +78,11 @@ class NPC2032002 {
                      cm.sendOk("2032002_ALREADY_RECEIVED_SHARE")
                   }
                } else {
-                  if (eim.gridCheck(cm.getPlayer()) == -1) {
+                  if (eim.gridCheck(cm.getCharacterId()) == -1) {
                      if (cm.canHold(4031061, 1)) {
                         cm.gainItem(4031061, (short) 1)
 
-                        eim.gridInsert(cm.getPlayer(), 1)
+                        eim.gridInsert(cm.getCharacterId(), 1)
                      } else {
                         cm.sendOk("2032002_MAKE_INVENTORY_ROOM")
                      }

@@ -1,5 +1,9 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.ExpeditionCharacter
+import com.atlas.ncs.processor.EventManager
+import com.atlas.ncs.processor.Expedition
+import com.atlas.ncs.processor.ExpeditionType
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201113 {
@@ -7,11 +11,10 @@ class NPC9201113 {
    int status = 0
    int sel = -1
 
-   MapleExpedition expedition
-   List<Map.Entry<Integer, String>> expeditionMembers
-   MapleCharacter player
+   Expedition expedition
+   List<ExpeditionCharacter> expeditionMembers
    EventManager em
-   MapleExpeditionType cwkpq = MapleExpeditionType.CWKPQ
+   ExpeditionType cwkpq = ExpeditionType.CWKPQ
    String list = "What would you like to do?#b\r\n\r\n#L1#View current Expedition members#l\r\n#L2#Start the fight!#l\r\n#L3#Stop the expedition.#l"
 
    def start() {
@@ -19,9 +22,8 @@ class NPC9201113 {
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-      player = cm.getPlayer()
       expedition = cm.getExpedition(cwkpq)
-      em = cm.getEventManager("CWKPQ")
+      em = cm.getEventManager("CWKPQ").orElseThrow()
 
       if (mode == -1) {
          cm.dispose()
@@ -32,13 +34,13 @@ class NPC9201113 {
          }
 
          if (status == 0) {
-            if (player.getLevel() < cwkpq.getMinLevel() || player.getLevel() > cwkpq.getMaxLevel()) {
+            if (cm.getLevel() < cwkpq.getMinLevel() || cm.getLevel() > cwkpq.getMaxLevel()) {
                cm.sendOk("9201113_DO_NOT_MEET_CRITERIA")
                cm.dispose()
             } else if (expedition == null) { //Start an expedition
                cm.sendSimple("9201113_PARTY_QUEST_INFO", em.getProperty("party"))
                status = 1
-            } else if (expedition.isLeader(player)) { //If you're the leader, manage the expedition
+            } else if (expedition.isLeader(cm.getCharacterId())) { //If you're the leader, manage the expedition
                if (expedition.isInProgress()) {
                   cm.sendOk("9201113_EXPEDITION_ALREADY_IN_PROGRESS")
                   cm.dispose()
@@ -47,16 +49,16 @@ class NPC9201113 {
                   status = 2
                }
             } else if (expedition.isRegistering()) { //If the expedition is registering
-               if (expedition.contains(player)) { //If you're in it but it hasn't started, be patient
-                  cm.sendOk("9201113_ALREADY_REGISTERED", expedition.getLeader().getName())
+               if (expedition.contains(cm.getCharacterId())) { //If you're in it but it hasn't started, be patient
+                  cm.sendOk("9201113_ALREADY_REGISTERED", expedition.getLeaderName())
                   cm.dispose()
                } else { //If you aren't in it, you're going to get added
-                  cm.sendOk(expedition.addMember(cm.getPlayer()))
+                  cm.sendOk(expedition.addMember(cm.getCharacterId()))
                   cm.dispose()
                }
             } else if (expedition.isInProgress()) { //Only if the expedition is in progress
-               if (expedition.contains(player)) { //If you're registered, warp you in
-                  em.getInstance("CWKPQ" + player.getClient().getChannel()).registerPlayer(player)
+               if (expedition.contains(cm.getCharacterId())) { //If you're registered, warp you in
+                  em.getInstance("CWKPQ" + cm.getChannelId()).registerPlayer(cm.getCharacterId())
                   cm.dispose()
                } else { //If you're not in by now, tough luck
                   cm.sendOk("9201113_ANOTHER_EXPEDITION")
@@ -101,9 +103,9 @@ class NPC9201113 {
                   return
                }
                String text = "The following members make up your expedition (Click on them to expel them):\r\n"
-               text += "\r\n\t\t1." + expedition.getLeader().getName()
+               text += "\r\n\t\t1." + expedition.getLeaderName()
                for (int i = 1; i < size; i++) {
-                  text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).getValue() + "#l\n"
+                  text += "\r\n#b#L" + (i + 1) + "#" + (i + 1) + ". " + expeditionMembers.get(i).name() + "#l\n"
                }
                cm.sendSimple(text)
                status = 6
@@ -120,7 +122,7 @@ class NPC9201113 {
 
                status = 4
             } else if (selection == 3) {
-               MessageBroadcaster.getInstance().sendMapServerNotice(player.getMap(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("EXPEDITION_ENDED_BY").with(expedition.getLeader().getName()))
+               cm.sendBlueTextToMap("EXPEDITION_ENDED_BY", expedition.getLeaderName())
                cm.endExpedition(expedition)
                cm.sendOk("9201113_EXPEDITION_ENDED")
                cm.dispose()
@@ -132,8 +134,8 @@ class NPC9201113 {
                return
             }
 
-            em.setProperty("leader", player.getName())
-            em.setProperty("channel", player.getClient().getChannel())
+            em.setProperty("leader", cm.getCharacterName())
+            em.setProperty("channel", cm.getChannelId())
             if (!em.startInstance(expedition)) {
                cm.sendOk("9201113_ANOTHER_EXPEDITION")
                cm.dispose()
@@ -143,9 +145,9 @@ class NPC9201113 {
             cm.dispose()
          } else if (status == 6) {
             if (selection > 0) {
-               Map.Entry<Integer, String> banned = expeditionMembers.get(selection - 1)
+               ExpeditionCharacter banned = expeditionMembers.get(selection - 1)
                expedition.ban(banned)
-               cm.sendOk("9201113_YOU_HAVE_BANNED", banned.getValue())
+               cm.sendOk("9201113_YOU_HAVE_BANNED", banned.name())
                cm.dispose()
             } else {
                cm.sendSimple(list)

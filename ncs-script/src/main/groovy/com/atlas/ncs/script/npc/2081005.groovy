@@ -10,7 +10,7 @@ class NPC2081005 {
    int price = 100000
 
    def start() {
-      if (!(isTransformed(cm.getPlayer()) || cm.haveItem(4001086))) {
+      if (!(isTransformed(cm.getCharacterId()) || cm.haveItem(4001086))) {
          cm.sendOk("2081005_HORNTAIL_CAVE")
 
          cm.dispose()
@@ -21,7 +21,7 @@ class NPC2081005 {
 
    }
 
-   static def isTransformed(MapleCharacter ch) {
+   static def isTransformed(int characterId) {
       return ch.getBuffSource(MapleBuffStat.MORPH) == 2210003
    }
 

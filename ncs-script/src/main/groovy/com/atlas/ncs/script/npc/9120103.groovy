@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9120103 {
    NPCConversationManager cm
@@ -30,11 +31,11 @@ class NPC9120103 {
                faceNew = []
                if (cm.getGender() == 0) {
                   for (int i = 0; i < maleFace.length; i++) {
-                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, maleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, maleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                } else {
                   for (int i = 0; i < femaleFace.length; i++) {
-                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, femaleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     faceNew = ScriptUtils.pushItemIfTrue(faceNew, femaleFace[i] + cm.getFace() % 1000 - (cm.getFace() % 100), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
                cm.sendYesNo("9120103_REGULAR_COUPON_CONFIRM")
@@ -49,7 +50,7 @@ class NPC9120103 {
                   current = cm.getFace() % 100 + 21000
                }
                int[] temp = [current, current + 100, current + 200, current + 300, current + 400, current + 500, current + 700]
-               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                cm.sendYesNo("9120103_REGULAR_LENS_COUPON_CONFIRM")
 
             }

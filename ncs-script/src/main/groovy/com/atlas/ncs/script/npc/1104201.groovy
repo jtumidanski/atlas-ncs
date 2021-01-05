@@ -27,9 +27,9 @@ class NPC1104201 {
          }
 
          if (status == 0) {
-            if (!(cm.isQuestCompleted(20407) || cm.isQuestStarted(20407) && cm.getQuestProgressInt(20407, 9001010) != 0) && cm.getMap().countMonster(9001010) == 0 && cm.getMap().getNPCById(1104002) == null) {
+            if (!(cm.isQuestCompleted(20407) || cm.isQuestStarted(20407) && cm.getQuestProgressInt(20407, 9001010) != 0) && cm.getMapMonsterCount(9001010) == 0 && cm.getNpcById(1104002).isEmpty()) {
                cm.sendOk("1104201_SHES_ALREADY_HERE")
-               MapleNPCFactory.spawnNpc(1104002, new Point(850, 0), cm.getMap())
+               cm.spawnNpc(1104002, 850, 0)
             } else {
                cm.sendOk("...")
             }

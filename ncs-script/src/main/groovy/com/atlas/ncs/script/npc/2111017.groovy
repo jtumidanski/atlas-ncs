@@ -32,7 +32,6 @@ class NPC2111017 {
 
                if (progress == 3) {
                   cm.sendGetText("2111017_SECRET_COMPARTMENT_SHOWS_UP")
-
                } else if (progress == 0) {
                   cm.setQuestProgress(23339, 1, 1)
                   cm.dispose()
@@ -57,7 +56,6 @@ class NPC2111017 {
                cm.dispose()
             } else {
                cm.sendOk("2111017_WRONG")
-
                cm.dispose()
             }
          }

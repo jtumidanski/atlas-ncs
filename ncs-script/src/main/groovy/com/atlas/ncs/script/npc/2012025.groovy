@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2012025 {
@@ -9,7 +10,7 @@ class NPC2012025 {
 
    def start() {
       if (cm.haveItem(4031576)) {
-         EventManager em = cm.getEventManager("Genie")
+         EventManager em = cm.getEventManager("Genie").orElseThrow()
          if (em.getProperty("entry") == "true") {
             cm.sendYesNo("2012025_DO_YOU_STILL_WISH_TO_BOARD")
          } else {

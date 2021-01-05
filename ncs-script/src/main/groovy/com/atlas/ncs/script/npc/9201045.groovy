@@ -1,6 +1,9 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
+
+import java.awt.Rectangle
 
 class NPC9201045 {
    NPCConversationManager cm
@@ -25,7 +28,6 @@ class NPC9201045 {
 
    static def clearStage(int stage, EventInstanceManager eim, int curMap) {
       eim.setProperty(stage + "stageclear", "true")
-
       eim.showClearEffect(true)
       eim.linkToNextStage(stage, "apq", curMap)  //opens the portal to the next map
    }
@@ -49,11 +51,10 @@ class NPC9201045 {
             status--
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
+         EventInstanceManager eim = cm.getEventInstance()
          if (eim.getProperty(stage.toString() + "stageclear") != null) {
             if (stage < 5) {
                cm.sendNext("9201045_ALREADY_OPEN")
-
             } else if (stage == 5) {
                eim.warpEventTeamToMapSpawnPoint(670010700, 0)
             } else {
@@ -63,18 +64,16 @@ class NPC9201045 {
                      eim.warpEventTeam(670010800)
                   } else {
                      eim.setIntProperty("marriedGroup", 0)
-
                      eim.restartEventTimer(2 * 60 * 1000)
                      eim.warpEventTeamToMapSpawnPoint(670010750, 1)
                   }
                } else {
                   cm.sendNext("9201045_LEADERS_COMMAND")
-
                }
             }
          } else {
             if (stage != 6) {
-               if (eim.isEventLeader(cm.getPlayer())) {
+               if (eim.isEventLeader(cm.getCharacterId())) {
                   int state = eim.getIntProperty("statusStg" + stage)
 
                   if (state == -1) {           // preamble
@@ -98,25 +97,22 @@ class NPC9201045 {
                            }
 
                            cm.sendNext("9201045_WELL_DONE")
-
-                           MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("9201045_TIME_RUNS_SHORT"))
+                           cm.sendPinkTextToMap("9201045_TIME_RUNS_SHORT")
                            clearStage(stage, eim, curMap)
                         } else {
                            cm.sendNext("9201045_DID_YOU_NOT_PAY_HEED")
-
                         }
 
                      } else if (stage == 5) {
                         boolean pass = true
 
                         if (eim.isEventTeamTogether()) {
-                           MapleCharacter[] party = cm.getEventInstance().getPlayers()
-                           Rectangle area = cm.getMap().getArea(2)
+                           List<Integer> party = cm.getEventInstance().getCharacterIds()
+                           Rectangle area = cm.getMapArea(2)
 
                            for (int i = 0; i < party.size(); i++) {
-                              MapleCharacter chr = party[i]
-
-                              if (chr.isAlive() && !area.contains(chr.position())) {
+                              int characterId = party[i]
+                              if (cm.characterIsAlive(characterId) && !area.contains(cm.characterPosition(characterId))) {
                                  pass = false
                                  break
                               }
@@ -136,28 +132,23 @@ class NPC9201045 {
                               }
 
                               cm.sendNext("9201045_ALREADY_GATHERED")
-
-
-                              MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("9201045_BOSS_FIGHT"))
+                              cm.sendPinkTextToMap("9201045_BOSS_FIGHT")
                               clearStage(stage, eim, curMap)
                            } else {
                               cm.sendNext("9201045_I_CAN_TELL_IT")
-
                            }
                         } else {
                            cm.sendNext("9201045_TEAM_NOT_GATHERED")
-
                         }
                      }
                   }
                } else {
                   cm.sendNext("9201045_PARTY_LEADER_MUST_TALK")
-
                }
             } else {
-               Rectangle area = cm.getMap().getArea(0)
-               if (area.contains(cm.getPlayer().position())) {
-                  if (cm.getPlayer().isAlive()) {
+               Rectangle area = cm.getMapArea(0)
+               if (area.contains(cm.characterPosition(cm.getCharacterId()))) {
+                  if (cm.characterIsAlive(cm.getCharacterId())) {
                      cm.warp(670010700, "st01")
                   } else {
                      cm.sendNext("9201045_STAND_BACK")
@@ -168,17 +159,13 @@ class NPC9201045 {
                      if (cm.haveItem(4031594, 1)) {
                         cm.gainItem(4031594, (short) -1)
                         cm.sendNext("9201045_CONGRATULATIONS")
-
-
                         clearStage(stage, eim, curMap)
                         eim.clearPQ()
                      } else {
                         cm.sendNext("9201045_HOW_IS_IT")
-
                      }
                   } else {
                      cm.sendNext("9201045_PARTY_LEADER_MUST_TALK")
-
                   }
                }
             }

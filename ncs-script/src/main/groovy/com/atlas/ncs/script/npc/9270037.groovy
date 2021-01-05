@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9270037 {
    NPCConversationManager cm
@@ -30,11 +31,11 @@ class NPC9270037 {
 
             if (cm.getGender() == 0) {
                for (int i = 0; i < maleHair.length; i++) {
-                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, maleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
             } else {
                for (int i = 0; i < femaleHair.length; i++) {
-                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                  hairNew = ScriptUtils.pushItemIfTrue(hairNew, femaleHair[i] + (cm.getHair() % 10).intValue(), { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                }
             }
 
@@ -45,7 +46,7 @@ class NPC9270037 {
             hairColor = []
             int current = (cm.getHair() / 10).intValue() * 10
             for (int i = 0; i < 8; i++) {
-               hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               hairColor = ScriptUtils.pushItemIfTrue(hairColor, current + i, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
             }
             cm.sendYesNo("9270037_REG_CONFIRM_2")
 

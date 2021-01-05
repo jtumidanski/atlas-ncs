@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201108 {
@@ -27,20 +28,16 @@ class NPC9201108 {
                   cm.gainItem(4001258, (short) 1)
                   cm.sendOk("9201108_GOOD_JOB")
 
-
                   stgStatus += (1 << jobNiche)
                   eim.setIntProperty("glpq5_room", stgStatus)
                } else {
                   cm.sendOk("9201108_MAKE_ETC_ROOM")
-
                }
             } else {
                cm.sendOk("9201108_ALREADY_BEEN_RETRIEVED")
-
             }
          } else {
             cm.sendOk("9201108_ELIMINATE_ALL")
-
          }
          cm.dispose()
       }

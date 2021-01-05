@@ -26,7 +26,7 @@ class NPC9201133 {
       if (status == 0) {
          if (!inHuntingGround) {
             if (cm.isQuestStarted(quest)) {
-               if (!cm.getPlayer().haveItemEquipped(1003036)) {
+               if (!cm.haveItemEquipped(1003036)) {
                   cm.sendOk("9201133_WEIRD_STENCH")
                   cm.dispose()
                   return

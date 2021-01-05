@@ -1,7 +1,9 @@
 package com.atlas.ncs;
 
+import com.atlas.cos.command.ChangeMapCommand;
 import com.atlas.csrv.command.EnableActionsCommand;
 import com.atlas.kafka.KafkaProducerFactory;
+import com.atlas.ncs.event.producer.CharacterExperienceGainProducer;
 import com.atlas.ncs.processor.TopicDiscoveryProcessor;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -36,6 +38,10 @@ public class EventProducerRegistry {
    private EventProducerRegistry() {
       producerMap = new HashMap<>();
       producerMap.put(EnableActionsCommand.class,
+            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
+      producerMap.put(ChangeMapCommand.class,
+            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
+      producerMap.put(CharacterExperienceGainProducer.class,
             KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
       topicMap = new HashMap<>();
    }

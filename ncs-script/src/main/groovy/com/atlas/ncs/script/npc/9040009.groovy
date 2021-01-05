@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9040009 {
@@ -16,7 +17,6 @@ class NPC9040009 {
    static def clearStage(int stage, EventInstanceManager eim) {
       eim.setProperty("stage" + stage + "clear", "true")
       eim.showClearEffect(true)
-
       eim.giveEventPlayersStageReward(stage)
    }
 
@@ -34,13 +34,12 @@ class NPC9040009 {
             status--
          }
 
-         EventInstanceManager eim = cm.getPlayer().getEventInstance()
+         EventInstanceManager eim = cm.getEventInstance()
          if (eim == null) {
             cm.warp(990001100)
          } else {
             if (eim.getProperty("stage1clear") == "true") {
                cm.sendOk("9040009_EXCELLENT_WORK")
-
                cm.dispose()
                return
             }
@@ -57,50 +56,43 @@ class NPC9040009 {
 
                      if (stage == 1) {
                         cm.sendOk("9040009_IN_THIS_CHALLENGE")
-
                      } else {
                         cm.sendOk("9040009_GOOD_LUCK")
-
                      }
                   } else if (eim.getProperty("stage1status") == "active") {
                      stage = (eim.getProperty("stage1phase")).toInteger()
 
                      if (eim.getProperty("stage1combo") == eim.getProperty("stage1guess")) {
                         if (stage == 3) {
-                           cm.getPlayer().getMap().getReactorByName("statuegate").forceHitReactor((byte) 1)
+                           cm.forceHitReactor("statuegate", (byte) 1)
                            clearStage(1, eim)
-                           MapleGuildProcessor.getInstance().gainGP(cm.getGuild(), 15)
-
+                           cm.gainGP(cm.getGuildId(), 15)
                            cm.sendOk("9040009_EXCELLENT_WORK")
-
                         } else {
                            cm.sendOk("9040009_VERY_GOOD")
-
                            eim.setProperty("stage1phase", stage + 1)
-                           MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("GATE_KEEPER_TEST_PART_COMPLETE").with(stage))
+                           cm.sendPinkTextToMap("GATE_KEEPER_TEST_PART_COMPLETE", stage)
                         }
 
                      } else {
                         eim.showWrongEffect()
                         cm.sendOk("9040009_FAILED")
-
-                        MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("GATE_KEEPER_TEST_FAILED"))
+                        cm.sendPinkTextToMap("GATE_KEEPER_TEST_FAILED")
                         eim.setProperty("stage1phase", "1")
                      }
                      eim.setProperty("stage1status", "waiting")
                      cm.dispose()
                   } else {
                      cm.sendOk("9040009_PLEASE_WAIT")
-
                      cm.dispose()
                   }
                } else if (status == 1) {
                   int[] reactors = getReactors()
                   int[] combo = makeCombo(reactors)
-                  MessageBroadcaster.getInstance().sendMapServerNotice(cm.getPlayer().getMap(), ServerNoticeType.PINK_TEXT, I18nMessage.from("GATE_KEEPER_TEST_COMBINATION_REVEALED"))
+                  cm.sendPinkTextToMap("GATE_KEEPER_TEST_COMBINATION_REVEALED")
                   int delay = 5000
                   for (int i = 0; i < combo.length; i++) {
-                     cm.getPlayer().getMap().getReactorByOid(combo[i]).delayedHitReactor(cm.getClient(), delay + 3500 * i)
+                     cm.delayedHitReactor(combo[i], delay + 3500 * i)
                   }
                   eim.setProperty("stage1status", "display")
                   eim.setProperty("stage1combo", "")
@@ -108,7 +100,6 @@ class NPC9040009 {
                }
             } else {
                cm.sendOk("9040009_LEADER_MUST_SPEAK")
-
                cm.dispose()
             }
          }

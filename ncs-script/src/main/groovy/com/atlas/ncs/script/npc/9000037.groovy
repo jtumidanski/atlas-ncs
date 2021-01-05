@@ -1,5 +1,7 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.PartyCharacter
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9000037 {
@@ -15,15 +17,15 @@ class NPC9000037 {
    }
 
    def isFinalBossDone() {
-      return cm.getMapId() >= 970032700 && cm.getMapId() < 970032800 && cm.getMap().getMonsters().isEmpty()
+      return cm.getMapId() >= 970032700 && cm.getMapId() < 970032800 && cm.getMapMonsterCount() == 0
    }
 
-   static def detectTeamLobby(MaplePartyCharacter[] team) {
+   static def detectTeamLobby(PartyCharacter[] team) {
       int midLevel = 0
 
       for (int i = 0; i < team.size(); i++) {
-         MaplePartyCharacter player = team[i]
-         midLevel += player.getLevel()
+         PartyCharacter player = team[i]
+         midLevel += player.level()
       }
       midLevel = Math.floor(midLevel / team.size()).intValue()
 
@@ -78,34 +80,27 @@ class NPC9000037 {
 
                if (cm.isEventLeader()) {
                   cm.sendOk("9000037_ASTOUNDING_FEAT")
-
                } else {
                   cm.sendOk("9000037_PRIZE")
-
                }
             } else if (state == 2) {
                if (cm.isEventLeader()) {
-                  if (cm.getPlayer().getEventInstance().isEventTeamTogether()) {
+                  if (cm.getEventInstance().isEventTeamTogether()) {
                      cm.sendYesNo("9000037_READY_TO_PROCEED")
-
                   } else {
                      cm.sendOk("9000037_PLEASE_WAIT")
-
                      cm.dispose()
                   }
                } else {
                   cm.sendOk("9000037_PARTY_LEADER_SIGNAL")
-
                   cm.dispose()
                }
             } else if (state == 1) {
                cm.sendYesNo("9000037_ABANDON")
-
             } else {
-               em = cm.getEventManager("BossRushPQ")
+               em = cm.getEventManager("BossRushPQ").orElseThrow()
                if (em == null) {
                   cm.sendOk("9000037_ENCOUNTERED_ERROR")
-
                   cm.dispose()
                   return
                } else if (cm.isUsingOldPqNpcStyle()) {
@@ -113,14 +108,12 @@ class NPC9000037 {
                   return
                }
 
-               cm.sendSimple("9000037_PARTY_QUEST_INFO", em.getProperty("party"), cm.getPlayer().isRecvPartySearchInviteEnabled() ? "disable" : "enable")
-
+               cm.sendSimple("9000037_PARTY_QUEST_INFO", em.getProperty("party"), cm.isRecvPartySearchInviteEnabled() ? "disable" : "enable")
             }
          } else if (status == 1) {
             if (state == 3) {
-               if (!cm.getPlayer().getEventInstance().giveEventReward(cm.getPlayer(), 6)) {
+               if (!cm.getEventInstance().giveEventReward(cm.getCharacterId(), 6)) {
                   cm.sendOk("9000037_ARRANGE_SLOT")
-
                   cm.dispose()
                   return
                }
@@ -129,10 +122,9 @@ class NPC9000037 {
                cm.dispose()
             } else if (state == 2) {
                int restSpot = ((cm.getMapId() - 1) % 5) + 1
-               cm.getPlayer().getEventInstance().restartEventTimer(restSpot * 4 * 60000)
+               cm.getEventInstance().restartEventTimer(restSpot * 4 * 60000)
                // adds (restSpot number * 4) minutes
-               cm.getPlayer().getEventInstance().warpEventTeam(970030100 + cm.getEventInstance().getIntProperty("lobby") + (500 * restSpot))
-
+               cm.getEventInstance().warpEventTeam(970030100 + cm.getEventInstance().getIntProperty("lobby") + (500 * restSpot))
                cm.dispose()
             } else if (state == 1) {
                cm.warp(970030000)
@@ -141,41 +133,35 @@ class NPC9000037 {
                if (selection == 0) {
                   if (cm.getParty().isEmpty()) {
                      cm.sendOk("9000037_MUST_BE_IN_PARTY")
-
                      cm.dispose()
-                  } else if (!cm.isLeader()) {
+                  } else if (!cm.isPartyLeader()) {
                      cm.sendOk("9000037_PARTY_LEADER_MUST_TALK")
-
                      cm.dispose()
                   } else {
-                     MaplePartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
+                     PartyCharacter[] eli = em.getEligibleParty(cm.getParty().orElseThrow())
                      if (eli.size() > 0) {
                         int lobby = detectTeamLobby(eli), i
                         for (i = lobby; i < 8; i++) {
-                           if (em.startInstance(i, cm.getParty().orElseThrow(), cm.getPlayer().getMap(), 1)) {
+                           if (em.startInstance(i, cm.getParty().orElseThrow(), cm.getMapId(), 1)) {
                               break
                            }
                         }
 
                         if (i == 8) {
                            cm.sendOk("9000037_ANOTHER_PARTY")
-
                         }
                      } else {
                         cm.sendOk("9000037_PARTY_REQUIREMENTS")
-
                      }
 
                      cm.dispose()
                   }
                } else if (selection == 1) {
-                  boolean psState = cm.getPlayer().toggleRecvPartySearchInvite()
+                  boolean psState = cm.toggleRecvPartySearchInvite()
                   cm.sendOk("9000037_PARTY_SEARCH_STATUS", (psState ? "enabled" : "disabled"))
-
                   cm.dispose()
                } else {
                   cm.sendOk("9000037_PARTY_QUEST_INFO_2")
-
                   cm.dispose()
                }
             }

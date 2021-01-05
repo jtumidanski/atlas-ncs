@@ -8,7 +8,7 @@ class NPC9900001 {
    int sel = -1
 
    def start() {
-      if (cm.getPlayer().gmLevel() > 1) {
+      if (cm.gmLevel() > 1) {
          cm.sendYesNo("9900001_LEVEL_UP")
 
       } else {
@@ -18,8 +18,8 @@ class NPC9900001 {
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-      if (mode > 0 && cm.getPlayer().gmLevel() > 1) {
-         cm.getPlayer().levelUp(true)
+      if (mode > 0 && cm.gmLevel() > 1) {
+         cm.levelUp(true)
       }
       cm.dispose()
    }

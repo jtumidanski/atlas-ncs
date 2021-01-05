@@ -7,6 +7,7 @@ import com.atlas.ncs.processor.NPCConversationManager
 	Map(s): 		Ludibrium: Ludibrium
 	Description: 	
 */
+
 class NPC2040046 {
    NPCConversationManager cm
    int status = 0
@@ -23,12 +24,10 @@ class NPC2040046 {
       } else {
          if (status == 0 && mode == 0) {
             cm.sendNext("2040046_I_SEE")
-
             cm.dispose()
             return
          } else if (status >= 1 && mode == 0) {
             cm.sendNext("2040046_NOT_AS_MANY_FRIENDS")
-
             cm.dispose()
             return
          }
@@ -39,26 +38,22 @@ class NPC2040046 {
          }
          if (status == 0) {
             cm.sendYesNo("2040046_I_HOPE_I_CAN")
-
          } else if (status == 1) {
             cm.sendYesNo("2040046_ALRIGHT")
-
          } else if (status == 2) {
-            int capacity = cm.getPlayer().getBuddyList().capacity()
+            int capacity = cm.getBuddyListCapacity()
             if (capacity >= 50 || cm.getMeso() < 240000) {
                cm.sendNext("2040046_ARE_YOU_SURE")
-
                cm.dispose()
             } else {
                int newCapacity = capacity + 5
-               BuddyListProcessor.getInstance().updateCapacity(cm.getPlayer(), newCapacity, {
+               boolean status = cm.updateBuddyCapacity(newCapacity)
+               if (status) {
                   cm.gainMeso(-240000)
                   cm.sendOk("2040046_SUCCESS")
-
-               }, {
+               } else {
                   cm.sendOk("2040046_ISSUE_INCREASING_SIZE")
-
-               })
+               }
                cm.dispose()
             }
          }

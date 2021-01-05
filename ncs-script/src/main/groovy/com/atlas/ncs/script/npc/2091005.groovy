@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.Party
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2091005 {
@@ -24,7 +25,7 @@ class NPC2091005 {
          return
       }
 
-      belt_points = YamlConfig.config.server.USE_FAST_DOJO_UPGRADE ? [10, 90, 200, 460, 850] : [200, 1800, 4000, 9200, 17000]
+      belt_points = cm.getConfiguration().fastDojo() ? [10, 90, 200, 460, 850] : [200, 1800, 4000, 9200, 17000]
 
       belt_on_inventory = []
       for (int i = 0; i < belts.length; i++) {
@@ -35,7 +36,7 @@ class NPC2091005 {
 
    def action(Byte mode, Byte type, Integer selection) {
       if (mode == -1) {
-         cm.getPlayer().setDojoStage(dojoWarp)
+         cm.setDojoStage(dojoWarp)
          cm.dispose()
       } else {
          if (mode == 0) {
@@ -56,14 +57,11 @@ class NPC2091005 {
             } else if (cm.getLevel() >= 25) {
                if (cm.getMapId() == 925020001) {
                   cm.sendSimple("2091005_WANT_TO_CHALLENGE")
-
                } else {
                   cm.sendYesNo("2091005_GIVING_UP_LONG")
-
                }
             } else {
                cm.sendOk("2091005_MOCKING_MASTER")
-
                cm.dispose()
             }
          } else {
@@ -73,15 +71,13 @@ class NPC2091005 {
                      selectedMenu = selection
                   }
                   if (selectedMenu == 0) { //I want to challenge him alone.
-                     if (!cm.getPlayer().hasEntered("dojang_Msg") && !cm.getPlayer().getFinishedDojoTutorial()) {
+                     if (!cm.getPlayer().hasEntered("dojang_Msg") && !cm.hasFinishedDojoTutorial()) {
                         //kind of hackish...
                         if (status == 1) {
                            cm.sendYesNo("2091005_IS_THIS_YOUR_FIRST_TIME")
-
                         } else if (status == 2) {
                            if (mode == 0) {
                               cm.sendNext("2091005_GO_BACK_HOME")
-
                               cm.dispose()
                            } else {
                               int avDojo = cm.getClient().getChannelServer().ingressDojo(true, 0)
@@ -89,14 +85,11 @@ class NPC2091005 {
                               if (avDojo < 0) {
                                  if (avDojo == -1) {
                                     cm.sendOk("2091005_ALL_DOJOS_USED")
-
                                  } else {
                                     cm.sendOk("2091005_PARTY_ALREADY_USING_DOJO")
-
                                  }
                               } else {
                                  cm.getClient().getChannelServer().getMapFactory().getMap(925020010 + avDojo).resetMapObjects()
-
                                  cm.resetDojoEnergy()
                                  cm.warp(925020010 + avDojo, 0)
                               }
@@ -104,25 +97,22 @@ class NPC2091005 {
                               cm.dispose()
                            }
                         }
-                     } else if (cm.getPlayer().getDojoStage() > 0) {
-                        dojoWarp = cm.getPlayer().getDojoStage()
-                        cm.getPlayer().setDojoStage(0)
+                     } else if (cm.getDojoStage() > 0) {
+                        dojoWarp = cm.getDojoStage()
+                        cm.setDojoStage(0)
                         int stageWarp = ((dojoWarp / 6) | 0) * 5
                         cm.sendYesNo("2091005_LAST_TIME", stageWarp)
-
                      } else {
                         int avDojo = cm.getClient().getChannelServer().ingressDojo(false, dojoWarp)
 
                         if (avDojo < 0) {
                            if (avDojo == -1) {
                               cm.sendOk("2091005_ALL_DOJOS_USED")
-
                            } else {
                               cm.sendOk("2091005_PARTY_ALREADY_USING_DOJO")
-
                            }
 
-                           cm.getPlayer().setDojoStage(dojoWarp)
+                           cm.setDojoStage(dojoWarp)
                         } else {
                            int warpDojoMap = 925020000 + (dojoWarp + 1) * 100 + avDojo
                            cm.getClient().getChannelServer().resetDojoMap(warpDojoMap)
@@ -134,17 +124,15 @@ class NPC2091005 {
                         cm.dispose()
                      }
                   } else if (selectedMenu == 1) { //I want to challenge him with a party.
-                     Optional<MapleParty> party = cm.getPlayer().getParty()
+                     Optional<Party> party = cm.getParty()
                      if (party.isEmpty()) {
                         cm.sendNext("2091005_WHERE_DO_YOU_THINK")
-
                         cm.dispose()
                         return
                      }
 
-                     if (party.get().getLeader().getId() != cm.getPlayer().getId()) {
+                     if (party.get().leaderId() != cm.getCharacterId()) {
                         cm.sendNext("2091005_WHERE_DO_YOU_THINK")
-
                         cm.dispose()
                      }
 
@@ -155,7 +143,6 @@ class NPC2091005 {
 
                      else if (!isBetween(party.get(), 30)) {
                         cm.sendNext("2091005_LEVEL_RANGE_TOO_BROAD")
-
                         cm.dispose()
                      } else {
                         int avDojo = cm.getClient().getChannelServer().ingressDojo(true, cm.getParty().get(), 0)
@@ -163,10 +150,8 @@ class NPC2091005 {
                         if (avDojo < 0) {
                            if (avDojo == -1) {
                               cm.sendOk("2091005_ALL_DOJOS_USED")
-
                            } else {
                               cm.sendOk("2091005_PARTY_ALREADY_USING_DOJO")
-
                            }
                         } else {
                            cm.getClient().getChannelServer().resetDojoMap(925030100 + avDojo)
@@ -181,7 +166,6 @@ class NPC2091005 {
                   } else if (selectedMenu == 2) { //I want to receive a belt.
                      if (!cm.canHold(belts[0])) {
                         cm.sendNext("2091005_EQUIP_INVENTORY_ROOM_NEEDED")
-
                         cm.dispose()
                         return
                      }
@@ -190,7 +174,7 @@ class NPC2091005 {
                         return
                      }
                      if (status == 1) {
-                        String selStr = "You have #b" + cm.getPlayer().getDojoPoints() + "#k training points. Master prefers those with great talent. If you obtain more points than the average, you can receive a belt depending on your score.\r\n"
+                        String selStr = "You have #b" + cm.getDojoPoints() + "#k training points. Master prefers those with great talent. If you obtain more points than the average, you can receive a belt depending on your score.\r\n"
                         for (int i = 0; i < belts.length; i++) {
                            if (belt_on_inventory[i]) {
                               selStr += "\r\n#L" + i + "##i" + belts[i] + "# #t" + belts[i] + "# (Already on inventory)"
@@ -209,7 +193,7 @@ class NPC2091005 {
 
                         if (selection > 0 && !belt_on_inventory[selection - 1]) {
                            sendBeltRequirements(belt, oldBelt, hasOldBelt, level, points)
-                        } else if (cm.getPlayer().getDojoPoints() >= points) {
+                        } else if (cm.getDojoPoints() >= points) {
                            if (selection > 0 && !hasOldBelt) {
                               sendBeltRequirements(belt, oldBelt, hasOldBelt, level, points)
                            } else if (cm.getLevel() > level) {
@@ -217,7 +201,7 @@ class NPC2091005 {
                                  cm.gainItem(oldBelt, (short) -1)
                               }
                               cm.gainItem(belt, (short) 1)
-                              cm.getPlayer().setDojoPoints(cm.getPlayer().getDojoPoints() - points)
+                              cm.setDojoPoints(cm.getDojoPoints() - points)
                               cm.sendNext("2091005_BELT_AWARD", belt, belt)
 
                            } else {
@@ -232,41 +216,35 @@ class NPC2091005 {
                   } else if (selectedMenu == 3) { //I want to reset my training points.
                      if (status == 1) {
                         cm.sendYesNo("2091005_RESET_INFO")
-
                      } else if (status == 2) {
                         if (mode == 0) {
                            cm.sendNext("2091005_GATHER_YOURSELF")
-
                         } else {
-                           cm.getPlayer().setDojoPoints(0)
+                           cm.setDojoPoints(0)
                            cm.sendNext("2091005_RESET_SUCCESS")
-
                         }
                         cm.dispose()
                      }
                   } else if (selectedMenu == 4) { //I want to receive a medal.
-                     if (status == 1 && cm.getPlayer().getVanquisherStage() <= 0) {
+                     if (status == 1 && cm.getVanquisherStage() <= 0) {
                         cm.sendYesNo("2091005_ATTEMPT_THE_MEDAL")
-
-                     } else if (status == 2 || cm.getPlayer().getVanquisherStage() > 0) {
+                     } else if (status == 2 || cm.getVanquisherStage() > 0) {
                         if (mode == 0) {
                            cm.sendNext("2091005_THAT_IS_FINE")
-
                         } else {
-                           if (cm.getPlayer().getDojoStage() > 37) {
+                           if (cm.getDojoStage() > 37) {
                               cm.sendNext("2091005_COMPLETED_ALL_MEDAL_CHALLENGES")
+                           } else if (cm.getVanquisherKills() < 100 && cm.getVanquisherStage() > 0) {
+                              cm.sendNext("2091005_STILL_NEED", (100 - cm.getVanquisherKills()))
 
-                           } else if (cm.getPlayer().getVanquisherKills() < 100 && cm.getPlayer().getVanquisherStage() > 0) {
-                              cm.sendNext("2091005_STILL_NEED", (100 - cm.getPlayer().getVanquisherKills()))
-
-                           } else if (cm.getPlayer().getVanquisherStage() <= 0) {
-                              cm.getPlayer().setVanquisherStage(1)
+                           } else if (cm.getVanquisherStage() <= 0) {
+                              cm.setVanquisherStage(1)
                            } else {
                               cm.sendNext("2091005_HAVE_OBTAINED")
 
-                              cm.gainItem(1142033 + cm.getPlayer().getVanquisherStage(), (short) 1)
-                              cm.getPlayer().setVanquisherStage(cm.c.getPlayer().getVanquisherStage() + 1)
-                              cm.getPlayer().setVanquisherKills(0)
+                              cm.gainItem(1142033 + cm.getVanquisherStage(), (short) 1)
+                              cm.setVanquisherStage(cm.getVanquisherStage() + 1)
+                              cm.setVanquisherKills(0)
                            }
                         }
 
@@ -276,7 +254,6 @@ class NPC2091005 {
                      }
                   } else if (selectedMenu == 5) { //What is a Mu Lung Dojo?
                      cm.sendNext("2091005_OUR_MASTER")
-
                      cm.dispose()
                   }
                } else {
@@ -289,21 +266,18 @@ class NPC2091005 {
 
                if (selectedMenu == 0) {
                   boolean hasParty = (cm.getParty().isPresent())
-
                   boolean firstEnter = false
                   int avDojo = cm.getClient().getChannelServer().lookupPartyDojo(cm.getParty().orElse(null))
                   if (avDojo < 0) {
                      if (hasParty) {
                         if (!cm.isPartyLeader()) {
                            cm.sendOk("2091005_NOT_THE_LEADER")
-
                            cm.dispose()
                            return
                         }
 
                         if (!isBetween(cm.getParty().get(), 35)) {
                            cm.sendOk("2091005_LEVEL_RANGE")
-
                            cm.dispose()
                            return
                         }
@@ -316,10 +290,8 @@ class NPC2091005 {
                   if (avDojo < 0) {
                      if (avDojo == -1) {
                         cm.sendOk("2091005_ALL_DOJOS_USED")
-
                      } else {
                         cm.sendOk("2091005_ALREADY_REGISTERED")
-
                      }
                   } else {
                      int baseStg = hasParty ? 925030000 : 925020000
@@ -327,13 +299,13 @@ class NPC2091005 {
 
                      int dojoWarpMap = baseStg + (nextStg * 100) + avDojo
                      if (firstEnter) {
-                        cm.getClient().getChannelServer().resetDojoMap(dojoWarpMap)
+                        cm.resetDojoMap(dojoWarpMap)
                      }
 
                      //non-leader party members can progress whilst having the record saved if they don't command to enter the next stage
-                     cm.getPlayer().setDojoStage(0)
+                     cm.setDojoStage(0)
 
-                     if (!hasParty || !cm.isLeader()) {
+                     if (!hasParty || !cm.isPartyLeader()) {
                         cm.warp(dojoWarpMap, 0)
                      } else {
                         cm.warpParty(dojoWarpMap, 0)
@@ -344,7 +316,6 @@ class NPC2091005 {
                } else if (selectedMenu == 1) { //I want to leave
                   if (status == 1) {
                      cm.sendYesNo("2091005_GIVING_UP")
-
                   } else {
                      if (mode == 1) {
                         cm.warp(925020002, "st00")
@@ -354,18 +325,14 @@ class NPC2091005 {
                } else if (selectedMenu == 2) { //I want to record my score up to this point
                   if (status == 1) {
                      cm.sendYesNo("2091005_DO_YOU_WANT_TO_RECORD")
-
                   } else {
                      if (mode == 0) {
                         cm.sendNext("2091005_GOOD_LUCK")
-
-                     } else if (cm.getPlayer().getDojoStage() == Math.floor(cm.getMapId() / 100) % 100) {
+                     } else if (cm.getDojoStage() == Math.floor(cm.getMapId() / 100) % 100) {
                         cm.sendOk("2091005_ALREADY_RECORDED")
-
                      } else {
                         cm.sendNext("2091005_RECORD_SUCCESS")
-
-                        cm.getPlayer().setDojoStage(Math.floor(cm.getMapId() / 100) % 100)
+                        cm.setDojoStage(Math.floor(cm.getMapId() / 100) % 100)
                      }
                      cm.dispose()
                   }
@@ -373,7 +340,6 @@ class NPC2091005 {
             } else {
                if (mode == 0) {
                   cm.sendNext("2091005_STOP_CHANGING_YOUR_MIND")
-
                } else if (mode == 1) {
                   int dojoMapId = cm.getMapId()
                   cm.warp(925020002, 0)
@@ -389,7 +355,7 @@ class NPC2091005 {
 
    def sendBeltRequirements(int belt, int oldBelt, boolean hasOldBelt, int level, int points) {
       String beltReqStr = (oldBelt != -1) ? " you must have the #i" + oldBelt + "# belt in your inventory," : ""
-      String pointsLeftStr = (points - cm.getPlayer().getDojoPoints() > 0) ? " you need #r" + (points - cm.getPlayer().getDojoPoints()) + "#k more training points" : ""
+      String pointsLeftStr = (points - cm.getDojoPoints() > 0) ? " you need #r" + (points - cm.getDojoPoints()) + "#k more training points" : ""
       String beltLeftStr = (!hasOldBelt) ? " you must have the needed belt unequipped and available in your EQP inventory" : ""
       String conjStr = (pointsLeftStr.length() > 0 && beltLeftStr.length() > 0) ? " and" : ""
       cm.sendNext("2091005_IN_ORDER_TO", belt, belt, beltReqStr, level, points)
@@ -399,11 +365,11 @@ class NPC2091005 {
       return (Math.floor(id / 100).intValue() % 100) % 6 == 0 && id != 925020001
    }
 
-   def isBetween(MapleParty party, int range) {
+   def isBetween(Party party, int range) {
       int lowest = cm.getLevel()
       int highest = lowest
-      for (int x = 0; x < party.getMembers().size(); x++) {
-         int lvl = party.getMembers()[x].getLevel()
+      for (int x = 0; x < party.members().size(); x++) {
+         int lvl = party.members()[x].level()
          if (lvl > highest) {
             highest = lvl
          } else if (lvl < lowest) {

@@ -10,17 +10,14 @@ class NPC9201100 {
    def start() {
       if (cm.getQuestStatus(8224) == 2) {
          cm.sendOk("9201100_FELLOW_CLAN_MEMBER")
-
       } else {
          cm.sendOk("9201100_HELLO")
-
       }
 
       cm.dispose()
    }
 
    def action(Byte mode, Byte type, Integer selection) {
-
    }
 }
 

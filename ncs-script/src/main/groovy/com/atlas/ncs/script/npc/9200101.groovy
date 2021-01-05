@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9200101 {
    NPCConversationManager cm
@@ -39,7 +40,7 @@ class NPC9200101 {
                   current = cm.getFace() % 100 + 21000
                }
                int[] temp = [current + 100, current + 300, current + 400, current + 700]
-               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                cm.sendYesNo("If you use the regular coupon, you'll be awarded a random pair of cosmetic lenses. Are you going to use a #b#t5152011##k and really make the change to your eyes?")
             } else if (selection == 2) {
                beauty = 2
@@ -51,7 +52,7 @@ class NPC9200101 {
                   current = cm.getFace() % 100 + 21000
                }
                int[] temp = [current + 100, current + 300, current + 400, current + 700]
-               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                cm.sendStyle("With our new computer program, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Please choose the style of your liking.", colors)
             } else if (selection == 3) {
                beauty = 3
@@ -66,7 +67,7 @@ class NPC9200101 {
                colors = []
                for (int i = 0; i < 8; i++) {
                   if (cm.haveItem(5152100 + i)) {
-                     colors = ScriptUtils.pushItemIfTrue(colors, current + 100 * 1, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     colors = ScriptUtils.pushItemIfTrue(colors, current + 100 * 1, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
 

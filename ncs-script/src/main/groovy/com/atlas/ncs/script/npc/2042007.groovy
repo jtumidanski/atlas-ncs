@@ -38,7 +38,7 @@ class NPC2042007 {
                cm.warp(980030000, 0)
                cm.dispose()
             }
-         } else if (cm.getChar().getMap().isCPQLoserMap()) {
+         } else if (cm.isCPQLoserMap()) {
             if (status == 0) {
                if (cm.getParty() != null) {
                   String shiu = ""
@@ -91,7 +91,7 @@ class NPC2042007 {
                      break
                }
             }
-         } else if (cm.getChar().getMap().isCPQWinnerMap()) {
+         } else if (cm.isCPQWinnerMap()) {
             if (status == 0) {
                if (cm.getParty() != null) {
                   String shi = ""

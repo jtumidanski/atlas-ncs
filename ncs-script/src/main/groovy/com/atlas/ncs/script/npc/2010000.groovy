@@ -224,7 +224,7 @@ class NPC2010000 {
             cm.sendOk("2010000_USE_AND_ETC_INVENTORY_FULL")
          } else {
             cm.gainItem(requiredItem, (short) -100)
-            cm.gainExp(500 * cm.getPlayer().getExpRate())
+            cm.gainExp(500 * cm.getExpRate())
             cm.gainItem(prizeItem, (short) prizeQuantity)
             cm.sendOk("2010000_WHAT_DO_YOU_THINK", requiredItem, prizeQuantity, prizeItem)
          }

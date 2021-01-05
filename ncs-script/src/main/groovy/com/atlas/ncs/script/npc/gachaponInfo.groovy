@@ -32,7 +32,7 @@ class NpcGachaponInfo {
          }
 
          if (status == 0) {
-            String sendStr = "Hi, #r#p" + cm.getNpc() + "##k here! I'm announcing all obtainable loots from the Gachapon machines. Which Gachapon machine would you like to look?\r\n\r\n#b" + gachaponMessages[0] + "#k"
+            String sendStr = "Hi, #r#p" + cm.getNpcId() + "##k here! I'm announcing all obtainable loots from the Gachapon machines. Which Gachapon machine would you like to look?\r\n\r\n#b" + gachaponMessages[0] + "#k"
             cm.sendSimple(sendStr)
          } else if (status == 1) {
             String sendStr = "Loots from #b" + gachaponMachines[selection].name() + "#k:\r\n\r\n" + gachaponMessages[selection + 1]

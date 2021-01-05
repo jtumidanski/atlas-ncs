@@ -43,7 +43,7 @@ class NPC2040003 {
                return
             }
 
-            if (cm.getWarpMap(922000000).countPlayers() == 0) {
+            if (cm.countCharactersInMap(922000000) == 0) {
                cm.warp(922000000, 0)
                if (!(cm.isQuestStarted(3239) && cm.haveItem(4031092, 10))) {
                   cm.removeAll(4031092)

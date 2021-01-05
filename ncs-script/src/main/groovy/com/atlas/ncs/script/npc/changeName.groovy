@@ -32,9 +32,9 @@ class NpcChangeName {
 
          } else if (status == 2) {
             String text = cm.getText()
-            boolean canCreate = CharacterProcessor.getInstance().canCreateChar(text)
+            boolean canCreate = cm.canCreateChar(text)
             if (canCreate) {
-               cm.getPlayer().setName(text)
+               cm.changeCharacterName(text)
                cm.sendOk("Your name has been changed to #b" + text + "#k. You will have to login again for this to take effect.", (byte) 1)
                cm.gainItem(2430026, (short) -1)
             } else {
@@ -42,7 +42,7 @@ class NpcChangeName {
             }
          } else if (status == 3) {
             cm.dispose()
-            cm.getClient().disconnect(false, false)
+            cm.disconnect(false, false)
          }
       }
    }

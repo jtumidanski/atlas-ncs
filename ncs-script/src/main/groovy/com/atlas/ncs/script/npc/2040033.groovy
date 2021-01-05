@@ -23,7 +23,7 @@ class NPC2040033 {
 
    def action(Byte mode, Byte type, Integer selection) {
       if (mode >= 1) {
-         if (cm.getPlayer().getNoPets() == 0) {
+         if (cm.petCount() == 0) {
             cm.sendNextPrev("2040033_GET_OUTTA_HERE")
          } else {
             cm.gainItem(4031128, (short) -1)

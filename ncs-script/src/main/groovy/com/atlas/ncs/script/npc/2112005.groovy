@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2112005 {
@@ -33,7 +34,6 @@ class NPC2112005 {
                if (eim.getIntProperty("npcShocked") == 0 && cm.haveItem(4001130, 1)) {
                   cm.gainItem(4001130, (short) -1)
                   eim.setIntProperty("npcShocked", 1)
-
                   cm.sendNext("2112005_SOMETHING_BIG")
 
                   MessageBroadcaster.getInstance().sendServerNotice(eim.getPlayers(), ServerNoticeType.LIGHT_BLUE, I18nMessage.from("JULIET_SHOCK"))
@@ -57,23 +57,18 @@ class NPC2112005 {
                      cm.gainItem(4001134, (short) -1)
                      cm.gainItem(4001135, (short) -1)
                      cm.sendNext("2112005_NOW_WE_CAN_PROCEED")
-
-
                      eim.showClearEffect()
                      eim.giveEventPlayersStageReward(4)
                      eim.setIntProperty("statusStg4", 1)
-
-                     cm.getMap().killAllMonsters()
+                     cm.killAllMonsters()
                      cm.getMap().getReactorByName("jnr3_out3").hitReactor(cm.getClient())
                   } else {
                      cm.sendOk("2112005_LET_LEADER_PASS")
-
                   }
 
                   cm.dispose()
                } else {
                   cm.sendYesNo("2112005_MUST_KEEP_FIGHTING")
-
                }
             } else {
                cm.warp(926110700, 0)
@@ -83,15 +78,12 @@ class NPC2112005 {
             if (status == 0) {
                if (eim.getIntProperty("escortFail") == 0) {
                   cm.sendNext("2112005_FINALLY")
-
                } else {
                   cm.sendNext("2112005_THANKS_TO_YOUR_EFFORTS")
-
                   status = 2
                }
             } else if (status == 1) {
                cm.sendNext("2112005_RECEIVE_THIS_GIFT")
-
             } else if (status == 2) {
                if (cm.canHold(4001160)) {
                   cm.gainItem(4001160, (short) 1)
@@ -103,7 +95,6 @@ class NPC2112005 {
                   }
                } else {
                   cm.sendOk("2112005_MAKE_ETC_SPACE")
-
                }
 
                cm.dispose()

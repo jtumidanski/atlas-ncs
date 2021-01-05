@@ -8,7 +8,7 @@ class NPC1101001 {
    int sel = -1
 
    def start() {
-      if (cm.getPlayer().isCygnus() && GameConstants.getJobBranch(cm.getJob()) > 2) {
+      if (cm.isCygnus() && cm.getJobBranch(cm.getJobId()) > 2) {
          cm.useItem(2022458)
          cm.sendOk("1101001_CAST_BLESSING")
       } else {

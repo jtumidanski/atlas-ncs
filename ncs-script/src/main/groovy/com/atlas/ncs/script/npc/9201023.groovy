@@ -22,11 +22,11 @@ class NPC9201023 {
       action((byte) 1, (byte) 0, 0)
    }
 
-   static def hasProofOfLoves(MapleCharacter player) {
+   def hasProofOfLoves(int characterId) {
       int count = 0
 
       for (int i = 4031367; i <= 4031372; i++) {
-         if (player.haveItem(i)) {
+         if (cm.characterHasItem(characterId, i)) {
             count++
          }
       }

@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2060005 {
@@ -16,12 +17,12 @@ class NPC2060005 {
             cm.sendOk("2060005_THANKS_FOR_SAVING_THE_PORK")
 
          } else {
-            EventManager em = cm.getEventManager("3rdJob_mount")
+            EventManager em = cm.getEventManager("3rdJob_mount").orElseThrow()
             if (em == null) {
                cm.sendOk("2060005_IS_CLOSED")
 
             } else {
-               if (em.startInstance(cm.getPlayer())) {
+               if (em.startInstance(cm.getCharacterId())) {
                   cm.removeAll(4031507)
                   cm.removeAll(4031508)
                } else {

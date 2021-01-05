@@ -11,11 +11,11 @@ class NPC9201003 {
    int state = 0
 
 
-   static def hasProofOfLoves(MapleCharacter player) {
+   def hasProofOfLoves(int characterId) {
       int count = 0
 
       for (int i = 4031367; i <= 4031372; i++) {
-         if (player.haveItem(i)) {
+         if (cm.characterHasItem(characterId, i)) {
             count++
          }
       }
@@ -45,19 +45,16 @@ class NPC9201003 {
          if (status == 0) {
             if (!cm.isQuestStarted(100400)) {
                cm.sendOk("9201003_HELLO")
-
                cm.dispose()
             } else {
                if (cm.getQuestProgressInt(100400, 1) == 0) {
                   cm.sendNext("Mom, dad, I have a request to do to both of you... I wanna know more about the path you've already been walking since always, the path of loving and caring for someone dear to me.", (byte) 2)
                } else {
-                  if (!hasProofOfLoves(cm.getPlayer())) {
+                  if (!hasProofOfLoves(cm.getCharacterId())) {
                      cm.sendOk("9201003_PLEASE_BRING")
-
                      cm.dispose()
                   } else {
                      cm.sendNext("9201003_MADE_US_PROUD")
-
                      state = 1
                   }
                }
@@ -65,7 +62,6 @@ class NPC9201003 {
          } else if (status == 1) {
             if (state == 0) {
                cm.sendNextPrev("9201003_MY_DEAR")
-
             } else {
                cm.sendOk("Mom... Dad... Thanks a lot for your tender support!!!", (byte) 2)
                cm.completeQuest(100400)
@@ -78,7 +74,6 @@ class NPC9201003 {
             }
          } else if (status == 2) {
             cm.sendNextPrev("9201003_COLLECT_AND_BRING")
-
          } else if (status == 3) {
             cm.setQuestProgress(100400, 1, 1)
             cm.dispose()

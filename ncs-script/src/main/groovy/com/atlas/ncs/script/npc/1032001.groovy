@@ -14,7 +14,7 @@ class NPC1032001 {
    int jobType = 2
 
    def start() {
-      if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(GameConstants.getHallOfFameMapId(cm.getJob()))) {
+      if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(cm.getHallOfFameMapId(cm.getJobId()))) {
          spawnPlayerNpc = true
 
          String sendStr = cm.evaluateToken("1032001_WALKED_A_LONG_WAY")
@@ -37,7 +37,7 @@ class NPC1032001 {
             } else {
                cm.sendNext("1032001_ASTONISHING")
             }
-         } else if (action["3thJobI"] || (cm.gotPartyQuestItem("JB3") && cm.getLevel() >= 70 && cm.getJobId() % 10 == 0 && (cm.getJobId() / 100).intValue() == 2 && !cm.getPlayer().gotPartyQuestItem("JBP"))) {
+         } else if (action["3thJobI"] || (cm.gotPartyQuestItem("JB3") && cm.getLevel() >= 70 && cm.getJobId() % 10 == 0 && (cm.getJobId() / 100).intValue() == 2 && !cm.gotPartyQuestItem("JBP"))) {
             action["3thJobI"] = true
             cm.sendNext("1032001_THERE_YOU_ARE")
          } else if (cm.gotPartyQuestItem("JBP") && !cm.haveItem(4031059)) {
@@ -74,7 +74,7 @@ class NPC1032001 {
                   return
                }
 
-               if (MaplePlayerNPC.spawnPlayerNPC(GameConstants.getHallOfFameMapId(cm.getJob()), cm.getPlayer())) {
+               if (cm.spawnPlayerNPC(cm.getHallOfFameMapId(cm.getJobId()))) {
                   cm.sendOk("1032001_THERE_YOU_GO")
                   cm.gainMeso(-spawnPlayerNpcFee)
                } else {
@@ -108,7 +108,7 @@ class NPC1032001 {
          } else if (status == 1) {
             if (cm.canHold(1372043)) {
                if (cm.getJobId() == 0) {
-                  cm.changeJobById(200)
+                  cm.changeJob(200)
                   cm.gainItem(1372043, (short) 1)
                   cm.resetStats()
                }
@@ -181,7 +181,7 @@ class NPC1032001 {
             cm.completeQuest(100008)
             cm.sendNext("1032001_2ND_JOB_SUCCESS", job == 210 ? "#bWizard (Fire / Poison)#k" : job == 220 ? "#bWizard (Ice / Lighting)#k" : "#bCleric#k")
             if (cm.getJobId() != job) {
-               cm.changeJobById(job)
+               cm.changeJob(job)
             }
          } else if (status == 4) {
             cm.sendNextPrev("1032001_GIVEN_YOU_A_BOOK", job == 210 ? "#bWizard (Fire / Poison)#k" : job == 220 ? "#bWizard (Ice / Lighting)#k" : "#bCleric#k")

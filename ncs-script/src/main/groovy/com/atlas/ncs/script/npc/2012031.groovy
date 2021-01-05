@@ -31,8 +31,7 @@ class NPC2012031 {
          }
 
          if (status == 0) {
-            MasterBroadcaster.getInstance().sendToAllInMap(cm.getMap(), new PlaySound("orbis/" + harpSounds[cm.getNpc() - 2012027]))
-
+            cm.playSoundInMap("orbis/" + harpSounds[cm.getNpcId() - 2012027])
             if (cm.isQuestStarted(3114)) {
                int idx = -1 * cm.getQuestProgressInt(3114)
 
@@ -41,9 +40,8 @@ class NPC2012031 {
 
                   if (harpNote != nextNote) {
                      cm.setQuestProgress(3114, 0)
-
-                     PacketCreator.announce(cm.getPlayer(), new ShowEffect("quest/party/wrong_kor"))
-                     PacketCreator.announce(cm.getPlayer(), new PlaySound("Party1/Failed"))
+                     cm.showEffect("quest/party/wrong_kor")
+                     cm.playSound("Party1/Failed")
                      cm.sendPinkText("2012027_MISSED_NOTE")
                   } else {
                      nextNote = harpSong[idx + 1]
@@ -54,10 +52,8 @@ class NPC2012031 {
                         if (idx == 45) {     // finished lullaby
                            cm.sendPinkText("2012027_TWINKLE_TWINKLE")
                            cm.setQuestProgress(3114, 42)
-
-                           PacketCreator.announce(cm.getPlayer(), new ShowEffect("quest/party/clear"))
-                           PacketCreator.announce(cm.getPlayer(), new PlaySound("Party1/Clear"))
-
+                           cm.showEffect("quest/party/clear")
+                           cm.playSound("Party1/Clear")
                            cm.dispose()
                            return
                         } else {

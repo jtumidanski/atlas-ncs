@@ -46,7 +46,7 @@ class NPC2081200 {
          } else if (status == 1) {
             if (mode >= 1 && cm.getJobId() % 100 % 10 != 2) {
                if (cm.canHold(2280003, 1)) {
-                  cm.changeJobById(cm.getJobId() + 1)
+                  cm.changeJob(cm.getJobId() + 1)
                   if (cm.getJobId() == 212) {
                      cm.teachSkill(2121001, (byte) 0, (byte) 10, -1)
                      cm.teachSkill(2121002, (byte) 0, (byte) 10, -1)
@@ -67,30 +67,30 @@ class NPC2081200 {
                }
             } else if (mode >= 1 && cm.getJobId() % 100 % 10 == 2) {
                if (cm.getJobId() == 212) {
-                  if (cm.getPlayer().getSkillLevel(2121007) == 0) {
+                  if (cm.getSkillLevel(2121007) == 0) {
                      cm.teachSkill(2121007, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(2121005) == 0) {
+                  if (cm.getSkillLevel(2121005) == 0) {
                      cm.teachSkill(2121005, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(2121005) == 0) {
+                  if (cm.getSkillLevel(2121005) == 0) {
                      cm.teachSkill(2121005, (byte) 0, (byte) 10, -1)
                   }
                } else if (cm.getJobId() == 222) {
-                  if (cm.getPlayer().getSkillLevel(2221007) == 0) {
+                  if (cm.getSkillLevel(2221007) == 0) {
                      cm.teachSkill(2221007, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(2221005) == 0) {
+                  if (cm.getSkillLevel(2221005) == 0) {
                      cm.teachSkill(2221005, (byte) 0, (byte) 10, -1)
                   }
-                  if (cm.getPlayer().getSkillLevel(2221003) == 0) {
+                  if (cm.getSkillLevel(2221003) == 0) {
                      cm.teachSkill(2221003, (byte) 0, (byte) 10, -1)
                   }
                } else if (cm.getJobId() == 232) {
-                  if (cm.getPlayer().getSkillLevel(2321008) < 1) {
+                  if (cm.getSkillLevel(2321008) < 1) {
                      cm.teachSkill(2321008, (byte) 0, (byte) 10, -1)
                   } // Genesis
-                  if (cm.getPlayer().getSkillLevel(2321006) < 1) {
+                  if (cm.getSkillLevel(2321006) < 1) {
                      cm.teachSkill(2321006, (byte) 0, (byte) 10, -1)
                   } // res
                }

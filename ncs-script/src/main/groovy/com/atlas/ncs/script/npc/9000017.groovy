@@ -17,7 +17,6 @@ class NPC9000017 {
    boolean last_use //last item is a use item
 
    def start() {
-      cm.getPlayer().setCS(true)
       status = -1
       action((byte) 1, (byte) 0, 0)
    }
@@ -33,9 +32,8 @@ class NPC9000017 {
       }
 
       if (status == 0) {
-         if (!YamlConfig.config.server.USE_ENABLE_CUSTOM_NPC_SCRIPT) {
+         if (!cm.getConfiguration().enableCustomNpcScript()) {
             cm.sendOk("9000017_HELLO", cm.getNpcId())
-
             cm.dispose()
             return
          }
@@ -86,10 +84,8 @@ class NPC9000017 {
 
          if (cm.getMeso() < cost * qty) {
             cm.sendOk("9000017_NOT_DOING_YOU_A_FAVOR")
-
          } else if (!cm.canHold(item, qty)) {
             cm.sendOk("9000017_NEED_INVENTORY_SPACE")
-
          } else {
             for (int i = 0; complete && i < mats.length; i++) {
                if (matQty[i] * qty == 1) {
@@ -101,7 +97,6 @@ class NPC9000017 {
 
             if (!complete) {
                cm.sendOk("9000017_KIDDING_RIGHT")
-
             } else {
                for (int i = 0; i < mats.length; i++) {
                   cm.gainItem(mats[i], (short) (-matQty[i] * qty))
@@ -109,7 +104,6 @@ class NPC9000017 {
                cm.gainMeso(-cost * qty)
                cm.gainItem(item, (short) qty)
                cm.sendOk("9000017_CANNOT_BELIEVE_IT_WORKED")
-
             }
          }
          cm.dispose()

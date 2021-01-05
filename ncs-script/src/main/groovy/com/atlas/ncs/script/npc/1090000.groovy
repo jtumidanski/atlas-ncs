@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1090000 {
@@ -28,7 +29,6 @@ class NPC1090000 {
             advQuest = 3
             cm.teachSkill(5121003, (byte) 0, (byte) 10, -1)
             cm.forceCompleteQuest(6330)
-
             cm.sendNext("1090000_CONGRATULATIONS_TRANSFORMATION")
          }
       } else if (cm.isQuestStarted(6370)) {
@@ -42,10 +42,9 @@ class NPC1090000 {
             advQuest = 4
             cm.teachSkill(5221006, (byte) 0, (byte) 10, -1)
             cm.forceCompleteQuest(6370)
-
             cm.sendNext("1090000_CONGRATULATIONS_BATTLE_SHIP")
          }
-      } else if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(GameConstants.getHallOfFameMapId(cm.getJob()))) {
+      } else if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(cm.getHallOfFameMapId(cm.getJobId()))) {
          spawnPlayerNpc = true
 
          String sendStr = "You have walked a long way to reach the power, wisdom and courage you hold today, haven't you? What do you say about having right now #ra NPC on the Hall of Fame holding the current image of your character#k? Do you like it?"
@@ -96,8 +95,8 @@ class NPC1090000 {
       } else {
          if (advQuest > 0) {
             if (advQuest < 3) {
-               EventManager em = cm.getEventManager(advQuest == 1 ? "4jship" : "4jsuper")
-               if (!em.startInstance(cm.getPlayer())) {
+               EventManager em = cm.getEventManager(advQuest == 1 ? "4jship" : "4jsuper").orElseThrow()
+               if (!em.startInstance(cm.getCharacterId())) {
                   cm.sendOk("1090000_SOMEONE_IS_ALREADY_CHALLENGING")
                }
             } else if (advQuest < 5) {
@@ -124,7 +123,7 @@ class NPC1090000 {
                   return
                }
 
-               if (MaplePlayerNPC.spawnPlayerNPC(GameConstants.getHallOfFameMapId(cm.getJob()), cm.getPlayer())) {
+               if (cm.spawnPlayerNPC(cm.getHallOfFameMapId(cm.getJobId()))) {
                   cm.sendOk("1090000_THERE_YOU_GO")
                   cm.gainMeso(-spawnPlayerNpcFee)
                } else {
@@ -158,7 +157,7 @@ class NPC1090000 {
          } else if (status == 1) {
             if (cm.canHold(2070000) && cm.canHoldAll([1482000, 1492000])) {
                if (cm.getJobId() == 0) {
-                  cm.changeJobById(500)
+                  cm.changeJob(500)
                   cm.gainItem(1492000, (short) 1)
                   cm.gainItem(1482000, (short) 1)
                   cm.gainItem(2330000, (short) 1000)
@@ -209,7 +208,7 @@ class NPC1090000 {
                } else {
                   map = 108000501
                }
-               if (cm.getPlayerCount(map) > 0) {
+               if (cm.countCharactersInMap(map) > 0) {
                   cm.sendOk("1090000_TRAINING_MAPS_IN_USE")
                   cm.dispose()
                } else {
@@ -239,7 +238,7 @@ class NPC1090000 {
             }
 
             if (cm.getJobId() != job) {
-               cm.changeJobById(job)
+               cm.changeJob(job)
             }
          } else if (status == 4) {
             cm.sendNextPrev("1090000_GIVEN_BOOK", job == 510 ? "brawler" : "gunslinger")

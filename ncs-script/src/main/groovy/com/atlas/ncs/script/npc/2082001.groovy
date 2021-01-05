@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2082001 {
@@ -9,18 +10,15 @@ class NPC2082001 {
 
    def start() {
       if (cm.haveItem(4031045)) {
-         EventManager em = cm.getEventManager("Cabin")
+         EventManager em = cm.getEventManager("Cabin").orElseThrow()
          if (em.getProperty("entry") == "true") {
             cm.sendYesNo("2082001_DO_YOU_WISH_TO_BOARD")
-
          } else {
             cm.sendOk("2082001_NOT_YET_ARRIVED")
-
             cm.dispose()
          }
       } else {
          cm.sendOk("2082001_NEED_TICKET")
-
          cm.dispose()
       }
    }

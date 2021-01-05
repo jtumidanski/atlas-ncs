@@ -51,15 +51,13 @@ class NPC9201000 {
                      cm.dispose()
                   }
                } else {
-                  if (hasEngagementBox(cm.getPlayer())) {
+                  if (hasEngagementBox(cm.getCharacterId())) {
                      cm.sendOk("9201000_SORRY")
-
                      cm.dispose()
                      return
                   }
                   if (cm.getGender() != 0) {
                      cm.sendOk("9201000_RING_BOX_ONLY_FOR_MALES")
-
                      cm.dispose()
                      return
                   }
@@ -70,16 +68,14 @@ class NPC9201000 {
                   cm.sendSimple(selStr)
                }
             } else {
-               if (hasEngagementBox(cm.getPlayer())) {
+               if (hasEngagementBox(cm.getCharacterId())) {
                   for (int i = 2240000; i <= 2240003; i++) {
                      cm.removeAll(i)
                   }
 
                   cm.sendOk("9201000_RING_BOX_DISCARDED")
-
                } else {
                   cm.sendOk("9201000_NO_RING_BOX")
-
                }
 
                cm.dispose()
@@ -162,7 +158,6 @@ class NPC9201000 {
 
                cm.gainItem(recvItem, (short) recvQty)
                cm.sendOk("9201000_ALL_DONE")
-
             }
             cm.dispose()
          }
@@ -177,9 +172,9 @@ class NPC9201000 {
       return menu
    }
 
-   static def hasEngagementBox(MapleCharacter player) {
+   def hasEngagementBox(int characterId) {
       for (int i = 2240000; i <= 2240003; i++) {
-         if (player.haveItem(i)) {
+         if (cm.characterHasItem(characterId, i)) {
             return true
          }
       }

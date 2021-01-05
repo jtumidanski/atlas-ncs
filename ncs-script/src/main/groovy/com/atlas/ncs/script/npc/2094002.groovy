@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2094002 {
@@ -32,13 +33,11 @@ class NPC2094002 {
 
       if (!cm.isEventLeader()) {
          cm.sendYesNo("2094002_LEADER_MUST_SPEAK")
-
       } else {
          EventInstanceManager eim = cm.getEventInstance()
          if (eim == null) {
             cm.warp(251010404, 0)
             cm.sendNext("2094002_HOW")
-
             cm.dispose()
             return
          }
@@ -48,7 +47,6 @@ class NPC2094002 {
          switch (cm.getMapId()) {
             case 925100000:
                cm.sendNext("2094002_DESTROY_ALL_MONSTERS")
-
                cm.dispose()
                break
             case 925100100:
@@ -56,55 +54,47 @@ class NPC2094002 {
                if (emp == "0") {
                   if (cm.haveItem(4001120, 20)) {
                      cm.sendNext("2094002_EXCELLENT")
-
                      cm.gainItem(4001120, (short) -20)
-                     cm.getMap().killAllMonsters()
+                     cm.killAllMonsters()
                      eim.setProperty("stage2", "1")
                   } else {
                      cm.sendNext("2094002_QUALIFY_AS_NOBLE_PIRATES")
-
                   }
                } else if (emp == "1") {
                   if (cm.haveItem(4001121, 20)) {
                      cm.sendNext("2094002_EXCELLENT_VETERAN")
-
                      cm.gainItem(4001121, (short) -20)
-                     cm.getMap().killAllMonsters()
+                     cm.killAllMonsters()
                      eim.setProperty("stage2", "2")
                   } else {
                      cm.sendNext("2094002_QUALIFY_AS_NOBLE_RISING_PIRATES")
-
                   }
                } else if (emp == "2") {
                   if (cm.haveItem(4001122, 20)) {
                      cm.sendNext("2094002_LET_US_GO")
-
                      cm.gainItem(4001122, (short) -20)
-                     cm.getMap().killAllMonsters()
+                     cm.killAllMonsters()
                      eim.setProperty("stage2", "3")
                      eim.showClearEffect(cm.getMapId())
                   } else {
                      cm.sendNext("2094002_QUALIFY_AS_NOBLE_VETERAN_PIRATES")
-
                   }
                } else {
                   cm.sendNext("2094002_NEXT_STAGE")
-
                }
                cm.dispose()
                break
             case 925100200:
             case 925100300:
                cm.sendNext("2094002_DESTROY_THE_GUARDS")
-
                cm.dispose()
                break
             case 925100201:
-               if (cm.getMap().getMonsters().size() == 0) {
+               if (cm.getMapMonsterCount() == 0) {
                   cm.sendNext("2094002_CHEST_HAS_APPEARED")
 
                   if (eim.getProperty("stage2a") == "0") {
-                     cm.getMap().setReactorState()
+                     cm.setReactorState()
                      eim.setProperty("stage2a", "1")
                   }
                } else {
@@ -113,11 +103,10 @@ class NPC2094002 {
                cm.dispose()
                break
             case 925100301:
-               if (cm.getMap().getMonsters().size() == 0) {
+               if (cm.getMapMonsterCount() == 0) {
                   cm.sendNext("2094002_CHEST_HAS_APPEARED")
-
                   if (eim.getProperty("stage3a") == "0") {
-                     cm.getMap().setReactorState()
+                     cm.setReactorState()
                      eim.setProperty("stage3a", "1")
                   }
                } else {
@@ -135,7 +124,7 @@ class NPC2094002 {
                cm.dispose()
                break
             case 925100500:
-               if (cm.getMap().getMonsters().size() == 0) {
+               if (cm.getMapMonsterCount() == 0) {
                   cm.sendNext("2094002_THANKS")
                } else {
                   cm.sendNext("2094002_DEFEAT_ALL_MONSTERS")

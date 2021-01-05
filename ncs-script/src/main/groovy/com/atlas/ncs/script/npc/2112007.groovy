@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2112007 {
@@ -23,23 +24,19 @@ class NPC2112007 {
          } else if (res == 1) {  // exp
             int expGain = 500 * cm.getExpRate()
             cm.sendNext("2112007_EARNED_EXP", expGain)
-
             cm.gainExp(expGain)
          } else if (res == 2) {  // letter
             int letter = 4001131
             if (!cm.canHold(letter)) {
                cm.sendOk("2112007_NO_INVENTORY_SPACE")
-
                cm.dispose()
                return
             }
 
             cm.gainItem(letter, (short) 1)
             cm.sendNext("2112007_FOUND_A_LETTER")
-
          } else if (res == 3) {  // pass
             cm.sendNext("2112007_FOUND_TRIGGER")
-
 
             eim.showClearEffect()
             eim.giveEventPlayersStageReward(1)
@@ -49,7 +46,6 @@ class NPC2112007 {
          }
       } else {
          cm.sendNext("2112007_NOTHING_HERE")
-
       }
 
       cm.dispose()

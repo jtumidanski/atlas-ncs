@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201109 {
@@ -10,11 +11,9 @@ class NPC9201109 {
    def start() {
       if (cm.getMapId() == 610030500) {
          cm.sendOk("9201109_QUALITY_WIZARD")
-
          cm.dispose()
       } else if (cm.getMapId() == 610030000) {
          cm.sendOk("9201109_EXCEPTIONALLY_SKILLED_SORCERER")
-
          cm.dispose()
       } else if (cm.getMapId() == 610030521) {
          if (cm.getMapMonsterCount() == 0) {
@@ -27,20 +26,16 @@ class NPC9201109 {
                   cm.gainItem(4001257, (short) 1)
                   cm.sendOk("9201109_GOOD_JOB")
 
-
                   stgStatus += (1 << jobNiche)
                   eim.setIntProperty("glpq5_room", stgStatus)
                } else {
                   cm.sendOk("9201109_MAKE_ETC_SPACE")
-
                }
             } else {
                cm.sendOk("9201109_ALREADY_RETRIEVED")
-
             }
          } else {
             cm.sendOk("9201109_ELIMINATE_ALL")
-
          }
          cm.dispose()
       }

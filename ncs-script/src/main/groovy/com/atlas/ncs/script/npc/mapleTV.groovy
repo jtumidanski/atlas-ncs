@@ -8,7 +8,7 @@ class NpcMapleTV {
    int sel = -1
 
    def start() {
-      if (YamlConfig.config.server.USE_ENABLE_CUSTOM_NPC_SCRIPT) {
+      if (cm.getConfiguration().enableCustomNpcScript()) {
          cm.dispose()
          cm.openNpc(9201088, "scroll_generator")
          return

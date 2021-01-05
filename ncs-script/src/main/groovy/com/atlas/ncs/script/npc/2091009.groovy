@@ -28,7 +28,7 @@ class NPC2091009 {
          cm.sendGetText("2091009_SEALED_SHRINE")
 
       } else if (status == 1) {
-         if (cm.getWarpMap(925040100).countPlayers() > 0) {
+         if (cm.countCharactersInMap(925040100) > 0) {
             cm.sendOk("2091009_SOMEONE_IS_ALREADY_ATTENDING")
 
             cm.dispose()

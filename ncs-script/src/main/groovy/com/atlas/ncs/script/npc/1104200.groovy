@@ -31,7 +31,7 @@ class NPC1104200 {
          } else if (status == 1) {
             cm.sendYesNo("1104200_YOU_READY_TO_FACE_ELEANOR")
          } else if (status == 2) {
-            if (cm.getWarpMap(913030000).countPlayers() == 0) {
+            if (cm.countCharactersInMap(913030000) == 0) {
                cm.warp(913030000, 0)
             } else {
                cm.sendOk("1104200_SOMEONE_ALREADY_CHALLENGING")

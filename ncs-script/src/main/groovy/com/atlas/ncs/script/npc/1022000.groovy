@@ -15,7 +15,7 @@ class NPC1022000 {
    int jobType = 1
 
    def start() {
-      if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(GameConstants.getHallOfFameMapId(cm.getJob()))) {
+      if ((cm.getJobId() / 100).intValue() == jobType && cm.canSpawnPlayerNpc(cm.getHallOfFameMapId(cm.getJobId()))) {
          spawnPlayerNpc = true
 
 
@@ -38,7 +38,7 @@ class NPC1022000 {
             } else {
                cm.sendNext("1022000_ASTONISHING")
             }
-         } else if (action["3thJobI"] || (cm.gotPartyQuestItem("JB3") && cm.getLevel() >= 70 && (cm.getJobId() % 10 == 0 && (cm.getJobId() / 100) == 1 && !cm.getPlayer().gotPartyQuestItem("JBP")))) {
+         } else if (action["3thJobI"] || (cm.gotPartyQuestItem("JB3") && cm.getLevel() >= 70 && (cm.getJobId() % 10 == 0 && (cm.getJobId() / 100) == 1 && !cm.gotPartyQuestItem("JBP")))) {
             action["3thJobI"] = true
             cm.sendNext("1022000_BEAT_CLONE")
          } else if (cm.gotPartyQuestItem("JBP") && !cm.haveItem(4031059)) {
@@ -75,7 +75,7 @@ class NPC1022000 {
                   return
                }
 
-               if (MaplePlayerNPC.spawnPlayerNPC(GameConstants.getHallOfFameMapId(cm.getJob()), cm.getPlayer())) {
+               if (cm.spawnPlayerNPC(cm.getHallOfFameMapId(cm.getJobId()))) {
                   cm.sendOk("1022000_HALL_OF_FAME_SUCCESS")
                   cm.gainMeso(-spawnPlayerNpcFee)
                } else {
@@ -109,7 +109,7 @@ class NPC1022000 {
          } else if (status == 1) {
             if (cm.canHold(1302077)) {
                if (cm.getJobId() == 0) {
-                  cm.changeJobById(100)
+                  cm.changeJob(100)
                   cm.gainItem(1302077, (short) 1)
                   cm.resetStats()
                }
@@ -182,7 +182,7 @@ class NPC1022000 {
                cm.sendNext("1022000_SPEARMAN_SUCCESS")
             }
             if (cm.getJobId() != job) {
-               cm.changeJobById(job)
+               cm.changeJob(job)
             }
          } else if (status == 4) {
             cm.sendNextPrev("1022000_BOOK_GIVEN", (job == 110 ? "fighter" : job == 120 ? "page" : "spearman"))

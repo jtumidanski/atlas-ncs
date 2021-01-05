@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201068 {
@@ -11,7 +12,7 @@ class NPC9201068 {
    EventManager em
 
    def start() {
-      em = cm.getEventManager("Subway")
+      em = cm.getEventManager("Subway").orElseThrow()
       String text = "Here's the ticket reader."
       boolean hasTicket = false
       if (cm.haveItem(4031713) && cm.getMapId() == 600010001) {
@@ -20,7 +21,6 @@ class NPC9201068 {
       }
       if (!hasTicket) {
          cm.sendOk("9201068_MISSING_TICKET")
-
          cm.dispose()
       } else {
          cm.sendSimple(text)
@@ -32,7 +32,6 @@ class NPC9201068 {
       if (mode != 1) {
          if (mode == 0) {
             cm.sendNext("9201068_SOME_BUSINESS_HERE")
-
          }
          cm.dispose()
          return
@@ -41,10 +40,8 @@ class NPC9201068 {
          if (selection == 0) {
             if (em.getProperty("entry") == "true") {
                cm.sendYesNo("9201068_PLENTY_OF_ROOM")
-
             } else {
                cm.sendNext("9201068_BE_PATIENT")
-
                cm.dispose()
             }
          }
@@ -56,11 +53,9 @@ class NPC9201068 {
                cm.warp(600010002)
             } else {
                cm.sendNext("9201068_BE_PATIENT")
-
             }
          } else {
             cm.sendNext("9201068_NEED_A_TICKET")
-
          }
 
          cm.dispose()

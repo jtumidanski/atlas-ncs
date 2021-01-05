@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201049 {
@@ -28,7 +29,6 @@ class NPC9201049 {
 
          if (status == 0) {
             cm.sendOk("9201049_DID_YOU_ENJOY")
-
          } else if (status == 1) {
             EventInstanceManager eim = cm.getEventInstance()
             if (eim != null) {
@@ -38,10 +38,8 @@ class NPC9201049 {
                   cm.gainItem(boxId, (short) 1)
                   cm.warp(680000000)
                   cm.sendOk("9201049_RECEIVED_ONYX_CHEST")
-
                } else {
                   cm.sendOk("9201049_MAKE_ETC_ROOM")
-
                   cm.dispose()
                   return
                }

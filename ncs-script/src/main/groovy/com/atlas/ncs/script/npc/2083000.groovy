@@ -28,20 +28,16 @@ class NPC2083000 {
          if (status == 0) {
             if (cm.haveItem(4001086)) {
                cm.sendYesNo("2083000_DO_YOU_WANT_TO_ACCESS")
-
-            } else if (YamlConfig.config.server.USE_ENABLE_SOLO_EXPEDITIONS) {
+            } else if (cm.getConfiguration().enableSoloExpeditions()) {
                if (canBypassHTPQ()) {
                   cm.sendYesNo("2083000_DO_YOU_WANT_TO_ACCESS")
-
                } else {
                   cm.sendOk("2083000_MUST_PROVE_VALOR")
-
                   // NPC picture is so long it goes through some section of text, || to fill up that space
                   cm.dispose()
                }
             } else {
                cm.sendOk("2083000_MUST_PROVE_VALOR_SHORT")
-
                cm.dispose()
             }
          } else {

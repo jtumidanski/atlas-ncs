@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC9201007 {
@@ -22,18 +23,15 @@ class NPC9201007 {
       if (cm.getMapId() == 680000200) {
          if (eim.getIntProperty("weddingStage") == 0) {
             cm.sendNext("9201007_GUESTS_ARE_GATHERING")
-
          } else {
             cm.warp(680000210, "sp")
             cm.sendNext("9201007_PICK_YOUR_SEAT")
-
          }
 
          cm.dispose()
       } else {
          if (cm.getCharacterId() != eim.getIntProperty("groomId") && cm.getCharacterId() != eim.getIntProperty("brideId")) {
             cm.sendNext("9201007_NO_TALKING")
-
             cm.dispose()
             return
          }
@@ -49,7 +47,7 @@ class NPC9201007 {
          int[] rings = [1112806, 1112803, 1112807, 1112809]
          hasRing = false
          for (int i = 0; i < rings.length; i++) {
-            if (cm.getPlayer().haveItemWithId(rings[i], true)) {
+            if (cm.characterHasItem(cm.getCharacterId(), rings[i], true)) {
                hasRing = true
             }
          }
@@ -76,7 +74,6 @@ class NPC9201007 {
 
          if (hasGoldenLeaf && hasEngage) {
             cm.sendOk("9201007_YOU_CANNOT_LEAVE_YET")
-
             cm.dispose()
          } else if (hasGoldenLeaf && hasRing) {
             String[] choice = ["Go to the after party", "What should I be doing"]
@@ -90,35 +87,30 @@ class NPC9201007 {
 
          }
       } else if (status == 1) {
-         AbstractPlayerInteraction cmPartner = cm.getMap().getCharacterById(cm.getPlayer().getPartnerId()).getAbstractPlayerInteraction()
-
          switch (selection) {
             case 0:
                if (eim.getIntProperty("isPremium") == 1) {
                   eim.warpEventTeam(680000300)
                   cm.sendOk("9201007_CHERISH_YOUR_PHOTOS")
 
-                  if (cmPartner != null) {
-                     cmPartner.npcTalk(cm.getNpc(), "Enjoy! Cherish your Photos Forever!")
+                  if (cm.hasPartner()) {
+                     cm.characterNpcTalk(cm.getPartnerId(), cm.getNpcId(), "Enjoy! Cherish your Photos Forever!")
                   }
                } else {    // skip the party-time (premium only)
                   eim.warpEventTeam(680000500)
                   cm.sendOk("9201007_CONGRATULATIONS")
 
-                  if (cmPartner != null) {
-                     cmPartner.npcTalk(cm.getNpcId(), "Congratulations for the newly-wed! I will escort you to the exit.")
+                  if (cm.hasPartner()) {
+                     cm.characterNpcTalk(cm.getPartnerId(), cm.getNpcId(), "Congratulations for the newly-wed! I will escort you to the exit.")
                   }
                }
 
                cm.dispose()
                break
-
             case 1:
                cm.sendOk("9201007_RECEIVE_THE_BLESSINGS")
-
                cm.dispose()
                break
-
             default:
                cm.warp(680000000, 0)
                cm.dispose()

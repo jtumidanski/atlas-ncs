@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventInstanceManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2112000 {
@@ -50,22 +51,14 @@ class NPC2112000 {
 
                if (state == -1) {
                   cm.sendOk("2112000_HAVE_FUN")
-
-
                } else if (playersTooClose()) {
                   cm.sendOk("2112000_OH_HELLO_THERE")
-
-
                   eim.setIntProperty("yuleteTalked", -1)
                } else if (eim.getIntProperty("npcShocked") == 0) {
                   cm.sendOk("2112000_QUITE_SNEAKY")
-
-
                   eim.setIntProperty("yuleteTalked", -1)
                } else {
                   cm.sendOk("2112000_HOW_DID_YOU_GET_HERE")
-
-
                   eim.setIntProperty("yuleteTalked", 1)
                }
             }
@@ -75,13 +68,11 @@ class NPC2112000 {
             if (status == 0) {
                if (eim.isEventCleared()) {
                   cm.sendOk("2112000_I_HAVE_BEEN_BEATEN")
-
                } else {
                   int state = eim.getIntProperty("yuletePassed")
 
                   if (state == -1) {
                      cm.sendOk("2112000_PINNACLE_OF_STUDIES")
-
                   } else if (state == 0) {
                      cm.sendOk("2112000_SUCH_A_PAIN")
                      cm.sendPinkText("YULETE_MEET_FRANK")

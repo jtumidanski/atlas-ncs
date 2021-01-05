@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.model.MapObject
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC1104100 {
@@ -38,22 +39,12 @@ class NPC1104100 {
 
             cm.sendOk("1104100_YOU_FOUND_ME")
          } else if (status == 1) {
-            MapleMap map = cm.getMap()
-            Point npcPosition = map.getMapObject(cm.getNpcObjectId()).position()
-
-            spawnMob(npcPosition.x, npcPosition.y, 9001009, map)
-            map.destroyNPC(npcId)
+            MapObject mapObject = cm.getMapObject(cm.getNpcObjectId())
+            cm.getMonster(9001009).ifPresent({ monster -> cm.spawnMonsterOnGroundBelow(monster, mapObject.x(), mapObject.y()) })
+            cm.destroyNPC(npcId)
             cm.dispose()
          }
       }
-   }
-
-   static def spawnMob(double x, double y, int id, MapleMap map) {
-      if (map.getMonsterById(id) != null) {
-         return
-      }
-
-      MapleLifeFactory.getMonster(id).ifPresent({ mob -> map.spawnMonsterOnGroundBelow(mob, new Point((int) x, (int) y)) })
    }
 }
 

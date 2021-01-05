@@ -1,5 +1,6 @@
 package com.atlas.ncs.script.npc
 
+import com.atlas.ncs.processor.EventManager
 import com.atlas.ncs.processor.NPCConversationManager
 
 class NPC2012013 {
@@ -9,7 +10,7 @@ class NPC2012013 {
 
    def start() {
       if (cm.haveItem(4031074)) {
-         EventManager em = cm.getEventManager("Trains")
+         EventManager em = cm.getEventManager("Trains").orElseThrow()
          if (em.getProperty("entry") == "true") {
             cm.sendYesNo("2012013_GO_TO_LUDIBRIUM")
          } else {

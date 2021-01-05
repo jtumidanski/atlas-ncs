@@ -1,6 +1,7 @@
 package com.atlas.ncs.script.npc
 
 import com.atlas.ncs.processor.NPCConversationManager
+import com.atlas.ncs.util.ScriptUtils
 
 class NPC9200102 {
    NPCConversationManager cm
@@ -40,7 +41,7 @@ class NPC9200102 {
                   current = cm.getFace() % 100 + 21000
                }
                int[] temp = [current + 200, current + 300, current + 400, current + 500, current + 700]
-               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                cm.sendYesNo("9200102_REG_LENS_INFO")
 
             } else if (selection == 2) {
@@ -53,7 +54,7 @@ class NPC9200102 {
                   current = cm.getFace() % 100 + 21000
                }
                int[] temp = [current + 200, current + 300, current + 400, current + 500, current + 700]
-               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+               colors = ScriptUtils.pushItemsIfTrue(colors, temp, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                cm.sendStyle("With our new computer program, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Please choose the style of your liking.", colors)
             } else if (selection == 3) {
                beauty = 3
@@ -68,7 +69,7 @@ class NPC9200102 {
                colors = []
                for (int i = 0; i < 8; i++) {
                   if (cm.haveItem(5152100 + i)) {
-                     colors = ScriptUtils.pushItemIfTrue(colors, current + 100 * i, { itemId -> cm.cosmeticExistsAndIsntEquipped(itemId) })
+                     colors = ScriptUtils.pushItemIfTrue(colors, current + 100 * i, { itemId -> cm.cosmeticExistsAndIsNotEquipped(itemId) })
                   }
                }
 

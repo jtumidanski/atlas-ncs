@@ -18,7 +18,6 @@ class NPC1052003 {
    boolean last_use
 
    def start() {
-      cm.getPlayer().setCS(true)
       status = -1
       action((byte) 1, (byte) 0, 0)
    }

@@ -19,7 +19,7 @@ class NPC1063002 {
 
          cm.gainItem(4031028, (short) 30)
       } else {
-         if (cm.getPlayer().getInventory(MapleInventoryType.ETC).getNumFreeSlot() < 1) {
+         if (cm.countFreeInventorySlot("ETC") < 1) {
             cm.sendNext("1063002_CHECK_YOUR_ETC_INVENTORY")
             cm.dispose()
             return

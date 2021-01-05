@@ -9,7 +9,7 @@ class NPC2101010 {
 
    def start() {
       cm.warp(670010200, 3)
-      cm.changeMusic("Bgm14/Ariant")
+      cm.changeMusicInMap("Bgm14/Ariant")
       cm.dispose()
    }
 

@@ -8,7 +8,7 @@ class NPC2010009 {
    int sel = -1
 
    int choice
-   String guildName
+   String allianceName
 
    int allianceCost = 2000000
    int increaseCost = 1000000
@@ -27,7 +27,7 @@ class NPC2010009 {
          return
       }
       if (status == 0) {
-         if (cm.getPlayer().getGuildId() < 1 || cm.getPlayer().getGuildRank() != 1) {
+         if (cm.getGuildId() < 1 || cm.getGuildRank() != 1) {
             cm.sendNext("2010009_HELLO_NON_GUILD_LEADER")
             cm.dispose()
             return
@@ -43,12 +43,12 @@ class NPC2010009 {
             cm.sendNext("2010009_HOW_TO")
             cm.dispose()
          } else if (selection == 2) {
-            if (!cm.isLeader()) {
+            if (!cm.isPartyLeader()) {
                cm.sendNext("2010009_PARTY_LEADER_MUST_TALK")
                cm.dispose()
                return
             }
-            if (cm.getPlayer().getGuild().get().getAllianceId() > 0) {
+            if (cm.getAllianceId() > 0) {
                cm.sendOk("2010009_GUILD_CANNOT_BE_PART_OF_ANOTHER_UNION")
                cm.dispose()
                return
@@ -56,13 +56,13 @@ class NPC2010009 {
 
             cm.sendYesNo("2010009_UNION_CREATION_FEE", allianceCost)
          } else if (selection == 3) {
-            if (cm.getPlayer().getMGC() == null) {
+            if (cm.getGuildCharacter().isEmpty()) {
                cm.sendOk("2010009_MUST_OWN_A_UNION_TO_EXPAND_ONE")
                cm.dispose()
                return
             }
 
-            int rank = cm.getPlayer().getMGC().getAllianceRank()
+            int rank = cm.getAllianceRank()
             if (rank == 1) {
                cm.sendYesNo("2010009_UNION_EXPANSION_COST", increaseCost)
             } else {
@@ -70,13 +70,13 @@ class NPC2010009 {
                cm.dispose()
             }
          } else if (selection == 4) {
-            if (cm.getPlayer().getMGC() == null) {
+            if (cm.getGuildCharacter().isEmpty()) {
                cm.sendOk("2010009_MUST_OWN_A_UNION_TO_DISBAND_ONE")
                cm.dispose()
                return
             }
 
-            int rank = cm.getPlayer().getMGC().getAllianceRank()
+            int rank = cm.getAllianceRank()
             if (rank == 1) {
                cm.sendYesNo("2010009_UNION_DISBAND_CONFIRMATION")
             } else {
@@ -109,25 +109,25 @@ class NPC2010009 {
             cm.sendOk("2010009_UNION_EXPANSION_SUCCESS")
             cm.dispose()
          } else if (choice == 4) {
-            if (cm.getPlayer().getGuild() == null || cm.getPlayer().getGuild().get().getAllianceId() <= 0) {
+            if (cm.hasGuild() || cm.getAllianceId() <= 0) {
                cm.sendNext("2010009_CANNOT_DISBAND_NON_EXISTENT_UNION")
                cm.dispose()
             } else {
-               cm.disbandAlliance(cm.getClient(), cm.getPlayer().getGuild().get().getAllianceId())
+               cm.disbandAlliance(cm.getAllianceId())
                cm.sendOk("2010009_UNION_DISBAND_SUCCESS")
                cm.dispose()
             }
          }
       } else if (status == 3) {
-         guildName = cm.getText()
-         cm.sendYesNo("2010009_UNION_NAME_CONFIRMATION", guildName)
+         allianceName = cm.getText()
+         cm.sendYesNo("2010009_UNION_NAME_CONFIRMATION", allianceName)
       } else if (status == 4) {
-         if (!cm.canBeUsedAllianceName(guildName)) {
+         if (!cm.canBeUsedAllianceName(allianceName)) {
             cm.sendNext("2010009_UNION_NAME_UNAVAILABLE") //Not real text
             status = 1
             choice = 2
          } else {
-            if (cm.createAlliance(guildName) == null) {
+            if (cm.createAlliance(allianceName).isEmpty()) {
                cm.sendOk("2010009_PARTY_COMPOSITION_ISSUE")
             } else {
                cm.gainMeso(-allianceCost)

@@ -24,7 +24,6 @@ class NPC9201095 {
          return
       }
 
-      cm.getPlayer().setCS(true)
       status = -1
       action((byte) 1, (byte) 0, 0)
    }

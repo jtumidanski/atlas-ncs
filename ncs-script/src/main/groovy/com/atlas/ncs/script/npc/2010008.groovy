@@ -19,14 +19,14 @@ class NPC2010008 {
          if (status == 1) {
             sel = selection
             if (sel == 0) {
-               if (cm.getPlayer().getGuildRank() == 1) {
+               if (cm.getGuildRank() == 1) {
                   cm.sendYesNo("2010008_EMBLEM_CHANGE_COST")
                } else {
                   cm.sendOk("2010008_MUST_BE_LEADER_TO_CHANGE_EMBLEM")
                }
             }
          } else if (status == 2 && sel == 0) {
-            cm.getPlayer().genericGuildMessage(17)
+            cm.genericGuildMessage(17)
             cm.dispose()
          } else {
             cm.dispose()

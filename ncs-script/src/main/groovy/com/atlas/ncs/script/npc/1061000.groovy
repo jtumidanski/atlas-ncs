@@ -17,7 +17,6 @@ class NPC1061000 {
    boolean equip
 
    def start() {
-      cm.getPlayer().setCS(true)
       status = -1
       action((byte) 1, (byte) 0, 0)
    }
