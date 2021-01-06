@@ -2,15 +2,8 @@ package com.atlas.ncs;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import com.atlas.cos.command.ChangeMapCommand;
-import com.atlas.cos.command.GainMesoCommand;
-import com.atlas.csrv.command.EnableActionsCommand;
-import com.atlas.csrv.command.NpcTalkCommand;
-import com.atlas.csrv.command.ServerNoticeCommand;
 import com.atlas.kafka.KafkaProducerFactory;
-import com.atlas.ncs.event.producer.CharacterExperienceGainProducer;
 import com.atlas.ncs.processor.TopicDiscoveryProcessor;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -18,11 +11,13 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 public class EventProducerRegistry {
    private static final Object lock = new Object();
 
+   private static final Object producerLock = new Object();
+
    private static volatile EventProducerRegistry instance;
 
-   private final Map<Class<?>, Producer<Long, ?>> producerMap;
-
    private final Map<String, String> topicMap;
+
+   private Producer<Long, ?> producer;
 
    public static EventProducerRegistry getInstance() {
       EventProducerRegistry result = instance;
@@ -39,48 +34,57 @@ public class EventProducerRegistry {
    }
 
    private EventProducerRegistry() {
-      producerMap = new HashMap<>();
-      producerMap.put(EnableActionsCommand.class,
-            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
-      producerMap.put(ChangeMapCommand.class,
-            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
-      producerMap.put(CharacterExperienceGainProducer.class,
-            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
-      producerMap.put(ServerNoticeCommand.class,
-            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
-      producerMap.put(GainMesoCommand.class,
-            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
-      producerMap.put(NpcTalkCommand.class,
-            KafkaProducerFactory.createProducer("NPC Conversation Service", System.getenv("BOOTSTRAP_SERVERS")));
       topicMap = new HashMap<>();
    }
 
-   public <T> void send(Class<T> clazz, String topic, int worldId, int channelId, T event) {
-      ProducerRecord<Long, T> record = new ProducerRecord<>(getTopic(topic), produceKey(worldId, channelId), event);
-      getProducer(clazz).ifPresent(producer -> producer.send(record));
+   public <T> void send(String topic, long key, T event) {
+      ProducerRecord<Long, T> record = new ProducerRecord<>(getTopic(topic), key, event);
+      Producer<Long, T> producer = getProducer();
+      producer.send(record);
    }
 
-   public <T> void send(Class<T> clazz, String topic, long key, T event) {
+   public <T> void sendAndFlush(String topic, long key, T event) {
       ProducerRecord<Long, T> record = new ProducerRecord<>(getTopic(topic), key, event);
-      getProducer(clazz).ifPresent(producer -> producer.send(record));
+      Producer<Long, T> producer = getProducer();
+      producer.send(record);
+      producer.flush();
+   }
+
+   public <T> void sendAndFlushAndClose(String topic, long key, T event) {
+      ProducerRecord<Long, T> record = new ProducerRecord<>(getTopic(topic), key, event);
+      Producer<Long, T> producer = getProducer();
+      producer.send(record);
+      producer.flush();
+      producer.close();
    }
 
    protected String getTopic(String id) {
       if (!topicMap.containsKey(id)) {
-         topicMap.put(id, TopicDiscoveryProcessor.getTopic(id));
+         synchronized (topicMap) {
+            if (!topicMap.containsKey(id)) {
+               topicMap.put(id, TopicDiscoveryProcessor.getTopic(id));
+            }
+         }
       }
       return topicMap.get(id);
    }
 
-   protected <T> Optional<Producer<Long, T>> getProducer(Class<T> clazz) {
-      Producer<Long, T> producer = null;
-      if (producerMap.containsKey(clazz)) {
-         producer = (Producer<Long, T>) producerMap.get(clazz);
+   protected <T> Producer<Long, T> getProducer() {
+      if (producer == null) {
+         synchronized (producerLock) {
+            if (producer == null) {
+               producer = KafkaProducerFactory.createProducer(getProducerId(), getBootstrapServers());
+            }
+         }
       }
-      return Optional.ofNullable(producer);
+      return (Producer<Long, T>) producer;
    }
 
-   protected static Long produceKey(int worldId, int channelId) {
-      return (long) ((worldId * 1000) + channelId);
+   protected String getProducerId() {
+      return "NPC Conversation Service";
+   }
+
+   protected String getBootstrapServers() {
+      return System.getenv("BOOTSTRAP_SERVERS");
    }
 }

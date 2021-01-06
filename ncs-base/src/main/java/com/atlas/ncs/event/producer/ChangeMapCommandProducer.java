@@ -9,8 +9,7 @@ public final class ChangeMapCommandProducer {
    }
 
    public static void changeMap(int worldId, int channelId, int characterId, int mapId, int portalId) {
-      EventProducerRegistry.getInstance().send(ChangeMapCommand.class,
-            CommandConstants.TOPIC_CHANGE_MAP_COMMAND, worldId, channelId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_CHANGE_MAP_COMMAND, characterId,
             new ChangeMapCommand(worldId, channelId, characterId, mapId, portalId));
    }
 }

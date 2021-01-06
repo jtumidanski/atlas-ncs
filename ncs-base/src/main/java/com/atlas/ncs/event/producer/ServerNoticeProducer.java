@@ -10,17 +10,17 @@ public final class ServerNoticeProducer {
    }
 
    public static void sendPinkText(int characterId, String message) {
-      EventProducerRegistry.getInstance().send(ServerNoticeCommand.class, CommandConstants.TOPIC_SERVER_NOTICE_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_SERVER_NOTICE_COMMAND, characterId,
             new ServerNoticeCommand(ServerNoticeType.PINK_TEXT, characterId, message));
    }
 
    public static void sendLightBlueText(int characterId, String message) {
-      EventProducerRegistry.getInstance().send(ServerNoticeCommand.class, CommandConstants.TOPIC_SERVER_NOTICE_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_SERVER_NOTICE_COMMAND, characterId,
             new ServerNoticeCommand(ServerNoticeType.LIGHT_BLUE, characterId, message));
    }
 
    public static void sendNotice(int characterId, String message) {
-      EventProducerRegistry.getInstance().send(ServerNoticeCommand.class, CommandConstants.TOPIC_SERVER_NOTICE_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_SERVER_NOTICE_COMMAND, characterId,
             new ServerNoticeCommand(ServerNoticeType.NOTICE, characterId, message));
    }
 }

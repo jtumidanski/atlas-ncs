@@ -6,7 +6,7 @@ import com.atlas.ncs.EventProducerRegistry;
 
 public final class CharacterEnableActionsProducer {
    public static void enableActions(int characterId) {
-      EventProducerRegistry.getInstance().send(EnableActionsCommand.class, CommandConstants.TOPIC_ENABLE_ACTIONS, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_ENABLE_ACTIONS, characterId,
             new EnableActionsCommand(characterId));
    }
 }

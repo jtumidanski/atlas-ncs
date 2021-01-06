@@ -11,27 +11,27 @@ public final class NpcTalkCommandProducer {
    }
 
    public static void sendSimple(int characterId, int npcId, String message) {
-      EventProducerRegistry.getInstance().send(NpcTalkCommand.class, CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
             new NpcTalkCommand(characterId, npcId, message, NpcTalkType.SIMPLE, NpcTalkSpeaker.NPC_LEFT));
    }
 
    public static void sendYesNo(int characterId, int npcId, String message) {
-      EventProducerRegistry.getInstance().send(NpcTalkCommand.class, CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
             new NpcTalkCommand(characterId, npcId, message, NpcTalkType.YES_NO, NpcTalkSpeaker.NPC_LEFT));
    }
 
    public static void sendAcceptDecline(int characterId, int npcId, String message) {
-      EventProducerRegistry.getInstance().send(NpcTalkCommand.class, CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
             new NpcTalkCommand(characterId, npcId, message, NpcTalkType.ACCEPT_DECLINE, NpcTalkSpeaker.NPC_LEFT));
    }
 
    public static void sendOk(int characterId, int npcId, String message) {
-      EventProducerRegistry.getInstance().send(NpcTalkCommand.class, CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
             new NpcTalkCommand(characterId, npcId, message, NpcTalkType.OK, NpcTalkSpeaker.NPC_LEFT));
    }
 
    public static void sendPrevious(int characterId, int npcId, String message) {
-      EventProducerRegistry.getInstance().send(NpcTalkCommand.class, CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
             new NpcTalkCommand(characterId, npcId, message, NpcTalkType.PREVIOUS, NpcTalkSpeaker.NPC_LEFT));
    }
 
@@ -40,7 +40,7 @@ public final class NpcTalkCommandProducer {
    }
 
    public static void sendNextPrevious(int characterId, int npcId, String message, byte speaker) {
-      EventProducerRegistry.getInstance().send(NpcTalkCommand.class, CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
             new NpcTalkCommand(characterId, npcId, message, NpcTalkType.NEXT_PREVIOUS, NpcTalkSpeaker.fromValue(speaker)));
    }
 
@@ -49,7 +49,7 @@ public final class NpcTalkCommandProducer {
    }
 
    public static void sendNext(int characterId, int npcId, String message, byte speaker) {
-      EventProducerRegistry.getInstance().send(NpcTalkCommand.class, CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
+      EventProducerRegistry.getInstance().send(CommandConstants.TOPIC_NPC_TALK_COMMAND, characterId,
             new NpcTalkCommand(characterId, npcId, message, NpcTalkType.NEXT, NpcTalkSpeaker.fromValue(speaker)));
    }
 }
