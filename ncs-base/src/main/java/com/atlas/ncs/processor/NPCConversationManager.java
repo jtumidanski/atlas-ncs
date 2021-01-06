@@ -15,8 +15,8 @@ import com.atlas.ncs.event.producer.ChangeMapCommandProducer;
 import com.atlas.ncs.event.producer.CharacterEnableActionsProducer;
 import com.atlas.ncs.event.producer.CharacterExperienceGainProducer;
 import com.atlas.ncs.event.producer.GainMesoProducer;
-import com.atlas.ncs.event.producer.ServerNoticeProducer;
 import com.atlas.ncs.event.producer.NpcTalkCommandProducer;
+import com.atlas.ncs.event.producer.ServerNoticeProducer;
 import com.atlas.ncs.model.Alliance;
 import com.atlas.ncs.model.GuildCharacter;
 import com.atlas.ncs.model.MapObject;
@@ -42,6 +42,8 @@ public class NPCConversationManager {
    private final String scriptName;
 
    private final boolean itemScript;
+
+   private String text;
 
    public NPCConversationManager(int worldId, int channelId, int mapId, int characterId, int npc) {
       this(worldId, channelId, mapId, characterId, npc, -1, "", false);
@@ -329,6 +331,7 @@ public class NPCConversationManager {
 
    /**
     * Gets the hair of the current character.
+    *
     * @return the hair
     */
    public int getHair() {
@@ -689,7 +692,11 @@ public class NPCConversationManager {
    }
 
    public String getText() {
-      return "";
+      return text;
+   }
+
+   public void setText(String text) {
+      this.text = text;
    }
 
    public boolean start_PyramidSubway(Integer integer) {

@@ -17,12 +17,15 @@ COPY ncs-script/src ncs-script/src
 
 RUN mvn install
 
-FROM openjdk:14-ea-jdk-alpine
+FROM groovy:3.0.5-jdk14
 USER root
+
+WORKDIR /
 
 RUN mkdir service
 
 COPY --from=build /ncs-base/target/ /service/
+COPY /ncs-script/src/main/groovy/com/atlas/ncs/script /service/script/
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.5.0/wait /wait
 

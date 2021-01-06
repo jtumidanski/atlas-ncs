@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class NPCScriptRegistry {
    private static final Object lock = new Object();
@@ -79,10 +80,9 @@ public class NPCScriptRegistry {
    }
 
    protected ScriptEngine eval(ScriptEngine engine, String path) {
-      path = "script/src/main/groovy/" + path;
       File scriptFile = null;
-      if (new File(path + ".groovy").exists()) {
-         scriptFile = new File(path + ".groovy");
+      if (new File(path).exists()) {
+         scriptFile = new File(path);
       }
       if (scriptFile == null) {
          return null;
@@ -207,9 +207,9 @@ public class NPCScriptRegistry {
 //            c.setClickedNPC();
             ((Invocable) iv).invokeFunction("action", mode, type, selection);
          } catch (ScriptException | NoSuchMethodException t) {
-            if (getCM(characterId) != null) {
-               System.out.printf("NPC [%d]%n", getCM(characterId).getNpcId());
-            }
+            getCM(characterId)
+                  .map(NPCConversationManager::getNpcId)
+                  .ifPresent(npcId -> System.out.printf("NPC [%d]%n", npcId));
             dispose(characterId);
          }
       }
@@ -231,8 +231,11 @@ public class NPCScriptRegistry {
       }
    }
 
-   public NPCConversationManager getCM(int characterId) {
-      return cms.get(characterId);
+   public Optional<NPCConversationManager> getCM(int characterId) {
+      if (cms.containsKey(characterId)) {
+         return Optional.of(cms.get(characterId));
+      }
+      return Optional.empty();
    }
 
 }
