@@ -6,8 +6,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import com.app.rest.util.RestResponseUtil;
+import com.atlas.mrg.constant.RestConstants;
 import com.atlas.mrg.rest.attribute.MapCharacterAttributes;
-import com.atlas.shared.rest.RestService;
 import com.atlas.shared.rest.UriBuilder;
 
 import rest.DataBody;
@@ -15,7 +15,7 @@ import rest.DataContainer;
 
 public final class MapProcessor {
    public static CompletableFuture<Integer> countCharactersInMap(int worldId, int channelId, int mapId) {
-      return UriBuilder.service(RestService.MAP_REGISTRY)
+      return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("worlds", worldId)
             .pathParam("channels", channelId)
             .pathParam("maps", mapId)
@@ -28,7 +28,7 @@ public final class MapProcessor {
    }
 
    public static CompletableFuture<List<Integer>> getCharacterIdsInMap(int worldId, int channelId, int mapId) {
-      return UriBuilder.service(RestService.MAP_REGISTRY)
+      return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("worlds", worldId)
             .pathParam("channels", channelId)
             .pathParam("maps", mapId)

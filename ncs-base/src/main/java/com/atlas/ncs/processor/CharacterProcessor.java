@@ -8,8 +8,8 @@ import com.app.rest.util.RestResponseUtil;
 import com.atlas.cos.attribute.LocationAttributes;
 import com.atlas.cos.attribute.LocationType;
 import com.atlas.cos.builder.LocationAttributesBuilder;
+import com.atlas.cos.constant.RestConstants;
 import com.atlas.ncs.model.Character;
-import com.atlas.shared.rest.RestService;
 import com.atlas.shared.rest.UriBuilder;
 
 import builder.ResultObjectBuilder;
@@ -21,7 +21,7 @@ public final class CharacterProcessor {
    }
 
    public static CompletableFuture<Character> getCharacter(int characterId) {
-      return UriBuilder.service(RestService.CHARACTER)
+      return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("characters", characterId)
             .getAsyncRestClient(com.atlas.cos.attribute.CharacterAttributes.class)
             .get()
@@ -32,7 +32,7 @@ public final class CharacterProcessor {
    }
 
    public static void saveLocation(int characterId, String type, int mapId, int portalId) {
-      UriBuilder.service(RestService.CHARACTER)
+      UriBuilder.service(RestConstants.SERVICE)
             .pathParam("characters", characterId)
             .path("locations")
             .getRestClient()
@@ -48,7 +48,7 @@ public final class CharacterProcessor {
    }
 
    public static int getSavedLocation(int characterId, String type) {
-      return UriBuilder.service(RestService.CHARACTER)
+      return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("characters", characterId)
             .path("locations")
             .queryParam("type", type)

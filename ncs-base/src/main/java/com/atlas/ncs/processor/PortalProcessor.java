@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import com.app.rest.util.RestResponseUtil;
 import com.atlas.mis.attribute.PortalAttributes;
+import com.atlas.mis.constant.RestConstants;
 import com.atlas.ncs.model.Portal;
-import com.atlas.shared.rest.RestService;
 import com.atlas.shared.rest.UriBuilder;
 
 import rest.DataContainer;
@@ -19,7 +19,7 @@ public final class PortalProcessor {
    }
 
    public static CompletableFuture<List<Portal>> getMapPortals(int mapId) {
-      return UriBuilder.service(RestService.MAP_INFORMATION)
+      return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("maps", mapId)
             .path("portals")
             .getAsyncRestClient(PortalAttributes.class)
@@ -32,7 +32,7 @@ public final class PortalProcessor {
    }
 
    public static CompletableFuture<Portal> getMapPortalByName(int mapId, String name) {
-      return UriBuilder.service(RestService.MAP_INFORMATION)
+      return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("maps", mapId)
             .path("portals")
             .queryParam("name", name)
@@ -45,7 +45,7 @@ public final class PortalProcessor {
    }
 
    public static CompletableFuture<Portal> getMapPortalById(int mapId, int portalId) {
-      return UriBuilder.service(RestService.MAP_INFORMATION)
+      return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("maps", mapId)
             .pathParam("portals", portalId)
             .getAsyncRestClient(PortalAttributes.class)
