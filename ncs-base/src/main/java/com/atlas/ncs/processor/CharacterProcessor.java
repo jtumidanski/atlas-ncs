@@ -5,10 +5,11 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import com.app.rest.util.RestResponseUtil;
-import com.atlas.cos.attribute.LocationAttributes;
-import com.atlas.cos.attribute.LocationType;
-import com.atlas.cos.builder.LocationAttributesBuilder;
 import com.atlas.cos.constant.RestConstants;
+import com.atlas.cos.rest.attribute.CharacterAttributes;
+import com.atlas.cos.rest.attribute.LocationAttributes;
+import com.atlas.cos.rest.attribute.LocationType;
+import com.atlas.cos.rest.builder.LocationAttributesBuilder;
 import com.atlas.ncs.model.Character;
 import com.atlas.shared.rest.UriBuilder;
 
@@ -23,7 +24,7 @@ public final class CharacterProcessor {
    public static CompletableFuture<Character> getCharacter(int characterId) {
       return UriBuilder.service(RestConstants.SERVICE)
             .pathParam("characters", characterId)
-            .getAsyncRestClient(com.atlas.cos.attribute.CharacterAttributes.class)
+            .getAsyncRestClient(CharacterAttributes.class)
             .get()
             .thenApply(RestResponseUtil::result)
             .thenApply(DataContainer::data)

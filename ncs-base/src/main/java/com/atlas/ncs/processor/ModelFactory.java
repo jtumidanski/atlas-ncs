@@ -2,7 +2,7 @@ package com.atlas.ncs.processor;
 
 import java.util.Arrays;
 
-import com.atlas.cos.attribute.CharacterAttributes;
+import com.atlas.cos.rest.attribute.CharacterAttributes;
 import com.atlas.mis.attribute.PortalAttributes;
 import com.atlas.ncs.model.Character;
 import com.atlas.ncs.model.Portal;
