@@ -15,7 +15,7 @@ COPY ncs-model/src ncs-model/src
 COPY ncs-base/src ncs-base/src
 COPY ncs-script/src ncs-script/src
 
-RUN mvn install
+RUN mvn install -Prunnable
 
 FROM groovy:3.0.5-jdk14
 USER root
