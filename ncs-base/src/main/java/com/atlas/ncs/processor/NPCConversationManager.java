@@ -14,7 +14,7 @@ import com.atlas.ncs.configuration.Configuration;
 import com.atlas.ncs.event.producer.ChangeMapCommandProducer;
 import com.atlas.ncs.event.producer.CharacterEnableActionsProducer;
 import com.atlas.ncs.event.producer.CharacterExperienceGainProducer;
-import com.atlas.ncs.event.producer.GainMesoProducer;
+import com.atlas.ncs.event.producer.AdjustMesoProducer;
 import com.atlas.ncs.event.producer.NpcTalkCommandProducer;
 import com.atlas.ncs.event.producer.ServerNoticeProducer;
 import com.atlas.ncs.model.Alliance;
@@ -195,7 +195,7 @@ public class NPCConversationManager {
    }
 
    public void gainMeso(int meso) {
-      GainMesoProducer.command(characterId, meso);
+      AdjustMesoProducer.command(characterId, meso);
    }
 
    /**
