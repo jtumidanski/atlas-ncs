@@ -48,3 +48,7 @@ func (c *conversation) SendNext(message string) {
 func (c *conversation) send() {
 
 }
+
+func (c *conversation) SendNextPrevious(message string) {
+	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeNextPrevious, SpeakerNPCLeft)
+}
