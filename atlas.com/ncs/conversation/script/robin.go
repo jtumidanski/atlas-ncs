@@ -14,7 +14,11 @@ func (r Robin) NPCId() uint32 {
 	return 2003
 }
 
-func (r Robin) Initial(l logrus.FieldLogger, c Context) State {
+func (r Robin) Initial() State {
+	return r.AskMeAnything
+}
+
+func (r Robin) AskMeAnything(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 
 	m := message.NewBuilder().
@@ -142,7 +146,7 @@ func (r Robin) WarriorToDo(l logrus.FieldLogger, c Context, mode byte, theType b
 		BlueText().ShowNPC(10202).
 		BlackText().AddText(". He'll teach you all about becoming a true warrior. Ohh, and one VERY important thing: You'll need to be at least level 10 in order to become a warrior!!")
 	conversation.SendNext(m.String())
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -157,7 +161,7 @@ func (r Robin) BowmanToDo(l logrus.FieldLogger, c Context, mode byte, theType by
 		BlueText().ShowNPC(10200).
 		BlackText().AddText(" and learn the in's and out's of being a bowman. Ohh, and one VERY important thing: You'll need to be at least level 10 in order to become a bowman!!")
 	conversation.SendNext(m.String())
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -187,7 +191,7 @@ func (r Robin) ThiefToDo(l logrus.FieldLogger, c Context, mode byte, theType byt
 		BlueText().ShowNPC(10203).
 		BlackText().AddText(" who'll teach you everything about being a thief. Ohh, and one VERY important thing: You'll need to be at least level 10 in order to become a thief!!")
 	conversation.SendNext(m.String())
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -211,7 +215,7 @@ func (r Robin) CheckItems(l logrus.FieldLogger, c Context, mode byte, theType by
 		BlueText().AddText("I").
 		BlackText().AddText(".")
 	conversation.SendNext(m.String())
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -224,7 +228,7 @@ func (r Robin) WearItems(l logrus.FieldLogger, c Context, mode byte, theType byt
 		BlueText().AddText("E").
 		BlackText().AddText(") and dragging the item into it. To take off an item, double-click on the item at the equipment inventory.")
 	conversation.SendNext(m.String())
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -235,7 +239,7 @@ func (r Robin) CheckEquipment(l logrus.FieldLogger, c Context, mode byte, theTyp
 		BlueText().AddText("E").
 		BlackText().AddText(" to open the equipment inventory, where you'll see exactly what you are wearing right at the moment. To take off an item, double-click on the item. The item will then be sent to the item inventory.")
 	conversation.SendNext(m.String())
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -246,7 +250,7 @@ func (r Robin) SpecialAbilities(l logrus.FieldLogger, c Context, mode byte, theT
 		BlueText().AddText("K").
 		BlackText().AddText(" to open the skill book. It'll help you down the road.")
 	conversation.SendNext(m.String())
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -260,7 +264,7 @@ func (r Robin) GetToVictoria(l logrus.FieldLogger, c Context, mode byte, theType
 func (r Robin) Mesos(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	conversation.SendNext("It's the currency used in MapleStory. You may purchase items through mesos. To earn them, you may either defeat the monsters, sell items at the store, or complete quests...")
-	return Next(GenericExit, nil)
+	return Next(GenericExit, r.AskMeAnything)
 
 }
 
@@ -271,7 +275,7 @@ func (r Robin) AttackMonsters(l logrus.FieldLogger, c Context, mode byte, theTyp
 		BlueText().AddText("Ctrl").
 		BlackText().AddText(" to use the weapon. With the right timing, you'll be able to easily take down the monsters.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.HowToMove)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.HowToMove)
 
 }
 
@@ -280,7 +284,7 @@ func (r Robin) JobAdvancement(l logrus.FieldLogger, c Context, mode byte, theTyp
 	m := message.NewBuilder().
 		AddText("Once you make the job advancement, you'll acquire different kinds of skills, and you can assign them to HotKeys for easier access. If it's an attacking skill, you don't need to press Ctrl to attack, just press the button assigned as a HotKey.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.HowToTakeDownMonster)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.HowToTakeDownMonster)
 
 }
 
@@ -289,7 +293,7 @@ func (r Robin) FullInventory(l logrus.FieldLogger, c Context, mode byte, theType
 	m := message.NewBuilder().
 		AddText("Remember, though, that if your item inventory is full, you won't be able to acquire more. So if you have an item you don't need, sell it so you can make something out of it. The inventory may expand once you make the job advancement.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.HowToGather)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.HowToGather)
 
 }
 
@@ -298,7 +302,7 @@ func (r Robin) BeginnerDeath(l logrus.FieldLogger, c Context, mode byte, theType
 	m := message.NewBuilder().
 		AddText("There isn't much to lose when you die if you are just a beginner. Once you have a job, however, it's a different story. You'll lose a portion of your EXP when you die, so make sure you avoid danger and death at all cost.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.WhenYouDie)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.WhenYouDie)
 
 }
 
@@ -307,7 +311,7 @@ func (r Robin) HowToAdvance(l logrus.FieldLogger, c Context, mode byte, theType 
 	m := message.NewBuilder().
 		AddText("Level isn't the only thing that determines the advancement, though. You also need to boost up the levels of a particular ability based on the occupation. For example, to be a warrior, your STR has to be over 35, and so forth, you know what I'm saying? Make sure you boost up the abilities that has direct implications to your job.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.ChoosingAJob)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.ChoosingAJob)
 
 }
 
@@ -316,7 +320,7 @@ func (r Robin) PowerfulPlayer(l logrus.FieldLogger, c Context, mode byte, theTyp
 	m := message.NewBuilder().
 		AddText("But, if you want to be a powerful player, better not think about staying here for too long. You won't be able to get a job anyway. Underneath this island lies an enormous island called Victoria Island. That place is so much bigger than here, it's not even funny.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.TheIsland)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.TheIsland)
 }
 
 func (r Robin) MagicianSpecial(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
@@ -324,7 +328,7 @@ func (r Robin) MagicianSpecial(l logrus.FieldLogger, c Context, mode byte, theTy
 	m := message.NewBuilder().
 		AddText("Oh by the way, unlike other jobs, to become a magician you only need to be at level 8. What comes with making the job advancement early also comes with the fact that it takes a lot to become a true powerful magician. Think long and carefully before choosing your path.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.MagicianToDo)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.MagicianToDo)
 }
 
 func (r Robin) AbilityExplanation(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
@@ -332,7 +336,7 @@ func (r Robin) AbilityExplanation(l logrus.FieldLogger, c Context, mode byte, th
 	m := message.NewBuilder().
 		AddText("Place your mouse cursor on top of all abilities for a brief explanation. For example, STR for warriors, DEX for bowman, INT for magician, and LUK for thief. That itself isn't everything you need to know, so you'll need to think long and hard on how to emphasize your character's strengths through assigning the points.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.RaiseStats)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.RaiseStats)
 }
 
 func (r Robin) OneLastPiece(l logrus.FieldLogger, c Context, _ byte, _ byte, _ int32) State {
@@ -342,5 +346,5 @@ func (r Robin) OneLastPiece(l logrus.FieldLogger, c Context, _ byte, _ byte, _ i
 		BlueText().AddText("W").
 		BlackText().AddText(". The world map will pop up with the locator showing where you stand. You won't have to worry about getting lost with that.")
 	conversation.SendNextPrevious(m.String())
-	return NextPrevious(GenericExit, nil, r.GetToVictoria)
+	return NextPrevious(GenericExit, r.AskMeAnything, r.GetToVictoria)
 }

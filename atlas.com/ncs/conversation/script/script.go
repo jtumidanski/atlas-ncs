@@ -16,7 +16,7 @@ type Context struct {
 type Script interface {
 	NPCId() uint32
 
-	Initial(l logrus.FieldLogger, c Context) State
+	Initial() State
 }
 
 type State func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State
