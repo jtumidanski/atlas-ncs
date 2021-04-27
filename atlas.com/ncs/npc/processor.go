@@ -11,6 +11,7 @@ const (
 	MessageTypeNext         = "NEXT"
 	MessageTypeNextPrevious = "NEXT_PREVIOUS"
 	MessageTypePrevious     = "PREVIOUS"
+	MessageTypeYesNo        = "YES_NO"
 
 	SpeakerNPCLeft       = "NPC_LEFT"
 	SpeakerCharacterLeft = "CHARACTER_LEFT"
@@ -38,6 +39,14 @@ func (p *processor) Conversation(characterId uint32, npcId uint32) *conversation
 	return &conversation{l: p.l, characterId: characterId, npcId: npcId}
 }
 
+func (p *processor) LockUI() {
+
+}
+
+func (p *processor) Warp(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
+	producers.ChangeMap(p.l, context.Background()).Emit(worldId, channelId, characterId, mapId, portalId)
+}
+
 func (c *conversation) SendSimple(message string) {
 	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeSimple, SpeakerNPCLeft)
 }
@@ -56,4 +65,8 @@ func (c *conversation) SendNextPrevious(message string) {
 
 func (c *conversation) SendPrevious(message string) {
 	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypePrevious, SpeakerNPCLeft)
+}
+
+func (c *conversation) SendYesNo(message string) {
+	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeYesNo, SpeakerNPCLeft)
 }

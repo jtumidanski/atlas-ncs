@@ -23,6 +23,7 @@ func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
 	s.addConversation(Robin{})
 	s.addConversation(Rain{})
+	s.addConversation(DarkLord{})
 	return s
 }
 
