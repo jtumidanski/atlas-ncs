@@ -31,7 +31,7 @@ func GenericExit(l logrus.FieldLogger, c Context) {
 
 func ListSelection(e ExitFunction, s ProcessSelection) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
-		if mode == 255 && theType == 0 {
+		if mode == 0 && theType == 4 {
 			e(l, c)
 			return nil
 		}
@@ -65,6 +65,19 @@ func NextPrevious(e ExitFunction, next State, previous State) State {
 			return previous(l, c, mode, theType, selection)
 		} else if mode == 1 && next != nil {
 			return next(l, c, mode, theType, selection)
+		}
+		return nil
+	}
+}
+
+func Previous(e ExitFunction, previous State) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 255 && theType == 0 {
+			e(l, c)
+			return nil
+		}
+		if mode == 0 && previous != nil {
+			return previous(l, c, mode, theType, selection)
 		}
 		return nil
 	}

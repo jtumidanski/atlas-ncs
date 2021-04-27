@@ -10,6 +10,7 @@ const (
 	MessageTypeSimple       = "SIMPLE"
 	MessageTypeNext         = "NEXT"
 	MessageTypeNextPrevious = "NEXT_PREVIOUS"
+	MessageTypePrevious     = "PREVIOUS"
 
 	SpeakerNPCLeft       = "NPC_LEFT"
 	SpeakerCharacterLeft = "CHARACTER_LEFT"
@@ -51,4 +52,8 @@ func (c *conversation) send() {
 
 func (c *conversation) SendNextPrevious(message string) {
 	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeNextPrevious, SpeakerNPCLeft)
+}
+
+func (c *conversation) SendPrevious(message string) {
+	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypePrevious, SpeakerNPCLeft)
 }
