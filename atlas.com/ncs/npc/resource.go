@@ -35,7 +35,7 @@ func SendSpeech(l logrus.FieldLogger) http.HandlerFunc {
 			return
 		}
 		attr := li.Data.Attributes
-		Processor(l).SendSimple(attr.CharacterId, attr.NPCId, attr.Message)
+		Processor(l).Conversation(attr.CharacterId, attr.NPCId).SendSimple(attr.Message)
 		rw.WriteHeader(http.StatusNoContent)
 	}
 }
