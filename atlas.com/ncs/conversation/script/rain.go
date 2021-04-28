@@ -14,11 +14,11 @@ func (r Rain) NPCId() uint32 {
 	return 12101
 }
 
-func (r Rain) Initial() State {
+func (r Rain) Initial() StateProducer {
 	return r.TownCalledAmherst
 }
 
-func (r Rain) TownCalledAmherst(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Rain) TownCalledAmherst(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("This is the town called ").
@@ -28,7 +28,7 @@ func (r Rain) TownCalledAmherst(l logrus.FieldLogger, c Context, mode byte, theT
 	return Next(GenericExit, r.GoToSouthPerry)
 }
 
-func (r Rain) GoToSouthPerry(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Rain) GoToSouthPerry(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("If you want to get stronger, then go to ").
@@ -40,7 +40,7 @@ func (r Rain) GoToSouthPerry(l logrus.FieldLogger, c Context, mode byte, theType
 	return NextPrevious(GenericExit, r.ChooseYourJob, r.TownCalledAmherst)
 }
 
-func (r Rain) ChooseYourJob(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Rain) ChooseYourJob(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("At the Victoria Island, you can choose your job. Is it called ").

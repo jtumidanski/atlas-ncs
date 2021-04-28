@@ -14,11 +14,11 @@ func (r Robin) NPCId() uint32 {
 	return 2003
 }
 
-func (r Robin) Initial() State {
+func (r Robin) Initial() StateProducer {
 	return r.AskMeAnything
 }
 
-func (r Robin) AskMeAnything(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) AskMeAnything(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 
 	m := message.NewBuilder().
@@ -45,7 +45,7 @@ func (r Robin) AskMeAnything(l logrus.FieldLogger, c Context, mode byte, theType
 	return ListSelection(GenericExit, r.ProcessListSelection)
 }
 
-func (r Robin) ProcessListSelection(selection int32) State {
+func (r Robin) ProcessListSelection(selection int32) StateProducer {
 	switch selection {
 	case 0:
 		return r.HowToMove
@@ -85,7 +85,7 @@ func (r Robin) ProcessListSelection(selection int32) State {
 	return nil
 }
 
-func (r Robin) HowToMove(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) HowToMove(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Alright this is how you move. Use ").
@@ -97,14 +97,14 @@ func (r Robin) HowToMove(l logrus.FieldLogger, c Context, mode byte, theType byt
 	return Next(GenericExit, r.AttackMonsters)
 }
 
-func (r Robin) HowToTakeDownMonster(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) HowToTakeDownMonster(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	conversation.SendNext("Here's how to take down a monster. Every monster possesses an HP of its own and you'll take them down by attacking with either a weapon or through spells. Of course the stronger they are, the harder it is to take them down.")
 	return Next(GenericExit, r.JobAdvancement)
 
 }
 
-func (r Robin) HowToGather(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) HowToGather(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("This is how you gather up an item. Once you take down a monster, an item will be dropped to the ground. When that happens, stand in front of the item and press ").
@@ -116,28 +116,28 @@ func (r Robin) HowToGather(l logrus.FieldLogger, c Context, mode byte, theType b
 	return Next(GenericExit, r.FullInventory)
 }
 
-func (r Robin) WhenYouDie(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) WhenYouDie(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	conversation.SendNext("Curious to find out what happens when you die? You'll become a ghost when your HP reaches 0. There will be a tombstone in that place and you won't be able to move, although you still will be able to chat.")
 	return Next(GenericExit, r.BeginnerDeath)
 
 }
 
-func (r Robin) ChoosingAJob(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) ChoosingAJob(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	conversation.SendNext("When do you get to choose your job? Hahaha, take it easy, my friend. Each job has a requirement set for you to meet. Normally a level between 8 and 10 will do, so work hard.")
 	return Next(GenericExit, r.HowToAdvance)
 
 }
 
-func (r Robin) TheIsland(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) TheIsland(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	conversation.SendNext("Want to know about this island? It's called Maple Island and it floats in the air. It's been floating in the sky for a while so the nasty monsters aren't really around. It's a very peaceful island, perfect for beginners!")
 	return Next(GenericExit, r.PowerfulPlayer)
 
 }
 
-func (r Robin) WarriorToDo(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) WarriorToDo(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to become a #bWarrior#k? Hmmm, then I suggest you head over to Victoria Island. Head over to a warrior-town called ").
@@ -150,7 +150,7 @@ func (r Robin) WarriorToDo(l logrus.FieldLogger, c Context, mode byte, theType b
 
 }
 
-func (r Robin) BowmanToDo(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) BowmanToDo(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to become a ").
@@ -165,7 +165,7 @@ func (r Robin) BowmanToDo(l logrus.FieldLogger, c Context, mode byte, theType by
 
 }
 
-func (r Robin) MagicianToDo(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) MagicianToDo(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to become a ").
@@ -180,7 +180,7 @@ func (r Robin) MagicianToDo(l logrus.FieldLogger, c Context, mode byte, theType 
 
 }
 
-func (r Robin) ThiefToDo(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) ThiefToDo(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to become a ").
@@ -195,7 +195,7 @@ func (r Robin) ThiefToDo(l logrus.FieldLogger, c Context, mode byte, theType byt
 
 }
 
-func (r Robin) RaiseStats(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) RaiseStats(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to know how to raise your character's ability stats? First press ").
@@ -206,7 +206,7 @@ func (r Robin) RaiseStats(l logrus.FieldLogger, c Context, mode byte, theType by
 
 }
 
-func (r Robin) CheckItems(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) CheckItems(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to know how to check out the items you've picked up, huh? When you defeat a monster, it'll drop an item on the ground, and you may press ").
@@ -219,7 +219,7 @@ func (r Robin) CheckItems(l logrus.FieldLogger, c Context, mode byte, theType by
 
 }
 
-func (r Robin) WearItems(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) WearItems(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to know how to wear the items, right? Press ").
@@ -232,7 +232,7 @@ func (r Robin) WearItems(l logrus.FieldLogger, c Context, mode byte, theType byt
 
 }
 
-func (r Robin) CheckEquipment(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) CheckEquipment(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("You want to check on the equipped items, right? Press ").
@@ -243,7 +243,7 @@ func (r Robin) CheckEquipment(l logrus.FieldLogger, c Context, mode byte, theTyp
 
 }
 
-func (r Robin) SpecialAbilities(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) SpecialAbilities(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("The special 'abilities' you get after acquiring a job are called skills. You'll acquire skills that are specifically for that job. You're not at that stage yet, so you don't have any skills yet, but just remember that to check on your skills, press ").
@@ -254,21 +254,21 @@ func (r Robin) SpecialAbilities(l logrus.FieldLogger, c Context, mode byte, theT
 
 }
 
-func (r Robin) GetToVictoria(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) GetToVictoria(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	conversation.SendNext("How do you get to Victoria Island? On the east of this island there's a harbor called Southperry. There, you'll find a ship that flies in the air. In front of the ship stands the captain. Ask him about it.")
 	return Next(GenericExit, r.OneLastPiece)
 
 }
 
-func (r Robin) Mesos(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) Mesos(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	conversation.SendNext("It's the currency used in MapleStory. You may purchase items through mesos. To earn them, you may either defeat the monsters, sell items at the store, or complete quests...")
 	return Next(GenericExit, r.AskMeAnything)
 
 }
 
-func (r Robin) AttackMonsters(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) AttackMonsters(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("In order to attack the monsters, you'll need to be equipped with a weapon. When equipped, press ").
@@ -279,7 +279,7 @@ func (r Robin) AttackMonsters(l logrus.FieldLogger, c Context, mode byte, theTyp
 
 }
 
-func (r Robin) JobAdvancement(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) JobAdvancement(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Once you make the job advancement, you'll acquire different kinds of skills, and you can assign them to HotKeys for easier access. If it's an attacking skill, you don't need to press Ctrl to attack, just press the button assigned as a HotKey.")
@@ -288,7 +288,7 @@ func (r Robin) JobAdvancement(l logrus.FieldLogger, c Context, mode byte, theTyp
 
 }
 
-func (r Robin) FullInventory(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) FullInventory(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Remember, though, that if your item inventory is full, you won't be able to acquire more. So if you have an item you don't need, sell it so you can make something out of it. The inventory may expand once you make the job advancement.")
@@ -297,7 +297,7 @@ func (r Robin) FullInventory(l logrus.FieldLogger, c Context, mode byte, theType
 
 }
 
-func (r Robin) BeginnerDeath(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) BeginnerDeath(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("There isn't much to lose when you die if you are just a beginner. Once you have a job, however, it's a different story. You'll lose a portion of your EXP when you die, so make sure you avoid danger and death at all cost.")
@@ -306,7 +306,7 @@ func (r Robin) BeginnerDeath(l logrus.FieldLogger, c Context, mode byte, theType
 
 }
 
-func (r Robin) HowToAdvance(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) HowToAdvance(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Level isn't the only thing that determines the advancement, though. You also need to boost up the levels of a particular ability based on the occupation. For example, to be a warrior, your STR has to be over 35, and so forth, you know what I'm saying? Make sure you boost up the abilities that has direct implications to your job.")
@@ -315,7 +315,7 @@ func (r Robin) HowToAdvance(l logrus.FieldLogger, c Context, mode byte, theType 
 
 }
 
-func (r Robin) PowerfulPlayer(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) PowerfulPlayer(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("But, if you want to be a powerful player, better not think about staying here for too long. You won't be able to get a job anyway. Underneath this island lies an enormous island called Victoria Island. That place is so much bigger than here, it's not even funny.")
@@ -323,7 +323,7 @@ func (r Robin) PowerfulPlayer(l logrus.FieldLogger, c Context, mode byte, theTyp
 	return NextPrevious(GenericExit, r.AskMeAnything, r.TheIsland)
 }
 
-func (r Robin) MagicianSpecial(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) MagicianSpecial(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Oh by the way, unlike other jobs, to become a magician you only need to be at level 8. What comes with making the job advancement early also comes with the fact that it takes a lot to become a true powerful magician. Think long and carefully before choosing your path.")
@@ -331,7 +331,7 @@ func (r Robin) MagicianSpecial(l logrus.FieldLogger, c Context, mode byte, theTy
 	return NextPrevious(GenericExit, r.AskMeAnything, r.MagicianToDo)
 }
 
-func (r Robin) AbilityExplanation(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+func (r Robin) AbilityExplanation(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Place your mouse cursor on top of all abilities for a brief explanation. For example, STR for warriors, DEX for bowman, INT for magician, and LUK for thief. That itself isn't everything you need to know, so you'll need to think long and hard on how to emphasize your character's strengths through assigning the points.")
@@ -339,7 +339,7 @@ func (r Robin) AbilityExplanation(l logrus.FieldLogger, c Context, mode byte, th
 	return NextPrevious(GenericExit, r.AskMeAnything, r.RaiseStats)
 }
 
-func (r Robin) OneLastPiece(l logrus.FieldLogger, c Context, _ byte, _ byte, _ int32) State {
+func (r Robin) OneLastPiece(l logrus.FieldLogger, c Context) State {
 	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Oh yeah! One last piece of information before I go. If you are not sure where you are, always press ").

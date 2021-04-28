@@ -16,12 +16,14 @@ type Context struct {
 type Script interface {
 	NPCId() uint32
 
-	Initial() State
+	Initial() StateProducer
 }
+
+type StateProducer func(l logrus.FieldLogger, c Context) State
 
 type State func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State
 
-type ProcessSelection func(selection int32) State
+type ProcessSelection func(selection int32) StateProducer
 
 type ExitFunction func(l logrus.FieldLogger, c Context)
 
@@ -41,58 +43,58 @@ func ListSelection(e ExitFunction, s ProcessSelection) State {
 			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
 			return nil
 		}
-		return f(l, c, mode, theType, selection)
+		return f(l, c)
 	}
 }
 
-func Next(e ExitFunction, next State) State {
+func Next(e ExitFunction, next StateProducer) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 255 && theType == 0 {
 			e(l, c)
 			return nil
 		}
-		return next(l, c, mode, theType, selection)
+		return next(l, c)
 	}
 }
 
-func NextPrevious(e ExitFunction, next State, previous State) State {
+func NextPrevious(e ExitFunction, next StateProducer, previous StateProducer) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 255 && theType == 0 {
 			e(l, c)
 			return nil
 		}
 		if mode == 0 && previous != nil {
-			return previous(l, c, mode, theType, selection)
+			return previous(l, c)
 		} else if mode == 1 && next != nil {
-			return next(l, c, mode, theType, selection)
+			return next(l, c)
 		}
 		return nil
 	}
 }
 
-func Previous(e ExitFunction, previous State) State {
+func Previous(e ExitFunction, previous StateProducer) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 255 && theType == 0 {
 			e(l, c)
 			return nil
 		}
 		if mode == 0 && previous != nil {
-			return previous(l, c, mode, theType, selection)
+			return previous(l, c)
 		}
 		return nil
 	}
 }
 
-func YesNo(e ExitFunction, yes State, no State) State {
+func YesNo(e ExitFunction, yes StateProducer, no StateProducer) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 255 && theType == 0 {
 			e(l, c)
 			return nil
 		}
 		if mode == 0 && no != nil {
-			return no(l, c, mode, theType, selection)
+			return no(l, c)
 		} else if mode == 1 && yes != nil {
-			return yes(l, c, mode, theType, selection)
+			return yes(l, c)
 		}
 		return nil
 	}

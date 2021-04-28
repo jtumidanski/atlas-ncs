@@ -21,9 +21,13 @@ func GetRegistry() *Registry {
 
 func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
-	s.addConversation(Robin{})
-	s.addConversation(Rain{})
+	s.addConversation(AthenaPierce{})
+	s.addConversation(DancesWithBalrog{})
 	s.addConversation(DarkLord{})
+	s.addConversation(GrendelTheReallyOld{})
+	s.addConversation(Kyrin{})
+	s.addConversation(Rain{})
+	s.addConversation(Robin{})
 	return s
 }
 
