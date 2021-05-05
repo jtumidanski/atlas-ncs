@@ -23,7 +23,7 @@ func (p processor) Start(worldId byte, channelId byte, mapId uint32, npcId uint3
 	}
 
 	ctx := script.Context{WorldId: worldId, ChannelId: channelId, MapId: mapId, CharacterId: characterId, NPCId: npcId}
-	ns := (*c).Initial()(p.l, ctx)
+	ns := (*c).Initial(p.l, ctx)
 	if ns != nil {
 		GetRegistry().SetContext(characterId, ctx, ns)
 	} else {

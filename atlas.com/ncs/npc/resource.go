@@ -29,13 +29,15 @@ func SendSpeech(l logrus.FieldLogger) http.HandlerFunc {
 		if err != nil {
 			l.WithError(err).Errorf("Deserializing input.")
 			rw.WriteHeader(http.StatusBadRequest)
-			if err != nil {
-				l.WithError(err).Fatalf("Writing error message.")
-			}
 			return
 		}
 		attr := li.Data.Attributes
-		Processor(l).Conversation(attr.CharacterId, attr.NPCId).SendSimple(attr.Message)
+		err = Processor(l).Conversation(attr.CharacterId, attr.NPCId).SendSimple(attr.Message)
+		if err != nil {
+			l.WithError(err).Errorf("Error sending simple message to %d on behalf of %d.", attr.CharacterId, attr.NPCId)
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		rw.WriteHeader(http.StatusNoContent)
 	}
 }

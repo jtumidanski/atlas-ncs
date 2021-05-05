@@ -28,6 +28,7 @@ func initRegistry() *Registry {
 	s.addConversation(Kyrin{})
 	s.addConversation(Rain{})
 	s.addConversation(Robin{})
+	s.addConversation(Shanks{})
 	return s
 }
 

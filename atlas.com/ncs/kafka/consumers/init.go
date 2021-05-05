@@ -1,28 +1,23 @@
 package consumers
 
 import (
-	"context"
 	"github.com/sirupsen/logrus"
+	"os"
 )
 
 func CreateEventConsumers(l *logrus.Logger) {
-	cec := func(topicToken string, emptyEventCreator EmptyEventCreator, processor EventProcessor) {
-		createEventConsumer(l, topicToken, emptyEventCreator, processor)
-	}
-	cec("TOPIC_START_NPC_CONVERSATION", StartNPCConversationCommandCreator(), HandleStartNPCConversationCommand())
-	cec("TOPIC_CONTINUE_NPC_CONVERSATION", ContinueNPCConversationCommandCreator(), HandleContinueNPCConversationCommand())
-	cec("TOPIC_SET_RETURN_TEXT", SetReturnTextCommandCreator(), HandleSetReturnTextCommand())
+	brokers := []string{os.Getenv("BOOTSTRAP_SERVERS")}
 
-}
-
-func createEventConsumer(l *logrus.Logger, topicToken string, emptyEventCreator EmptyEventCreator, processor EventProcessor) {
-	h := func(logger logrus.FieldLogger, event interface{}) {
-		processor(logger, event)
+	creator := func(topicToken string, creator EmptyEventCreator, processor EventProcessor) {
+		go func() {
+			err := NewConsumer(l, processor, creator, SetGroupId("Character Orchestration Service"), SetTopicToken(topicToken), SetBrokers(brokers))
+			if err != nil {
+				l.WithError(err).Errorf("Consumer exited with error.")
+			}
+		}()
 	}
 
-	c := NewConsumer(l, context.Background(), h,
-		SetGroupId("Character Orchestration Service"),
-		SetTopicToken(topicToken),
-		SetEmptyEventCreator(emptyEventCreator))
-	go c.Init()
+	creator("TOPIC_START_NPC_CONVERSATION", StartNPCConversationCommandCreator(), HandleStartNPCConversationCommand())
+	creator("TOPIC_CONTINUE_NPC_CONVERSATION", ContinueNPCConversationCommandCreator(), HandleContinueNPCConversationCommand())
+	creator("TOPIC_SET_RETURN_TEXT", SetReturnTextCommandCreator(), HandleSetReturnTextCommand())
 }

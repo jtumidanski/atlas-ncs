@@ -14,34 +14,33 @@ func (r DancesWithBalrog) NPCId() uint32 {
 	return 10202
 }
 
-func (r DancesWithBalrog) Initial() StateProducer {
-	return r.WarriorIntroduction
+func (r DancesWithBalrog) Initial(l logrus.FieldLogger, c Context) State {
+	return r.WarriorIntroduction(l, c)
 }
 
 func (r DancesWithBalrog) WarriorIntroduction(l logrus.FieldLogger, c Context) State {
-    conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
     m := message.NewBuilder().
         AddText("Warriors possess an enormous power with stamina to back it up, and they shine the brightest in melee combat situation. Regular attacks are powerful to begin with, and armed with complex skills, the job is perfect for explosive attacks.")
-    conversation.SendNext(m.String())
-    return Next(GenericExit, r.Demo)
+    return SendNext(l, c, m.String(), r.Demo)
 }
 
 func (r DancesWithBalrog) Demo(l logrus.FieldLogger, c Context) State {
-    conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
     m := message.NewBuilder().AddText("Would you like to experience what it's like to be a Warrior?")
-    conversation.SendYesNo(m.String())
-    return YesNo(GenericExit, r.DoDemo, r.SeeMeAgain)
+    return SendYesNo(l, c, m.String(), r.DoDemo, r.SeeMeAgain)
 }
 
 func (r DancesWithBalrog) DoDemo(l logrus.FieldLogger, c Context) State {
     npc.Processor(l).LockUI()
-    npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, 1020100, 0)
+
+    mapId := uint32(1020100)
+    err := npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
+    if err != nil {
+        l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
+    }
     return nil
 }
 
 func (r DancesWithBalrog) SeeMeAgain(l logrus.FieldLogger, c Context) State {
-    conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
     m := message.NewBuilder().AddText("If you wish to experience what it's like to be a Warrior, come see me again.")
-    conversation.SendNext(m.String())
-    return nil
+    return SendNext(l, c, m.String(), Exit())
 }

@@ -1,27 +1,29 @@
 package producers
 
 import (
-	"context"
 	"github.com/sirupsen/logrus"
+	"os"
 )
+
+const topicTokenEnableActions = "TOPIC_ENABLE_ACTIONS"
 
 type enableActionsEvent struct {
 	CharacterId uint32 `json:"characterId"`
 }
 
-var EnableActions = func(l logrus.FieldLogger, ctx context.Context) *enableActions {
-	return &enableActions{
-		l:   l,
-		ctx: ctx,
+type EnableActionsEmitter func(characterId uint32) error
+
+func EnableActions(l logrus.FieldLogger) (EnableActionsEmitter, error) {
+	producer, err := create(l, topicTokenEnableActions, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
+	if err != nil {
+		return nil, err
 	}
+	return produceEnableActions(producer), nil
 }
 
-type enableActions struct {
-	l   logrus.FieldLogger
-	ctx context.Context
-}
-
-func (e *enableActions) Emit(characterId uint32) {
-	event := &enableActionsEvent{characterId}
-	produceEvent(e.l, "TOPIC_ENABLE_ACTIONS", createKey(int(characterId)), event)
+func produceEnableActions(producer MessageProducer) EnableActionsEmitter {
+	return func(characterId uint32) error {
+		event := &enableActionsEvent{characterId}
+		return producer(createKey(int(characterId)), event)
+	}
 }

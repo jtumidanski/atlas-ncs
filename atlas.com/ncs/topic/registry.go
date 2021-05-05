@@ -1,13 +1,12 @@
-package topics
+package topic
 
 import (
-	"atlas-ncs/rest/requests"
-	"github.com/sirupsen/logrus"
+	"errors"
 	"sync"
 )
 
 type Registry struct {
-	topics map[string]string
+	topics map[string]*Model
 	lock   sync.RWMutex
 }
 
@@ -17,33 +16,32 @@ var registry *Registry
 func GetRegistry() *Registry {
 	once.Do(func() {
 		registry = &Registry{
-			topics: make(map[string]string, 0),
+			topics: make(map[string]*Model, 0),
 			lock:   sync.RWMutex{},
 		}
 	})
 	return registry
 }
 
-func (r *Registry) Get(l logrus.FieldLogger, token string) string {
+func (r *Registry) Get(token string) (*Model, error) {
 	r.lock.RLock()
 	if val, ok := r.topics[token]; ok {
 		r.lock.RUnlock()
-		return val
+		return val, nil
 	} else {
 		r.lock.RUnlock()
 		r.lock.Lock()
 		if val, ok = r.topics[token]; ok {
 			r.lock.Unlock()
-			return val
+			return val, nil
 		}
-		td, err := requests.Topic(l).GetTopic(token)
+		t, err := RequestTopic(token)
 		if err != nil {
 			r.lock.Unlock()
-			l.WithError(err).Fatalf("Unable to locate topic for token %s.", token)
-			return ""
+			return nil, errors.New("unable to locate topic for token")
 		}
-		r.topics[token] = td.Attributes.Name
+		r.topics[token] = t
 		r.lock.Unlock()
-		return td.Attributes.Name
+		return t, nil
 	}
 }

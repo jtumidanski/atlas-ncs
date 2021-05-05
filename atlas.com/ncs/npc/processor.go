@@ -2,7 +2,6 @@ package npc
 
 import (
 	"atlas-ncs/kafka/producers"
-	"context"
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,61 +11,74 @@ const (
 	MessageTypeNextPrevious = "NEXT_PREVIOUS"
 	MessageTypePrevious     = "PREVIOUS"
 	MessageTypeYesNo        = "YES_NO"
+	MessageTypeOk           = "OK"
 
-	SpeakerNPCLeft       = "NPC_LEFT"
-	SpeakerCharacterLeft = "CHARACTER_LEFT"
+	SpeakerNPCLeft = "NPC_LEFT"
 )
 
 type processor struct {
-	l logrus.FieldLogger
+	l                    logrus.FieldLogger
+	enableActionsEmitter producers.EnableActionsEmitter
+	changeMapEmitter     producers.ChangeMapEmitter
 }
 
 type conversation struct {
-	l           logrus.FieldLogger
-	characterId uint32
-	npcId       uint32
+	l              logrus.FieldLogger
+	npcTalkEmitter producers.NPCTalkEmitter
+	characterId    uint32
+	npcId          uint32
 }
 
 var Processor = func(l logrus.FieldLogger) *processor {
-	return &processor{l}
+	enableActionsEmitter, _ := producers.EnableActions(l)
+	changeMapEmitter, _ := producers.ChangeMap(l)
+
+	return &processor{l, enableActionsEmitter, changeMapEmitter}
 }
 
-func (p *processor) Dispose(characterId uint32) {
-	producers.EnableActions(p.l, context.Background()).Emit(characterId)
+func (p *processor) Dispose(characterId uint32) error {
+	return p.enableActionsEmitter(characterId)
 }
 
 func (p *processor) Conversation(characterId uint32, npcId uint32) *conversation {
-	return &conversation{l: p.l, characterId: characterId, npcId: npcId}
+	npcTalkEmitter, _ := producers.NPCTalk(p.l)
+
+	return &conversation{
+		l:              p.l,
+		npcTalkEmitter: npcTalkEmitter,
+		characterId:    characterId,
+		npcId:          npcId,
+	}
 }
 
 func (p *processor) LockUI() {
 
 }
 
-func (p *processor) Warp(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
-	producers.ChangeMap(p.l, context.Background()).Emit(worldId, channelId, characterId, mapId, portalId)
+func (p *processor) Warp(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
+	return p.changeMapEmitter(worldId, channelId, characterId, mapId, portalId)
 }
 
-func (c *conversation) SendSimple(message string) {
-	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeSimple, SpeakerNPCLeft)
+func (c *conversation) SendSimple(message string) error {
+	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeSimple, SpeakerNPCLeft)
 }
 
-func (c *conversation) SendNext(message string) {
-	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeNext, SpeakerNPCLeft)
+func (c *conversation) SendNext(message string) error {
+	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeNext, SpeakerNPCLeft)
 }
 
-func (c *conversation) send() {
-
+func (c *conversation) SendNextPrevious(message string) error {
+	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeNextPrevious, SpeakerNPCLeft)
 }
 
-func (c *conversation) SendNextPrevious(message string) {
-	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeNextPrevious, SpeakerNPCLeft)
+func (c *conversation) SendPrevious(message string) error {
+	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypePrevious, SpeakerNPCLeft)
 }
 
-func (c *conversation) SendPrevious(message string) {
-	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypePrevious, SpeakerNPCLeft)
+func (c *conversation) SendYesNo(message string) error {
+	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeYesNo, SpeakerNPCLeft)
 }
 
-func (c *conversation) SendYesNo(message string) {
-	producers.NPCTalk(c.l, context.Background()).Emit(c.characterId, c.npcId, message, MessageTypeYesNo, SpeakerNPCLeft)
+func (c *conversation) SendOk(message string) error {
+	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeOk, SpeakerNPCLeft)
 }

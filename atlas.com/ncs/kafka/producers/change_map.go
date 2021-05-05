@@ -1,9 +1,11 @@
 package producers
 
 import (
-	"context"
 	"github.com/sirupsen/logrus"
+	"os"
 )
+
+const topicTokenChangeMap = "TOPIC_CHANGE_MAP_COMMAND"
 
 type changeMapEvent struct {
 	WorldId     byte   `json:"worldId"`
@@ -13,19 +15,19 @@ type changeMapEvent struct {
 	PortalId    uint32 `json:"portalId"`
 }
 
-var ChangeMap = func(l logrus.FieldLogger, ctx context.Context) *changeMap {
-	return &changeMap{
-		l:   l,
-		ctx: ctx,
+type ChangeMapEmitter func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error
+
+func ChangeMap(l logrus.FieldLogger) (ChangeMapEmitter, error) {
+	producer, err := create(l, topicTokenChangeMap, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
+	if err != nil {
+		return nil, err
 	}
+	return produceChangeMap(producer), nil
 }
 
-type changeMap struct {
-	l   logrus.FieldLogger
-	ctx context.Context
-}
-
-func (e *changeMap) Emit(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
-	event := &changeMapEvent{WorldId: worldId, ChannelId: channelId, CharacterId: characterId, MapId: mapId, PortalId: portalId}
-	produceEvent(e.l, "TOPIC_CHANGE_MAP_COMMAND", createKey(int(characterId)), event)
+func produceChangeMap(producer MessageProducer) ChangeMapEmitter {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
+		event := &changeMapEvent{WorldId: worldId, ChannelId: channelId, CharacterId: characterId, MapId: mapId, PortalId: portalId}
+		return producer(createKey(int(characterId)), event)
+	}
 }

@@ -14,34 +14,33 @@ func (r DarkLord) NPCId() uint32 {
 	return 10203
 }
 
-func (r DarkLord) Initial() StateProducer {
-	return r.ThiefIntroduction
+func (r DarkLord) Initial(l logrus.FieldLogger, c Context) State {
+	return r.ThiefIntroduction(l, c)
 }
 
 func (r DarkLord) ThiefIntroduction(l logrus.FieldLogger, c Context) State {
-	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().
 		AddText("Thieves are a perfect blend of luck, dexterity, and power that are adept at the surprise attacks against helpless enemies. A high level of avoidability and speed allows Thieves to attack enemies from various angles.")
-	conversation.SendNext(m.String())
-	return Next(GenericExit, r.Demo)
+	return SendNext(l, c, m.String(), r.Demo)
 }
 
 func (r DarkLord) Demo(l logrus.FieldLogger, c Context) State {
-	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().AddText("Would you like to experience what it's like to be a Thief?")
-	conversation.SendYesNo(m.String())
-	return YesNo(GenericExit, r.DoDemo, r.SeeMeAgain)
+	return SendYesNo(l, c, m.String(), r.DoDemo, r.SeeMeAgain)
 }
 
 func (r DarkLord) DoDemo(l logrus.FieldLogger, c Context) State {
 	npc.Processor(l).LockUI()
-	npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, 1020400, 0)
+
+	mapId := uint32(1020400)
+	err := npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
+	if err != nil {
+		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
+	}
 	return nil
 }
 
 func (r DarkLord) SeeMeAgain(l logrus.FieldLogger, c Context) State {
-	conversation := npc.Processor(l).Conversation(c.CharacterId, c.NPCId)
 	m := message.NewBuilder().AddText("If you wish to experience what it's like to be a Thief, come see me again.")
-	conversation.SendNext(m.String())
-	return nil
+	return SendNext(l, c, m.String(), Exit())
 }

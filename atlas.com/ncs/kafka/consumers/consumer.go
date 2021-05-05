@@ -1,100 +1,98 @@
 package consumers
 
 import (
-	"atlas-ncs/kafka/topics"
 	"atlas-ncs/retry"
+	"atlas-ncs/topic"
 	"context"
 	"encoding/json"
 	"github.com/segmentio/kafka-go"
-	log "github.com/sirupsen/logrus"
-	"os"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
-type Consumer struct {
-	l                 log.FieldLogger
-	ctx               context.Context
-	name              string
-	groupId           string
-	topicToken        string
-	emptyEventCreator EmptyEventCreator
-	h                 EventProcessor
-}
-
-func NewConsumer(l *log.Logger, ctx context.Context, h EventProcessor, options ...ConsumerOption) Consumer {
-	c := &Consumer{}
-	c.ctx = ctx
-	c.h = h
-	for _, option := range options {
-		option(c)
-	}
-
-	c.name = topics.GetRegistry().Get(l, c.topicToken)
-	c.l = l.WithFields(log.Fields{"originator": c.name, "type": "kafka_consumer"})
-	return *c
-}
-
 type EmptyEventCreator func() interface{}
 
-type EventProcessor func(log.FieldLogger, interface{})
+type EventProcessor func(logrus.FieldLogger, interface{})
 
-type ConsumerOption func(c *Consumer)
+type Config func(c *config)
 
-func SetGroupId(groupId string) func(c *Consumer) {
-	return func(c *Consumer) {
+func SetGroupId(groupId string) func(c *config) {
+	return func(c *config) {
 		c.groupId = groupId
 	}
 }
 
-func SetTopicToken(topicToken string) func(c *Consumer) {
-	return func(c *Consumer) {
+func SetTopicToken(topicToken string) func(c *config) {
+	return func(c *config) {
 		c.topicToken = topicToken
 	}
 }
 
-func SetEmptyEventCreator(f EmptyEventCreator) func(c *Consumer) {
-	return func(c *Consumer) {
-		c.emptyEventCreator = f
+func SetBrokers(brokers []string) func(c *config) {
+	return func(c *config) {
+		c.brokers = brokers
 	}
 }
 
-func (c Consumer) Init() {
-	c.l.Infof("Creating topic consumer.")
+type config struct {
+	groupId    string
+	topicToken string
+	maxWait    time.Duration
+	brokers    []string
+}
+
+func NewConsumer(l *logrus.Logger, processor EventProcessor, eventCreator EmptyEventCreator, options ...Config) error {
+	c := &config{maxWait: 500 * time.Millisecond}
+
+	for _, option := range options {
+		option(c)
+	}
+
+	t, err := topic.GetRegistry().Get(c.topicToken)
+	if err != nil {
+		return err
+	}
 
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{os.Getenv("BOOTSTRAP_SERVERS")},
-		Topic:   c.name,
+		Brokers: c.brokers,
+		Topic:   t.Name(),
 		GroupID: c.groupId,
-		MaxWait: 500 * time.Millisecond,
+		MaxWait: c.maxWait,
 	})
 
-	for {
-		msg, err := retry.RetryResponse(consumerReader(c.l, r, c.ctx), 10)
-		if err != nil {
-			c.l.WithError(err).Errorf("Could not successfully read message.")
-		} else {
-			if val, ok := msg.(*kafka.Message); ok {
-				event := c.emptyEventCreator()
-				err = json.Unmarshal(val.Value, &event)
-				if err != nil {
-					c.l.WithError(err).Errorf("Could not unmarshal event into %s.", val.Value)
-				} else {
-					c.h(c.l, event)
-				}
-			} else {
-				c.l.Errorf("Message received not a valid kafka message.")
-			}
-		}
-	}
+	return readerLoop(r, l.WithFields(logrus.Fields{"originator": t.Name(), "type": "kafka_consumer"}), eventCreator, processor)
 }
 
-func consumerReader(l log.FieldLogger, r *kafka.Reader, ctx context.Context) retry.RetryResponseFunc {
-	return func(attempt int) (bool, interface{}, error) {
-		msg, err := r.ReadMessage(ctx)
-		if err != nil {
-			l.WithError(err).Warnf("Could not read message on topic %s, will retry.", r.Config().Topic)
-			return true, nil, err
+func readerLoop(r *kafka.Reader, l logrus.FieldLogger, eventCreator EmptyEventCreator, processor EventProcessor) error {
+	name := r.Config().Topic
+
+	l.Infof("Creating topic consumer for %s.", name)
+	for {
+		var msg kafka.Message
+		var err error
+
+		readMessage := func(attempt int) (bool, error) {
+			msg, err = r.ReadMessage(context.Background())
+			if err != nil {
+				l.WithError(err).Warnf("Could not read message on topic %s, will retry.", name)
+				return true, err
+			}
+			return false, err
 		}
-		return false, &msg, err
+
+		err = retry.Try(readMessage, 10)
+		if err != nil {
+			l.WithError(err).Errorf("Could not successfully read message on topic %s.", name)
+			continue
+		}
+
+		event := eventCreator()
+		err = json.Unmarshal(msg.Value, &event)
+		if err != nil {
+			l.WithError(err).Errorf("Could not unmarshal event from topic %s into %s.", name, msg.Value)
+			continue
+		}
+
+		processor(l, event)
 	}
 }
