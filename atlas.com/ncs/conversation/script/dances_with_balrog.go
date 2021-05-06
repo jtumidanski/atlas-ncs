@@ -1,6 +1,7 @@
 package script
 
 import (
+    _map "atlas-ncs/map"
     "atlas-ncs/npc"
     "atlas-ncs/npc/message"
     "github.com/sirupsen/logrus"
@@ -11,7 +12,7 @@ type DancesWithBalrog struct {
 }
 
 func (r DancesWithBalrog) NPCId() uint32 {
-	return 10202
+	return npc.DancesWithBalrogDemo
 }
 
 func (r DancesWithBalrog) Initial(l logrus.FieldLogger, c Context) State {
@@ -32,10 +33,9 @@ func (r DancesWithBalrog) Demo(l logrus.FieldLogger, c Context) State {
 func (r DancesWithBalrog) DoDemo(l logrus.FieldLogger, c Context) State {
     npc.Processor(l).LockUI()
 
-    mapId := uint32(1020100)
-    err := npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
+    err := npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, _map.WarriorDemo, 0)
     if err != nil {
-        l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
+        l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WarriorDemo, c.NPCId)
     }
     return nil
 }

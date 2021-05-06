@@ -8,10 +8,11 @@ import (
 	"encoding/json"
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
+	"os"
 	"time"
 )
 
-func createKey(key int) []byte {
+func CreateKey(key int) []byte {
 	b := make([]byte, 8)
 	binary.LittleEndian.PutUint32(b, uint32(key))
 	return b
@@ -32,8 +33,12 @@ type config struct {
 
 type MessageProducer func([]byte, interface{}) error
 
-func create(l logrus.FieldLogger, topicToken string, options ...Config) (MessageProducer, error) {
-	c := &config{batchTimeout: 50 * time.Millisecond}
+func ProduceEvent(l logrus.FieldLogger, topicToken string, options ...Config) (MessageProducer, error) {
+	c := &config{
+		batchTimeout: 50 * time.Millisecond,
+		brokers: []string{os.Getenv("BOOTSTRAP_SERVERS")},
+	}
+
 	for _, option := range options {
 		option(c)
 	}

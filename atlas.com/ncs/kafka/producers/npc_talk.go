@@ -18,7 +18,7 @@ type npcTalkCommand struct {
 type NPCTalkEmitter func(characterId uint32, npcId uint32, message string, messageType string, speaker string) error
 
 func NPCTalk(l logrus.FieldLogger) (NPCTalkEmitter, error) {
-	producer, err := create(l, topicTokenNPCTalk, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
+	producer, err := ProduceEvent(l, topicTokenNPCTalk, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func NPCTalk(l logrus.FieldLogger) (NPCTalkEmitter, error) {
 
 func produceNPCTalk(producer MessageProducer) NPCTalkEmitter {
 	return func(characterId uint32, npcId uint32, message string, messageType string, speaker string) error {
-		key := createKey(int(characterId))
+		key := CreateKey(int(characterId))
 		event := &npcTalkCommand{characterId, npcId, message, messageType, speaker}
 		return producer(key, event)
 	}

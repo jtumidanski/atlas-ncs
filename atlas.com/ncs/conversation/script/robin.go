@@ -1,6 +1,7 @@
 package script
 
 import (
+	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"github.com/sirupsen/logrus"
 )
@@ -10,7 +11,7 @@ type Robin struct {
 }
 
 func (r Robin) NPCId() uint32 {
-	return 2003
+	return npc.Robin
 }
 
 func (r Robin) Initial(l logrus.FieldLogger, c Context) State {
@@ -130,7 +131,7 @@ func (r Robin) WarriorToDo(l logrus.FieldLogger, c Context) State {
 		AddText("You want to become a #bWarrior#k? Hmmm, then I suggest you head over to Victoria Island. Head over to a warrior-town called ").
 		RedText().AddText("Perion").
 		BlackText().AddText(" and see ").
-		BlueText().ShowNPC(10202).
+		BlueText().ShowNPC(npc.DancesWithBalrogDemo).
 		BlackText().AddText(". He'll teach you all about becoming a true warrior. Ohh, and one VERY important thing: You'll need to be at least level 10 in order to become a warrior!!")
 	return SendNext(l, c, m.String(), r.AskMeAnything)
 
@@ -143,7 +144,7 @@ func (r Robin) BowmanToDo(l logrus.FieldLogger, c Context) State {
 		BlackText().AddText("? You'll need to go to Victoria Island to make the job advancement. Head over to a bowman-town called ").
 		RedText().AddText("Henesys").
 		BlackText().AddText(" and talk to the beautiful ").
-		BlueText().ShowNPC(10200).
+		BlueText().ShowNPC(npc.AthenaPierceDemo).
 		BlackText().AddText(" and learn the in's and out's of being a bowman. Ohh, and one VERY important thing: You'll need to be at least level 10 in order to become a bowman!!")
 	return SendNext(l, c, m.String(), r.AskMeAnything)
 
@@ -156,7 +157,7 @@ func (r Robin) MagicianToDo(l logrus.FieldLogger, c Context) State {
 		BlackText().AddText("? For you to do that, you'll have to head over to Victoria Island. Head over to a magician-town called ").
 		RedText().AddText("Ellinia").
 		BlackText().AddText(", and at the very top lies the Magic Library. Inside, you'll meet the head of all wizards, ").
-		BlueText().ShowNPC(10201).
+		BlueText().ShowNPC(npc.GrendelTheReallyOldDemo).
 		BlackText().AddText(", who'll teach you everything about becoming a wizard.")
 	return SendNext(l, c, m.String(), r.MagicianSpecial)
 
@@ -169,7 +170,7 @@ func (r Robin) ThiefToDo(l logrus.FieldLogger, c Context) State {
 		BlackText().AddText("? In order to become one, you'll have to head over to Victoria Island. Head over to a thief-town called ").
 		RedText().AddText("Kerning City").
 		BlackText().AddText(", and on the shadier side of town, you'll see a thief's hideaway. There, you'll meet ").
-		BlueText().ShowNPC(10203).
+		BlueText().ShowNPC(npc.DarkLordDemo).
 		BlackText().AddText(" who'll teach you everything about being a thief. Ohh, and one VERY important thing: You'll need to be at least level 10 in order to become a thief!!")
 	return SendNext(l, c, m.String(), r.AskMeAnything)
 

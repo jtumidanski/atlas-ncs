@@ -1,6 +1,7 @@
 package script
 
 import (
+	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"github.com/sirupsen/logrus"
 )
@@ -10,7 +11,7 @@ type Rain struct {
 }
 
 func (r Rain) NPCId() uint32 {
-	return 12101
+	return npc.Rain
 }
 
 func (r Rain) Initial(l logrus.FieldLogger, c Context) State {

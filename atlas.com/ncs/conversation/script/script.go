@@ -49,6 +49,14 @@ func SendListSelection(l logrus.FieldLogger, c Context, message string, s Proces
 	return doListSelection(GenericExit, s)
 }
 
+func SendListSelectionExit(l logrus.FieldLogger, c Context, message string, s ProcessSelection, exit StateProducer) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendSimple(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending list selection for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doListSelectionExit(exit, s)
+}
+
 func doListSelection(e ExitFunction, s ProcessSelection) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 0 && theType == 4 {
@@ -68,12 +76,35 @@ func doListSelection(e ExitFunction, s ProcessSelection) State {
 	}
 }
 
+func doListSelectionExit(e StateProducer, s ProcessSelection) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 0 && theType == 4 {
+			return e(l, c)
+		}
+
+		f := s(selection)
+		if f == nil {
+			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
+			return nil
+		}
+		return f(l, c)
+	}
+}
+
 func SendNext(l logrus.FieldLogger, c Context, message string, next StateProducer) State {
 	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNext(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending next message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
 	return doNext(GenericExit, next)
+}
+
+func SendNextExit(l logrus.FieldLogger, c Context, message string, next StateProducer, exit StateProducer) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNext(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending next message for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doNextExit(exit, next)
 }
 
 func doNext(e ExitFunction, next StateProducer) State {
@@ -89,12 +120,29 @@ func doNext(e ExitFunction, next StateProducer) State {
 	}
 }
 
+func doNextExit(e StateProducer, next StateProducer) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 255 && theType == 0 {
+			return e(l, c)
+		}
+		return next(l, c)
+	}
+}
+
 func SendNextPrevious(l logrus.FieldLogger, c Context, message string, next StateProducer, previous StateProducer) State {
 	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNextPrevious(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending next / previous message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
 	return doNextPrevious(GenericExit, next, previous)
+}
+
+func SendNextPreviousExit(l logrus.FieldLogger, c Context, message string, next StateProducer, previous StateProducer, exit StateProducer) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNextPrevious(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending next / previous message for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doNextPreviousExit(exit, next, previous)
 }
 
 func doNextPrevious(e ExitFunction, next StateProducer, previous StateProducer) State {
@@ -105,6 +153,20 @@ func doNextPrevious(e ExitFunction, next StateProducer, previous StateProducer) 
 				l.WithError(err).Errorf("Error exiting conversation.")
 			}
 			return nil
+		}
+		if mode == 0 && previous != nil {
+			return previous(l, c)
+		} else if mode == 1 && next != nil {
+			return next(l, c)
+		}
+		return nil
+	}
+}
+
+func doNextPreviousExit(e StateProducer, next StateProducer, previous StateProducer) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 255 && theType == 0 {
+			return e(l, c)
 		}
 		if mode == 0 && previous != nil {
 			return previous(l, c)
@@ -147,6 +209,14 @@ func SendYesNo(l logrus.FieldLogger, c Context, message string, yes StateProduce
 	return doYesNo(GenericExit, yes, no)
 }
 
+func SendYesNoExit(l logrus.FieldLogger, c Context, message string, yes StateProducer, no StateProducer, exit StateProducer) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendYesNo(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending yes / no message for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doYesNoExit(exit, yes, no)
+}
+
 func doYesNo(e ExitFunction, yes StateProducer, no StateProducer) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 255 && theType == 0 {
@@ -155,6 +225,20 @@ func doYesNo(e ExitFunction, yes StateProducer, no StateProducer) State {
 				l.WithError(err).Errorf("Error exiting conversation.")
 			}
 			return nil
+		}
+		if mode == 0 && no != nil {
+			return no(l, c)
+		} else if mode == 1 && yes != nil {
+			return yes(l, c)
+		}
+		return nil
+	}
+}
+
+func doYesNoExit(e StateProducer, yes StateProducer, no StateProducer) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 255 && theType == 0 {
+			return e(l, c)
 		}
 		if mode == 0 && no != nil {
 			return no(l, c)
