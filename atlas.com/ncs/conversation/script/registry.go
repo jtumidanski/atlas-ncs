@@ -22,10 +22,11 @@ func GetRegistry() *Registry {
 func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
 	s.addConversation(AthenaPierce{})
-	s.addConversation(DancesWithBalrog{})
-	s.addConversation(DarkLord{})
-	s.addConversation(GrendelTheReallyOld{})
-	s.addConversation(Kyrin{})
+	s.addConversation(AthenaPierceDemo{})
+	s.addConversation(DancesWithBalrogDemo{})
+	s.addConversation(DarkLordDemo{})
+	s.addConversation(GrendelTheReallyOldDemo{})
+	s.addConversation(KyrinDemo{})
 	s.addConversation(Rain{})
 	s.addConversation(Robin{})
 	s.addConversation(Shanks{})

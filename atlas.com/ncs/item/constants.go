@@ -2,4 +2,6 @@ package item
 
 const (
 	LucasRcommendationLetter uint32 = 4031801
+	BeginnerBowmanBow        uint32 = 1452051
+	ArrowForBow              uint32 = 2060000
 )

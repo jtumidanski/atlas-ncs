@@ -6,8 +6,8 @@ const (
 	BowmanDemo   uint32 = 1020300
 	ThiefDemo    uint32 = 1020400
 	PirateDemo   uint32 = 1020500
-	Ellinia      uint32 = 100000000
-	Henesys      uint32 = 101000000
+	Ellinia      uint32 = 101000000
+	Henesys      uint32 = 100000000
 	Perion       uint32 = 102000000
 	KerningCity  uint32 = 103000000
 	LithHarbor   uint32 = 104000000

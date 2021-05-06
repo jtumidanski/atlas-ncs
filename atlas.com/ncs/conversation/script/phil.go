@@ -94,7 +94,7 @@ func (r Phil) Cost(index int32, beginner bool) uint32 {
 
 func (r Phil) TakeMeSomewhere(l logrus.FieldLogger, c Context) State {
 	mb := message.NewBuilder()
-	beginner := character.IsBeginner(l)(c.CharacterId)
+	beginner := character.IsBeginnerTree(l)(c.CharacterId)
 
 	if beginner {
 		mb = mb.AddText("There's a special 90% discount for all beginners. Alright, where would you want to go?").BlueText().AddNewLine()

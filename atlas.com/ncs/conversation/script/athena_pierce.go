@@ -1,46 +1,66 @@
 package script
 
 import (
-	_map "atlas-ncs/map"
+	"atlas-ncs/character"
+	"atlas-ncs/item"
+	"atlas-ncs/job"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"github.com/sirupsen/logrus"
 )
 
-// AthenaPierce is located in Maple Road : Split Road of Destiny (1020000)
+// AthenaPierce is located in Victoria Road - Bowman Instructional School (100000201)
 type AthenaPierce struct {
 }
 
 func (r AthenaPierce) NPCId() uint32 {
-	return npc.AthenaPierceDemo
+	return npc.AthenaPierce
 }
 
 func (r AthenaPierce) Initial(l logrus.FieldLogger, c Context) State {
-	return r.BowmanIntroduction(l, c)
-}
-
-func (r AthenaPierce) BowmanIntroduction(l logrus.FieldLogger, c Context) State {
-	m := message.NewBuilder().
-		AddText("Bowmen are blessed with dexterity and power, taking charge of long-distance attacks, providing support for those at the front line of the battle. Very adept at using landscape as part of the arsenal.")
-	return SendNext(l, c, m.String(), r.Demo)
-}
-
-func (r AthenaPierce) Demo(l logrus.FieldLogger, c Context) State {
-	m := message.NewBuilder().AddText("Would you like to experience what it's like to be a Bowman?")
-	return SendYesNo(l, c, m.String(), r.DoDemo, r.SeeMeAgain)
-}
-
-func (r AthenaPierce) DoDemo(l logrus.FieldLogger, c Context) State {
-	npc.Processor(l).LockUI()
-
-	err := npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, _map.BowmanDemo, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.BowmanDemo, c.NPCId)
+	if character.IsJob(l)(c.CharacterId, job.Beginner) {
+		return r.FirstJobInitial(l, c)
 	}
 	return nil
 }
 
-func (r AthenaPierce) SeeMeAgain(l logrus.FieldLogger, c Context) State {
-	m := message.NewBuilder().AddText("If you wish to experience what it's like to be a Bowman, come see me again.")
+func (r AthenaPierce) FirstJobInitial(l logrus.FieldLogger, c Context) State {
+	m := message.NewBuilder().
+		AddText("So you decided to become a ").
+		RedText().AddText("bowman").
+		BlackText().AddText("? There are some standards to meet, y'know... ").
+		BlueText().AddText("Your level should be at least 10, with at least 25 DEX").
+		BlackText().AddText(". Let's see.")
+	return SendNext(l, c, m.String(), r.FirstJobRequirementCheck)
+}
+
+func (r AthenaPierce) FirstJobRequirementCheck(l logrus.FieldLogger, c Context) State {
+	if character.IsLevel(l)(c.CharacterId, 10) && character.HasDexterity(l)(c.CharacterId, 25) {
+		m := message.NewBuilder().
+			AddText("It is an important and final choice. You will not be able to turn back.")
+		return SendNextPrevious(l, c, m.String(), r.AwardFirstJob, r.FirstJobInitial)
+	}
+
+	m := message.NewBuilder().
+		AddText("Train a bit more until you reach the base requirements and I can show you the way of the ").
+		RedText().AddText("Bowman").
+		BlackText().AddText(".")
+	return SendOk(l, c, m.String())
+}
+
+func (r AthenaPierce) AwardFirstJob(l logrus.FieldLogger, c Context) State {
+	if !character.CanHold(l)(c.CharacterId, item.BeginnerBowmanBow) || !character.CanHold(l)(c.CharacterId, item.ArrowForBow) {
+		m := message.NewBuilder().
+			AddText("Make some room in your inventory and talk back to me.")
+		return SendNext(l, c, m.String(), Exit())
+	}
+
+	character.ChangeJob(l)(c.CharacterId, job.Bowman)
+	character.GainEquipment(l)(c.CharacterId, item.BeginnerBowmanBow)
+	character.GainItem(l)(c.CharacterId, item.ArrowForBow, 1000)
+	character.ResetAP(l)(c.CharacterId)
+
+	m := message.NewBuilder().
+		AddText("Alright, from here out, you are a part of us! You'll be living the life of a wanderer at ..., but just be patient as soon, you'll be living the high life. Alright, it ain't much, but I'll give you some of my abilities... HAAAHHH!!!")
 	return SendNext(l, c, m.String(), Exit())
 }

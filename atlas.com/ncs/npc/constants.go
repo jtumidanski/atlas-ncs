@@ -10,4 +10,5 @@ const (
 	Rain                    uint32 = 12101
 	Shanks                  uint32 = 22000
 	Phil                    uint32 = 1002000
+	AthenaPierce            uint32 = 1012100
 )
