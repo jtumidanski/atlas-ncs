@@ -31,6 +31,7 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 		meso:      att.Meso,
 		jobId:     att.JobId,
 		dexterity: att.Dexterity,
+		intelligence: att.Intelligence,
 	}
 	return &r
 }
@@ -78,6 +79,17 @@ func HasDexterity(l logrus.FieldLogger) func(characterId uint32, amount uint16) 
 			return false
 		}
 		return c.Dexterity() >= amount
+	}
+}
+
+func HasIntelligence(l logrus.FieldLogger) func(characterId uint32, amount uint16) bool {
+	return func(characterId uint32, amount uint16) bool {
+		c, err := GetCharacterById(characterId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve character.")
+			return false
+		}
+		return c.Intelligence() >= amount
 	}
 }
 
