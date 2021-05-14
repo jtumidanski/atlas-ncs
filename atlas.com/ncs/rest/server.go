@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"atlas-ncs/conversation"
 	"atlas-ncs/npc"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -16,11 +17,15 @@ type Server struct {
 }
 
 func NewServer(l *logrus.Logger) *Server {
-	router := mux.NewRouter().StrictSlash(true)
+	router := mux.NewRouter().PathPrefix("/ms/ncs").Subrouter().StrictSlash(true)
 	router.Use(commonHeader)
 
-	csr := router.PathPrefix("/ms/ncs/speak").Subrouter()
-	csr.HandleFunc("", npc.SendSpeech(l)).Methods(http.MethodPost)
+	sr := router.PathPrefix("/conversation").Subrouter()
+	sr.HandleFunc("/{npcId}", conversation.GetConversation(l)).Methods(http.MethodGet)
+	sr.HandleFunc("/{npcId}/character/{characterId}", conversation.InConversation(l)).Methods(http.MethodGet)
+
+	r := router.PathPrefix("/speak").Subrouter()
+	r.HandleFunc("", npc.SendSpeech(l)).Methods(http.MethodPost)
 
 	w := l.Writer()
 	defer w.Close()
