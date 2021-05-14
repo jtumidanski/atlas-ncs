@@ -20,9 +20,8 @@ func NewServer(l *logrus.Logger) *Server {
 	router := mux.NewRouter().PathPrefix("/ms/ncs").Subrouter().StrictSlash(true)
 	router.Use(commonHeader)
 
-	sr := router.PathPrefix("/conversation").Subrouter()
-	sr.HandleFunc("/{npcId}", conversation.GetConversation(l)).Methods(http.MethodGet)
-	sr.HandleFunc("/{npcId}/character/{characterId}", conversation.InConversation(l)).Methods(http.MethodGet)
+	router.HandleFunc("/script/{npcId}", conversation.GetConversation(l)).Methods(http.MethodGet)
+	router.HandleFunc("/conversation/{characterId}", conversation.InConversation(l)).Methods(http.MethodGet)
 
 	r := router.PathPrefix("/speak").Subrouter()
 	r.HandleFunc("", npc.SendSpeech(l)).Methods(http.MethodPost)
