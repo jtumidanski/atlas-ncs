@@ -20,7 +20,7 @@ func GetConversation(l logrus.FieldLogger) http.HandlerFunc {
 
 		_, err = script.GetRegistry().GetScript(uint32(npcId))
 		if err != nil {
-			l.WithError(err).Errorf("Script for npc %d is not implemented.", npcId)
+			l.WithError(err).Debugf("Script for npc %d is not implemented.", npcId)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -41,7 +41,7 @@ func InConversation(l logrus.FieldLogger) http.HandlerFunc {
 
 		_, err = GetRegistry().GetPreviousContext(uint32(characterId))
 		if err != nil {
-			l.WithError(err).Errorf("Conversation with %d does not exist.", characterId)
+			l.WithError(err).Debugf("Conversation with %d does not exist.", characterId)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
