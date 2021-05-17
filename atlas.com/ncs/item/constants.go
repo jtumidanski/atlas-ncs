@@ -5,4 +5,5 @@ const (
 	BeginnerBowmanBow        uint32 = 1452051
 	ArrowForBow              uint32 = 2060000
 	BeginnerMagicWand        uint32 = 1372043
+	NeinheartsTaxiCoupon     uint32 = 4032288
 )

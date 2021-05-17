@@ -12,5 +12,6 @@ const (
 	Phil                    uint32 = 1002000
 	RegularCabHenesys       uint32 = 1012000
 	AthenaPierce            uint32 = 1012100
+	RegularCabEllinia       uint32 = 1032000
 	GrendelTheReallyOld     uint32 = 1032001
 )
