@@ -159,3 +159,21 @@ func IsJob(l logrus.FieldLogger) func(characterId uint32, option uint16) bool {
 		return job.IsA(c.JobId(), option)
 	}
 }
+
+func CompleteQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
+	return func(characterId uint32, questId uint32) {
+		
+	}
+}
+
+func QuestStarted(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
+	return func(characterId uint32, questId uint32) bool {
+		return false
+	}
+}
+
+func StartQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
+	return func(characterId uint32, questId uint32) {
+
+	}
+}

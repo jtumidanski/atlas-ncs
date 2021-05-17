@@ -16,4 +16,5 @@ const (
 	RegularCabEllinia       uint32 = 1032000
 	GrendelTheReallyOld     uint32 = 1032001
 	RegularCabKerningCity   uint32 = 1052016
+	MagicianJobInstructor   uint32 = 1072001
 )

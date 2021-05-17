@@ -23,9 +23,9 @@ const (
 	FirePoisonMagician     uint16 = 211
 	FirePoisonArchMagician uint16 = 212
 
-	IceLighteningWizard       uint16 = 220
-	IceLighteningMagician     uint16 = 221
-	IceLighteningArchMagician uint16 = 222
+	IceLightningWizard       uint16 = 220
+	IceLightningMagician     uint16 = 221
+	IceLightningArchMagician uint16 = 222
 
 	Cleric uint16 = 230
 	Priest uint16 = 231
