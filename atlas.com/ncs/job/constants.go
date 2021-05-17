@@ -125,48 +125,6 @@ func IsA(characterJobId uint16, referenceJobId ...uint16) bool {
 	return is
 }
 
-func GetJobStyle(jobId uint16, strength uint16, dexterity uint16) uint16 {
-	if strength > dexterity {
-		return getJobStyleInternal(jobId, 0x80)
-	} else {
-		return getJobStyleInternal(jobId, 0x40)
-	}
-}
-
-func getJobStyleInternal(jobId uint16, opt byte) uint16 {
-	if IsA(jobId, Warrior, DawnWarrior1, Aran1) {
-		return Warrior
-	} else if IsA(jobId, Magician, BlazeWizard1, Evan1) {
-		return Magician
-	} else if isA(jobId, CrossBowman) {
-		return CrossBowman
-	} else if IsA(jobId, Bowman, WindArcher1) {
-		return Bowman
-	} else if IsA(jobId, Thief, NightWalker1) {
-		return Thief
-	} else if IsA(jobId, Pirate, ThunderBreaker1) {
-		if opt == 0x80 {
-			return Brawler
-		} else {
-			return Gunslinger
-		}
-	}
-	return Beginner
-}
-
 func isA(characterJobId uint16, referenceJobId uint16) bool {
-	characterBranch := characterJobId / 10
-	referenceBranch := referenceJobId / 10
-	return characterBranch == referenceBranch && characterJobId >= referenceJobId || referenceBranch%10 == 0 && characterJobId/100 == referenceJobId/100
-}
-
-func GetJobFromIndex(jobIndex uint32) (uint16, bool) {
-	if jobIndex == 0 {
-		return Noblesse, true
-	} else if jobIndex == 1 {
-		return Beginner, true
-	} else if jobIndex == 2 {
-		return Legend, true
-	}
-	return 0, false
+	return characterJobId == referenceJobId
 }
