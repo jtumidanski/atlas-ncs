@@ -14,4 +14,5 @@ const (
 	AthenaPierce            uint32 = 1012100
 	RegularCabEllinia       uint32 = 1032000
 	GrendelTheReallyOld     uint32 = 1032001
+	RegularCabKerningCity   uint32 = 1052016
 )

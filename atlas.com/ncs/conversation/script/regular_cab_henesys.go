@@ -105,7 +105,7 @@ func (r RegularCabHenesys) ConfirmEllinia(cost uint32) StateProducer {
 }
 
 func (r RegularCabHenesys) ConfirmLithHarbor(cost uint32) StateProducer {
-	return r.ConfirmMap(_map.Henesys, cost)
+	return r.ConfirmMap(_map.LithHarbor, cost)
 }
 
 func (r RegularCabHenesys) ConfirmKerningCity(cost uint32) StateProducer {
