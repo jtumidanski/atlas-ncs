@@ -2,6 +2,7 @@ package script
 
 import (
 	"atlas-ncs/character"
+	"atlas-ncs/character/inventory"
 	"atlas-ncs/item"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -119,7 +120,7 @@ func (r RegularCabEllinia) ConfirmNautalis(cost uint32) StateProducer {
 
 func (r RegularCabEllinia) ConfirmMap(mapId uint32, cost uint32) StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
-		if mapId == _map.Henesys && character.HasItem(l)(c.CharacterId, item.NeinheartsTaxiCoupon) {
+		if mapId == _map.Henesys && character.HasItem(l)(c.CharacterId, inventory.TypeETC, item.NeinheartsTaxiCoupon) {
 			return r.ConfirmNeinheart(l, c, mapId)
 		} else {
 			return r.StandardConfirmMap(l, c, mapId, cost)

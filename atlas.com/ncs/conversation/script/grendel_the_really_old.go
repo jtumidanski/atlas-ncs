@@ -2,6 +2,7 @@ package script
 
 import (
 	"atlas-ncs/character"
+	"atlas-ncs/character/inventory"
 	"atlas-ncs/item"
 	"atlas-ncs/job"
 	_map "atlas-ncs/map"
@@ -22,9 +23,9 @@ func (r GrendelTheReallyOld) Initial(l logrus.FieldLogger, c Context) State {
 	if character.IsJob(l)(c.CharacterId, job.Beginner) {
 		return r.FirstJobInitial(l, c)
 	} else if character.IsLevel(l)(c.CharacterId, 30) && character.IsJob(l)(c.CharacterId, job.Magician) {
-		if character.HasItem(l)(c.CharacterId, item.ProofOfHero) {
+		if character.HasItem(l)(c.CharacterId, inventory.TypeETC, item.ProofOfHero) {
 			return r.SecondJobNextStep(l, c)
-		} else if character.HasItem(l)(c.CharacterId, item.GrendelTheReallyOldsLetter) {
+		} else if character.HasItem(l)(c.CharacterId, inventory.TypeETC, item.GrendelTheReallyOldsLetter) {
 			return r.GoSeeInstructor(l, c)
 		} else {
 			return r.Astonishing(l, c)
@@ -182,7 +183,7 @@ func (r GrendelTheReallyOld) SecondJobSelection(selection int32) StateProducer {
 
 func (r GrendelTheReallyOld) ConfirmSecondJob(jobId uint16, jobName string) StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
-		if character.HasItem(l)(c.CharacterId, item.GrendelTheReallyOldsLetter) {
+		if character.HasItem(l)(c.CharacterId, inventory.TypeETC, item.GrendelTheReallyOldsLetter) {
 			return Exit()(l, c)
 		}
 		m := message.NewBuilder().
@@ -195,7 +196,7 @@ func (r GrendelTheReallyOld) ConfirmSecondJob(jobId uint16, jobName string) Stat
 
 func (r GrendelTheReallyOld) PerformSecondJobAdvancement(jobId uint16, jobName string) StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
-		if character.HasItem(l)(c.CharacterId, item.ProofOfHero) {
+		if character.HasItem(l)(c.CharacterId, inventory.TypeETC, item.ProofOfHero) {
 			character.GainItem(l)(c.CharacterId, item.ProofOfHero, -1)
 		}
 		character.CompleteQuest(l)(c.CharacterId, 100008)
@@ -268,7 +269,7 @@ func (r GrendelTheReallyOld) GoodDecision(l logrus.FieldLogger, c Context) State
 }
 
 func (r GrendelTheReallyOld) TakeThisLetter(l logrus.FieldLogger, c Context) State {
-	if !character.HasItem(l)(c.CharacterId, item.GrendelTheReallyOldsLetter) {
+	if !character.HasItem(l)(c.CharacterId, inventory.TypeETC, item.GrendelTheReallyOldsLetter) {
 		character.GainItem(l)(c.CharacterId, item.GrendelTheReallyOldsLetter, 1)
 	}
 	m := message.NewBuilder().

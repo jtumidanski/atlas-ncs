@@ -1,6 +1,7 @@
 package character
 
 import (
+	"atlas-ncs/character/inventory"
 	"atlas-ncs/job"
 	"errors"
 	"github.com/sirupsen/logrus"
@@ -26,19 +27,46 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 	}
 	att := ca.Attributes
 	r := Model{
-		id:        uint32(cid),
-		level:     att.Level,
-		meso:      att.Meso,
-		jobId:     att.JobId,
-		dexterity: att.Dexterity,
+		id:           uint32(cid),
+		level:        att.Level,
+		meso:         att.Meso,
+		jobId:        att.JobId,
+		dexterity:    att.Dexterity,
 		intelligence: att.Intelligence,
 	}
 	return &r
 }
 
-func HasItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
-	return func(characterId uint32, itemId uint32) bool {
-		return false
+func HasItem(l logrus.FieldLogger) func(characterId uint32, inventoryType string, itemId uint32) bool {
+	return func(characterId uint32, inventoryType string, itemId uint32) bool {
+		return HasItems(l)(characterId, inventoryType, itemId, 1)
+	}
+}
+
+func HasItems(l logrus.FieldLogger) func(characterId uint32, inventoryType string, itemId uint32, quantity uint32) bool {
+	return func(characterId uint32, inventoryType string, itemId uint32, quantity uint32) bool {
+		i, err := requestItemsForCharacter(characterId, inventoryType, itemId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
+			return false
+		}
+
+		if inventoryType == inventory.TypeEquip {
+			return uint32(len(i.GetIncludedItems())) >= quantity
+		} else {
+			is := i.GetIncludedItems()
+			if len(is) == 0 {
+				return false
+			}
+			count := uint32(0)
+			for _, i := range is {
+				count += uint32(i.Attributes.Quantity)
+				if count >= quantity {
+					return true
+				}
+			}
+			return false
+		}
 	}
 }
 
@@ -162,7 +190,7 @@ func IsJob(l logrus.FieldLogger) func(characterId uint32, option uint16) bool {
 
 func CompleteQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
 	return func(characterId uint32, questId uint32) {
-		
+
 	}
 }
 
