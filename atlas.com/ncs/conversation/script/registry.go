@@ -32,6 +32,7 @@ func initRegistry() *Registry {
 	s.addConversation(RegularCabEllinia{})
 	s.addConversation(RegularCabHenesys{})
 	s.addConversation(RegularCabKerningCity{})
+	s.addConversation(RegularCabPerion{})
 	s.addConversation(Robin{})
 	s.addConversation(Shanks{})
 	s.addConversation(Phil{})
