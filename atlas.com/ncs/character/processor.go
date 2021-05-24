@@ -37,41 +37,31 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 	return &r
 }
 
-func HasItem(l logrus.FieldLogger) func(characterId uint32, inventoryType string, itemId uint32) bool {
-	return func(characterId uint32, inventoryType string, itemId uint32) bool {
-		return HasItems(l)(characterId, inventoryType, itemId, 1)
+func HasItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
+	return func(characterId uint32, itemId uint32) bool {
+		return HasItems(l)(characterId, itemId, 1)
 	}
 }
 
-func HasItems(l logrus.FieldLogger) func(characterId uint32, inventoryType string, itemId uint32, quantity uint32) bool {
-	return func(characterId uint32, inventoryType string, itemId uint32, quantity uint32) bool {
-		i, err := requestItemsForCharacter(characterId, inventoryType, itemId)
+func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quantity uint32) bool {
+	return func(characterId uint32, itemId uint32, quantity uint32) bool {
+		i, err := requestItemsForCharacter(characterId, itemId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
 		}
-
-		if inventoryType == inventory.TypeEquip {
-			return uint32(len(i.GetIncludedItems())) >= quantity
-		} else {
-			is := i.GetIncludedItems()
-			if len(is) == 0 {
-				return false
-			}
-			count := uint32(0)
-			for _, i := range is {
-				count += uint32(i.Attributes.Quantity)
-				if count >= quantity {
-					return true
-				}
-			}
-			return false
-		}
+		return false
 	}
 }
 
 func CanHold(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
 	return func(characterId uint32, itemId uint32) bool {
+		return CanHoldAll(l)(characterId, itemId, 1)
+	}
+}
+
+func CanHoldAll(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quantity uint32) bool {
+	return func(characterId uint32, itemId uint32, quantity uint32) bool {
 		return true
 	}
 }
@@ -200,8 +190,32 @@ func QuestStarted(l logrus.FieldLogger) func(characterId uint32, questId uint32)
 	}
 }
 
+func QuestCompleted(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
+	return func(characterId uint32, questId uint32) bool {
+		return false
+	}
+}
+
 func StartQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
 	return func(characterId uint32, questId uint32) {
 
+	}
+}
+
+func SaveLocation(l logrus.FieldLogger) func(characterId uint32, location string) {
+	return func(characterId uint32, location string) {
+
+	}
+}
+
+func BuddyCapacity(l logrus.FieldLogger) func(characterId uint32) uint8 {
+	return func(characterId uint32) uint8 {
+		return 0
+	}
+}
+
+func IncreaseBuddyCapacity(l logrus.FieldLogger) func(characterId uint32, amount int8) error {
+	return func(characterId uint32, amount int8) error {
+		return nil
 	}
 }

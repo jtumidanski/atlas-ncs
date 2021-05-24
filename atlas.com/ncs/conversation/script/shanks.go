@@ -2,7 +2,6 @@ package script
 
 import (
 	"atlas-ncs/character"
-	"atlas-ncs/character/inventory"
 	"atlas-ncs/item"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -39,7 +38,7 @@ func (r Shanks) No(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Shanks) Yes(l logrus.FieldLogger, c Context) State {
-	if character.HasItem(l)(c.CharacterId, inventory.TypeETC, item.LucasRecommendationLetter) {
+	if character.HasItem(l)(c.CharacterId, item.LucasRecommendationLetter) {
 		m := message.NewBuilder().
 			AddText("Okay, now give me 150 mesos... Hey, what's that? Is that the recommendation letter from Lucas, the chief of Amherst? Hey, you should have told me you had this. I, Shanks, recognize greatness when I see one, and since you have been recommended by Lucas, I see that you have a great, great potential as an adventurer. No way would I charge you for this trip!")
 		return SendNext(l, c, m.String(), r.ConfirmUse)
@@ -61,7 +60,7 @@ func (r Shanks) ConfirmUse(l logrus.FieldLogger, c Context) State {
 func (r Shanks) WarpWithItem(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.LucasRecommendationLetter, -1)
 
-	err := npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
+	err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.LithHarbor, c.NPCId)
 	}
@@ -95,7 +94,7 @@ func (r Shanks) WarpWithMeso(l logrus.FieldLogger, c Context) State {
 		return nil
 	}
 
-	err = npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
+	err = npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.LithHarbor, c.NPCId)
 	}

@@ -12,6 +12,7 @@ const (
 	MessageTypePrevious     = "PREVIOUS"
 	MessageTypeYesNo        = "YES_NO"
 	MessageTypeOk           = "OK"
+	MessageTypeNum          = "NUM"
 
 	SpeakerNPCLeft = "NPC_LEFT"
 )
@@ -23,10 +24,11 @@ type processor struct {
 }
 
 type conversation struct {
-	l              logrus.FieldLogger
-	npcTalkEmitter producers.NPCTalkEmitter
-	characterId    uint32
-	npcId          uint32
+	l                 logrus.FieldLogger
+	npcTalkEmitter    producers.NPCTalkEmitter
+	npcTalkNumEmitter producers.NPCTalkNumEmitter
+	characterId       uint32
+	npcId             uint32
 }
 
 var Processor = func(l logrus.FieldLogger) *processor {
@@ -42,12 +44,14 @@ func (p *processor) Dispose(characterId uint32) error {
 
 func (p *processor) Conversation(characterId uint32, npcId uint32) *conversation {
 	npcTalkEmitter, _ := producers.NPCTalk(p.l)
+	npcTalkNumEmitter, _ := producers.NPCTalkNum(p.l)
 
 	return &conversation{
-		l:              p.l,
-		npcTalkEmitter: npcTalkEmitter,
-		characterId:    characterId,
-		npcId:          npcId,
+		l:                 p.l,
+		npcTalkEmitter:    npcTalkEmitter,
+		npcTalkNumEmitter: npcTalkNumEmitter,
+		characterId:       characterId,
+		npcId:             npcId,
 	}
 }
 
@@ -55,8 +59,12 @@ func (p *processor) LockUI() {
 
 }
 
-func (p *processor) Warp(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
+func (p *processor) WarpById(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
 	return p.changeMapEmitter(worldId, channelId, characterId, mapId, portalId)
+}
+
+func (p *processor) WarpByName(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
+	return nil
 }
 
 func (c *conversation) SendSimple(message string) error {
@@ -81,4 +89,8 @@ func (c *conversation) SendYesNo(message string) error {
 
 func (c *conversation) SendOk(message string) error {
 	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeOk, SpeakerNPCLeft)
+}
+
+func (c *conversation) SendGetNumber(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
+	return c.npcTalkNumEmitter(c.characterId, c.npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
 }

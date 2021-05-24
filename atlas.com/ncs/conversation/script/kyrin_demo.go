@@ -33,7 +33,7 @@ func (r KyrinDemo) Demo(l logrus.FieldLogger, c Context) State {
 func (r KyrinDemo) DoDemo(l logrus.FieldLogger, c Context) State {
 	npc.Processor(l).LockUI()
 
-	err := npc.Processor(l).Warp(c.WorldId, c.ChannelId, c.CharacterId, _map.PirateDemo, 0)
+	err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.PirateDemo, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.PirateDemo, c.NPCId)
 	}
