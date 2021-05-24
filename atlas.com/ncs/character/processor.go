@@ -1,7 +1,6 @@
 package character
 
 import (
-	"atlas-ncs/character/inventory"
 	"atlas-ncs/job"
 	"errors"
 	"github.com/sirupsen/logrus"
@@ -45,11 +44,20 @@ func HasItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool 
 
 func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quantity uint32) bool {
 	return func(characterId uint32, itemId uint32, quantity uint32) bool {
-		i, err := requestItemsForCharacter(characterId, itemId)
+		items, err := requestItemsForCharacter(characterId, itemId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
 		}
+
+		count := uint32(0)
+		for _, i := range items.Data {
+			count += i.Attributes.Quantity
+			if count > quantity {
+				return true
+			}
+		}
+
 		return false
 	}
 }

@@ -1,7 +1,6 @@
 package character
 
 import (
-	"atlas-ncs/character/inventory"
 	"atlas-ncs/rest/requests"
 	"fmt"
 )
@@ -11,8 +10,8 @@ const (
 	charactersService              = requests.BaseRequest + charactersServicePrefix
 	charactersResource             = charactersService + "characters/"
 	charactersById                 = charactersResource + "%d"
-	inventoryResource              = charactersById + "/inventories?type=%s&include=inventoryItems,equipmentStatistics"
-	inventoryByItemId              = inventoryResource + "&itemId=%d"
+	characterItems                 = charactersById + "/items"
+	characterItem                  = characterItems + "?itemId=%d"
 )
 
 func requestCharacter(characterId uint32) (*dataContainer, error) {
@@ -24,9 +23,9 @@ func requestCharacter(characterId uint32) (*dataContainer, error) {
 	return ar, nil
 }
 
-func requestItemsForCharacter(characterId uint32, inventoryType string, itemId uint32) (*inventory.InventoryDataContainer, error) {
-	ar := &inventory.InventoryDataContainer{}
-	err := requests.Get(fmt.Sprintf(inventoryByItemId, characterId, inventoryType, itemId), ar)
+func requestItemsForCharacter(characterId uint32, itemId uint32) (*ItemListDataContainer, error) {
+	ar := &ItemListDataContainer{}
+	err := requests.Get(fmt.Sprintf(characterItem, characterId, itemId), ar)
 	if err != nil {
 		return nil, err
 	}
