@@ -85,4 +85,14 @@ const (
 	StiffFeather               uint32 = 4003004
 	SoftFeather                uint32 = 4003005
 	PetAPResetScroll           uint32 = 4160011
+	BartosLetter               uint32 = 4031035
+	SlimeAndMushroomOmokSet    uint32 = 4080000
+	SlimeAndOctopusOmokSet     uint32 = 4080001
+	SlimeAndPigOmokSet         uint32 = 4080002
+	OctopusAndMushroomOmokSet  uint32 = 4080003
+	PigAndOctopusOmokSet       uint32 = 4080004
+	PigAndMushroomOmokSet      uint32 = 4080005
+	OmokTable                  uint32 = 4030009
+	MonsterCard                uint32 = 4030012
+	ASetOfMatchCards           uint32 = 4080100
 )

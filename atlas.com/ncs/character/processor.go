@@ -227,3 +227,15 @@ func IncreaseBuddyCapacity(l logrus.FieldLogger) func(characterId uint32, amount
 		return nil
 	}
 }
+
+func HasPets(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
+	}
+}
+
+func GainCloseness(l logrus.FieldLogger) func(characterId uint32, amount int8) {
+	return func(characterId uint32, amount int8) {
+		
+	}
+}

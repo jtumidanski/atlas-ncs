@@ -21,6 +21,9 @@ const (
 	RegularCabHenesys       uint32 = 1012000
 	Vicious                 uint32 = 1012002
 	Cloy                    uint32 = 1012005
+	TrainerBartos           uint32 = 1012006
+	TrainerFrod             uint32 = 1012007
+	Casey                   uint32 = 1012008
 	AthenaPierce            uint32 = 1012100
 	RegularCabPerion        uint32 = 1022001
 	RegularCabEllinia       uint32 = 1032000

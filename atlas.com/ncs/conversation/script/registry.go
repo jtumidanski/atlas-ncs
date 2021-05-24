@@ -23,6 +23,7 @@ func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
 	s.addConversation(AthenaPierce{})
 	s.addConversation(AthenaPierceDemo{})
+	s.addConversation(Casey{})
 	s.addConversation(Chef{})
 	s.addConversation(Cloy{})
 	s.addConversation(DancesWithBalrogDemo{})
@@ -34,6 +35,7 @@ func initRegistry() *Registry {
 	s.addConversation(KyrinDemo{})
 	s.addConversation(MrGoldstein{})
 	s.addConversation(Pason{})
+	s.addConversation(Phil{})
 	s.addConversation(Rain{})
 	s.addConversation(RegularCabEllinia{})
 	s.addConversation(RegularCabHenesys{})
@@ -43,7 +45,8 @@ func initRegistry() *Registry {
 	s.addConversation(Robin{})
 	s.addConversation(Sera{})
 	s.addConversation(Shanks{})
-	s.addConversation(Phil{})
+	s.addConversation(TrainerBartos{})
+	s.addConversation(TrainerFrod{})
 	s.addConversation(Vicious{})
 	s.addConversation(VIPCabLithHarbor{})
 	return s
