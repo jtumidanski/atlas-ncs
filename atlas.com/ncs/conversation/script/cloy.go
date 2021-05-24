@@ -146,7 +146,7 @@ func (r Cloy) Commands(l logrus.FieldLogger, c Context) State {
 func (r Cloy) Dying(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Dying... well, they aren't technically ALIVE per se, so I don't know if dying is the right term to use. They are dolls with my magical power and the power of Water of Life to become a live object. Of course while it's alive, it's just like a live animal...")
-	return SendNext(l, c, m.String(), Exit())
+	return SendNext(l, c, m.String(), r.AfterSomeTime)
 }
 
 func (r Cloy) Kitty(l logrus.FieldLogger, c Context) State {
@@ -806,7 +806,7 @@ func (r Cloy) NeedPetFood(l logrus.FieldLogger, c Context) State {
 		BlackText().AddText(" sells ").
 		BlueText().AddText("Pet Food").
 		BlackText().AddText(" at the Henesys Market so if you need food for your pet, find Henesys. It'll be a good idea to buy the food in advance and feed the pet before it gets really hungry.")
-	return SendNextPrevious(l, c, m.String(), r.RegularBasis, nil)
+	return SendNextPrevious(l, c, m.String(), r.RegularBasis, r.HaveHunger)
 }
 
 func (r Cloy) RegularBasis(l logrus.FieldLogger, c Context) State {
@@ -838,7 +838,7 @@ func (r Cloy) HaveHunger(l logrus.FieldLogger, c Context) State {
 func (r Cloy) AfterSomeTime(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("After some time... that's correct, they stop moving. They just turn back to being a doll, after the effect of magic dies down and Water of Life dries out. But that doesn't mean it's stopped forever, because once you pour Water of Life over, it's going to be back alive.")
-	return SendNextPrevious(l, c, m.String(), r.SadToSee, nil)
+	return SendNextPrevious(l, c, m.String(), r.SadToSee, r.Dying)
 }
 
 func (r Cloy) SadToSee(l logrus.FieldLogger, c Context) State {
