@@ -21,6 +21,8 @@ type Script interface {
 
 type StateProducer func(l logrus.FieldLogger, c Context) State
 
+type ProcessNumber func(selection int32) StateProducer
+
 type State func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State
 
 type ProcessSelection func(selection int32) StateProducer
@@ -177,4 +179,35 @@ func SendOk(l logrus.FieldLogger, c Context, message string) State {
 		l.WithError(err).Errorf("Sending ok message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
 	return nil
+}
+
+func SendGetNumber(l logrus.FieldLogger, c Context, message string, s ProcessNumber, defaultValue int32, minimumValue int32, maximumValue int32) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendGetNumber(message, defaultValue, minimumValue, maximumValue)
+	if err != nil {
+		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doGetNumberExit(Exit(), s)
+}
+
+func SendGetNumberExit(l logrus.FieldLogger, c Context, message string, s ProcessNumber, e StateProducer, defaultValue int32, minimumValue int32, maximumValue int32) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendGetNumber(message, defaultValue, minimumValue, maximumValue)
+	if err != nil {
+		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doGetNumberExit(e, s)
+}
+
+func doGetNumberExit(e StateProducer, s ProcessNumber) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 0 && theType == 4 {
+			return e(l, c)
+		}
+
+		f := s(selection)
+		if f == nil {
+			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
+			return nil
+		}
+		return f(l, c)
+	}
 }
