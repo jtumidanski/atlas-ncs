@@ -1,10 +1,7 @@
 package rest
 
 import (
-	"atlas-ncs/conversation"
-	"atlas-ncs/npc"
 	"context"
-	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"log"
 	"net/http"
@@ -21,7 +18,7 @@ type Config struct {
 	addr         string
 }
 
-func NewServer(cl *logrus.Logger, ctx context.Context, wg *sync.WaitGroup, configurators ...ConfigFunc) {
+func NewServer(cl *logrus.Logger, ctx context.Context, wg *sync.WaitGroup, routerProducer func(l logrus.FieldLogger) http.Handler, configurators ...ConfigFunc) {
 	l := cl.WithFields(logrus.Fields{"originator": "HTTPServer"})
 	w := cl.Writer()
 	defer func() {
@@ -42,18 +39,9 @@ func NewServer(cl *logrus.Logger, ctx context.Context, wg *sync.WaitGroup, confi
 		configurator(config)
 	}
 
-	router := mux.NewRouter().PathPrefix("/ms/ncs").Subrouter().StrictSlash(true)
-	router.Use(commonHeader)
-
-	router.HandleFunc("/script/{npcId}", conversation.GetConversation(l)).Methods(http.MethodGet)
-	router.HandleFunc("/conversation/{characterId}", conversation.InConversation(l)).Methods(http.MethodGet)
-
-	r := router.PathPrefix("/speak").Subrouter()
-	r.HandleFunc("", npc.SendSpeech(l)).Methods(http.MethodPost)
-
 	hs := http.Server{
 		Addr:         config.addr,
-		Handler:      router,
+		Handler:      routerProducer(l),
 		ErrorLog:     log.New(w, "", 0),
 		ReadTimeout:  config.readTimeout,
 		WriteTimeout: config.writeTimeout,
@@ -83,7 +71,7 @@ func NewServer(cl *logrus.Logger, ctx context.Context, wg *sync.WaitGroup, confi
 	}
 }
 
-func commonHeader(next http.Handler) http.Handler {
+func CommonHeader(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
