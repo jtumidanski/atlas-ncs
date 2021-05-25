@@ -29,7 +29,7 @@ func NPCTalk(l logrus.FieldLogger) (NPCTalkEmitter, error) {
 	}, nil
 }
 
-const topicTokenNPCTalkNum = "TOPIC_NPC_TALK_COMMAND"
+const topicTokenNPCTalkNum = "TOPIC_NPC_TALK_NUM_COMMAND"
 
 type npcTalkCommandNum struct {
 	CharacterId  uint32 `json:"characterId"`
@@ -52,6 +52,31 @@ func NPCTalkNum(l logrus.FieldLogger) (NPCTalkNumEmitter, error) {
 	return func(characterId uint32, npcId uint32, message string, defaultValue int32, minimumValue int32, maximumValue int32, messageType string, speaker string) error {
 		key := CreateKey(int(characterId))
 		event := &npcTalkCommandNum{characterId, npcId, message, messageType, speaker, defaultValue, minimumValue, maximumValue}
+		return producer(key, event)
+	}, nil
+}
+
+const topicTokenNPCTalkStyle = "TOPIC_NPC_TALK_STYLE_COMMAND"
+
+type npcTalkCommandStyle struct {
+	CharacterId uint32   `json:"characterId"`
+	NPCId       uint32   `json:"npcId"`
+	Message     string   `json:"message"`
+	Type        string   `json:"type"`
+	Speaker     string   `json:"speaker"`
+	Styles      []uint32 `json:"styles"`
+}
+
+type NPCTalkStyleEmitter func(characterId uint32, npcId uint32, message string, options []uint32, messageType string, speaker string) error
+
+func NPCTalkStyle(l logrus.FieldLogger) (NPCTalkStyleEmitter, error) {
+	producer, err := ProduceEvent(l, topicTokenNPCTalkStyle, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
+	if err != nil {
+		return nil, err
+	}
+	return func(characterId uint32, npcId uint32, message string, options []uint32, messageType string, speaker string) error {
+		key := CreateKey(int(characterId))
+		event := &npcTalkCommandStyle{characterId, npcId, message, messageType, speaker, options}
 		return producer(key, event)
 	}, nil
 }

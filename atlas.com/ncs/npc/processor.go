@@ -13,6 +13,7 @@ const (
 	MessageTypeYesNo        = "YES_NO"
 	MessageTypeOk           = "OK"
 	MessageTypeNum          = "NUM"
+	MessageTypeStyle        = "STYLE"
 
 	SpeakerNPCLeft = "NPC_LEFT"
 )
@@ -24,11 +25,12 @@ type processor struct {
 }
 
 type conversation struct {
-	l                 logrus.FieldLogger
-	npcTalkEmitter    producers.NPCTalkEmitter
-	npcTalkNumEmitter producers.NPCTalkNumEmitter
-	characterId       uint32
-	npcId             uint32
+	l                   logrus.FieldLogger
+	npcTalkEmitter      producers.NPCTalkEmitter
+	npcTalkNumEmitter   producers.NPCTalkNumEmitter
+	npcTalkStyleEmitter producers.NPCTalkStyleEmitter
+	characterId         uint32
+	npcId               uint32
 }
 
 var Processor = func(l logrus.FieldLogger) *processor {
@@ -93,4 +95,8 @@ func (c *conversation) SendOk(message string) error {
 
 func (c *conversation) SendGetNumber(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
 	return c.npcTalkNumEmitter(c.characterId, c.npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+}
+
+func (c *conversation) SendStyle(message string, options []uint32) error {
+	return c.npcTalkStyleEmitter(c.characterId, c.npcId, message, options, MessageTypeStyle, SpeakerNPCLeft)
 }

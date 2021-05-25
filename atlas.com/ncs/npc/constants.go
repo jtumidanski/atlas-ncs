@@ -25,6 +25,8 @@ const (
 	TrainerFrod             uint32 = 1012007
 	Casey                   uint32 = 1012008
 	AthenaPierce            uint32 = 1012100
+	Natalie                 uint32 = 1012103
+	Brittany                uint32 = 1012104
 	RegularCabPerion        uint32 = 1022001
 	RegularCabEllinia       uint32 = 1032000
 	GrendelTheReallyOld     uint32 = 1032001

@@ -7,6 +7,8 @@ type Model struct {
 	jobId        uint16
 	dexterity    uint16
 	intelligence uint16
+	gender       byte
+	hair         uint32
 }
 
 func (a Model) Id() uint32 {
@@ -31,4 +33,12 @@ func (a Model) Dexterity() uint16 {
 
 func (a Model) Intelligence() uint16 {
 	return a.intelligence
+}
+
+func (a Model) Gender() byte {
+	return a.gender
+}
+
+func (a Model) Hair() uint32 {
+	return a.hair
 }

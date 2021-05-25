@@ -32,6 +32,8 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 		jobId:        att.JobId,
 		dexterity:    att.Dexterity,
 		intelligence: att.Intelligence,
+		gender:       att.Gender,
+		hair:         att.Hair,
 	}
 	return &r
 }
@@ -236,6 +238,34 @@ func HasPets(l logrus.FieldLogger) func(characterId uint32) bool {
 
 func GainCloseness(l logrus.FieldLogger) func(characterId uint32, amount int8) {
 	return func(characterId uint32, amount int8) {
+
+	}
+}
+
+func GetGender(l logrus.FieldLogger) func(characterId uint32) byte {
+	return func(characterId uint32) byte {
+		c, err := GetCharacterById(characterId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
+			return 0
+		}
+		return c.Gender()
+	}
+}
+
+func GetHair(l logrus.FieldLogger) func(characterId uint32) uint32 {
+	return func(characterId uint32) uint32 {
+		c, err := GetCharacterById(characterId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
+			return 0
+		}
+		return c.Hair()
+	}
+}
+
+func SetHair(l logrus.FieldLogger) func(characterId uint32, hair uint32) {
+	return func(characterId uint32, hair uint32) {
 		
 	}
 }

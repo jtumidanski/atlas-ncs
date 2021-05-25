@@ -211,3 +211,17 @@ func doGetNumberExit(e StateProducer, s ProcessNumber) State {
 		return f(l, c)
 	}
 }
+
+func SendStyle(l logrus.FieldLogger, c Context, message string, next ProcessSelection, options []uint32) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendStyle(message, options)
+	if err != nil {
+		l.WithError(err).Errorf("Sending style for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doSendStyle(next)
+}
+
+func doSendStyle(next ProcessSelection) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		return next(selection)(l, c)
+	}
+}
