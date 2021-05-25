@@ -225,11 +225,14 @@ func SendStyle(l logrus.FieldLogger, c Context, message string, next ProcessSele
 	if err != nil {
 		l.WithError(err).Errorf("Sending style for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
-	return doSendStyle(next)
+	return doSendStyleExit(Exit(), next)
 }
 
-func doSendStyle(next ProcessSelection) State {
+func doSendStyleExit(e StateProducer, next ProcessSelection) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 0 && theType == 7 {
+			return e(l, c)
+		}
 		return next(selection)(l, c)
 	}
 }

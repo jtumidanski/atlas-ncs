@@ -47,13 +47,15 @@ func (p *processor) Dispose(characterId uint32) error {
 func (p *processor) Conversation(characterId uint32, npcId uint32) *conversation {
 	npcTalkEmitter, _ := producers.NPCTalk(p.l)
 	npcTalkNumEmitter, _ := producers.NPCTalkNum(p.l)
+	npcTalkStyleEmitter, _ := producers.NPCTalkStyle(p.l)
 
 	return &conversation{
-		l:                 p.l,
-		npcTalkEmitter:    npcTalkEmitter,
-		npcTalkNumEmitter: npcTalkNumEmitter,
-		characterId:       characterId,
-		npcId:             npcId,
+		l:                   p.l,
+		npcTalkEmitter:      npcTalkEmitter,
+		npcTalkNumEmitter:   npcTalkNumEmitter,
+		npcTalkStyleEmitter: npcTalkStyleEmitter,
+		characterId:         characterId,
+		npcId:               npcId,
 	}
 }
 
