@@ -22,6 +22,7 @@ func GetRegistry() *Registry {
 func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
 	s.addConversation(APileOfFlowers{})
+	s.addConversation(APileOfHerbs{})
 	s.addConversation(ArwenTheFairy{})
 	s.addConversation(AthenaPierce{})
 	s.addConversation(AthenaPierceDemo{})

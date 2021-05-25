@@ -85,4 +85,5 @@ func (r APileOfFlowers) FilterOutGenderedItems(gender byte, prizes FlowerPrizes)
 			result.prizes = append(result.prizes, p)
 		}
 	}
+	return result
 }

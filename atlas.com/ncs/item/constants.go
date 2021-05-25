@@ -123,4 +123,18 @@ const (
 	WoodenSlingshot             uint32 = 1702002
 	BugNet                      uint32 = 1702015
 	PinkAnthurium               uint32 = 4031020
+	GreenTrainerPants           uint32 = 1060041
+	GreenDiscoPants             uint32 = 1060048
+	MilitaryCargoShorts         uint32 = 1060116
+	HawaiianSkirt               uint32 = 1061113
+	GreenLongSkirt              uint32 = 1061130
+	MilitaryCargoShorts2        uint32 = 1061139
+	GreenCampingShorts          uint32 = 1062009
+	GreenSnowboardPants         uint32 = 1062017
+	CamouflagedArmyPants        uint32 = 1062024
+	MilitaryCargoPants          uint32 = 1062056
+	OliveSkinnyJeans            uint32 = 1062061
+	SunflowerStalk              uint32 = 1702045
+	WonkysLeaf                  uint32 = 1702114
+	DoubleRootedRedGinseng      uint32 = 4031032
 )

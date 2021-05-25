@@ -71,6 +71,10 @@ const (
 	PowerBForeEllinia        uint32 = 1032114
 	Luke                     uint32 = 1040000
 	APileOfFlowers           uint32 = 1043000
+	APileOfHerbs             uint32 = 1043001
+	DarkLord                 uint32 = 1052001
+	JMFromThaStreetz         uint32 = 1052002
+	Chris                    uint32 = 1052003
 	RegularCabKerningCity    uint32 = 1052016
 	WarriorJobInstructor     uint32 = 1072000
 	MagicianJobInstructor    uint32 = 1072001
