@@ -181,6 +181,14 @@ func SendOk(l logrus.FieldLogger, c Context, message string) State {
 	return nil
 }
 
+func SendOkTrigger(l logrus.FieldLogger, c Context, message string, next StateProducer) State {
+	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendOk(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending ok message for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return next(l, c)
+}
+
 func SendGetNumber(l logrus.FieldLogger, c Context, message string, s ProcessNumber, defaultValue int32, minimumValue int32, maximumValue int32) State {
 	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendGetNumber(message, defaultValue, minimumValue, maximumValue)
 	if err != nil {

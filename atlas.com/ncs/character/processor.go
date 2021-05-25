@@ -239,6 +239,12 @@ func CompleteQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32
 	}
 }
 
+func CompleteQuestViaNPC(l logrus.FieldLogger) func(characterId uint32, questId uint32, npcId uint32) {
+	return func(characterId uint32, questId uint32, npcId uint32) {
+
+	}
+}
+
 func QuestStarted(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
 	return func(characterId uint32, questId uint32) bool {
 		return false
@@ -301,7 +307,7 @@ func PetIsLevel(l logrus.FieldLogger) func(characterId uint32, slot int16, level
 
 func EvolvePet(l logrus.FieldLogger) func(characterId uint32, slot int16, itemId uint32) {
 	return func(characterId uint32, slot int16, itemId uint32) {
-		
+
 	}
 }
 
@@ -383,6 +389,12 @@ func BoatBoarding(l logrus.FieldLogger) func(characterId uint32, departureMapId 
 
 func RemoveFromSlot(l logrus.FieldLogger) func(characterId uint32, inventoryType string, slot int16, amount int32) {
 	return func(characterId uint32, inventoryType string, slot int16, amount int32) {
+
+	}
+}
+
+func GainExperience(l logrus.FieldLogger) func(characterId uint32, amount int32) {
+	return func(characterId uint32, amount int32) {
 
 	}
 }

@@ -21,6 +21,7 @@ func GetRegistry() *Registry {
 
 func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
+	s.addConversation(APileOfFlowers{})
 	s.addConversation(ArwenTheFairy{})
 	s.addConversation(AthenaPierce{})
 	s.addConversation(AthenaPierceDemo{})
@@ -29,6 +30,8 @@ func initRegistry() *Registry {
 	s.addConversation(Chef{})
 	s.addConversation(Cherry{})
 	s.addConversation(Cloy{})
+	s.addConversation(CornerOfTheMagicLibrary{})
+	s.addConversation(CornerOfTheMagicLibrary2{})
 	s.addConversation(DancesWithBalrog{})
 	s.addConversation(DancesWithBalrogDemo{})
 	s.addConversation(DarkLordDemo{})
@@ -41,6 +44,7 @@ func initRegistry() *Registry {
 	s.addConversation(Joel{})
 	s.addConversation(KyrinDemo{})
 	s.addConversation(Louis{})
+	s.addConversation(Luke{})
 	s.addConversation(MarTheFairy{})
 	s.addConversation(MrGoldstein{})
 	s.addConversation(MsTan{})
@@ -48,7 +52,9 @@ func initRegistry() *Registry {
 	s.addConversation(Pason{})
 	s.addConversation(Phil{})
 	s.addConversation(PowerBForeBowman{})
+	s.addConversation(PowerBForeEllinia{})
 	s.addConversation(PowerBForeHenesys{})
+	s.addConversation(PowerBForeMagician{})
 	s.addConversation(PowerBForePerion{})
 	s.addConversation(PowerBForeWarrior{})
 	s.addConversation(Purin{})
@@ -63,6 +69,7 @@ func initRegistry() *Registry {
 	s.addConversation(Sera{})
 	s.addConversation(Shane{})
 	s.addConversation(Shanks{})
+	s.addConversation(SmallTreeStump{})
 	s.addConversation(TrainerBartos{})
 	s.addConversation(TrainerFrod{})
 	s.addConversation(Vicious{})

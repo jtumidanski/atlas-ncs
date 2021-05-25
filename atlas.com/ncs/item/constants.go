@@ -108,4 +108,19 @@ const (
 	StarRock                    uint32 = 4021009
 	BlackFeather                uint32 = 4031042
 	TheRockOfEvolution          uint32 = 5380000
+	ClearTreeSap                uint32 = 4032142
+	TrainingInstructorsBadge    uint32 = 4032479
+	GreenStripedTrainer         uint32 = 1040052
+	GreenDiscoShirt             uint32 = 1040054
+	GreenTieCasualSuit          uint32 = 1040130
+	GreenTieJacket              uint32 = 1041143
+	GreenSnowboardTop           uint32 = 1042013
+	CamouflagedUniform          uint32 = 1042022
+	GreenDoubleCoat             uint32 = 1042034
+	ArmyGeneralHoodie           uint32 = 1042084
+	CamoHoodedJacket            uint32 = 1042098
+	GreenBaseballJacket         uint32 = 1042117
+	WoodenSlingshot             uint32 = 1702002
+	BugNet                      uint32 = 1702015
+	PinkAnthurium               uint32 = 4031020
 )
