@@ -68,7 +68,7 @@ func (r Shanks) WarpWithItem(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Shanks) StrongEnough(l logrus.FieldLogger, c Context) State {
-	if !character.IsAboveLevel(l)(c.CharacterId, 6) {
+	if !character.AboveLevel(l)(c.CharacterId, 6) {
 		m := message.NewBuilder().
 			AddText("Let's see... I don't think you are strong enough. You'll have to be at least Level 7 to go to Victoria Island.")
 		return SendOk(l, c, m.String())

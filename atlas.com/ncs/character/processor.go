@@ -30,12 +30,31 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 		level:        att.Level,
 		meso:         att.Meso,
 		jobId:        att.JobId,
+		strength:     att.Strength,
 		dexterity:    att.Dexterity,
 		intelligence: att.Intelligence,
 		gender:       att.Gender,
 		hair:         att.Hair,
 	}
 	return &r
+}
+
+type AttributeCriteria func(*Model) bool
+
+func MeetsCriteria(l logrus.FieldLogger) func(characterId uint32, criteria ...AttributeCriteria) bool {
+	return func(characterId uint32, criteria ...AttributeCriteria) bool {
+		c, err := GetCharacterById(characterId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve character %d for criteria check.", characterId)
+			return false
+		}
+		for _, check := range criteria {
+			if ok := check(c); !ok {
+				return false
+			}
+		}
+		return true
+	}
 }
 
 func HasItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
@@ -90,56 +109,73 @@ func ResetAP(l logrus.FieldLogger) func(characterId uint32) {
 
 func IsLevel(l logrus.FieldLogger) func(characterId uint32, level byte) bool {
 	return func(characterId uint32, level byte) bool {
-		c, err := GetCharacterById(characterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve character.")
-			return false
-		}
+		return MeetsCriteria(l)(characterId, IsLevelCriteria(level))
+	}
+}
+
+func IsLevelCriteria(level byte) AttributeCriteria {
+	return func(c *Model) bool {
 		return c.Level() >= level
+	}
+}
+
+func HasStrength(l logrus.FieldLogger) func(characterId uint32, amount uint16) bool {
+	return func(characterId uint32, amount uint16) bool {
+		return MeetsCriteria(l)(characterId, HasStrengthCriteria(amount))
+	}
+}
+
+func HasStrengthCriteria(amount uint16) AttributeCriteria {
+	return func(c *Model) bool {
+		return c.Strength() >= amount
 	}
 }
 
 func HasDexterity(l logrus.FieldLogger) func(characterId uint32, amount uint16) bool {
 	return func(characterId uint32, amount uint16) bool {
-		c, err := GetCharacterById(characterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve character.")
-			return false
-		}
+		return MeetsCriteria(l)(characterId, HasDexterityCriteria(amount))
+	}
+}
+
+func HasDexterityCriteria(amount uint16) AttributeCriteria {
+	return func(c *Model) bool {
 		return c.Dexterity() >= amount
 	}
 }
 
 func HasIntelligence(l logrus.FieldLogger) func(characterId uint32, amount uint16) bool {
 	return func(characterId uint32, amount uint16) bool {
-		c, err := GetCharacterById(characterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve character.")
-			return false
-		}
+		return MeetsCriteria(l)(characterId, HasIntelligenceCriteria(amount))
+	}
+}
+
+func HasIntelligenceCriteria(amount uint16) AttributeCriteria {
+	return func(c *Model) bool {
 		return c.Intelligence() >= amount
 	}
 }
 
-func IsAboveLevel(l logrus.FieldLogger) func(characterId uint32, level byte) bool {
+func AboveLevel(l logrus.FieldLogger) func(characterId uint32, level byte) bool {
 	return func(characterId uint32, level byte) bool {
-		c, err := GetCharacterById(characterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve character.")
-			return false
-		}
+		return MeetsCriteria(l)(characterId, AboveLevelCriteria(level))
+	}
+}
+
+func AboveLevelCriteria(level byte) AttributeCriteria {
+	return func(c *Model) bool {
 		return c.Level() > level
 	}
 }
 
 func HasMeso(l logrus.FieldLogger) func(characterId uint32, amount uint32) bool {
 	return func(characterId uint32, amount uint32) bool {
-		c, err := GetCharacterById(characterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve character.")
-			return false
-		}
-		return c.Meso() > amount
+		return MeetsCriteria(l)(characterId, HasMesoCriteria(amount))
+	}
+}
+
+func HasMesoCriteria(amount uint32) AttributeCriteria {
+	return func(c *Model) bool {
+		return c.Meso() >= amount
 	}
 }
 
@@ -168,22 +204,24 @@ func GainMeso(l logrus.FieldLogger) func(characterId uint32, amount int32) error
 
 func IsBeginnerTree(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
-		c, err := GetCharacterById(characterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve character for job check.")
-			return false
-		}
+		return MeetsCriteria(l)(characterId, IsBeginnerTreeCriteria())
+	}
+}
+
+func IsBeginnerTreeCriteria() AttributeCriteria {
+	return func(c *Model) bool {
 		return job.IsA(c.JobId(), job.Beginner, job.Noblesse, job.Legend)
 	}
 }
 
 func IsJob(l logrus.FieldLogger) func(characterId uint32, option uint16) bool {
 	return func(characterId uint32, option uint16) bool {
-		c, err := GetCharacterById(characterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve character for job check.")
-			return false
-		}
+		return MeetsCriteria(l)(characterId, IsJobCriteria(option))
+	}
+}
+
+func IsJobCriteria(option uint16) AttributeCriteria {
+	return func(c *Model) bool {
 		return job.IsA(c.JobId(), option)
 	}
 }
@@ -266,6 +304,42 @@ func GetHair(l logrus.FieldLogger) func(characterId uint32) uint32 {
 
 func SetHair(l logrus.FieldLogger) func(characterId uint32, hair uint32) {
 	return func(characterId uint32, hair uint32) {
-		
+
+	}
+}
+
+func SetSkin(l logrus.FieldLogger) func(characterId uint32, skin byte) {
+	return func(characterId uint32, skin byte) {
+
+	}
+}
+
+func QuestNotStarted(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
+	return func(characterId uint32, questId uint32) bool {
+		return true
+	}
+}
+
+func ForceCompleteQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
+	return func(characterId uint32, questId uint32) {
+
+	}
+}
+
+func AnyQuestActive(l logrus.FieldLogger) func(characterId uint32, questId ...uint32) bool {
+	return func(characterId uint32, questId ...uint32) bool {
+		for _, q := range questId {
+			active := QuestActive(l)(characterId, q)
+			if active {
+				return true
+			}
+		}
+		return false
+	}
+}
+
+func QuestActive(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
+	return func(characterId uint32, questId uint32) bool {
+		return false
 	}
 }

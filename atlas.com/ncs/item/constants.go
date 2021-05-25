@@ -101,4 +101,7 @@ const (
 	HenesysHairStyleCouponREG   uint32 = 5150000
 	HenesysHairStyleCouponEXP   uint32 = 5150010
 	HenesysHairColorCouponREG   uint32 = 5151000
+	HenesysSkinCoupon           uint32 = 5153000
+	BeginnerWarriorsSword       uint32 = 1302077
+	DancesWithBalrogsLetter     uint32 = 4031008
 )

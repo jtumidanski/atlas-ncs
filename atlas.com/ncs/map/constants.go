@@ -21,4 +21,5 @@ const (
 	AntTunnelPark                     uint32 = 105070001
 	FlorinaBeach                      uint32 = 110000000
 	Nautalis                          uint32 = 120000000
+	WestRockyMountainIV               uint32 = 102020300
 )

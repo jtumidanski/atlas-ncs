@@ -2,6 +2,7 @@ package npc
 
 const (
 	Robin                   uint32 = 2003
+	MapleAdministrator      uint32 = 2007
 	Sera                    uint32 = 2100
 	Heena                   uint32 = 2101
 	AthenaPierceDemo        uint32 = 10200
@@ -15,6 +16,7 @@ const (
 	Pason                   uint32 = 1002002
 	MrGoldstein             uint32 = 1002003
 	VIPCabLithHarbor        uint32 = 1002004
+	MrKim                   uint32 = 1002005
 	Chef                    uint32 = 1002006
 	RegularCabLithHarbor    uint32 = 1002007
 	Jane                    uint32 = 1002100
@@ -24,12 +26,29 @@ const (
 	TrainerBartos           uint32 = 1012006
 	TrainerFrod             uint32 = 1012007
 	Casey                   uint32 = 1012008
+	MrLee                   uint32 = 1012009
 	AthenaPierce            uint32 = 1012100
 	Natalie                 uint32 = 1012103
 	Brittany                uint32 = 1012104
+	MsTan                   uint32 = 1012105
+	Tory                    uint32 = 1012112
+	Tommy                   uint32 = 1012113
+	Growlie                 uint32 = 1012114
+	HenesysForest           uint32 = 1012115
+	HenesysForest2          uint32 = 1012116
+	BigHeadward             uint32 = 1012117
+	PowerBForeBowman        uint32 = 1012118
+	PowerBForeHenesys       uint32 = 1012119
+	Dragon                  uint32 = 1013001
+	DragonNest              uint32 = 1013002
+	Hen                     uint32 = 1013104
+	BabyPig                 uint32 = 1013200
+	DancesWithBalrog        uint32 = 1022000
 	RegularCabPerion        uint32 = 1022001
 	RegularCabEllinia       uint32 = 1032000
 	GrendelTheReallyOld     uint32 = 1032001
 	RegularCabKerningCity   uint32 = 1052016
+	WarriorJobInstructor    uint32 = 1072000
 	MagicianJobInstructor   uint32 = 1072001
+	Roca                    uint32 = 1103001
 )

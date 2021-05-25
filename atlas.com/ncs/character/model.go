@@ -5,6 +5,7 @@ type Model struct {
 	level        byte
 	meso         uint32
 	jobId        uint16
+	strength     uint16
 	dexterity    uint16
 	intelligence uint16
 	gender       byte
@@ -41,4 +42,8 @@ func (a Model) Gender() byte {
 
 func (a Model) Hair() uint32 {
 	return a.hair
+}
+
+func (a Model) Strength() uint16 {
+	return a.strength
 }
