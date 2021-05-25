@@ -33,6 +33,7 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 		strength:     att.Strength,
 		dexterity:    att.Dexterity,
 		intelligence: att.Intelligence,
+		mapId:        att.MapId,
 		gender:       att.Gender,
 		hair:         att.Hair,
 	}
@@ -116,6 +117,12 @@ func IsLevel(l logrus.FieldLogger) func(characterId uint32, level byte) bool {
 func IsLevelCriteria(level byte) AttributeCriteria {
 	return func(c *Model) bool {
 		return c.Level() >= level
+	}
+}
+
+func LevelBetweenCriteria(lower byte, upper byte) AttributeCriteria {
+	return func(c *Model) bool {
+		return c.Level() > lower && c.Level() < upper
 	}
 }
 

@@ -22,4 +22,7 @@ const (
 	FlorinaBeach                      uint32 = 110000000
 	Nautalis                          uint32 = 120000000
 	WestRockyMountainIV               uint32 = 102020300
+	Happyville                        uint32 = 209000000
+	TheForestOfPatienceStep1          uint32 = 101000100
+	TheForestOfPatienceStep3          uint32 = 101000102
 )

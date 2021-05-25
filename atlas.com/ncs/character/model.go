@@ -8,6 +8,7 @@ type Model struct {
 	strength     uint16
 	dexterity    uint16
 	intelligence uint16
+	mapId        uint32
 	gender       byte
 	hair         uint32
 }

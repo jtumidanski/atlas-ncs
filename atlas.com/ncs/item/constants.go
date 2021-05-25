@@ -104,4 +104,5 @@ const (
 	HenesysSkinCoupon           uint32 = 5153000
 	BeginnerWarriorsSword       uint32 = 1302077
 	DancesWithBalrogsLetter     uint32 = 4031008
+	TicketToOrbisRegular        uint32 = 4031045
 )
