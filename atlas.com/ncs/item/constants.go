@@ -105,4 +105,7 @@ const (
 	BeginnerWarriorsSword       uint32 = 1302077
 	DancesWithBalrogsLetter     uint32 = 4031008
 	TicketToOrbisRegular        uint32 = 4031045
+	StarRock                    uint32 = 4021009
+	BlackFeather                uint32 = 4031042
+	TheRockOfEvolution          uint32 = 5380000
 )

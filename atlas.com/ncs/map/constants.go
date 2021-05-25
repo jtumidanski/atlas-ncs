@@ -25,4 +25,6 @@ const (
 	Happyville                        uint32 = 209000000
 	TheForestOfPatienceStep1          uint32 = 101000100
 	TheForestOfPatienceStep3          uint32 = 101000102
+	BeforeTakeoffToOrbis              uint32 = 101000301
+	ElliniaStation                    uint32 = 101000300
 )

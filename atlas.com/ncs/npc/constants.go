@@ -59,6 +59,10 @@ const (
 	VIPCabEllinia           uint32 = 1032005
 	MrPark                  uint32 = 1032006
 	Joel                    uint32 = 1032007
+	Cherry                  uint32 = 1032008
+	Purin                   uint32 = 1032009
+	ArwenTheFairy           uint32 = 1032100
+	MarTheFairy             uint32 = 1032102
 	RegularCabKerningCity   uint32 = 1052016
 	WarriorJobInstructor    uint32 = 1072000
 	MagicianJobInstructor   uint32 = 1072001

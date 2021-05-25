@@ -281,6 +281,30 @@ func HasPets(l logrus.FieldLogger) func(characterId uint32) bool {
 	}
 }
 
+func HasPet(l logrus.FieldLogger) func(characterId uint32, slot int16) bool {
+	return func(characterId uint32, slot int16) bool {
+		return false
+	}
+}
+
+func PetIs(l logrus.FieldLogger) func(characterId uint32, slot int16, petId ...uint32) bool {
+	return func(characterId uint32, slot int16, petId ...uint32) bool {
+		return false
+	}
+}
+
+func PetIsLevel(l logrus.FieldLogger) func(characterId uint32, slot int16, level byte) bool {
+	return func(characterId uint32, slot int16, level byte) bool {
+		return false
+	}
+}
+
+func EvolvePet(l logrus.FieldLogger) func(characterId uint32, slot int16, itemId uint32) {
+	return func(characterId uint32, slot int16, itemId uint32) {
+		
+	}
+}
+
 func GainCloseness(l logrus.FieldLogger) func(characterId uint32, amount int8) {
 	return func(characterId uint32, amount int8) {
 
@@ -348,5 +372,17 @@ func AnyQuestActive(l logrus.FieldLogger) func(characterId uint32, questId ...ui
 func QuestActive(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
 	return func(characterId uint32, questId uint32) bool {
 		return false
+	}
+}
+
+func BoatBoarding(l logrus.FieldLogger) func(characterId uint32, departureMapId uint32) bool {
+	return func(characterId uint32, departureMapId uint32) bool {
+		return false
+	}
+}
+
+func RemoveFromSlot(l logrus.FieldLogger) func(characterId uint32, inventoryType string, slot int16, amount int32) {
+	return func(characterId uint32, inventoryType string, slot int16, amount int32) {
+
 	}
 }

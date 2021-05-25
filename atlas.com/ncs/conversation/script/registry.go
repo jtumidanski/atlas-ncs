@@ -21,11 +21,13 @@ func GetRegistry() *Registry {
 
 func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
+	s.addConversation(ArwenTheFairy{})
 	s.addConversation(AthenaPierce{})
 	s.addConversation(AthenaPierceDemo{})
 	s.addConversation(Brittany{})
 	s.addConversation(Casey{})
 	s.addConversation(Chef{})
+	s.addConversation(Cherry{})
 	s.addConversation(Cloy{})
 	s.addConversation(DancesWithBalrog{})
 	s.addConversation(DancesWithBalrogDemo{})
@@ -39,6 +41,7 @@ func initRegistry() *Registry {
 	s.addConversation(Joel{})
 	s.addConversation(KyrinDemo{})
 	s.addConversation(Louis{})
+	s.addConversation(MarTheFairy{})
 	s.addConversation(MrGoldstein{})
 	s.addConversation(MsTan{})
 	s.addConversation(Natalie{})
@@ -48,6 +51,7 @@ func initRegistry() *Registry {
 	s.addConversation(PowerBForeHenesys{})
 	s.addConversation(PowerBForePerion{})
 	s.addConversation(PowerBForeWarrior{})
+	s.addConversation(Purin{})
 	s.addConversation(Rain{})
 	s.addConversation(RegularCabEllinia{})
 	s.addConversation(RegularCabHenesys{})
