@@ -1,47 +1,48 @@
 package topic
 
 import (
-	"errors"
+	"github.com/sirupsen/logrus"
 	"sync"
 )
 
-type Registry struct {
-	topics map[string]*Model
+type registry struct {
+	topics map[string]string
 	lock   sync.RWMutex
 }
 
 var once sync.Once
-var registry *Registry
+var r *registry
 
-func GetRegistry() *Registry {
+func GetRegistry() *registry {
 	once.Do(func() {
-		registry = &Registry{
-			topics: make(map[string]*Model, 0),
+		r = &registry{
+			topics: make(map[string]string, 0),
 			lock:   sync.RWMutex{},
 		}
 	})
-	return registry
+	return r
 }
 
-func (r *Registry) Get(token string) (*Model, error) {
+func (r *registry) Get(l logrus.FieldLogger, token string) string {
 	r.lock.RLock()
 	if val, ok := r.topics[token]; ok {
 		r.lock.RUnlock()
-		return val, nil
+		return val
 	} else {
 		r.lock.RUnlock()
 		r.lock.Lock()
 		if val, ok = r.topics[token]; ok {
 			r.lock.Unlock()
-			return val, nil
+			return val
 		}
-		t, err := RequestTopic(token)
+		td, err := GetTopic(l)(token)
 		if err != nil {
 			r.lock.Unlock()
-			return nil, errors.New("unable to locate topic for token")
+			l.WithError(err).Fatalf("Unable to locate topic for token %s.", token)
+			return ""
 		}
-		r.topics[token] = t
+		r.topics[token] = td.Attributes.Name
 		r.lock.Unlock()
-		return t, nil
+		return td.Attributes.Name
 	}
 }

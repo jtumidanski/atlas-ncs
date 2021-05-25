@@ -2,6 +2,7 @@ package consumers
 
 import (
 	"atlas-ncs/conversation"
+	"atlas-ncs/kafka/handler"
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,13 +13,13 @@ type continueNPCConversationCommand struct {
 	Selection   int32  `json:"selection"`
 }
 
-func ContinueNPCConversationCommandCreator() EmptyEventCreator {
+func ContinueNPCConversationCommandCreator() handler.EmptyEventCreator {
 	return func() interface{} {
 		return &continueNPCConversationCommand{}
 	}
 }
 
-func HandleContinueNPCConversationCommand() EventProcessor {
+func HandleContinueNPCConversationCommand() handler.EventHandler {
 	return func(l logrus.FieldLogger, e interface{}) {
 		if event, ok := e.(*continueNPCConversationCommand); ok {
 			conversation.Processor(l).Continue(event.CharacterId, event.Mode, event.Type, event.Selection)

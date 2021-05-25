@@ -1,15 +1,15 @@
 package topic
 
-type DataContainer struct {
-	Data Data `json:"data"`
+type dataContainer struct {
+	Data dataBody `json:"data"`
 }
 
-type Data struct {
+type dataBody struct {
 	Id         string     `json:"id"`
 	Type       string     `json:"type"`
-	Attributes Attributes `json:"attributes"`
+	Attributes attributes `json:"attributes"`
 }
 
-type Attributes struct {
+type attributes struct {
 	Name string `json:"name"`
 }

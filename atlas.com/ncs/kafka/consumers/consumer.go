@@ -1,98 +1,87 @@
 package consumers
 
 import (
+	"atlas-ncs/kafka/handler"
 	"atlas-ncs/retry"
 	"atlas-ncs/topic"
 	"context"
 	"encoding/json"
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
+	"io"
+	"os"
+	"sync"
 	"time"
 )
 
-type EmptyEventCreator func() interface{}
-
-type EventProcessor func(logrus.FieldLogger, interface{})
-
-type Config func(c *config)
-
-func SetGroupId(groupId string) func(c *config) {
-	return func(c *config) {
-		c.groupId = groupId
-	}
-}
-
-func SetTopicToken(topicToken string) func(c *config) {
-	return func(c *config) {
-		c.topicToken = topicToken
-	}
-}
-
-func SetBrokers(brokers []string) func(c *config) {
-	return func(c *config) {
-		c.brokers = brokers
-	}
-}
-
 type config struct {
-	groupId    string
-	topicToken string
-	maxWait    time.Duration
-	brokers    []string
+	maxWait time.Duration
 }
 
-func NewConsumer(l *logrus.Logger, processor EventProcessor, eventCreator EmptyEventCreator, options ...Config) error {
+type ConfigOption func(c *config)
+
+func NewConsumer(cl *logrus.Logger, ctx context.Context, wg *sync.WaitGroup, topicToken string, groupId string, ec handler.EmptyEventCreator, h handler.EventHandler, modifications ...ConfigOption) {
 	c := &config{maxWait: 500 * time.Millisecond}
 
-	for _, option := range options {
-		option(c)
+	for _, modification := range modifications {
+		modification(c)
 	}
 
-	t, err := topic.GetRegistry().Get(c.topicToken)
-	if err != nil {
-		return err
-	}
+	name := topic.GetRegistry().Get(cl, topicToken)
+
+	l := cl.WithFields(logrus.Fields{"originator": name, "type": "kafka_consumer"})
+
+	l.Infof("Creating topic consumer.")
 
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: c.brokers,
-		Topic:   t.Name(),
-		GroupID: c.groupId,
+		Brokers: []string{os.Getenv("BOOTSTRAP_SERVERS")},
+		Topic:   name,
+		GroupID: groupId,
 		MaxWait: c.maxWait,
 	})
 
-	return readerLoop(r, l.WithFields(logrus.Fields{"originator": t.Name(), "type": "kafka_consumer"}), eventCreator, processor)
-}
-
-func readerLoop(r *kafka.Reader, l logrus.FieldLogger, eventCreator EmptyEventCreator, processor EventProcessor) error {
-	name := r.Config().Topic
-
-	l.Infof("Creating topic consumer for %s.", name)
-	for {
-		var msg kafka.Message
-		var err error
-
-		readMessage := func(attempt int) (bool, error) {
-			msg, err = r.ReadMessage(context.Background())
-			if err != nil {
-				l.WithError(err).Warnf("Could not read message on topic %s, will retry.", name)
-				return true, err
+	go func() {
+		ctx, cancel := context.WithCancel(ctx)
+		defer cancel()
+		for {
+			var msg kafka.Message
+			readerFunc := func(attempt int) (bool, error) {
+				var err error
+				msg, err = r.ReadMessage(ctx)
+				if err == io.EOF || err == context.Canceled {
+					return false, err
+				} else if err != nil {
+					l.WithError(err).Warnf("Could not read message on topic %s, will retry.", r.Config().Topic)
+					return true, err
+				}
+				return false, err
 			}
-			return false, err
-		}
 
-		err = retry.Try(readMessage, 10)
-		if err != nil {
-			l.WithError(err).Errorf("Could not successfully read message on topic %s.", name)
-			continue
+			err := retry.Try(readerFunc, 10)
+			if err == io.EOF || err == context.Canceled || len(msg.Value) == 0 {
+				l.Infof("Reader closed, shutdown.")
+				return
+			} else if err != nil {
+				l.WithError(err).Errorf("Could not successfully read message.")
+			} else {
+				l.Infof("Message received %s.", string(msg.Value))
+				event := ec()
+				err = json.Unmarshal(msg.Value, &event)
+				if err != nil {
+					l.WithError(err).Errorf("Could not unmarshal event into %s.", msg.Value)
+				} else {
+					go h(l, event)
+				}
+			}
 		}
+	}()
 
-		event := eventCreator()
-		err = json.Unmarshal(msg.Value, &event)
-		if err != nil {
-			l.WithError(err).Errorf("Could not unmarshal event from topic %s into %s.", name, msg.Value)
-			continue
-		}
-
-		processor(l, event)
+	l.Infof("Start consuming topic.")
+	<-ctx.Done()
+	l.Infof("Shutting down topic consumer.")
+	if err := r.Close(); err != nil {
+		l.WithError(err).Errorf("Error closing reader.")
 	}
+	wg.Done()
+	l.Infof("Topic consumer stopped.")
 }

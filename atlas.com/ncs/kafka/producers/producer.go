@@ -43,14 +43,11 @@ func ProduceEvent(l logrus.FieldLogger, topicToken string, options ...Config) (M
 		option(c)
 	}
 
-	t, err := topic.GetRegistry().Get(topicToken)
-	if err != nil {
-		return nil, err
-	}
+	t := topic.GetRegistry().Get(l, topicToken)
 
 	w := &kafka.Writer{
 		Addr:         kafka.TCP(c.brokers...),
-		Topic:        t.Name(),
+		Topic:        t,
 		Balancer:     &kafka.LeastBytes{},
 		BatchTimeout: c.batchTimeout,
 	}

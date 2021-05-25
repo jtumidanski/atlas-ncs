@@ -1,9 +1,12 @@
 package topic
 
 import (
+	"atlas-ncs/json"
 	"atlas-ncs/rest/requests"
 	"atlas-ncs/retry"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 const (
@@ -12,21 +15,31 @@ const (
 	topicById                  = topicsService + "topics/%s"
 )
 
-func RequestTopic(topic string) (*Model, error) {
-	td := &DataContainer{}
-
-	var get = func(attempt int) (bool, error) {
-		err := requests.Get(fmt.Sprintf(topicById, topic), td)
-		if err != nil {
-			return true, err
+func GetTopic(l logrus.FieldLogger) func(topic string) (*dataBody, error) {
+	return func(topic string) (*dataBody, error) {
+		var r *http.Response
+		get := func(attempt int) (bool, error) {
+			var err error
+			r, err = http.Get(fmt.Sprintf(topicById, topic))
+			if err != nil {
+				l.Warningln("Unable to retrieve topic data for %s, will retry.", topic)
+				return true, err
+			}
+			return false, nil
 		}
-		return false, nil
-	}
 
-	err := retry.Try(get, 10)
-	if err != nil {
-		return nil, err
-	}
+		err := retry.Try(get, 10)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve topic data for %s", topic)
+			return nil, err
+		}
 
-	return &Model{name: td.Data.Attributes.Name}, nil
+		td := &dataContainer{}
+		err = json.FromJSON(td, r.Body)
+		if err != nil {
+			l.Errorf("Decoding topic data for %s", topic)
+			return nil, err
+		}
+		return &td.Data, nil
+	}
 }
