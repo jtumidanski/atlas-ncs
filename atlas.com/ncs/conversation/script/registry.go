@@ -37,6 +37,7 @@ func initRegistry() *Registry {
 	s.addConversation(DancesWithBalrog{})
 	s.addConversation(DancesWithBalrogDemo{})
 	s.addConversation(DarkLordDemo{})
+	s.addConversation(Francois{})
 	s.addConversation(GrendelTheReallyOld{})
 	s.addConversation(GrendelTheReallyOldDemo{})
 	s.addConversation(Heena{})
