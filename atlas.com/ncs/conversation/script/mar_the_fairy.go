@@ -95,9 +95,9 @@ func (r MarTheFairy) NotLeveledEnough(l logrus.FieldLogger, c Context) State {
 
 func (r MarTheFairy) MultipleItem(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("You have a dragon which isn't out, and as well as a dragon which is out. I can remove one for you. Remember that the data for the dragon I am removing will be lost.").AddNewLine().
-		OpenItem(0).RedText().AddText("Remove my CASH first slot.").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("Remove the first dragon in my inventory.").CloseItem().AddNewLine().
+		AddText("You have a dragon which isn't out, and as well as a dragon which is out. I can remove one for you. Remember that the data for the dragon I am removing will be lost.").NewLine().
+		OpenItem(0).RedText().AddText("Remove my CASH first slot.").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("Remove the first dragon in my inventory.").CloseItem().NewLine().
 		OpenItem(2).GreenText().AddText("No thanks.").CloseItem()
 	return SendListSelection(l, c, m.String(), r.ProcessRemoval)
 }

@@ -23,9 +23,9 @@ func (r Casey) Initial(l logrus.FieldLogger, c Context) State {
 
 func (r Casey) Hello(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("Hey, you look like you need a breather. You should be enjoying the life, just like I am. Well, if you have a couple of items, I can trade you for an item you can play mini games with. Now... what can I do for you?").AddNewLine().
-		OpenItem(0).BlueText().AddText("Create a mini game item").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("Explain to me what the mini games are about").CloseItem().AddNewLine()
+		AddText("Hey, you look like you need a breather. You should be enjoying the life, just like I am. Well, if you have a couple of items, I can trade you for an item you can play mini games with. Now... what can I do for you?").NewLine().
+		OpenItem(0).BlueText().AddText("Create a mini game item").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("Explain to me what the mini games are about").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.Selection)
 }
 
@@ -41,9 +41,9 @@ func (r Casey) Selection(selection int32) StateProducer {
 
 func (r Casey) MakeMiniGame(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("You want to make the mini game item? Mini games aren't something you can just go ahead and play right off the bat. For each mini game, you'll need a specific set of items. Which minigame it em do you want to make?").AddNewLine().
-		OpenItem(0).BlueText().AddText("Omok Set").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("A Set of Match Cards").CloseItem().AddNewLine()
+		AddText("You want to make the mini game item? Mini games aren't something you can just go ahead and play right off the bat. For each mini game, you'll need a specific set of items. Which minigame it em do you want to make?").NewLine().
+		OpenItem(0).BlueText().AddText("Omok Set").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("A Set of Match Cards").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.MiniGameProducer)
 }
 
@@ -59,9 +59,9 @@ func (r Casey) MiniGameProducer(selection int32) StateProducer {
 
 func (r Casey) LearnMore(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("You want to learn more about the mini games? Awesome! Ask me anything. Which mini game do you want to know more about?").AddNewLine().
-		OpenItem(0).BlueText().AddText("Omok").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("Match Cards").CloseItem().AddNewLine()
+		AddText("You want to learn more about the mini games? Awesome! Ask me anything. Which mini game do you want to know more about?").NewLine().
+		OpenItem(0).BlueText().AddText("Omok").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("Match Cards").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.LearnMoreProducer)
 }
 
@@ -116,7 +116,7 @@ func (r Casey) HowToStart(next StateProducer, previous StateProducer) StateProdu
 		m := message.NewBuilder().
 			AddText("Enter the room, and when you're ready to play, click on ").
 			BlueText().AddText("Ready").
-			BlackText().AddText(".").AddNewLine().
+			BlackText().AddText(".").NewLine().
 			AddText("Once the visitor clicks on ").
 			BlueText().AddText("Ready").
 			BlackText().AddText(", the room owner can press ").
@@ -186,13 +186,13 @@ func (r Casey) MakeOmok(l logrus.FieldLogger, c Context) State {
 
 func (r Casey) WhichSet(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("The set also differs based on what kind of pieces you want to use for the game. Which set would you like to make?").AddNewLine().
-		OpenItem(0).BlueText().ShowItemName1(item.SlimeAndMushroomOmokSet).CloseItem().AddNewLine().BlackText().
-		OpenItem(1).BlueText().ShowItemName1(item.SlimeAndOctopusOmokSet).CloseItem().AddNewLine().BlackText().
-		OpenItem(2).BlueText().ShowItemName1(item.SlimeAndPigOmokSet).CloseItem().AddNewLine().BlackText().
-		OpenItem(3).BlueText().ShowItemName1(item.OctopusAndMushroomOmokSet).CloseItem().AddNewLine().BlackText().
-		OpenItem(4).BlueText().ShowItemName1(item.PigAndOctopusOmokSet).CloseItem().AddNewLine().BlackText().
-		OpenItem(5).BlueText().ShowItemName1(item.PigAndMushroomOmokSet).CloseItem().AddNewLine().BlackText()
+		AddText("The set also differs based on what kind of pieces you want to use for the game. Which set would you like to make?").NewLine().
+		OpenItem(0).BlueText().ShowItemName1(item.SlimeAndMushroomOmokSet).CloseItem().NewLine().BlackText().
+		OpenItem(1).BlueText().ShowItemName1(item.SlimeAndOctopusOmokSet).CloseItem().NewLine().BlackText().
+		OpenItem(2).BlueText().ShowItemName1(item.SlimeAndPigOmokSet).CloseItem().NewLine().BlackText().
+		OpenItem(3).BlueText().ShowItemName1(item.OctopusAndMushroomOmokSet).CloseItem().NewLine().BlackText().
+		OpenItem(4).BlueText().ShowItemName1(item.PigAndOctopusOmokSet).CloseItem().NewLine().BlackText().
+		OpenItem(5).BlueText().ShowItemName1(item.PigAndMushroomOmokSet).CloseItem().NewLine().BlackText()
 	return SendListSelection(l, c, m.String(), r.OmokSetSelection)
 }
 

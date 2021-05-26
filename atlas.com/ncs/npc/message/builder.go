@@ -22,7 +22,7 @@ func (b *builder) String() string {
 	return b.b.String()
 }
 
-func (b *builder) AddNewLine() *builder {
+func (b *builder) NewLine() *builder {
 	b.b.WriteString("\r\n")
 	return b
 }

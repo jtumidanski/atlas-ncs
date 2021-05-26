@@ -173,10 +173,10 @@ func (r DancesWithBalrog) MakeSpace(l logrus.FieldLogger, c Context) State {
 
 func (r DancesWithBalrog) PathInfo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("Alright, when you have made your decision, click on [I'll choose my occupation] at the bottom.").AddNewLine().
-		OpenItem(0).BlueText().AddText("Please explain to me what being the Fighter is all about.").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("Please explain to me what being the Page is all about.").CloseItem().AddNewLine().
-		OpenItem(2).BlueText().AddText("Please explain to me what being the Spearman is all about.").CloseItem().AddNewLine().
+		AddText("Alright, when you have made your decision, click on [I'll choose my occupation] at the bottom.").NewLine().
+		OpenItem(0).BlueText().AddText("Please explain to me what being the Fighter is all about.").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("Please explain to me what being the Page is all about.").CloseItem().NewLine().
+		OpenItem(2).BlueText().AddText("Please explain to me what being the Spearman is all about.").CloseItem().NewLine().
 		OpenItem(3).BlueText().AddText("I'll choose my occupation!").CloseItem()
 	return SendListSelectionExit(l, c, m.String(), r.PathInfoSelected, r.MakeUpYourMind)
 }
@@ -199,7 +199,7 @@ func (r DancesWithBalrog) FighterInfo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Warriors that master ").
 		RedText().AddText("Swords or Axes").
-		BlackText().AddText(".").AddNewLine().AddNewLine().
+		BlackText().AddText(".").NewLine().NewLine().
 		RedText().AddText("Fighters").
 		BlackText().AddText(" get ").
 		BlueText().AddText("Rage").
@@ -217,7 +217,7 @@ func (r DancesWithBalrog) PageInfo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Warriors that master ").
 		RedText().AddText("Swords or Maces/Blunt weapons").
-		BlackText().AddText(".").AddNewLine().AddNewLine().
+		BlackText().AddText(".").NewLine().NewLine().
 		RedText().AddText("Pages").
 		BlackText().AddText(" get ").
 		BlueText().AddText("Threaten").
@@ -235,7 +235,7 @@ func (r DancesWithBalrog) SpearmanInfo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Warriors that master ").
 		RedText().AddText("Spears or Polearms").
-		BlackText().AddText(".").AddNewLine().AddNewLine().
+		BlackText().AddText(".").NewLine().NewLine().
 		RedText().AddText("Spearmen").
 		BlackText().AddText(" get ").
 		BlueText().AddText("Hyper Body").
@@ -247,9 +247,9 @@ func (r DancesWithBalrog) SpearmanInfo(l logrus.FieldLogger, c Context) State {
 
 func (r DancesWithBalrog) PathSelection(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("Now... have you made up your mind? Please choose the job you'd like to select for your 2nd job advancement. ").AddNewLine().
-		OpenItem(0).BlueText().AddText("Fighter").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("Page").CloseItem().AddNewLine().
+		AddText("Now... have you made up your mind? Please choose the job you'd like to select for your 2nd job advancement. ").NewLine().
+		OpenItem(0).BlueText().AddText("Fighter").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("Page").CloseItem().NewLine().
 		OpenItem(2).BlueText().AddText("Spearman").CloseItem()
 	return SendListSelectionExit(l, c, m.String(), r.PathSelected, r.MakeUpYourMind)
 }

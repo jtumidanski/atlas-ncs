@@ -44,9 +44,9 @@ func (r PowerBForePerion) Warp(mapId uint32) StateProducer {
 func (r PowerBForePerion) ChooseRoom(l logrus.FieldLogger, c Context) State {
 	format := "Training Center %d (%d/%d)"
 	m := message.NewBuilder().
-		AddText("Would you like to go into the Training Center?").AddNewLine()
+		AddText("Would you like to go into the Training Center?").NewLine()
 	for i := 0; i < r.Rooms(); i++ {
-		m = m.OpenItem(i).BlueText().AddText(fmt.Sprintf(format, i+1, _map.CharacterCount(l)(c.WorldId, c.ChannelId, r.TrainingMap()+uint32(i)), r.MaxInRoom())).AddNewLine()
+		m = m.OpenItem(i).BlueText().AddText(fmt.Sprintf(format, i+1, _map.CharacterCount(l)(c.WorldId, c.ChannelId, r.TrainingMap()+uint32(i)), r.MaxInRoom())).NewLine()
 	}
 	return SendListSelection(l, c, m.String(), r.RoomSelection)
 }

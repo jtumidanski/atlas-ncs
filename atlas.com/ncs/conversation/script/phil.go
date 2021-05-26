@@ -30,8 +30,8 @@ func (r Phil) WouldYouLikeTo(l logrus.FieldLogger, c Context) State {
 func (r Phil) Confused(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("It's understandable that you may be confused about this place if this is your first time around. If you got any questions about this place, fire away.").
-		AddNewLine().
-		OpenItem(0).BlueText().AddText("What kind of towns are here in Victoria Island?").CloseItem().AddNewLine().
+		NewLine().
+		OpenItem(0).BlueText().AddText("What kind of towns are here in Victoria Island?").CloseItem().NewLine().
 		OpenItem(1).NormalText().AddText("Please take me somewhere else.").BlackText().CloseItem()
 	return SendListSelectionExit(l, c, m.String(), r.ConfusedResult, r.MoreToDo)
 }
@@ -54,13 +54,13 @@ func (r Phil) ConfusedResult(selection int32) StateProducer {
 
 func (r Phil) KindOfTowns(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("There are 7 big towns here in Victoria Island. Which of those do you want to know more of?").AddNewLine().
-		OpenItem(0).BlueText().ShowMap(_map.LithHarbor).CloseItem().AddNewLine().
-		OpenItem(1).BlueText().ShowMap(_map.Perion).CloseItem().AddNewLine().
-		OpenItem(2).BlueText().ShowMap(_map.Ellinia).CloseItem().AddNewLine().
-		OpenItem(3).BlueText().ShowMap(_map.Henesys).CloseItem().AddNewLine().
-		OpenItem(4).BlueText().ShowMap(_map.KerningCity).CloseItem().AddNewLine().
-		OpenItem(5).BlueText().ShowMap(_map.Nautalis).CloseItem().AddNewLine().
+		AddText("There are 7 big towns here in Victoria Island. Which of those do you want to know more of?").NewLine().
+		OpenItem(0).BlueText().ShowMap(_map.LithHarbor).CloseItem().NewLine().
+		OpenItem(1).BlueText().ShowMap(_map.Perion).CloseItem().NewLine().
+		OpenItem(2).BlueText().ShowMap(_map.Ellinia).CloseItem().NewLine().
+		OpenItem(3).BlueText().ShowMap(_map.Henesys).CloseItem().NewLine().
+		OpenItem(4).BlueText().ShowMap(_map.KerningCity).CloseItem().NewLine().
+		OpenItem(5).BlueText().ShowMap(_map.Nautalis).CloseItem().NewLine().
 		OpenItem(6).BlueText().ShowMap(_map.Sleepywood).CloseItem()
 	return SendListSelectionExit(l, c, m.String(), r.SelectTownInfo, r.MoreToDo)
 }
@@ -97,15 +97,15 @@ func (r Phil) TakeMeSomewhere(l logrus.FieldLogger, c Context) State {
 	beginner := character.IsBeginnerTree(l)(c.CharacterId)
 
 	if beginner {
-		mb = mb.AddText("There's a special 90% discount for all beginners. Alright, where would you want to go?").BlueText().AddNewLine()
+		mb = mb.AddText("There's a special 90% discount for all beginners. Alright, where would you want to go?").BlueText().NewLine()
 	} else {
-		mb = mb.AddText("Oh you aren't a beginner, huh? Then I'm afraid I may have to charge you full price. Where would you like to go?").BlueText().AddNewLine()
+		mb = mb.AddText("Oh you aren't a beginner, huh? Then I'm afraid I may have to charge you full price. Where would you like to go?").BlueText().NewLine()
 	}
 	mb = mb.
-		OpenItem(0).ShowMap(_map.Perion).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(0, beginner))).CloseItem().AddNewLine().
-		OpenItem(1).ShowMap(_map.Ellinia).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(1, beginner))).CloseItem().AddNewLine().
-		OpenItem(2).ShowMap(_map.Henesys).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(2, beginner))).CloseItem().AddNewLine().
-		OpenItem(3).ShowMap(_map.KerningCity).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(3, beginner))).CloseItem().AddNewLine().
+		OpenItem(0).ShowMap(_map.Perion).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(0, beginner))).CloseItem().NewLine().
+		OpenItem(1).ShowMap(_map.Ellinia).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(1, beginner))).CloseItem().NewLine().
+		OpenItem(2).ShowMap(_map.Henesys).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(2, beginner))).CloseItem().NewLine().
+		OpenItem(3).ShowMap(_map.KerningCity).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(3, beginner))).CloseItem().NewLine().
 		OpenItem(4).ShowMap(_map.Nautalis).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(4, beginner))).CloseItem()
 	return SendListSelectionExit(l, c, mb.String(), r.SelectTownConfirm(beginner), r.MoreToDo)
 }

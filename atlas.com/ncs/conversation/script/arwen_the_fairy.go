@@ -37,9 +37,9 @@ func (r ArwenTheFairy) HelloStranger(l logrus.FieldLogger, c Context) State {
 
 func (r ArwenTheFairy) WhatToMake(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("What do you want to make?").AddNewLine().
-		OpenItem(0).BlueText().AddText("Moon Rock").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("Star Rock").CloseItem().AddNewLine().
+		AddText("What do you want to make?").NewLine().
+		OpenItem(0).BlueText().AddText("Moon Rock").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("Star Rock").CloseItem().NewLine().
 		OpenItem(2).BlueText().AddText("Black Feather").CloseItem()
 	return SendListSelection(l, c, m.String(), r.ProcessMake)
 }
@@ -71,7 +71,7 @@ func (r ArwenTheFairy) ConfirmMoonRock(l logrus.FieldLogger, c Context) State {
 		BlueText().AddText("Bronze Plate").
 		BlackText().AddText(", ").
 		BlueText().AddText("Steel Plate").
-		BlackText().AddText(",").AddNewLine().
+		BlackText().AddText(",").NewLine().
 		BlueText().AddText("Mithril Plate").
 		BlackText().AddText(", ").
 		BlueText().AddText("Adamantium Plate").

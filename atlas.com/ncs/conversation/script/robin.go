@@ -20,23 +20,23 @@ func (r Robin) Initial(l logrus.FieldLogger, c Context) State {
 
 func (r Robin) AskMeAnything(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("Now...ask me any questions you may have on traveling!!").AddNewLine().
-		OpenItem(0).BlueText().AddText("How do I move?").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("How do I take down the monsters?").CloseItem().AddNewLine().
-		OpenItem(2).BlueText().AddText("How can I pick up an item?").CloseItem().AddNewLine().
-		OpenItem(3).BlueText().AddText("What happens when I die?").CloseItem().AddNewLine().
-		OpenItem(4).BlueText().AddText("When can I choose a job?").CloseItem().AddNewLine().
-		OpenItem(5).BlueText().AddText("Tell me more about this island!").CloseItem().AddNewLine().
-		OpenItem(6).BlueText().AddText("What should I do to become a Warrior?").CloseItem().AddNewLine().
-		OpenItem(7).BlueText().AddText("What should I do to become a Bowman?").CloseItem().AddNewLine().
-		OpenItem(8).BlueText().AddText("What should I do to become a Magician?").CloseItem().AddNewLine().
-		OpenItem(9).BlueText().AddText("What should I do to become a Thief?").CloseItem().AddNewLine().
-		OpenItem(10).BlueText().AddText("How do I raise the character stats? (S)").CloseItem().AddNewLine().
-		OpenItem(11).BlueText().AddText("How do I check the items that I just picked up?").CloseItem().AddNewLine().
-		OpenItem(12).BlueText().AddText("How do I put on an item?").CloseItem().AddNewLine().
-		OpenItem(13).BlueText().AddText("How do I check out the items that I'm wearing?").CloseItem().AddNewLine().
-		OpenItem(14).BlueText().AddText("What are skills? (K)").CloseItem().AddNewLine().
-		OpenItem(15).BlueText().AddText("How do I get to Victoria Island?").CloseItem().AddNewLine().
+		AddText("Now...ask me any questions you may have on traveling!!").NewLine().
+		OpenItem(0).BlueText().AddText("How do I move?").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("How do I take down the monsters?").CloseItem().NewLine().
+		OpenItem(2).BlueText().AddText("How can I pick up an item?").CloseItem().NewLine().
+		OpenItem(3).BlueText().AddText("What happens when I die?").CloseItem().NewLine().
+		OpenItem(4).BlueText().AddText("When can I choose a job?").CloseItem().NewLine().
+		OpenItem(5).BlueText().AddText("Tell me more about this island!").CloseItem().NewLine().
+		OpenItem(6).BlueText().AddText("What should I do to become a Warrior?").CloseItem().NewLine().
+		OpenItem(7).BlueText().AddText("What should I do to become a Bowman?").CloseItem().NewLine().
+		OpenItem(8).BlueText().AddText("What should I do to become a Magician?").CloseItem().NewLine().
+		OpenItem(9).BlueText().AddText("What should I do to become a Thief?").CloseItem().NewLine().
+		OpenItem(10).BlueText().AddText("How do I raise the character stats? (S)").CloseItem().NewLine().
+		OpenItem(11).BlueText().AddText("How do I check the items that I just picked up?").CloseItem().NewLine().
+		OpenItem(12).BlueText().AddText("How do I put on an item?").CloseItem().NewLine().
+		OpenItem(13).BlueText().AddText("How do I check out the items that I'm wearing?").CloseItem().NewLine().
+		OpenItem(14).BlueText().AddText("What are skills? (K)").CloseItem().NewLine().
+		OpenItem(15).BlueText().AddText("How do I get to Victoria Island?").CloseItem().NewLine().
 		OpenItem(16).BlueText().AddText("What are mesos?").CloseItem().
 		BlackText()
 	return SendListSelection(l, c, m.String(), r.ProcessListSelection)

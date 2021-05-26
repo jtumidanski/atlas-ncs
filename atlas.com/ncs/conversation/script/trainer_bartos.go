@@ -22,9 +22,9 @@ func (r TrainerBartos) Initial(l logrus.FieldLogger, c Context) State {
 
 func (r TrainerBartos) Hello(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("Do you have any business with me?").AddNewLine().
-		OpenItem(0).BlueText().AddText("Please tell me about this place.").CloseItem().AddNewLine().
-		OpenItem(1).BlueText().AddText("I'm here through a word from Mar the Fairy...").CloseItem().AddNewLine()
+		AddText("Do you have any business with me?").NewLine().
+		OpenItem(0).BlueText().AddText("Please tell me about this place.").CloseItem().NewLine().
+		OpenItem(1).BlueText().AddText("I'm here through a word from Mar the Fairy...").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.WhatBusiness)
 }
 

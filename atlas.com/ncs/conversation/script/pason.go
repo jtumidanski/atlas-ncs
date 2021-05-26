@@ -30,9 +30,9 @@ func (r Pason) HaveYouHeard(l logrus.FieldLogger, c Context) State {
 		BlackText().AddText(", or if you have a ").
 		BlueText().AddText("VIP Ticket to Florina Beach").
 		BlackText().AddText(" with you, in which case you'll be there for free.").
-		AddNewLine().AddNewLine().
-		OpenItem(0).BlueText().AddText("I'll pay 1500 mesos.").CloseItem().AddNewLine().
-		OpenItem(1).AddText("I have a VIP Ticket to Florina Beach.").CloseItem().AddNewLine().
+		NewLine().NewLine().
+		OpenItem(0).BlueText().AddText("I'll pay 1500 mesos.").CloseItem().NewLine().
+		OpenItem(1).AddText("I have a VIP Ticket to Florina Beach.").CloseItem().NewLine().
 		OpenItem(2).AddText("What is a VIP Ticket to Florina Beach?").CloseItem().BlackText()
 	return SendListSelectionExit(l, c, m.String(), r.Choices, r.UnfinishedBusiness)
 }

@@ -29,10 +29,10 @@ func (r Brittany) Hello(l logrus.FieldLogger, c Context) State {
 		BlueText().ShowItemName1(item.HenesysHairStyleCouponEXP).
 		BlackText().AddText(" or ").
 		BlueText().ShowItemName1(item.HenesysHairColorCouponREG).
-		BlackText().AddText(" by any chance, then how about letting me change your hairdo?").AddNewLine().
-		OpenItem(0).AddText("Haircut: ").ShowItemImage2(item.HenesysHairStyleCouponREG).ShowItemName1(item.HenesysHairStyleCouponREG).CloseItem().AddNewLine().
-		OpenItem(1).AddText("Haircut: ").ShowItemImage2(item.HenesysHairStyleCouponEXP).ShowItemName1(item.HenesysHairStyleCouponEXP).CloseItem().AddNewLine().
-		OpenItem(2).AddText("Dye your hair: ").ShowItemImage2(item.HenesysHairColorCouponREG).ShowItemName1(item.HenesysHairColorCouponREG).CloseItem().AddNewLine()
+		BlackText().AddText(" by any chance, then how about letting me change your hairdo?").NewLine().
+		OpenItem(0).AddText("Haircut: ").ShowItemImage2(item.HenesysHairStyleCouponREG).ShowItemName1(item.HenesysHairStyleCouponREG).CloseItem().NewLine().
+		OpenItem(1).AddText("Haircut: ").ShowItemImage2(item.HenesysHairStyleCouponEXP).ShowItemName1(item.HenesysHairStyleCouponEXP).CloseItem().NewLine().
+		OpenItem(2).AddText("Dye your hair: ").ShowItemImage2(item.HenesysHairColorCouponREG).ShowItemName1(item.HenesysHairColorCouponREG).CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.Choose)
 }
 

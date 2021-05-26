@@ -42,11 +42,11 @@ func (r RegularCabHenesys) WhereToGo(l logrus.FieldLogger, c Context) State {
 	}
 	m = m.
 		AddText("Choose your destination, for fees will change from place to place.").
-		BlueText().AddNewLine().
-		OpenItem(0).BlueText().ShowMap(_map.LithHarbor).CloseItem().AddNewLine().
-		OpenItem(1).BlueText().ShowMap(_map.Perion).CloseItem().AddNewLine().
-		OpenItem(2).BlueText().ShowMap(_map.Ellinia).CloseItem().AddNewLine().
-		OpenItem(3).BlueText().ShowMap(_map.KerningCity).CloseItem().AddNewLine().
+		BlueText().NewLine().
+		OpenItem(0).BlueText().ShowMap(_map.LithHarbor).CloseItem().NewLine().
+		OpenItem(1).BlueText().ShowMap(_map.Perion).CloseItem().NewLine().
+		OpenItem(2).BlueText().ShowMap(_map.Ellinia).CloseItem().NewLine().
+		OpenItem(3).BlueText().ShowMap(_map.KerningCity).CloseItem().NewLine().
 		OpenItem(4).BlueText().ShowMap(_map.Nautalis).CloseItem()
 	return SendListSelectionExit(l, c, m.String(), r.SelectTownConfirm(beginner), r.MoreToSee)
 }

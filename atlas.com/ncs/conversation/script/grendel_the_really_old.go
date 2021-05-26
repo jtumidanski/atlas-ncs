@@ -82,10 +82,10 @@ func (r GrendelTheReallyOld) SecondJobNextStep(l logrus.FieldLogger, c Context) 
 func (r GrendelTheReallyOld) SecondJobPathInfo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Alright, when you have made your decision, click on [I'll choose my occupation] at the bottom.").
-		BlueText().AddNewLine().
-		OpenItem(0).AddText("Please explain to me what being the Wizard (Fire / Poison) is all about.").CloseItem().AddNewLine().
-		OpenItem(1).AddText("Please explain to me what being the Wizard (Ice / Lightning) is all about.").CloseItem().AddNewLine().
-		OpenItem(2).AddText("Please explain to me what being the Cleric is all about.").CloseItem().AddNewLine().
+		BlueText().NewLine().
+		OpenItem(0).AddText("Please explain to me what being the Wizard (Fire / Poison) is all about.").CloseItem().NewLine().
+		OpenItem(1).AddText("Please explain to me what being the Wizard (Ice / Lightning) is all about.").CloseItem().NewLine().
+		OpenItem(2).AddText("Please explain to me what being the Cleric is all about.").CloseItem().NewLine().
 		OpenItem(3).AddText("I'll choose my occupation!")
 	return SendListSelection(l, c, m.String(), r.SecondJobPathSelection)
 }
@@ -108,7 +108,7 @@ func (r GrendelTheReallyOld) FirePoisonWizardInfo(l logrus.FieldLogger, c Contex
 	m := message.NewBuilder().
 		AddText("Magicians that master ").
 		RedText().AddText("Fire/Poison-based magic").
-		BlackText().AddNewLine().AddNewLine().
+		BlackText().NewLine().NewLine().
 		BlueText().AddText("Wizards").
 		BlackText().AddText(" are a active class that deal magical, elemental damage. These abilities grants them a significant advantage against enemies weak to their element. With their skills ").
 		RedText().AddText("Meditation").
@@ -126,7 +126,7 @@ func (r GrendelTheReallyOld) IceLightningWizardInfo(l logrus.FieldLogger, c Cont
 	m := message.NewBuilder().
 		AddText("Magicians that master ").
 		RedText().AddText("Ice/Lightning-based magic").
-		BlackText().AddNewLine().AddNewLine().
+		BlackText().NewLine().NewLine().
 		BlueText().AddText("Wizards").
 		BlackText().AddText(" are a active class that deal magical, elemental damage. These abilities grants them a significant advantage against enemies weak to their element. With their skills ").
 		RedText().AddText("Meditation").
@@ -144,7 +144,7 @@ func (r GrendelTheReallyOld) ClericInfo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Magicians that master ").
 		RedText().AddText("Holy magic").
-		BlackText().AddNewLine().AddNewLine().
+		BlackText().NewLine().NewLine().
 		BlueText().AddText("Clerics").
 		BlackText().AddText(" are a powerful supportive class, bound to be accepted into any Party. That's because the have the power to ").
 		RedText().AddText("Heal").
@@ -161,9 +161,9 @@ func (r GrendelTheReallyOld) ClericInfo(l logrus.FieldLogger, c Context) State {
 func (r GrendelTheReallyOld) SecondJobChoice(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Now... have you made up your mind? Please choose the job you'd like to select for your 2nd job advancement. ").
-		BlueText().AddNewLine().
-		OpenItem(0).AddText("Wizard (Fire / Poison)").CloseItem().AddNewLine().
-		OpenItem(1).AddText("Wizard (Ice / Lightning)").CloseItem().AddNewLine().
+		BlueText().NewLine().
+		OpenItem(0).AddText("Wizard (Fire / Poison)").CloseItem().NewLine().
+		OpenItem(1).AddText("Wizard (Ice / Lightning)").CloseItem().NewLine().
 		OpenItem(2).AddText("Cleric").CloseItem()
 	return SendListSelection(l, c, m.String(), r.SecondJobSelection)
 }

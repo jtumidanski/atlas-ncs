@@ -53,12 +53,12 @@ func (r Jane) StillHaveAFew(l logrus.FieldLogger, c Context) State {
 
 func (r Jane) WhatToBuy(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
-		AddText("Which item would you like to buy?").AddNewLine().
+		AddText("Which item would you like to buy?").NewLine().
 		BlueText().
-		OpenItem(0).ShowItemImage2(item.WhitePotion).AddText(fmt.Sprintf(" (Price : %d mesos)", 310)).CloseItem().AddNewLine().
-		OpenItem(1).ShowItemImage2(item.Unagi).AddText(fmt.Sprintf(" (Price : %d mesos)", 1060)).CloseItem().AddNewLine().
-		OpenItem(2).ShowItemImage2(item.PureWater).AddText(fmt.Sprintf(" (Price : %d mesos)", 1600)).CloseItem().AddNewLine().
-		OpenItem(3).ShowItemImage2(item.Watermelon).AddText(fmt.Sprintf(" (Price : %d mesos)", 3120)).CloseItem().AddNewLine()
+		OpenItem(0).ShowItemImage2(item.WhitePotion).AddText(fmt.Sprintf(" (Price : %d mesos)", 310)).CloseItem().NewLine().
+		OpenItem(1).ShowItemImage2(item.Unagi).AddText(fmt.Sprintf(" (Price : %d mesos)", 1060)).CloseItem().NewLine().
+		OpenItem(2).ShowItemImage2(item.PureWater).AddText(fmt.Sprintf(" (Price : %d mesos)", 1600)).CloseItem().NewLine().
+		OpenItem(3).ShowItemImage2(item.Watermelon).AddText(fmt.Sprintf(" (Price : %d mesos)", 3120)).CloseItem().NewLine()
 	return SendListSelectionExit(l, c, m.String(), r.SelectItem, r.StillHaveAFew)
 }
 

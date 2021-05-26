@@ -24,7 +24,7 @@ func (r MsTan) Hello(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Well, hello! Welcome to the Henesys Skin-Care! Would you like to have a firm, tight, healthy looking skin like mine?  With a ").
 		BlueText().ShowItemName1(item.HenesysSkinCoupon).
-		BlackText().AddText(", you can let us take care of the rest and have the kind of skin you've always wanted~!").AddNewLine().
+		BlackText().AddText(", you can let us take care of the rest and have the kind of skin you've always wanted~!").NewLine().
 		OpenItem(0).AddText("Skin Care: ").ShowItemImage2(item.HenesysSkinCoupon).ShowItemName1(item.HenesysSkinCoupon).CloseItem()
 	return SendListSelection(l, c, m.String(), r.Choices)
 }

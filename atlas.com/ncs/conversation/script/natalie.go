@@ -27,9 +27,9 @@ func (r Natalie) Hello(l logrus.FieldLogger, c Context) State {
 		BlueText().ShowItemName1(item.HenesysHairStyleCouponVIP).
 		BlackText().AddText(" or a ").
 		BlueText().ShowItemName1(item.HenesysHairColorCouponVIP).
-		BlackText().AddText(" allow me to take care of your hairdo. Please choose the one you want.").AddNewLine().
-		OpenItem(0).AddText("Haircut: ").ShowItemImage2(item.HenesysHairStyleCouponVIP).ShowItemName1(item.HenesysHairStyleCouponVIP).CloseItem().AddNewLine().
-		OpenItem(1).AddText("Dye your hair: ").ShowItemImage2(item.HenesysHairColorCouponVIP).ShowItemName1(item.HenesysHairColorCouponVIP).CloseItem().AddNewLine()
+		BlackText().AddText(" allow me to take care of your hairdo. Please choose the one you want.").NewLine().
+		OpenItem(0).AddText("Haircut: ").ShowItemImage2(item.HenesysHairStyleCouponVIP).ShowItemName1(item.HenesysHairStyleCouponVIP).CloseItem().NewLine().
+		OpenItem(1).AddText("Dye your hair: ").ShowItemImage2(item.HenesysHairColorCouponVIP).ShowItemName1(item.HenesysHairColorCouponVIP).CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.Choose)
 }
 

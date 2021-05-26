@@ -34,13 +34,13 @@ func (r Vicious) Initial(l logrus.FieldLogger, c Context) State {
 func (r Vicious) Hello(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Hello. I am Vicious, retired Sniper. However, I used to be the top student of Athena Pierce. Though I no longer hunt, I can make some archer items that will be useful for you...").
-		BlueText().AddNewLine().
-		OpenItem(0).AddText("Create a bow").CloseItem().AddNewLine().
-		OpenItem(1).AddText("Create a crossbow").CloseItem().AddNewLine().
-		OpenItem(2).AddText("Make a glove").CloseItem().AddNewLine().
-		OpenItem(3).AddText("Upgrade a glove").CloseItem().AddNewLine().
-		OpenItem(4).AddText("Create materials").CloseItem().AddNewLine().
-		OpenItem(5).AddText("Create arrows").CloseItem().AddNewLine()
+		BlueText().NewLine().
+		OpenItem(0).AddText("Create a bow").CloseItem().NewLine().
+		OpenItem(1).AddText("Create a crossbow").CloseItem().NewLine().
+		OpenItem(2).AddText("Make a glove").CloseItem().NewLine().
+		OpenItem(3).AddText("Upgrade a glove").CloseItem().NewLine().
+		OpenItem(4).AddText("Create materials").CloseItem().NewLine().
+		OpenItem(5).AddText("Create arrows").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.Selection)
 }
 
@@ -80,13 +80,13 @@ func (r Vicious) RefineItemConfirm(itemId uint32, amount int32, quantityPrompt f
 	return func(l logrus.FieldLogger, c Context) State {
 		m := message.NewBuilder().
 			AddText(quantityPrompt()).ShowItemName1(itemId).
-			AddText("? In that case, I'm going to need specific items from you in order to make it. Make sure you have room in your inventory, though!").AddNewLine().
+			AddText("? In that case, I'm going to need specific items from you in order to make it. Make sure you have room in your inventory, though!").NewLine().
 			BlueText()
 		for _, req := range requirements.requirements {
-			m = m.ShowItemImage2(req.itemId).AddText(fmt.Sprintf(" %d ", uint32(req.amount)*uint32(amount))).ShowItemName1(req.itemId).AddNewLine()
+			m = m.ShowItemImage2(req.itemId).AddText(fmt.Sprintf(" %d ", uint32(req.amount)*uint32(amount))).ShowItemName1(req.itemId).NewLine()
 		}
 		if requirements.cost > 0 {
-			m = m.ShowItemImage2(item.MoneySack).AddText(fmt.Sprintf(" %d meso", requirements.cost*uint32(amount))).AddNewLine()
+			m = m.ShowItemImage2(item.MoneySack).AddText(fmt.Sprintf(" %d meso", requirements.cost*uint32(amount))).NewLine()
 		}
 		return SendYesNo(l, c, m.String(), r.ProcessPurchase(itemId, 1, requirements), Exit())
 	}
@@ -148,14 +148,14 @@ func (r Vicious) ProcessPurchase(itemId uint32, amount int8, requirements Refine
 func (r Vicious) BowRefine(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("I may have been a Sniper, but bows and crossbows aren't too much different. Anyway, which would you like to make?").
-		AddNewLine().
-		BlueText().OpenItem(0).ShowItemName1(item.WarBow).BlackText().AddText(" - Bowman Lv. 10").CloseItem().AddNewLine().
-		BlueText().OpenItem(1).ShowItemName1(item.CompositeBow).BlackText().AddText(" - Bowman Lv. 15").CloseItem().AddNewLine().
-		BlueText().OpenItem(2).ShowItemName1(item.HuntersBow).BlackText().AddText(" - Bowman Lv. 20").CloseItem().AddNewLine().
-		BlueText().OpenItem(3).ShowItemName1(item.BattleBow).BlackText().AddText(" - Bowman Lv. 25").CloseItem().AddNewLine().
-		BlueText().OpenItem(4).ShowItemName1(item.Ryden).BlackText().AddText(" - Bowman Lv. 30").CloseItem().AddNewLine().
-		BlueText().OpenItem(5).ShowItemName1(item.RedViper).BlackText().AddText(" - Bowman Lv. 35").CloseItem().AddNewLine().
-		BlueText().OpenItem(6).ShowItemName1(item.Vaulter2000).BlackText().AddText(" - Bowman Lv. 40").CloseItem().AddNewLine()
+		NewLine().
+		BlueText().OpenItem(0).ShowItemName1(item.WarBow).BlackText().AddText(" - Bowman Lv. 10").CloseItem().NewLine().
+		BlueText().OpenItem(1).ShowItemName1(item.CompositeBow).BlackText().AddText(" - Bowman Lv. 15").CloseItem().NewLine().
+		BlueText().OpenItem(2).ShowItemName1(item.HuntersBow).BlackText().AddText(" - Bowman Lv. 20").CloseItem().NewLine().
+		BlueText().OpenItem(3).ShowItemName1(item.BattleBow).BlackText().AddText(" - Bowman Lv. 25").CloseItem().NewLine().
+		BlueText().OpenItem(4).ShowItemName1(item.Ryden).BlackText().AddText(" - Bowman Lv. 30").CloseItem().NewLine().
+		BlueText().OpenItem(5).ShowItemName1(item.RedViper).BlackText().AddText(" - Bowman Lv. 35").CloseItem().NewLine().
+		BlueText().OpenItem(6).ShowItemName1(item.Vaulter2000).BlackText().AddText(" - Bowman Lv. 40").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.BowRefineSelection)
 }
 
@@ -231,15 +231,15 @@ func (r Vicious) Vaulter2000Requirements() RefinementRequirements {
 func (r Vicious) CrossbowRefine(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("I was a Sniper. Crossbows are my specialty. Which would you like me to make for you?").
-		AddNewLine().
-		BlueText().OpenItem(0).ShowItemName1(item.Crossbow).BlackText().AddText(" - Bowman Lv. 10").CloseItem().AddNewLine().
-		BlueText().OpenItem(1).ShowItemName1(item.BattleCrossbow).BlackText().AddText(" - Bowman Lv. 15").CloseItem().AddNewLine().
-		BlueText().OpenItem(2).ShowItemName1(item.Balanche).BlackText().AddText(" - Bowman Lv. 20").CloseItem().AddNewLine().
-		BlueText().OpenItem(3).ShowItemName1(item.MountainCrossbow).BlackText().AddText(" - Bowman Lv. 25").CloseItem().AddNewLine().
-		BlueText().OpenItem(4).ShowItemName1(item.EagleCrow).BlackText().AddText(" - Bowman Lv. 30").CloseItem().AddNewLine().
-		BlueText().OpenItem(5).ShowItemName1(item.Heckler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().AddNewLine().
-		BlueText().OpenItem(6).ShowItemName1(item.SilverCrow).BlackText().AddText(" - Bowman Lv. 40").CloseItem().AddNewLine().
-		BlueText().OpenItem(7).ShowItemName1(item.Rower).BlackText().AddText(" - Bowman Lv. 45").CloseItem().AddNewLine()
+		NewLine().
+		BlueText().OpenItem(0).ShowItemName1(item.Crossbow).BlackText().AddText(" - Bowman Lv. 10").CloseItem().NewLine().
+		BlueText().OpenItem(1).ShowItemName1(item.BattleCrossbow).BlackText().AddText(" - Bowman Lv. 15").CloseItem().NewLine().
+		BlueText().OpenItem(2).ShowItemName1(item.Balanche).BlackText().AddText(" - Bowman Lv. 20").CloseItem().NewLine().
+		BlueText().OpenItem(3).ShowItemName1(item.MountainCrossbow).BlackText().AddText(" - Bowman Lv. 25").CloseItem().NewLine().
+		BlueText().OpenItem(4).ShowItemName1(item.EagleCrow).BlackText().AddText(" - Bowman Lv. 30").CloseItem().NewLine().
+		BlueText().OpenItem(5).ShowItemName1(item.Heckler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().NewLine().
+		BlueText().OpenItem(6).ShowItemName1(item.SilverCrow).BlackText().AddText(" - Bowman Lv. 40").CloseItem().NewLine().
+		BlueText().OpenItem(7).ShowItemName1(item.Rower).BlackText().AddText(" - Bowman Lv. 45").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.CrossbowRefineSelection)
 }
 
@@ -324,15 +324,15 @@ func (r Vicious) RowerRequirements() RefinementRequirements {
 func (r Vicious) GloveRefine(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Okay, so which glove do you want me to make?").
-		AddNewLine().
-		BlueText().OpenItem(0).ShowItemName1(item.BasicArcherGloves).BlackText().AddText(" - Bowman Lv. 10").CloseItem().AddNewLine().
-		BlueText().OpenItem(1).ShowItemName1(item.BlueDiros).BlackText().AddText(" - Bowman Lv. 15").CloseItem().AddNewLine().
-		BlueText().OpenItem(2).ShowItemName1(item.BlueSavata).BlackText().AddText(" - Bowman Lv. 25").CloseItem().AddNewLine().
-		BlueText().OpenItem(3).ShowItemName1(item.BrownMarker).BlackText().AddText(" - Bowman Lv. 30").CloseItem().AddNewLine().
-		BlueText().OpenItem(4).ShowItemName1(item.BronzeScaler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().AddNewLine().
-		BlueText().OpenItem(5).ShowItemName1(item.AquaBrace).BlackText().AddText(" - Bowman Lv. 40").CloseItem().AddNewLine().
-		BlueText().OpenItem(6).ShowItemName1(item.BlueWillow).BlackText().AddText(" - Bowman Lv. 50").CloseItem().AddNewLine().
-		BlueText().OpenItem(7).ShowItemName1(item.OakerGarner).BlackText().AddText(" - Bowman Lv. 60").CloseItem().AddNewLine()
+		NewLine().
+		BlueText().OpenItem(0).ShowItemName1(item.BasicArcherGloves).BlackText().AddText(" - Bowman Lv. 10").CloseItem().NewLine().
+		BlueText().OpenItem(1).ShowItemName1(item.BlueDiros).BlackText().AddText(" - Bowman Lv. 15").CloseItem().NewLine().
+		BlueText().OpenItem(2).ShowItemName1(item.BlueSavata).BlackText().AddText(" - Bowman Lv. 25").CloseItem().NewLine().
+		BlueText().OpenItem(3).ShowItemName1(item.BrownMarker).BlackText().AddText(" - Bowman Lv. 30").CloseItem().NewLine().
+		BlueText().OpenItem(4).ShowItemName1(item.BronzeScaler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().NewLine().
+		BlueText().OpenItem(5).ShowItemName1(item.AquaBrace).BlackText().AddText(" - Bowman Lv. 40").CloseItem().NewLine().
+		BlueText().OpenItem(6).ShowItemName1(item.BlueWillow).BlackText().AddText(" - Bowman Lv. 50").CloseItem().NewLine().
+		BlueText().OpenItem(7).ShowItemName1(item.OakerGarner).BlackText().AddText(" - Bowman Lv. 60").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.GloveRefineSelection)
 }
 
@@ -417,21 +417,21 @@ func (r Vicious) OakerGarnerRequirements() RefinementRequirements {
 func (r Vicious) GloveUpgrade(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Upgrade a glove? That shouldn't be too difficult. Which did you have in mind?").
-		AddNewLine().
-		BlueText().OpenItem(0).ShowItemName1(item.GreenDiros).BlackText().AddText(" - Bowman Lv. 15").CloseItem().AddNewLine().
-		BlueText().OpenItem(1).ShowItemName1(item.RedDiros).BlackText().AddText(" - Bowman Lv. 15").CloseItem().AddNewLine().
-		BlueText().OpenItem(2).ShowItemName1(item.RedSavata).BlackText().AddText(" - Bowman Lv. 25").CloseItem().AddNewLine().
-		BlueText().OpenItem(3).ShowItemName1(item.DarkSavata).BlackText().AddText(" - Bowman Lv. 25").CloseItem().AddNewLine().
-		BlueText().OpenItem(4).ShowItemName1(item.GreenMarker).BlackText().AddText(" - Bowman Lv. 30").CloseItem().AddNewLine().
-		BlueText().OpenItem(5).ShowItemName1(item.BlackMarker).BlackText().AddText(" - Bowman Lv. 30").CloseItem().AddNewLine().
-		BlueText().OpenItem(6).ShowItemName1(item.MithrilScaler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().AddNewLine().
-		BlueText().OpenItem(7).ShowItemName1(item.GoldScaler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().AddNewLine().
-		BlueText().OpenItem(8).ShowItemName1(item.GoldBrace).BlackText().AddText(" - Bowman Lv. 40").CloseItem().AddNewLine().
-		BlueText().OpenItem(9).ShowItemName1(item.DarkBrace).BlackText().AddText(" - Bowman Lv. 40").CloseItem().AddNewLine().
-		BlueText().OpenItem(10).ShowItemName1(item.RedWillow).BlackText().AddText(" - Bowman Lv. 50").CloseItem().AddNewLine().
-		BlueText().OpenItem(11).ShowItemName1(item.DarkWillow).BlackText().AddText(" - Bowman Lv. 50").CloseItem().AddNewLine().
-		BlueText().OpenItem(12).ShowItemName1(item.SephiaGarner).BlackText().AddText(" - Bowman Lv. 60").CloseItem().AddNewLine().
-		BlueText().OpenItem(13).ShowItemName1(item.DarkGarner).BlackText().AddText(" - Bowman Lv. 60").CloseItem().AddNewLine()
+		NewLine().
+		BlueText().OpenItem(0).ShowItemName1(item.GreenDiros).BlackText().AddText(" - Bowman Lv. 15").CloseItem().NewLine().
+		BlueText().OpenItem(1).ShowItemName1(item.RedDiros).BlackText().AddText(" - Bowman Lv. 15").CloseItem().NewLine().
+		BlueText().OpenItem(2).ShowItemName1(item.RedSavata).BlackText().AddText(" - Bowman Lv. 25").CloseItem().NewLine().
+		BlueText().OpenItem(3).ShowItemName1(item.DarkSavata).BlackText().AddText(" - Bowman Lv. 25").CloseItem().NewLine().
+		BlueText().OpenItem(4).ShowItemName1(item.GreenMarker).BlackText().AddText(" - Bowman Lv. 30").CloseItem().NewLine().
+		BlueText().OpenItem(5).ShowItemName1(item.BlackMarker).BlackText().AddText(" - Bowman Lv. 30").CloseItem().NewLine().
+		BlueText().OpenItem(6).ShowItemName1(item.MithrilScaler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().NewLine().
+		BlueText().OpenItem(7).ShowItemName1(item.GoldScaler).BlackText().AddText(" - Bowman Lv. 35").CloseItem().NewLine().
+		BlueText().OpenItem(8).ShowItemName1(item.GoldBrace).BlackText().AddText(" - Bowman Lv. 40").CloseItem().NewLine().
+		BlueText().OpenItem(9).ShowItemName1(item.DarkBrace).BlackText().AddText(" - Bowman Lv. 40").CloseItem().NewLine().
+		BlueText().OpenItem(10).ShowItemName1(item.RedWillow).BlackText().AddText(" - Bowman Lv. 50").CloseItem().NewLine().
+		BlueText().OpenItem(11).ShowItemName1(item.DarkWillow).BlackText().AddText(" - Bowman Lv. 50").CloseItem().NewLine().
+		BlueText().OpenItem(12).ShowItemName1(item.SephiaGarner).BlackText().AddText(" - Bowman Lv. 60").CloseItem().NewLine().
+		BlueText().OpenItem(13).ShowItemName1(item.DarkGarner).BlackText().AddText(" - Bowman Lv. 60").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.GloveUpgradeSelection)
 }
 
@@ -570,10 +570,10 @@ func (r Vicious) DarkGarnerRequirements() RefinementRequirements {
 func (r Vicious) MaterialRefine(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Materials? I know of a few materials that I can make for you...").
-		AddNewLine().
-		BlueText().OpenItem(0).AddText("Make Processed Wood with Tree Branch").CloseItem().AddNewLine().
-		BlueText().OpenItem(1).AddText("Make Processed Wood with Firewood").CloseItem().AddNewLine().
-		BlueText().OpenItem(2).AddText("Make Screws (packs of 15)").CloseItem().AddNewLine()
+		NewLine().
+		BlueText().OpenItem(0).AddText("Make Processed Wood with Tree Branch").CloseItem().NewLine().
+		BlueText().OpenItem(1).AddText("Make Processed Wood with Firewood").CloseItem().NewLine().
+		BlueText().OpenItem(2).AddText("Make Screws (packs of 15)").CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.MaterialRefineSelection)
 }
 
@@ -629,13 +629,13 @@ func (r Vicious) ProcessMaterialQuantity(itemId uint32, requirements RefinementR
 func (r Vicious) ArrowRefine(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Arrows? Not a problem at all.").
-		AddNewLine().
-		BlueText().OpenItem(0).ShowItemName1(item.ArrowForBow).CloseItem().AddNewLine().
-		BlueText().OpenItem(1).ShowItemName1(item.ArrowForCrossbow).CloseItem().AddNewLine().
-		BlueText().OpenItem(2).ShowItemName1(item.BronzeArrowForBow).CloseItem().AddNewLine().
-		BlueText().OpenItem(3).ShowItemName1(item.BronzeArrowForCrossbow).CloseItem().AddNewLine().
-		BlueText().OpenItem(4).ShowItemName1(item.SteelArrowForBow).CloseItem().AddNewLine().
-		BlueText().OpenItem(5).ShowItemName1(item.SteelArrowForCrossbow).CloseItem().AddNewLine()
+		NewLine().
+		BlueText().OpenItem(0).ShowItemName1(item.ArrowForBow).CloseItem().NewLine().
+		BlueText().OpenItem(1).ShowItemName1(item.ArrowForCrossbow).CloseItem().NewLine().
+		BlueText().OpenItem(2).ShowItemName1(item.BronzeArrowForBow).CloseItem().NewLine().
+		BlueText().OpenItem(3).ShowItemName1(item.BronzeArrowForCrossbow).CloseItem().NewLine().
+		BlueText().OpenItem(4).ShowItemName1(item.SteelArrowForBow).CloseItem().NewLine().
+		BlueText().OpenItem(5).ShowItemName1(item.SteelArrowForCrossbow).CloseItem().NewLine()
 	return SendListSelection(l, c, m.String(), r.ArrowRefineSelection)
 }
 
