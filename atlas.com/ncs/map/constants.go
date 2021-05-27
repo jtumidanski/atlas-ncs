@@ -37,4 +37,18 @@ const (
 	Line3ConstructionSiteB3Area1      uint32 = 103000906
 	NLCSubwayStation                  uint32 = 600010001
 	WaitingRoomFromKCToNLC            uint32 = 600010004
+	TheDeepForestOfPatienceStep1      uint32 = 105040310
+	TheDeepForestOfPatienceStep3      uint32 = 105040312
+	TheDeepForestOfPatienceStep5      uint32 = 105040314
+	TheOtherDimension1                uint32 = 108010101
+	TheOtherDimension2                uint32 = 108010201
+	TheOtherDimension3                uint32 = 108010301
+	TheOtherDimension4                uint32 = 108010401
+	TheOtherDimension5                uint32 = 108010501
+	SleepyDungeonV                    uint32 = 105040305
+	TheForestOfEvilII                 uint32 = 100040106
+	MonkeySwampII                     uint32 = 107000402
+	TheCaveOfEvilEyeII                uint32 = 105070200
+	RegularSauna                      uint32 = 105040401
+	VIPSauna                          uint32 = 105040402
 )

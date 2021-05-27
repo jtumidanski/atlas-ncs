@@ -258,6 +258,12 @@ func IsJobCriteria(option uint16) AttributeCriteria {
 	}
 }
 
+func IsAJobCriteria(options ... uint16) AttributeCriteria {
+	return func(c *Model) bool {
+		return job.IsA(c.JobId(), options...)
+	}
+}
+
 func CompleteQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
 	return func(characterId uint32, questId uint32) {
 
@@ -421,5 +427,11 @@ func RemoveFromSlot(l logrus.FieldLogger) func(characterId uint32, inventoryType
 func GainExperience(l logrus.FieldLogger) func(characterId uint32, amount int32) {
 	return func(characterId uint32, amount int32) {
 
+	}
+}
+
+func HasParty(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
 	}
 }

@@ -326,4 +326,8 @@ const (
 	ShumisCoin                  uint32 = 4031039
 	ShumisRollOfCash            uint32 = 4031040
 	ShumisSackOfCash            uint32 = 4031041
+	BubblingDoll                uint32 = 4032136
+	PinkViola                   uint32 = 4031025
+	BlueViola                   uint32 = 4031026
+	WhiteViola                  uint32 = 4031028
 )
