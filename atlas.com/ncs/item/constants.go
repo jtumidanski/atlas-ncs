@@ -311,4 +311,12 @@ const (
 	WildKargoEye                uint32 = 4000027
 	WildBoarTooth               uint32 = 4000020
 	HornyMushroomCap            uint32 = 4000015
+	IronHogsMetalHoof           uint32 = 4000039
+	BronzeGigantic              uint32 = 1472022
+	DrakesBlood                 uint32 = 2012000
+	SapOfAncientTree            uint32 = 2012002
+	TaurospearHorn              uint32 = 4000046
+	BloodGigantic               uint32 = 1472023
+	SapphireGigantic            uint32 = 1472024
+	DarkGigantic                uint32 = 1472025
 )
