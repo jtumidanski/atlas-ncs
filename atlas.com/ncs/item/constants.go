@@ -323,4 +323,7 @@ const (
 	TicketToConstructionSiteB2  uint32 = 4031037
 	TicketToConstructionSiteB3  uint32 = 4031038
 	SubwayTicketToNLCRegular    uint32 = 4031711
+	ShumisCoin                  uint32 = 4031039
+	ShumisRollOfCash            uint32 = 4031040
+	ShumisSackOfCash            uint32 = 4031041
 )
