@@ -45,6 +45,7 @@ func initRegistry() *Registry {
 	s.addConversation(HenesysForest2{})
 	s.addConversation(Jane{})
 	s.addConversation(Joel{})
+	s.addConversation(JMFromThaStreetz{})
 	s.addConversation(KyrinDemo{})
 	s.addConversation(Louis{})
 	s.addConversation(Luke{})

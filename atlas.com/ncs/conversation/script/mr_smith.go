@@ -168,79 +168,79 @@ func (r MrSmith) ScrewRequirements() RefinementRequirements {
 }
 
 func (r MrSmith) JunoRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4000021, amount: 15}, {itemId: 4011001, amount: 1}}, cost: 1000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 15}, {itemId: item.SteelPlate, amount: 1}}, cost: 1000}
 }
 
 func (r MrSmith) SteelFingerlessGlovesRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4011001, amount: 2}}, cost: 2000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelPlate, amount: 2}}, cost: 2000}
 }
 
 func (r MrSmith) VenonRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4000021, amount: 40}, {itemId: 4011000, amount: 2}}, cost: 5000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 40}, {itemId: item.BronzePlate, amount: 2}}, cost: 5000}
 }
 
 func (r MrSmith) WhiteFingerlessGlovesRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4011001, amount: 2}}, cost: 10000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelPlate, amount: 2}}, cost: 10000}
 }
 
 func (r MrSmith) BronzeMisselRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4011000, amount: 3}, {itemId: 4011001, amount: 2}, {itemId: 4003000, amount: 15}}, cost: 20000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzePlate, amount: 3}, {itemId: item.SteelPlate, amount: 2}, {itemId: item.Screw, amount: 15}}, cost: 20000}
 }
 
 func (r MrSmith) SteelBriggonRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4000021, amount: 30}, {itemId: 4011001, amount: 4}, {itemId: 4003000, amount: 15}}, cost: 30000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 30}, {itemId: item.SteelPlate, amount: 4}, {itemId: item.Screw, amount: 15}}, cost: 30000}
 }
 
 func (r MrSmith) IronKnuckleRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4000021, amount: 50}, {itemId: 4011001, amount: 5}, {itemId: 4003000, amount: 40}}, cost: 40000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 50}, {itemId: item.SteelPlate, amount: 5}, {itemId: item.Screw, amount: 40}}, cost: 40000}
 }
 
 func (r MrSmith) SteelBristRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4011001, amount: 3}, {itemId: 4021007, amount: 2}, {itemId: 4000030, amount: 30}, {itemId: 4003000, amount: 45}}, cost: 50000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelPlate, amount: 3}, {itemId: item.Diamond, amount: 2}, {itemId: item.DragonSkin, amount: 30}, {itemId: item.Screw, amount: 45}}, cost: 50000}
 }
 
 func (r MrSmith) BronzeClenchRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 4011007, amount: 1}, {itemId: 4011000, amount: 8}, {itemId: 4011006, amount: 2}, {itemId: 4000030, amount: 50}, {itemId: 4003000, amount: 50}}, cost: 70000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.MoonRock, amount: 1}, {itemId: item.BronzePlate, amount: 8}, {itemId: item.GoldPlate, amount: 2}, {itemId: item.DragonSkin, amount: 50}, {itemId: item.Screw, amount: 50}}, cost: 70000}
 }
 
 func (r MrSmith) SteelMisselRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082007, amount: 1}, {itemId: 4011001, amount: 1}}, cost: 20000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeMissel, amount: 1}, {itemId: item.SteelPlate, amount: 1}}, cost: 20000}
 }
 
 func (r MrSmith) OrihalconMisselRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082007, amount: 1}, {itemId: 4011005, amount: 2}}, cost: 25000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeMissel, amount: 1}, {itemId: item.OrihalconPlate, amount: 2}}, cost: 25000}
 }
 
 func (r MrSmith) YellowBriggonRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082008, amount: 1}, {itemId: 4021006, amount: 3}}, cost: 30000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelBriggon, amount: 1}, {itemId: item.Topaz, amount: 3}}, cost: 30000}
 }
 
 func (r MrSmith) DarkBriggonRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082008, amount: 1}, {itemId: 4021008, amount: 1}}, cost: 40000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelBriggon, amount: 1}, {itemId: item.BlackCrystal, amount: 1}}, cost: 40000}
 }
 
 func (r MrSmith) AdamantiumKnuckleRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082023, amount: 1}, {itemId: 4011003, amount: 4}}, cost: 45000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.IronKnuckle, amount: 1}, {itemId: item.AdamantiumPlate, amount: 4}}, cost: 45000}
 }
 
 func (r MrSmith) DarkKnuckleRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082023, amount: 1}, {itemId: 4021008, amount: 2}}, cost: 50000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.IronKnuckle, amount: 1}, {itemId: item.BlackCrystal, amount: 2}}, cost: 50000}
 }
 
 func (r MrSmith) MithrilBristRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082009, amount: 1}, {itemId: 4011002, amount: 5}}, cost: 55000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelBrist, amount: 1}, {itemId: item.MithrilPlate, amount: 5}}, cost: 55000}
 }
 
 func (r MrSmith) GoldBristRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082009, amount: 1}, {itemId: 4011006, amount: 4}}, cost: 60000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelBrist, amount: 1}, {itemId: item.GoldPlate, amount: 4}}, cost: 60000}
 }
 
 func (r MrSmith) SapphireClenchRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082059, amount: 1}, {itemId: 4011002, amount: 3}, {itemId: 4021005, amount: 5}}, cost: 70000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeClench, amount: 1}, {itemId: item.MithrilPlate, amount: 3}, {itemId: item.Sapphire, amount: 5}}, cost: 70000}
 }
 
 func (r MrSmith) DarkClenchRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: 1082059, amount: 1}, {itemId: 4021007, amount: 2}, {itemId: 4021008, amount: 2}}, cost: 80000}
+	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeClench, amount: 1}, {itemId: item.Diamond, amount: 2}, {itemId: item.BlackCrystal, amount: 2}}, cost: 80000}
 }
 
 func (r MrSmith) ProcessMaterialQuantity(itemId uint32, requirements RefinementRequirements) ProcessNumber {
