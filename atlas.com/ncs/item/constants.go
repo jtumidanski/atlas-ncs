@@ -319,4 +319,8 @@ const (
 	BloodGigantic               uint32 = 1472023
 	SapphireGigantic            uint32 = 1472024
 	DarkGigantic                uint32 = 1472025
+	TicketToConstructionSiteB1  uint32 = 4031036
+	TicketToConstructionSiteB2  uint32 = 4031037
+	TicketToConstructionSiteB3  uint32 = 4031038
+	SubwayTicketToNLCRegular    uint32 = 4031711
 )

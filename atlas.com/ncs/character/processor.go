@@ -84,6 +84,31 @@ func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quan
 	}
 }
 
+func HasAnyItem(l logrus.FieldLogger) func(characterId uint32, items ...uint32) bool {
+	return func(characterId uint32, items ...uint32) bool {
+		allItems, err := requestAllItemsForCharacter(characterId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
+			return false
+		}
+
+		for _, i := range allItems.Data {
+			possibleId, err := strconv.Atoi(i.Id)
+			if err != nil {
+				l.WithError(err).Errorf("Error parsing item id %s.", i.Id)
+				continue
+			}
+			for _, id := range items {
+				if uint32(possibleId) == id {
+					return true
+				}
+			}
+		}
+
+		return false
+	}
+}
+
 func CanHold(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
 	return func(characterId uint32, itemId uint32) bool {
 		return CanHoldAll(l)(characterId, itemId, 1)
@@ -381,8 +406,8 @@ func QuestActive(l logrus.FieldLogger) func(characterId uint32, questId uint32) 
 	}
 }
 
-func BoatBoarding(l logrus.FieldLogger) func(characterId uint32, departureMapId uint32) bool {
-	return func(characterId uint32, departureMapId uint32) bool {
+func TransportBoarding(l logrus.FieldLogger) func(characterId uint32, departureMapId uint32, destinationMapId uint32) bool {
+	return func(characterId uint32, departureMapId uint32, destinationMapId uint32) bool {
 		return false
 	}
 }

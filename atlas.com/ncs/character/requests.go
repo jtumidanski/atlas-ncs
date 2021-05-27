@@ -23,6 +23,15 @@ func requestCharacter(characterId uint32) (*dataContainer, error) {
 	return ar, nil
 }
 
+func requestAllItemsForCharacter(characterId uint32) (*ItemListDataContainer, error) {
+	ar := &ItemListDataContainer{}
+	err := requests.Get(fmt.Sprintf(characterItems, characterId), ar)
+	if err != nil {
+		return nil, err
+	}
+	return ar, nil
+}
+
 func requestItemsForCharacter(characterId uint32, itemId uint32) (*ItemListDataContainer, error) {
 	ar := &ItemListDataContainer{}
 	err := requests.Get(fmt.Sprintf(characterItem, characterId, itemId), ar)

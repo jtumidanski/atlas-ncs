@@ -27,4 +27,14 @@ const (
 	TheForestOfPatienceStep3          uint32 = 101000102
 	BeforeTakeoffToOrbis              uint32 = 101000301
 	ElliniaStation                    uint32 = 101000300
+	SubwayTicketingBooth              uint32 = 103000100
+	KerningCityInternetCafe           uint32 = 193000000
+	Orbis                             uint32 = 200000000
+	OrbisStationEnterance             uint32 = 200000100
+	KerningSquareLobby                uint32 = 103040000
+	Line3ConstructionSiteB1Area1      uint32 = 103000900
+	Line3ConstructionSiteB2Area1      uint32 = 103000903
+	Line3ConstructionSiteB3Area1      uint32 = 103000906
+	NLCSubwayStation                  uint32 = 600010001
+	WaitingRoomFromKCToNLC            uint32 = 600010004
 )
