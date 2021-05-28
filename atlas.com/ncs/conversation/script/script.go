@@ -24,6 +24,8 @@ type StateProducer func(l logrus.FieldLogger, c Context) State
 
 type ProcessNumber func(selection int32) StateProducer
 
+type ProcessText func(text string) StateProducer
+
 type State func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State
 
 type ProcessSelection func(selection int32) StateProducer
@@ -213,6 +215,35 @@ func doGetNumberExit(e StateProducer, s ProcessNumber) State {
 		}
 
 		f := s(selection)
+		if f == nil {
+			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
+			return nil
+		}
+		return f(l, c)
+	}
+}
+
+func SendGetText(l logrus.FieldLogger, c Context, message string, s ProcessText) State {
+	return SendGetTextExit(l, c, message, s, Exit())
+}
+
+func SendGetTextExit(l logrus.FieldLogger, c Context, message string, s ProcessText, e StateProducer) State {
+	err := npc.SendGetText(l, c)(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doGetTextExit(e, s)
+}
+
+func doGetTextExit(e StateProducer, s ProcessText) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 0 && theType == 4 {
+			return e(l, c)
+		}
+
+		//TODO get text somehow
+		text := ""
+		f := s(text)
 		if f == nil {
 			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
 			return nil

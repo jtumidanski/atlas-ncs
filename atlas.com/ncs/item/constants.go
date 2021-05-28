@@ -337,7 +337,13 @@ const (
 	PotentPowerCrystal          uint32 = 4031856
 	PotentWindCrystal           uint32 = 4031857
 	MilkJug                     uint32 = 4031847
+	MilkJugOneThird             uint32 = 4031848
+	MilkJugTwoThird             uint32 = 4031849
+	MilkJugFull                 uint32 = 4031850
 	ReturnScrollToNautilus      uint32 = 2030019
 	DirtyTreasureMap            uint32 = 4220153
 	CrumpledLetter              uint32 = 4031839
+	AbelsGlasses                uint32 = 4031853
+	MiscellaneousGlasses1       uint32 = 4031854
+	MiscellaneousGlasses2       uint32 = 4031855
 )

@@ -71,3 +71,24 @@ func NPCTalkStyle(l logrus.FieldLogger) NPCTalkStyleEmitter {
 		return producer(key, event)
 	}
 }
+
+const topicTokenNPCTalkText = "TOPIC_NPC_TALK_TEXT_COMMAND"
+
+type npcTalkCommandText struct {
+	CharacterId uint32 `json:"characterId"`
+	NPCId       uint32 `json:"npcId"`
+	Message     string `json:"message"`
+	Type        string `json:"type"`
+	Speaker     string `json:"speaker"`
+}
+
+type NPCTalkTextEmitter func(characterId uint32, npcId uint32, message string, messageType string, speaker string) error
+
+func NPCTalkText(l logrus.FieldLogger) NPCTalkTextEmitter {
+	producer, _ := ProduceEvent(l, topicTokenNPCTalkText, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
+	return func(characterId uint32, npcId uint32, message string, messageType string, speaker string) error {
+		key := CreateKey(int(characterId))
+		event := &npcTalkCommandText{characterId, npcId, message, messageType, speaker}
+		return producer(key, event)
+	}
+}

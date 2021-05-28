@@ -448,8 +448,8 @@ func QuestProgressInt(l logrus.FieldLogger) func(characterId uint32, questId uin
 	}
 }
 
-func SetQuestProgress(l logrus.FieldLogger) func(characterId uint32, questId uint32, infoNumber int, npcObjectId uint32) {
-	return func(characterId uint32, questId uint32, infoNumber int, npcObjectId uint32) {
+func SetQuestProgress(l logrus.FieldLogger) func(characterId uint32, questId uint32, infoNumber int, progress uint32) {
+	return func(characterId uint32, questId uint32, infoNumber int, progress uint32) {
 
 	}
 }

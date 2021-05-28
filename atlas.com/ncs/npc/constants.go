@@ -139,6 +139,17 @@ const (
 	WaterFilter               uint32 = 1092015
 	ShinyStone                uint32 = 1092016
 	TrashCan                  uint32 = 1092018
+	LordJonathan              uint32 = 1092019
+	MotherMilkCow1            uint32 = 1092090
+	MotherMilkCow2            uint32 = 1092091
+	BabyMilkCow1              uint32 = 1092094
+	BabyMilkCow2              uint32 = 1092095
+	Bart                      uint32 = 1094000
+	Bush1                     uint32 = 1094002
+	Bush2                     uint32 = 1094003
+	Bush3                     uint32 = 1094004
+	Bush4                     uint32 = 1094005
+	Bush5                     uint32 = 1094006
 	Delli                     uint32 = 2095000
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003

@@ -14,6 +14,7 @@ const (
 	MessageTypeYesNo        = "YES_NO"
 	MessageTypeOk           = "OK"
 	MessageTypeNum          = "NUM"
+	MessageTypeText         = "TEXT"
 	MessageTypeStyle        = "STYLE"
 
 	SpeakerNPCLeft = "NPC_LEFT"
@@ -82,6 +83,12 @@ func SendOk(l logrus.FieldLogger, c script.Context) func(message string) error {
 func SendGetNumber(l logrus.FieldLogger, c script.Context) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
 	return func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
 		return producers.NPCTalkNum(l)(c.CharacterId, c.NPCId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+	}
+}
+
+func SendGetText(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalkText(l)(c.CharacterId, c.NPCId, message, MessageTypeText, SpeakerNPCLeft)
 	}
 }
 
