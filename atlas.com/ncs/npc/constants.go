@@ -127,6 +127,19 @@ const (
 	BowmanJobInstructorExit   uint32 = 1072006
 	ThiefJobInstructorExit    uint32 = 1072007
 	PirateJobInstructorExit   uint32 = 1072008
+	Pison                     uint32 = 1081001
+	Kyrin                     uint32 = 1090000
+	Serryl                    uint32 = 1091003
+	Dondlass                  uint32 = 1091004
+	Tangyoon                  uint32 = 1092000
+	Muirhat                   uint32 = 1092007
+	Shulynch                  uint32 = 1092008
+	Jack                      uint32 = 1092010
+	NautilusMidSizedTaxi      uint32 = 1092014
+	WaterFilter               uint32 = 1092015
+	ShinyStone                uint32 = 1092016
+	TrashCan                  uint32 = 1092018
+	Delli                     uint32 = 2095000
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003
 )

@@ -465,3 +465,14 @@ func RemoveAll(l logrus.FieldLogger) func(characterId uint32, itemId uint32) {
 
 	}
 }
+
+func SavedLocation(l logrus.FieldLogger) func(characterId uint32, location string) uint32 {
+	return func(characterId uint32, location string) uint32 {
+		return 0
+	}
+}
+
+func ClearSavedLocation(l logrus.FieldLogger) func(characterId uint32, location string) {
+	return func(characterId uint32, location string) {
+	}
+}

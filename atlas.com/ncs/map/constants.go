@@ -67,4 +67,7 @@ const (
 	PirateTestRoom1                    uint32 = 108000501
 	PirateTestRoom2                    uint32 = 108000502
 	NavigationRoom                     uint32 = 120000101
+	Stable                             uint32 = 912000100
+	TheRestingSpotPigPark              uint32 = 100000006
+	LookingForDelli1                   uint32 = 925010000
 )

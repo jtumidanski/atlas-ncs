@@ -336,4 +336,8 @@ const (
 	DarkLordsLetter             uint32 = 4031011
 	PotentPowerCrystal          uint32 = 4031856
 	PotentWindCrystal           uint32 = 4031857
+	MilkJug                     uint32 = 4031847
+	ReturnScrollToNautilus      uint32 = 2030019
+	DirtyTreasureMap            uint32 = 4220153
+	CrumpledLetter              uint32 = 4031839
 )
