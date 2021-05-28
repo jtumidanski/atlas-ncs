@@ -156,7 +156,7 @@ func (r RegularCabEllinia) PerformTransaction(mapId uint32, cost uint32) StatePr
 			return nil
 		}
 
-		err = npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
+		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding mesos.", c.CharacterId)
 			err = character.GainMeso(l)(c.CharacterId, int32(cost))
@@ -172,7 +172,7 @@ func (r RegularCabEllinia) PerformNeinheartTransaction(mapId uint32) StateProduc
 	return func(l logrus.FieldLogger, c Context) State {
 		character.GainItem(l)(c.CharacterId, item.NeinheartsTaxiCoupon, -1)
 
-		err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
+		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding item.", c.CharacterId)
 			character.GainItem(l)(c.CharacterId, item.NeinheartsTaxiCoupon, 1)

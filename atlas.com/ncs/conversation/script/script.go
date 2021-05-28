@@ -11,6 +11,7 @@ type Context struct {
 	CharacterId uint32
 	MapId       uint32
 	NPCId       uint32
+	NPCObjectId uint32
 }
 
 type Script interface {
@@ -29,7 +30,7 @@ type ProcessSelection func(selection int32) StateProducer
 
 func Exit() StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.Processor(l).Dispose(c.CharacterId)
+		err := npc.Dispose(l)(c.CharacterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to dispose conversation.")
 		}
@@ -38,7 +39,7 @@ func Exit() StateProducer {
 }
 
 func SendListSelection(l logrus.FieldLogger, c Context, message string, s ProcessSelection) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendSimple(message)
+	err := npc.SendSimple(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending list selection for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -46,7 +47,7 @@ func SendListSelection(l logrus.FieldLogger, c Context, message string, s Proces
 }
 
 func SendListSelectionExit(l logrus.FieldLogger, c Context, message string, s ProcessSelection, exit StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendSimple(message)
+	err := npc.SendSimple(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending list selection for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -69,7 +70,7 @@ func doListSelectionExit(e StateProducer, s ProcessSelection) State {
 }
 
 func SendNext(l logrus.FieldLogger, c Context, message string, next StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNext(message)
+	err := npc.SendNext(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending next message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -77,7 +78,7 @@ func SendNext(l logrus.FieldLogger, c Context, message string, next StateProduce
 }
 
 func SendNextExit(l logrus.FieldLogger, c Context, message string, next StateProducer, exit StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNext(message)
+	err := npc.SendNext(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending next message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -94,7 +95,7 @@ func doNextExit(e StateProducer, next StateProducer) State {
 }
 
 func SendNextPrevious(l logrus.FieldLogger, c Context, message string, next StateProducer, previous StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNextPrevious(message)
+	err := npc.SendNextPrevious(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending next / previous message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -102,7 +103,7 @@ func SendNextPrevious(l logrus.FieldLogger, c Context, message string, next Stat
 }
 
 func SendNextPreviousExit(l logrus.FieldLogger, c Context, message string, next StateProducer, previous StateProducer, exit StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendNextPrevious(message)
+	err := npc.SendNextPrevious(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending next / previous message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -124,7 +125,7 @@ func doNextPreviousExit(e StateProducer, next StateProducer, previous StateProdu
 }
 
 func SendPrevious(l logrus.FieldLogger, c Context, message string, previous StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendPrevious(message)
+	err := npc.SendPrevious(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending previous message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -144,7 +145,7 @@ func doPreviousExit(e StateProducer, previous StateProducer) State {
 }
 
 func SendYesNo(l logrus.FieldLogger, c Context, message string, yes StateProducer, no StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendYesNo(message)
+	err := npc.SendYesNo(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending yes / no message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -152,7 +153,7 @@ func SendYesNo(l logrus.FieldLogger, c Context, message string, yes StateProduce
 }
 
 func SendYesNoExit(l logrus.FieldLogger, c Context, message string, yes StateProducer, no StateProducer, exit StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendYesNo(message)
+	err := npc.SendYesNo(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending yes / no message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -174,7 +175,7 @@ func doYesNoExit(e StateProducer, yes StateProducer, no StateProducer) State {
 }
 
 func SendOk(l logrus.FieldLogger, c Context, message string) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendOk(message)
+	err := npc.SendOk(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending ok message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -182,7 +183,7 @@ func SendOk(l logrus.FieldLogger, c Context, message string) State {
 }
 
 func SendOkTrigger(l logrus.FieldLogger, c Context, message string, next StateProducer) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendOk(message)
+	err := npc.SendOk(l, c)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending ok message for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -190,7 +191,7 @@ func SendOkTrigger(l logrus.FieldLogger, c Context, message string, next StatePr
 }
 
 func SendGetNumber(l logrus.FieldLogger, c Context, message string, s ProcessNumber, defaultValue int32, minimumValue int32, maximumValue int32) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendGetNumber(message, defaultValue, minimumValue, maximumValue)
+	err := npc.SendGetNumber(l, c)(message, defaultValue, minimumValue, maximumValue)
 	if err != nil {
 		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -198,7 +199,7 @@ func SendGetNumber(l logrus.FieldLogger, c Context, message string, s ProcessNum
 }
 
 func SendGetNumberExit(l logrus.FieldLogger, c Context, message string, s ProcessNumber, e StateProducer, defaultValue int32, minimumValue int32, maximumValue int32) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendGetNumber(message, defaultValue, minimumValue, maximumValue)
+	err := npc.SendGetNumber(l, c)(message, defaultValue, minimumValue, maximumValue)
 	if err != nil {
 		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}
@@ -221,7 +222,7 @@ func doGetNumberExit(e StateProducer, s ProcessNumber) State {
 }
 
 func SendStyle(l logrus.FieldLogger, c Context, message string, next ProcessSelection, options []uint32) State {
-	err := npc.Processor(l).Conversation(c.CharacterId, c.NPCId).SendStyle(message, options)
+	err := npc.SendStyle(l, c)(message, options)
 	if err != nil {
 		l.WithError(err).Errorf("Sending style for npc %d to character %d.", c.NPCId, c.CharacterId)
 	}

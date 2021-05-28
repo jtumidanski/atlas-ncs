@@ -1,6 +1,7 @@
 package npc
 
 import (
+	"atlas-ncs/conversation/script"
 	"atlas-ncs/kafka/producers"
 	"github.com/sirupsen/logrus"
 )
@@ -18,87 +19,74 @@ const (
 	SpeakerNPCLeft = "NPC_LEFT"
 )
 
-type processor struct {
-	l                    logrus.FieldLogger
-	enableActionsEmitter producers.EnableActionsEmitter
-	changeMapEmitter     producers.ChangeMapEmitter
-}
-
-type conversation struct {
-	l                   logrus.FieldLogger
-	npcTalkEmitter      producers.NPCTalkEmitter
-	npcTalkNumEmitter   producers.NPCTalkNumEmitter
-	npcTalkStyleEmitter producers.NPCTalkStyleEmitter
-	characterId         uint32
-	npcId               uint32
-}
-
-var Processor = func(l logrus.FieldLogger) *processor {
-	enableActionsEmitter, _ := producers.EnableActions(l)
-	changeMapEmitter, _ := producers.ChangeMap(l)
-
-	return &processor{l, enableActionsEmitter, changeMapEmitter}
-}
-
-func (p *processor) Dispose(characterId uint32) error {
-	return p.enableActionsEmitter(characterId)
-}
-
-func (p *processor) Conversation(characterId uint32, npcId uint32) *conversation {
-	npcTalkEmitter, _ := producers.NPCTalk(p.l)
-	npcTalkNumEmitter, _ := producers.NPCTalkNum(p.l)
-	npcTalkStyleEmitter, _ := producers.NPCTalkStyle(p.l)
-
-	return &conversation{
-		l:                   p.l,
-		npcTalkEmitter:      npcTalkEmitter,
-		npcTalkNumEmitter:   npcTalkNumEmitter,
-		npcTalkStyleEmitter: npcTalkStyleEmitter,
-		characterId:         characterId,
-		npcId:               npcId,
+func Dispose(l logrus.FieldLogger) func(characterId uint32) error {
+	return func(characterId uint32) error {
+		return producers.EnableActions(l)(characterId)
 	}
 }
 
-func (p *processor) LockUI() {
+func LockUI(l logrus.FieldLogger) func(characterId uint32) {
+	return func(characterId uint32) {
 
+	}
 }
 
-func (p *processor) WarpById(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
-	return p.changeMapEmitter(worldId, channelId, characterId, mapId, portalId)
+func WarpById(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
+		return producers.ChangeMap(l)(worldId, channelId, characterId, mapId, portalId)
+	}
 }
 
-func (p *processor) WarpByName(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
-	return nil
+func WarpByName(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
+		return nil
+	}
 }
 
-func (c *conversation) SendSimple(message string) error {
-	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeSimple, SpeakerNPCLeft)
+func SendSimple(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypeSimple, SpeakerNPCLeft)
+	}
 }
 
-func (c *conversation) SendNext(message string) error {
-	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeNext, SpeakerNPCLeft)
+func SendNext(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypeNext, SpeakerNPCLeft)
+	}
 }
 
-func (c *conversation) SendNextPrevious(message string) error {
-	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeNextPrevious, SpeakerNPCLeft)
+func SendNextPrevious(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypeNextPrevious, SpeakerNPCLeft)
+	}
 }
 
-func (c *conversation) SendPrevious(message string) error {
-	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypePrevious, SpeakerNPCLeft)
+func SendPrevious(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypePrevious, SpeakerNPCLeft)
+	}
 }
 
-func (c *conversation) SendYesNo(message string) error {
-	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeYesNo, SpeakerNPCLeft)
+func SendYesNo(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypeYesNo, SpeakerNPCLeft)
+	}
 }
 
-func (c *conversation) SendOk(message string) error {
-	return c.npcTalkEmitter(c.characterId, c.npcId, message, MessageTypeOk, SpeakerNPCLeft)
+func SendOk(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypeOk, SpeakerNPCLeft)
+	}
 }
 
-func (c *conversation) SendGetNumber(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
-	return c.npcTalkNumEmitter(c.characterId, c.npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+func SendGetNumber(l logrus.FieldLogger, c script.Context) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
+	return func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
+		return producers.NPCTalkNum(l)(c.CharacterId, c.NPCId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+	}
 }
 
-func (c *conversation) SendStyle(message string, options []uint32) error {
-	return c.npcTalkStyleEmitter(c.characterId, c.npcId, message, options, MessageTypeStyle, SpeakerNPCLeft)
+func SendStyle(l logrus.FieldLogger, c script.Context) func(message string, options []uint32) error {
+	return func(message string, options []uint32) error {
+		return producers.NPCTalkStyle(l)(c.CharacterId, c.NPCId, message, options, MessageTypeStyle, SpeakerNPCLeft)
+	}
 }

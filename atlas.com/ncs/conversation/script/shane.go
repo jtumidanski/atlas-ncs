@@ -73,7 +73,7 @@ func (r Shane) ValidatePayment(l logrus.FieldLogger, c Context) State {
 		destination = c.MapId
 	}
 
-	err = npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, destination, 0)
+	err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, destination, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, destination, c.NPCId)
 	}

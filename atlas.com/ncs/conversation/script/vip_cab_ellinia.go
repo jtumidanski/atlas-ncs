@@ -79,7 +79,7 @@ func (r VIPCabEllinia) ProcessPayment(cost uint32) StateProducer {
 			l.WithError(err).Errorf("Unable to process payment of VIP Cab use by character %d.", c.CharacterId)
 			return Exit()(l, c)
 		}
-		err = npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.AntTunnelPark, 0)
+		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.AntTunnelPark, 0)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.AntTunnelPark, c.NPCId)
 		}

@@ -26,7 +26,7 @@ func (r Louis) Return(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Louis) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.Ellinia, 0)
+	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.Ellinia, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.Ellinia, c.NPCId)
 	}

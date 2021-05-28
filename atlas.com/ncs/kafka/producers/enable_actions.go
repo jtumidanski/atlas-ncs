@@ -13,12 +13,9 @@ type enableActionsEvent struct {
 
 type EnableActionsEmitter func(characterId uint32) error
 
-func EnableActions(l logrus.FieldLogger) (EnableActionsEmitter, error) {
-	producer, err := ProduceEvent(l, topicTokenEnableActions, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
-	if err != nil {
-		return nil, err
-	}
-	return produceEnableActions(producer), nil
+func EnableActions(l logrus.FieldLogger) EnableActionsEmitter {
+	producer, _ := ProduceEvent(l, topicTokenEnableActions, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
+	return produceEnableActions(producer)
 }
 
 func produceEnableActions(producer MessageProducer) EnableActionsEmitter {

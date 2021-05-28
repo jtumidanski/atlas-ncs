@@ -145,7 +145,7 @@ func (r RegularCabLithHarbor) PerformTransaction(mapId uint32, cost uint32) Stat
 			return nil
 		}
 
-		err = npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
+		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding mesos.", c.CharacterId)
 			err = character.GainMeso(l)(c.CharacterId, int32(cost))
@@ -165,7 +165,7 @@ func (r RegularCabLithHarbor) TruTaxiCoupon(l logrus.FieldLogger, c Context) Sta
 
 func (r RegularCabLithHarbor) PerformTruTaxiTransaction(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.TruTaxiCoupon, -1)
-	err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.Henesys, 0)
+	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.Henesys, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.Henesys, c.NPCId)
 	}

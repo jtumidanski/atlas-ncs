@@ -258,7 +258,7 @@ func IsJobCriteria(option uint16) AttributeCriteria {
 	}
 }
 
-func IsAJobCriteria(options ... uint16) AttributeCriteria {
+func IsAJobCriteria(options ...uint16) AttributeCriteria {
 	return func(c *Model) bool {
 		return job.IsA(c.JobId(), options...)
 	}
@@ -433,5 +433,35 @@ func GainExperience(l logrus.FieldLogger) func(characterId uint32, amount int32)
 func HasParty(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
 		return false
+	}
+}
+
+func QuestProgress(l logrus.FieldLogger) func(characterId uint32, questId uint32) string {
+	return func(characterId uint32, questId uint32) string {
+		return ""
+	}
+}
+
+func QuestProgressInt(l logrus.FieldLogger) func(characterId uint32, questId uint32, infoNumber int) int {
+	return func(characterId uint32, questId uint32, infoNumber int) int {
+		return 0
+	}
+}
+
+func SetQuestProgress(l logrus.FieldLogger) func(characterId uint32, questId uint32, infoNumber int, npcObjectId uint32) {
+	return func(characterId uint32, questId uint32, infoNumber int, npcObjectId uint32) {
+
+	}
+}
+
+func SetQuestProgressString(l logrus.FieldLogger) func(characterId uint32, questId uint32, progress string) {
+	return func(characterId uint32, questId uint32, progress string) {
+
+	}
+}
+
+func RemoveAll(l logrus.FieldLogger) func(characterId uint32, itemId uint32) {
+	return func(characterId uint32, itemId uint32) {
+
 	}
 }

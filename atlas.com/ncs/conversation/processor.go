@@ -13,7 +13,7 @@ var Processor = func(l logrus.FieldLogger) *processor {
 	return &processor{l}
 }
 
-func (p processor) Start(worldId byte, channelId byte, mapId uint32, npcId uint32, characterId uint32) {
+func (p processor) Start(worldId byte, channelId byte, mapId uint32, npcId uint32, npcObjectId uint32, characterId uint32) {
 	p.l.Debugf("Start conversation with NPC %d with character %d in map %d.", npcId, characterId, mapId)
 
 	c, err := script.GetRegistry().GetScript(npcId)
@@ -22,7 +22,7 @@ func (p processor) Start(worldId byte, channelId byte, mapId uint32, npcId uint3
 		return
 	}
 
-	ctx := script.Context{WorldId: worldId, ChannelId: channelId, MapId: mapId, CharacterId: characterId, NPCId: npcId}
+	ctx := script.Context{WorldId: worldId, ChannelId: channelId, MapId: mapId, CharacterId: characterId, NPCId: npcId, NPCObjectId: npcObjectId}
 	ns := (*c).Initial(p.l, ctx)
 	if ns != nil {
 		GetRegistry().SetContext(characterId, ctx, ns)

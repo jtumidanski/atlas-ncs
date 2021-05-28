@@ -60,7 +60,7 @@ func (r Shanks) ConfirmUse(l logrus.FieldLogger, c Context) State {
 func (r Shanks) WarpWithItem(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.LucasRecommendationLetter, -1)
 
-	err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
+	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.LithHarbor, c.NPCId)
 	}
@@ -94,7 +94,7 @@ func (r Shanks) WarpWithMeso(l logrus.FieldLogger, c Context) State {
 		return nil
 	}
 
-	err = npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
+	err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.LithHarbor, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.LithHarbor, c.NPCId)
 	}

@@ -330,4 +330,10 @@ const (
 	PinkViola                   uint32 = 4031025
 	BlueViola                   uint32 = 4031026
 	WhiteViola                  uint32 = 4031028
+	ShamanCharm                 uint32 = 4032263
+	DarkMarble                  uint32 = 4031013
+	AthenaPiercesLetter         uint32 = 4031010
+	DarkLordsLetter             uint32 = 4031011
+	PotentPowerCrystal          uint32 = 4031856
+	PotentWindCrystal           uint32 = 4031857
 )

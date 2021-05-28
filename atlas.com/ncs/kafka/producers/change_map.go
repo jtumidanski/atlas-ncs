@@ -17,12 +17,9 @@ type changeMapEvent struct {
 
 type ChangeMapEmitter func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error
 
-func ChangeMap(l logrus.FieldLogger) (ChangeMapEmitter, error) {
-	producer, err := ProduceEvent(l, topicTokenChangeMap, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
-	if err != nil {
-		return nil, err
-	}
-	return produceChangeMap(producer), nil
+func ChangeMap(l logrus.FieldLogger) ChangeMapEmitter {
+	producer, _ := ProduceEvent(l, topicTokenChangeMap, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
+	return produceChangeMap(producer)
 }
 
 func produceChangeMap(producer MessageProducer) ChangeMapEmitter {

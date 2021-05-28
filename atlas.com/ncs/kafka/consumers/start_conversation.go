@@ -24,7 +24,7 @@ func StartNPCConversationCommandCreator() handler.EmptyEventCreator {
 func HandleStartNPCConversationCommand() handler.EventHandler {
 	return func(l logrus.FieldLogger, e interface{}) {
 		if event, ok := e.(*startNPCConversationCommand); ok {
-			conversation.Processor(l).Start(event.WorldId, event.ChannelId, event.MapId, event.NPCId, event.CharacterId)
+			conversation.Processor(l).Start(event.WorldId, event.ChannelId, event.MapId, event.NPCId, event.NPCObjectId, event.CharacterId)
 		} else {
 			l.Errorf("Unable to cast event provided to handler")
 		}

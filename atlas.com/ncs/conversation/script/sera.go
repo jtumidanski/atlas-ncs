@@ -48,7 +48,7 @@ func (r Sera) Skip(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Sera) WarpTraining(l logrus.FieldLogger, c Context) State {
-	err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.UpperLevelOfTheTrainingCamp, 0)
+	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.UpperLevelOfTheTrainingCamp, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.UpperLevelOfTheTrainingCamp, c.NPCId)
 	}
@@ -56,7 +56,7 @@ func (r Sera) WarpTraining(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Sera) WarpSkip(l logrus.FieldLogger, c Context) State {
-	err := npc.Processor(l).WarpById(c.WorldId, c.ChannelId, c.CharacterId, _map.InASmallForest, 0)
+	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.InASmallForest, 0)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.InASmallForest, c.NPCId)
 	}
