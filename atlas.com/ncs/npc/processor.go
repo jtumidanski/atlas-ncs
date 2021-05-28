@@ -32,6 +32,13 @@ func LockUI(l logrus.FieldLogger) func(characterId uint32) {
 	}
 }
 
+func Warp(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32) error {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32) error {
+		//TODO random portal id
+		return producers.ChangeMap(l)(worldId, channelId, characterId, mapId, 0)
+	}
+}
+
 func WarpById(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
 		return producers.ChangeMap(l)(worldId, channelId, characterId, mapId, portalId)

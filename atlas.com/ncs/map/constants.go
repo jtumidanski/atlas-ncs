@@ -70,4 +70,7 @@ const (
 	Stable                             uint32 = 912000100
 	TheRestingSpotPigPark              uint32 = 100000006
 	LookingForDelli1                   uint32 = 925010000
+	TrainingRoom                       uint32 = 120000104
+	EmpressRoadToEllinia               uint32 = 200090031
+	EmpressRoadToOrbis                 uint32 = 200090021
 )

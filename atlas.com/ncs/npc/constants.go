@@ -150,7 +150,15 @@ const (
 	Bush3                     uint32 = 1094004
 	Bush4                     uint32 = 1094005
 	Bush5                     uint32 = 1094006
-	Delli                     uint32 = 2095000
+	Shulynch2                 uint32 = 1095000
+	PowerBForePirate          uint32 = 1095001
+	PowerBForeNautilus        uint32 = 1095002
+	Kirium                    uint32 = 1100000
+	Kiriru                    uint32 = 1100003
+	Kiru                      uint32 = 1100004
+	Kiruru                    uint32 = 1100005
+	Kiru2                     uint32 = 1100006
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003
+	Delli                     uint32 = 2095000
 )
