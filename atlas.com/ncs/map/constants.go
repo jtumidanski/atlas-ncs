@@ -77,4 +77,5 @@ const (
 	EmpressRoadToEreveFromOrbis        uint32 = 200090020
 	EntranceToTheDrillHall             uint32 = 130020000
 	Ereve                              uint32 = 130000000
+	QuietEreve                         uint32 = 913030000
 )

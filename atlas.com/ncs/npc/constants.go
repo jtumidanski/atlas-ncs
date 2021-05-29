@@ -174,6 +174,7 @@ const (
 	Irena                     uint32 = 1104102
 	Eckhart                   uint32 = 1104103
 	Hawkeye                   uint32 = 1104104
+	FallenKnight              uint32 = 1104200
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003
 	Delli                     uint32 = 2095000
