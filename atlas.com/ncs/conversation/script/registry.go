@@ -125,6 +125,8 @@ func initRegistry() *Registry {
 	s.addConversation(PowerBForeThief{})
 	s.addConversation(PowerBForeWarrior{})
 	s.addConversation(Purin{})
+	s.addConversation(PuroToLithHarbor{})
+	s.addConversation(PuroToRien{})
 	s.addConversation(Rain{})
 	s.addConversation(RegularCabEllinia{})
 	s.addConversation(RegularCabHenesys{})

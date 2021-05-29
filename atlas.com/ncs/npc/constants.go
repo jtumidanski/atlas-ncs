@@ -183,6 +183,10 @@ const (
 	EckhartStatue             uint32 = 1104206
 	HawkeyeStatue             uint32 = 1104207
 	Pusla                     uint32 = 1200000
+	PuroRien                  uint32 = 1200003
+	PuroLithHarbor            uint32 = 1200004
+	PuroToRien                uint32 = 1200005
+	PuroToLithHarbor          uint32 = 1200006
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003
 	Delli                     uint32 = 2095000
