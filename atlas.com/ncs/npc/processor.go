@@ -111,3 +111,9 @@ func SendAcceptDecline(l logrus.FieldLogger, c script.Context) func(message stri
 		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypeAcceptDecline, SpeakerNPCLeft)
 	}
 }
+
+func Destroy(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId uint32, npcId uint32) {
+	return func(worldId byte, channelId byte, mapId uint32, npcId uint32) {
+
+	}
+}

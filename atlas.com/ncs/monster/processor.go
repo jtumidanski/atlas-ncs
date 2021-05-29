@@ -7,3 +7,9 @@ func SpawnMonster(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId
 
 	}
 }
+
+func SpawnMonsterOnNPC(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId uint32, monsterId uint32, npcId uint32) {
+	return func(worldId byte, channelId byte, mapId uint32, monsterId uint32, npcId uint32) {
+
+	}
+}

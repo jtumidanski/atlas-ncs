@@ -167,6 +167,13 @@ const (
 	Kidan                     uint32 = 1102003
 	Dunamis                   uint32 = 1103000
 	Neinheart                 uint32 = 1103005
+	Francis                   uint32 = 1104000
+	Eleanor                   uint32 = 1104002
+	Mihile                    uint32 = 1104100
+	Oz                        uint32 = 1104101
+	Irena                     uint32 = 1104102
+	Eckhart                   uint32 = 1104103
+	Hawkeye                   uint32 = 1104104
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003
 	Delli                     uint32 = 2095000

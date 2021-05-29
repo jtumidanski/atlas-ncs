@@ -512,3 +512,9 @@ func GuideHint(l logrus.FieldLogger) func(characterId uint32, hint uint32) {
 
 	}
 }
+
+func SendNotice(l logrus.FieldLogger) func(characterId uint32, noticeType string, message string) {
+	return func(characterId uint32, noticeType string, message string) {
+
+	}
+}
