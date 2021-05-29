@@ -73,4 +73,8 @@ const (
 	TrainingRoom                       uint32 = 120000104
 	EmpressRoadToEllinia               uint32 = 200090031
 	EmpressRoadToOrbis                 uint32 = 200090021
+	EmpressRoadToEreveFromEllinia      uint32 = 200090030
+	EmpressRoadToEreveFromOrbis        uint32 = 200090020
+	EntranceToTheDrillHall             uint32 = 130020000
+	Ereve                              uint32 = 130000000
 )

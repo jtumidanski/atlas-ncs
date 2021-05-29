@@ -8,19 +8,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Kiriru is located in Empress' Road - Sky Ferry (130000210)
-type Kiriru struct {
+// KiriruEreve is located in Empress' Road - Sky Ferry (130000210)
+type KiriruEreve struct {
 }
 
-func (r Kiriru) NPCId() uint32 {
-	return npc.Kiriru
+func (r KiriruEreve) NPCId() uint32 {
+	return npc.KiriruEreve
 }
 
-func (r Kiriru) Initial(l logrus.FieldLogger, c Context) State {
+func (r KiriruEreve) Initial(l logrus.FieldLogger, c Context) State {
 	return r.Hello(l, c)
 }
 
-func (r Kiriru) Hello(l logrus.FieldLogger, c Context) State {
+func (r KiriruEreve) Hello(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Eh, Hello...again. Do you want to leave Ereve and go somewhere else? If so, you've come to the right place. I operate a ferry that goes from ").
 		BlueText().AddText("Ereve").
@@ -35,7 +35,7 @@ func (r Kiriru) Hello(l logrus.FieldLogger, c Context) State {
 	return SendListSelectionExit(l, c, m.String(), r.ChooseDestination, r.OhWell)
 }
 
-func (r Kiriru) ChooseDestination(selection int32) StateProducer {
+func (r KiriruEreve) ChooseDestination(selection int32) StateProducer {
 	switch selection {
 	case 0:
 		return r.VictoriaIsland
@@ -43,19 +43,19 @@ func (r Kiriru) ChooseDestination(selection int32) StateProducer {
 	return nil
 }
 
-func (r Kiriru) VictoriaIsland(l logrus.FieldLogger, c Context) State {
+func (r KiriruEreve) VictoriaIsland(l logrus.FieldLogger, c Context) State {
 	if !character.HasMeso(l)(c.CharacterId, 1000) {
 		return r.NotEnoughMeso(l, c)
 	}
 	return r.Process(l, c)
 }
 
-func (r Kiriru) OhWell(l logrus.FieldLogger, c Context) State {
+func (r KiriruEreve) OhWell(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("If you're not interested, then oh well...")
 	return SendOk(l, c, m.String())
 }
 
-func (r Kiriru) NotEnoughMeso(l logrus.FieldLogger, c Context) State {
+func (r KiriruEreve) NotEnoughMeso(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Hmm... Are you sure you have ").
 		BlueText().AddText("1000").
@@ -63,7 +63,7 @@ func (r Kiriru) NotEnoughMeso(l logrus.FieldLogger, c Context) State {
 	return SendNext(l, c, m.String(), Exit())
 }
 
-func (r Kiriru) Process(l logrus.FieldLogger, c Context) State {
+func (r KiriruEreve) Process(l logrus.FieldLogger, c Context) State {
 	err := character.GainMeso(l)(c.CharacterId, -1000)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to process payment by character %d.", c.CharacterId)

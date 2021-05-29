@@ -7,15 +7,16 @@ import (
 )
 
 const (
-	MessageTypeSimple       = "SIMPLE"
-	MessageTypeNext         = "NEXT"
-	MessageTypeNextPrevious = "NEXT_PREVIOUS"
-	MessageTypePrevious     = "PREVIOUS"
-	MessageTypeYesNo        = "YES_NO"
-	MessageTypeOk           = "OK"
-	MessageTypeNum          = "NUM"
-	MessageTypeText         = "TEXT"
-	MessageTypeStyle        = "STYLE"
+	MessageTypeSimple        = "SIMPLE"
+	MessageTypeNext          = "NEXT"
+	MessageTypeNextPrevious  = "NEXT_PREVIOUS"
+	MessageTypePrevious      = "PREVIOUS"
+	MessageTypeYesNo         = "YES_NO"
+	MessageTypeOk            = "OK"
+	MessageTypeNum           = "NUM"
+	MessageTypeText          = "TEXT"
+	MessageTypeStyle         = "STYLE"
+	MessageTypeAcceptDecline = "ACCEPT_DECLINE"
 
 	SpeakerNPCLeft = "NPC_LEFT"
 )
@@ -102,5 +103,11 @@ func SendGetText(l logrus.FieldLogger, c script.Context) func(message string) er
 func SendStyle(l logrus.FieldLogger, c script.Context) func(message string, options []uint32) error {
 	return func(message string, options []uint32) error {
 		return producers.NPCTalkStyle(l)(c.CharacterId, c.NPCId, message, options, MessageTypeStyle, SpeakerNPCLeft)
+	}
+}
+
+func SendAcceptDecline(l logrus.FieldLogger, c script.Context) func(message string) error {
+	return func(message string) error {
+		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, MessageTypeAcceptDecline, SpeakerNPCLeft)
 	}
 }

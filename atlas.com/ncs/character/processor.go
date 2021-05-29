@@ -476,3 +476,39 @@ func ClearSavedLocation(l logrus.FieldLogger) func(characterId uint32, location 
 	return func(characterId uint32, location string) {
 	}
 }
+
+func IsCygnus(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return MeetsCriteria(l)(characterId, IsCygnusCriteria())
+	}
+}
+
+func IsCygnusCriteria() AttributeCriteria {
+	return func(c *Model) bool {
+		return false
+	}
+}
+
+func IsJobBranch(l logrus.FieldLogger) func(characterId uint32, branch uint32) bool {
+	return func(characterId uint32, branch uint32) bool {
+		return MeetsCriteria(l)(characterId, IsJobBranchCriteria(branch))
+	}
+}
+
+func IsJobBranchCriteria(branch uint32) AttributeCriteria {
+	return func(c *Model) bool {
+		return false
+	}
+}
+
+func UseItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) {
+	return func(characterId uint32, itemId uint32) {
+
+	}
+}
+
+func GuideHint(l logrus.FieldLogger) func(characterId uint32, hint uint32) {
+	return func(characterId uint32, hint uint32) {
+
+	}
+}

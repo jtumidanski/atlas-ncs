@@ -268,3 +268,33 @@ func doSendStyleExit(e StateProducer, next ProcessSelection) State {
 		return next(selection)(l, c)
 	}
 }
+
+func SendAcceptDecline(l logrus.FieldLogger, c Context, message string, accept StateProducer, decline StateProducer) State {
+	err := npc.SendAcceptDecline(l, c)(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending yes / no message for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doAcceptDeclineExit(Exit(), accept, decline)
+}
+
+func SendAcceptDeclineExit(l logrus.FieldLogger, c Context, message string, accept StateProducer, decline StateProducer, exit StateProducer) State {
+	err := npc.SendAcceptDecline(l, c)(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending yes / no message for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doAcceptDeclineExit(exit, accept, decline)
+}
+
+func doAcceptDeclineExit(e StateProducer, accept StateProducer, decline StateProducer) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 255 && theType == 0 {
+			return e(l, c)
+		}
+		if mode == 0 && decline != nil {
+			return decline(l, c)
+		} else if mode == 1 && accept != nil {
+			return accept(l, c)
+		}
+		return nil
+	}
+}

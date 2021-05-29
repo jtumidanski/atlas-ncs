@@ -346,4 +346,5 @@ const (
 	AbelsGlasses                uint32 = 4031853
 	MiscellaneousGlasses1       uint32 = 4031854
 	MiscellaneousGlasses2       uint32 = 4031855
+	ShinsoosBlessing            uint32 = 2022458
 )
