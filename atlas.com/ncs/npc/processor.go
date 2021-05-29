@@ -112,6 +112,12 @@ func SendAcceptDecline(l logrus.FieldLogger, c script.Context) func(message stri
 	}
 }
 
+func Spawn(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId uint32, npcId uint32, x int16, y int16) {
+	return func(worldId byte, channelId byte, mapId uint32, npcId uint32, x int16, y int16) {
+
+	}
+}
+
 func Destroy(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId uint32, npcId uint32) {
 	return func(worldId byte, channelId byte, mapId uint32, npcId uint32) {
 

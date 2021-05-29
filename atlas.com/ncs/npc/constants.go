@@ -166,7 +166,7 @@ const (
 	Kiridu                    uint32 = 1102002
 	Kidan                     uint32 = 1102003
 	Dunamis                   uint32 = 1103000
-	Neinheart                 uint32 = 1103005
+	NeinheartDemo             uint32 = 1103005
 	Francis                   uint32 = 1104000
 	Eleanor                   uint32 = 1104002
 	Mihile                    uint32 = 1104100
@@ -175,6 +175,14 @@ const (
 	Eckhart                   uint32 = 1104103
 	Hawkeye                   uint32 = 1104104
 	FallenKnight              uint32 = 1104200
+	Cygnus                    uint32 = 1104201
+	NeinheartStatue           uint32 = 1104202
+	MihileStatue              uint32 = 1104203
+	OzStatue                  uint32 = 1104204
+	IrenaStatue               uint32 = 1104205
+	EckhartStatue             uint32 = 1104206
+	HawkeyeStatue             uint32 = 1104207
+	Pusla                     uint32 = 1200000
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003
 	Delli                     uint32 = 2095000
