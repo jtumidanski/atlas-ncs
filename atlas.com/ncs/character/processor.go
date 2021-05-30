@@ -518,3 +518,27 @@ func SendNotice(l logrus.FieldLogger) func(characterId uint32, noticeType string
 
 	}
 }
+
+func AreaInfo(l logrus.FieldLogger) func(characterId uint32, areaId uint16, property string) bool {
+	return func(characterId uint32, areaId uint16, property string) bool {
+		return false
+	}
+}
+
+func ShowIntro(l logrus.FieldLogger) func(characterId uint32, path string) {
+	return func(characterId uint32, path string) {
+
+	}
+}
+
+func SetAreaInfo(l logrus.FieldLogger) func(characterId uint32, areaId uint16, property string) {
+	return func(characterId uint32, areaId uint16, property string) {
+		
+	}
+}
+
+func SpawnGuide(l logrus.FieldLogger) func(characterId uint32) {
+	return func(characterId uint32) {
+		
+	}
+}

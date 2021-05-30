@@ -22,7 +22,7 @@ func (r Francis) Initial(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Francis) StartEvent(l logrus.FieldLogger, c Context) State {
-	event.SetProperty(l)(c.CharacterId, "player", strconv.Itoa(int(c.CharacterId)))
+	event.SetProperty(l)("Puppeteer", "player", strconv.Itoa(int(c.CharacterId)))
 	event.StartEvent(l)(c.CharacterId, "Puppeteer")
 	return Exit()(l, c)
 }

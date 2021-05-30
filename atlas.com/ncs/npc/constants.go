@@ -166,6 +166,8 @@ const (
 	Kiridu                    uint32 = 1102002
 	Kidan                     uint32 = 1102003
 	Dunamis                   uint32 = 1103000
+	Roca                      uint32 = 1103001
+	Hersha                    uint32 = 1103003
 	NeinheartDemo             uint32 = 1103005
 	Francis                   uint32 = 1104000
 	Eleanor                   uint32 = 1104002
@@ -187,7 +189,21 @@ const (
 	PuroLithHarbor            uint32 = 1200004
 	PuroToRien                uint32 = 1200005
 	PuroToLithHarbor          uint32 = 1200006
-	Roca                      uint32 = 1103001
-	Hersha                    uint32 = 1103003
+	TutorialLilin             uint32 = 1202000
+	WolfGuard                 uint32 = 1202009
+	Pudin                     uint32 = 1202010
+	Francis2                  uint32 = 1204001
+	YoungAthenaPierce         uint32 = 1209000
+	Refugee1                  uint32 = 1209001
+	Refugee2                  uint32 = 1209002
+	ThreeRefugees             uint32 = 1209003
+	Refugee3                  uint32 = 1209004
+	Refugee4                  uint32 = 1209005
+	KingPepe                  uint32 = 1300001
+	PrinceGiuseppe            uint32 = 1300006
+	BlockedEntrance           uint32 = 1300013
+	Cliff                     uint32 = 2001000
+	BranchSnowman             uint32 = 2001001
+	Rudi                      uint32 = 2002001
 	Delli                     uint32 = 2095000
 )

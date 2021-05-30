@@ -78,4 +78,12 @@ const (
 	EntranceToTheDrillHall             uint32 = 130020000
 	Ereve                              uint32 = 130000000
 	QuietEreve                         uint32 = 913030000
+	ToRien                             uint32 = 200090060
+	ToLithHarbor                       uint32 = 200090070
+	IceCave                            uint32 = 140090000
+	ColdForest1                        uint32 = 140090100
+	FieldOfWolves                      uint32 = 140010210
+	HuntingGroundInTheDeepForestII     uint32 = 105040200
+	TheLastCastleTower                 uint32 = 106021402
+	TheHillOfChristmas1                uint32 = 209000001
 )
