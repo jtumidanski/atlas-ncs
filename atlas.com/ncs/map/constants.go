@@ -91,4 +91,10 @@ const (
 	BeforeTheDepartureLudibrium        uint32 = 200000122
 	OrbisTower20thFloor                uint32 = 200080200
 	OrbisTower1stFloor                 uint32 = 200082100
+	CabinToLeafre                      uint32 = 200000131
+	LeafreStationEntrance              uint32 = 240000100
+	CabinToLeafre2                     uint32 = 200000132
+	StationToAriant                    uint32 = 200000151
+	AriantStationPlatform              uint32 = 260000100
+	StationToAriant2                   uint32 = 200000152
 )

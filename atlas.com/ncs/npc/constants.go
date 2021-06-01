@@ -208,5 +208,24 @@ const (
 	Sunny                     uint32 = 2012013
 	OrbisMagicSpot20          uint32 = 2012014
 	OrbisMagicSpot1           uint32 = 2012015
+	Ramini                    uint32 = 2012021
+	Pelace                    uint32 = 2012022
+	MapleLeafMarble           uint32 = 2012023
+	Egnet                     uint32 = 2012024
+	Geras                     uint32 = 2012025
+	HarpStringC               uint32 = 2012027
+	HarpStringD               uint32 = 2012028
+	HarpStringE               uint32 = 2012029
+	HarpStringF               uint32 = 2012030
+	HarpStringG               uint32 = 2012031
+	HarpStringA               uint32 = 2012032
+	HarpStringB               uint32 = 2012033
+	WonkyTheFairy             uint32 = 2013000
+	ChamberlainEak            uint32 = 2013001
+	MinervaTheGoddess         uint32 = 2013002
+	Vogen                     uint32 = 2020000
+	Gordon                    uint32 = 2020002
+	MrMohammed                uint32 = 2020004
+	Alcaster                  uint32 = 2020005
 	Delli                     uint32 = 2095000
 )

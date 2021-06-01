@@ -357,4 +357,6 @@ const (
 	TicketToAriantRegular       uint32 = 4031576
 	OrbisSkinCoupon             uint32 = 5153001
 	OrbisRockScroll             uint32 = 4001019
+	GlassMarble                 uint32 = 4031476
+	MapleMarble                 uint32 = 4031456
 )

@@ -584,3 +584,15 @@ func ExpandAlliance(l logrus.FieldLogger) func(characterId uint32) error {
 		return nil
 	}
 }
+
+func ShowEffect(l logrus.FieldLogger) func(characterId uint32, path string) {
+	return func(characterId uint32, path string) {
+
+	}
+}
+
+func PlaySound(l logrus.FieldLogger) func(characterId uint32, path string) {
+	return func(characterId uint32, path string) {
+
+	}
+}

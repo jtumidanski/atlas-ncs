@@ -19,3 +19,9 @@ func HasNPC(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId uint3
 		return false
 	}
 }
+
+func PlaySound(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId uint32, sound string) {
+	return func(worldId byte, channelId byte, mapId uint32, sound string) {
+
+	}
+}
