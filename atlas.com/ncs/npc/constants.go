@@ -227,5 +227,14 @@ const (
 	Gordon                    uint32 = 2020002
 	MrMohammed                uint32 = 2020004
 	Alcaster                  uint32 = 2020005
+	Tylus                     uint32 = 2020008
+	Robeira                   uint32 = 2020009
+	Rene                      uint32 = 2020010
+	Arec                      uint32 = 2020011
+	Pedro                     uint32 = 2020013
+	TylusComplete             uint32 = 2022004
+	DangerZoneTaxi            uint32 = 2023000
+	Jeff                      uint32 = 2030000
+	HolyStone                 uint32 = 2030006
 	Delli                     uint32 = 2095000
 )

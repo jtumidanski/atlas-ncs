@@ -359,4 +359,12 @@ const (
 	OrbisRockScroll             uint32 = 4001019
 	GlassMarble                 uint32 = 4031476
 	MapleMarble                 uint32 = 4031456
+	TheBookOfAncient            uint32 = 4031056
+	HolyWater                   uint32 = 2050003
+	AllCurePotion               uint32 = 2050004
+	TheMagicRock                uint32 = 4006000
+	TheSummoningRock            uint32 = 4006001
+	OrihalconHammer             uint32 = 4031450
+	NecklaceOfWisdom            uint32 = 4031058
+	DarkCrystal                 uint32 = 4005004
 )

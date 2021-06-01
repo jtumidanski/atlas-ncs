@@ -97,4 +97,13 @@ const (
 	StationToAriant                    uint32 = 200000151
 	AriantStationPlatform              uint32 = 260000100
 	StationToAriant2                   uint32 = 200000152
+	ElNath                             uint32 = 211000000
+	IceValleyII                        uint32 = 211040200
+	Ludibrium                          uint32 = 220000000
+	PathOfTime                         uint32 = 220050300
+	OmegaSector                        uint32 = 221000000
+	Leafre                             uint32 = 240000000
+	EntranceToDragonForest             uint32 = 240030000
+	IceValley                          uint32 = 921100100
+	SharpCliffI                        uint32 = 211040300
 )
