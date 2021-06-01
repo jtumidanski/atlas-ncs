@@ -347,4 +347,8 @@ const (
 	MiscellaneousGlasses1       uint32 = 4031854
 	MiscellaneousGlasses2       uint32 = 4031855
 	ShinsoosBlessing            uint32 = 2022458
+	OrbisHairStyleCouponVIP     uint32 = 5150005
+	OrbisHairColorCouponVIP     uint32 = 5151005
+	OrbisHairMembershipCoupon   uint32 = 5420004
+	OrbisFaceCouponVIP          uint32 = 5152005
 )

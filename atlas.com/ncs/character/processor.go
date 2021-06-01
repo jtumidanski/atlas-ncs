@@ -36,6 +36,7 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 		mapId:        att.MapId,
 		gender:       att.Gender,
 		hair:         att.Hair,
+		face:         att.Face,
 	}
 	return &r
 }
@@ -370,6 +371,17 @@ func GetHair(l logrus.FieldLogger) func(characterId uint32) uint32 {
 	}
 }
 
+func GetFace(l logrus.FieldLogger) func(characterId uint32) uint32 {
+	return func(characterId uint32) uint32 {
+		c, err := GetCharacterById(characterId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
+			return 0
+		}
+		return c.Face()
+	}
+}
+
 func SetHair(l logrus.FieldLogger) func(characterId uint32, hair uint32) {
 	return func(characterId uint32, hair uint32) {
 
@@ -378,6 +390,12 @@ func SetHair(l logrus.FieldLogger) func(characterId uint32, hair uint32) {
 
 func SetSkin(l logrus.FieldLogger) func(characterId uint32, skin byte) {
 	return func(characterId uint32, skin byte) {
+
+	}
+}
+
+func SetFace(l logrus.FieldLogger) func(characterId uint32, face uint32) {
+	return func(characterId uint32, face uint32) {
 
 	}
 }
@@ -516,5 +534,53 @@ func GuideHint(l logrus.FieldLogger) func(characterId uint32, hint uint32) {
 func SendNotice(l logrus.FieldLogger) func(characterId uint32, noticeType string, message string) {
 	return func(characterId uint32, noticeType string, message string) {
 
+	}
+}
+
+func HasGuild(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
+	}
+}
+
+func IsGuildLeader(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
+	}
+}
+
+func GuildHasAlliance(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
+	}
+}
+
+func AllianceLeader(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
+	}
+}
+
+func ValidAllianceName(l logrus.FieldLogger) func(text string) bool {
+	return func(text string) bool {
+		return false
+	}
+}
+
+func CreateAlliance(l logrus.FieldLogger) func(characterId uint32, name string) error {
+	return func(characterId uint32, name string) error {
+		return nil
+	}
+}
+
+func AllianceAtCapacity(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
+	}
+}
+
+func ExpandAlliance(l logrus.FieldLogger) func(characterId uint32) error {
+	return func(characterId uint32) error {
+		return nil
 	}
 }

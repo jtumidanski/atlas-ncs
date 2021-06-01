@@ -189,5 +189,13 @@ const (
 	PuroToLithHarbor          uint32 = 1200006
 	Roca                      uint32 = 1103001
 	Hersha                    uint32 = 1103003
+	MinoTheOwner              uint32 = 2010001
+	FranzTheOwner             uint32 = 2010002
+	Neve                      uint32 = 2010003
+	Shuri                     uint32 = 2010005
+	Trina                     uint32 = 2010006
+	Heracle                   uint32 = 2010007
+	Lea                       uint32 = 2010008
+	Lenario                   uint32 = 2010009
 	Delli                     uint32 = 2095000
 )
