@@ -106,4 +106,6 @@ const (
 	EntranceToDragonForest             uint32 = 240030000
 	IceValley                          uint32 = 921100100
 	SharpCliffI                        uint32 = 211040300
+	ZakumsAltar                        uint32 = 280030000
+	TheDoorToZakum                     uint32 = 211042300
 )

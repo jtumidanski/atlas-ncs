@@ -596,3 +596,9 @@ func PlaySound(l logrus.FieldLogger) func(characterId uint32, path string) {
 
 	}
 }
+
+func EventCleared(l logrus.FieldLogger) func(characterId uint32) bool {
+	return func(characterId uint32) bool {
+		return false
+	}
+}

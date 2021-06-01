@@ -236,5 +236,11 @@ const (
 	DangerZoneTaxi            uint32 = 2023000
 	Jeff                      uint32 = 2030000
 	HolyStone                 uint32 = 2030006
+	Adobis                    uint32 = 2030008
+	Amon                      uint32 = 2030010
+	Ali                       uint32 = 2030011
+	AdobisZakumEntrance       uint32 = 2030013
+	AncientIcyStone           uint32 = 2030014
+	Spiruna                   uint32 = 2032001
 	Delli                     uint32 = 2095000
 )

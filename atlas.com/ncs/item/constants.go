@@ -367,4 +367,9 @@ const (
 	OrihalconHammer             uint32 = 4031450
 	NecklaceOfWisdom            uint32 = 4031058
 	DarkCrystal                 uint32 = 4005004
+	PaperDocument               uint32 = 4001015
+	TheKey                      uint32 = 4001016
+	FireOre                     uint32 = 4001018
+	AncientIcePowder            uint32 = 2280011
+	DarkCrystalOre              uint32 = 4004004
 )
