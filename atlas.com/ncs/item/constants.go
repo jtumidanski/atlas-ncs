@@ -351,4 +351,10 @@ const (
 	OrbisHairColorCouponVIP     uint32 = 5151005
 	OrbisHairMembershipCoupon   uint32 = 5420004
 	OrbisFaceCouponVIP          uint32 = 5152005
+	TicketToElliniaRegular      uint32 = 4031047
+	TicketToLudibriumRegular    uint32 = 4031074
+	TicketToLeafreRegular       uint32 = 4031331
+	TicketToAriantRegular       uint32 = 4031576
+	OrbisSkinCoupon             uint32 = 5153001
+	OrbisRockScroll             uint32 = 4001019
 )

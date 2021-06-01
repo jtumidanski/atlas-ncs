@@ -78,4 +78,17 @@ const (
 	EntranceToTheDrillHall             uint32 = 130020000
 	Ereve                              uint32 = 130000000
 	QuietEreve                         uint32 = 913030000
+	StationToEllinia                   uint32 = 200000111
+	BeforeTakeoffToEllinia             uint32 = 200000112
+	StationTunnelToEllinia             uint32 = 200000110
+	StationPathwayLudibrium            uint32 = 200000120
+	CabinPathToLeafre                  uint32 = 200000130
+	CabinPathToMuLung                  uint32 = 200000140
+	StationTunnelToAriant              uint32 = 200000150
+	StationHall                        uint32 = 200000160
+	OrbisStationLudibrium              uint32 = 200000121
+	LudibriumStationOrbis              uint32 = 220000110
+	BeforeTheDepartureLudibrium        uint32 = 200000122
+	OrbisTower20thFloor                uint32 = 200080200
+	OrbisTower1stFloor                 uint32 = 200082100
 )

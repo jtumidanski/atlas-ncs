@@ -197,5 +197,16 @@ const (
 	Heracle                   uint32 = 2010007
 	Lea                       uint32 = 2010008
 	Lenario                   uint32 = 2010009
+	Agatha                    uint32 = 2012000
+	Rini                      uint32 = 2012001
+	Erin                      uint32 = 2012002
+	IsaTheStationGuide        uint32 = 2012006
+	RinzTheAssistant          uint32 = 2012007
+	Romi                      uint32 = 2012008
+	RizaTheAssistant          uint32 = 2012009
+	Lisa                      uint32 = 2012012
+	Sunny                     uint32 = 2012013
+	OrbisMagicSpot20          uint32 = 2012014
+	OrbisMagicSpot1           uint32 = 2012015
 	Delli                     uint32 = 2095000
 )
