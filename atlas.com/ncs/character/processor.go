@@ -235,6 +235,12 @@ func GainItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32, amou
 	}
 }
 
+func GainFame(l logrus.FieldLogger) func(characterId uint32, amount int32) {
+	return func(characterId uint32, amount int32) {
+
+	}
+}
+
 func GainMeso(l logrus.FieldLogger) func(characterId uint32, amount int32) error {
 	adjuster, _ := AdjustMeso(l)
 	return func(characterId uint32, amount int32) error {

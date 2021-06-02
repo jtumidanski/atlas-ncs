@@ -330,5 +330,14 @@ const (
 	Meteorite4                uint32 = 2050017
 	Meteorite5                uint32 = 2050018
 	Meteorite6                uint32 = 2050019
+	Kenta                     uint32 = 2060005
+	Gerrard                   uint32 = 2060008
+	Dolphin                   uint32 = 2060009
+	Carta                     uint32 = 2060100
+	MrNoh                     uint32 = 2070000
+	AFamiliarLady             uint32 = 2071012
+	Mos                       uint32 = 2080000
+	Koscu                     uint32 = 2080005
+	ChiefTatamo               uint32 = 2081000
 	Delli                     uint32 = 2095000
 )

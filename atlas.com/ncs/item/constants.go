@@ -443,4 +443,10 @@ const (
 	ChaosScroll60                       uint32 = 2049100
 	TimersEgg                           uint32 = 4220046
 	MeteoriteSample                     uint32 = 4031117
+	Pheromone                           uint32 = 4031507
+	KentasReport                        uint32 = 4031508
+	DolphinTaxiCoupon                   uint32 = 4031242
+	MiniaturePianus                     uint32 = 4000175
+	OldFoxsTail                         uint32 = 4031793
+	MagicSeed                           uint32 = 4031346
 )

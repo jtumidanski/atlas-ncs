@@ -21,6 +21,7 @@ func GetRegistry() *Registry {
 
 func initRegistry() *Registry {
 	s := &Registry{make(map[uint32]Script)}
+	s.addConversation(AFamiliarLady{})
 	s.addConversation(APileOfBlueFlowers{})
 	s.addConversation(APileOfFlowers{})
 	s.addConversation(APileOfHerbs{})
@@ -56,9 +57,11 @@ func initRegistry() *Registry {
 	s.addConversation(Bush3{})
 	s.addConversation(Bush4{})
 	s.addConversation(Bush5{})
+	s.addConversation(Carta{})
 	s.addConversation(Casey{})
 	s.addConversation(Chef{})
 	s.addConversation(Cherry{})
+	s.addConversation(ChiefTatamo{})
 	s.addConversation(Chris{})
 	s.addConversation(Cliff{})
 	s.addConversation(Cloy{})
@@ -71,6 +74,7 @@ func initRegistry() *Registry {
 	s.addConversation(DangerZoneTaxi{})
 	s.addConversation(DarkLordDemo{})
 	s.addConversation(DocumentRoll{})
+	s.addConversation(Dolphin{})
 	s.addConversation(Dunamis{})
 	s.addConversation(Eckhart{})
 	s.addConversation(EckhartStatue{})
@@ -115,6 +119,7 @@ func initRegistry() *Registry {
 	s.addConversation(JMFromThaStreetz{})
 	s.addConversation(Joel{})
 	s.addConversation(Karen{})
+	s.addConversation(Kenta{})
 	s.addConversation(KingPepe{})
 	s.addConversation(Kiridu{})
 	s.addConversation(Kiriko{})

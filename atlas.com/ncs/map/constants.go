@@ -132,4 +132,9 @@ const (
 	DeepInsideTheClocktower            uint32 = 220080000
 	SpiegelmannsOffice                 uint32 = 980000000
 	SpiegelmannsOffice2                uint32 = 980030000
+	PierOnTheBeach                     uint32 = 251000100
+	TheSharpUnknown                    uint32 = 230030200
+	Aquarium                           uint32 = 230000000
+	HerbTown                           uint32 = 251000000
+	WarpedDimension                    uint32 = 923000000
 )
