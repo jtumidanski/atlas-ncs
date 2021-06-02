@@ -86,4 +86,6 @@ const (
 	HuntingGroundInTheDeepForestII     uint32 = 105040200
 	TheLastCastleTower                 uint32 = 106021402
 	TheHillOfChristmas1                uint32 = 209000001
+	TheHillOfChristmas2                uint32 = 209000002
+	TheHillOfChristmas3                uint32 = 209000003
 )

@@ -32,7 +32,7 @@ func SendSpeech(l logrus.FieldLogger) http.HandlerFunc {
 			return
 		}
 		attr := li.Data.Attributes
-		err = Processor(l).Conversation(attr.CharacterId, attr.NPCId).SendSimple(attr.Message)
+		err = SendSimple(l, attr.CharacterId, attr.NPCId)(attr.Message)
 		if err != nil {
 			l.WithError(err).Errorf("Error sending simple message to %d on behalf of %d.", attr.CharacterId, attr.NPCId)
 			rw.WriteHeader(http.StatusInternalServerError)

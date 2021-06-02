@@ -1,7 +1,6 @@
 package npc
 
 import (
-	"atlas-ncs/conversation/script"
 	"atlas-ncs/kafka/producers"
 	"github.com/sirupsen/logrus"
 )
@@ -72,12 +71,12 @@ func (c TalkConfig) Speaker() string {
 
 type TalkConfigurator func(config *TalkConfig)
 
-func SendNPCTalk(l logrus.FieldLogger, c script.Context, config *TalkConfig) func(message string, configurations ...TalkConfigurator) error {
+func SendNPCTalk(l logrus.FieldLogger, characterId uint32, npcId uint32, config *TalkConfig) func(message string, configurations ...TalkConfigurator) error {
 	return func(message string, configurations ...TalkConfigurator) error {
 		for _, configuration := range configurations {
 			configuration(config)
 		}
-		return producers.NPCTalk(l)(c.CharacterId, c.NPCId, message, config.MessageType(), config.Speaker())
+		return producers.NPCTalk(l)(characterId, npcId, message, config.MessageType(), config.Speaker())
 	}
 }
 
@@ -89,49 +88,49 @@ func SetSpeaker(speaker string) TalkConfigurator {
 
 type TalkFunc func(message string, configurations ... TalkConfigurator) error
 
-func SendSimple(l logrus.FieldLogger, c script.Context) TalkFunc {
-	return SendNPCTalk(l, c, &TalkConfig{messageType: MessageTypeSimple, speaker: SpeakerNPCLeft})
+func SendSimple(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
+	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeSimple, speaker: SpeakerNPCLeft})
 }
 
-func SendNext(l logrus.FieldLogger, c script.Context) TalkFunc {
-	return SendNPCTalk(l, c, &TalkConfig{messageType: MessageTypeNext, speaker: SpeakerNPCLeft})
+func SendNext(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
+	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeNext, speaker: SpeakerNPCLeft})
 }
 
-func SendNextPrevious(l logrus.FieldLogger, c script.Context) TalkFunc {
-	return SendNPCTalk(l, c, &TalkConfig{messageType: MessageTypeNextPrevious, speaker: SpeakerNPCLeft})
+func SendNextPrevious(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
+	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeNextPrevious, speaker: SpeakerNPCLeft})
 }
 
-func SendPrevious(l logrus.FieldLogger, c script.Context) TalkFunc {
-	return SendNPCTalk(l, c, &TalkConfig{messageType: MessageTypePrevious, speaker: SpeakerNPCLeft})
+func SendPrevious(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
+	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypePrevious, speaker: SpeakerNPCLeft})
 }
 
-func SendYesNo(l logrus.FieldLogger, c script.Context) TalkFunc {
-	return SendNPCTalk(l, c, &TalkConfig{messageType: MessageTypeYesNo, speaker: SpeakerNPCLeft})
+func SendYesNo(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
+	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeYesNo, speaker: SpeakerNPCLeft})
 }
 
-func SendOk(l logrus.FieldLogger, c script.Context) TalkFunc {
-	return SendNPCTalk(l, c, &TalkConfig{messageType: MessageTypeOk, speaker: SpeakerNPCLeft})
+func SendOk(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
+	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeOk, speaker: SpeakerNPCLeft})
 }
 
-func SendAcceptDecline(l logrus.FieldLogger, c script.Context) TalkFunc {
-	return SendNPCTalk(l, c, &TalkConfig{messageType: MessageTypeAcceptDecline, speaker: SpeakerNPCLeft})
+func SendAcceptDecline(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
+	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeAcceptDecline, speaker: SpeakerNPCLeft})
 }
 
-func SendGetNumber(l logrus.FieldLogger, c script.Context) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
+func SendGetNumber(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
 	return func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
-		return producers.NPCTalkNum(l)(c.CharacterId, c.NPCId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+		return producers.NPCTalkNum(l)(characterId, npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
 	}
 }
 
-func SendGetText(l logrus.FieldLogger, c script.Context) func(message string) error {
+func SendGetText(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string) error {
 	return func(message string) error {
-		return producers.NPCTalkText(l)(c.CharacterId, c.NPCId, message, MessageTypeText, SpeakerNPCLeft)
+		return producers.NPCTalkText(l)(characterId, npcId, message, MessageTypeText, SpeakerNPCLeft)
 	}
 }
 
-func SendStyle(l logrus.FieldLogger, c script.Context) func(message string, options []uint32) error {
+func SendStyle(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string, options []uint32) error {
 	return func(message string, options []uint32) error {
-		return producers.NPCTalkStyle(l)(c.CharacterId, c.NPCId, message, options, MessageTypeStyle, SpeakerNPCLeft)
+		return producers.NPCTalkStyle(l)(characterId, npcId, message, options, MessageTypeStyle, SpeakerNPCLeft)
 	}
 }
 

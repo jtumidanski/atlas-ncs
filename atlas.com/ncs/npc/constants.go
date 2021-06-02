@@ -204,6 +204,11 @@ const (
 	BlockedEntrance           uint32 = 1300013
 	Cliff                     uint32 = 2001000
 	BranchSnowman             uint32 = 2001001
+	MetalBucketSnowman        uint32 = 2001002
+	StrawHatSnowman           uint32 = 2001003
+	ScarfSnowman              uint32 = 2001004
+	Rupi                      uint32 = 2002000
 	Rudi                      uint32 = 2002001
+	StaffSeargantCharlie      uint32 = 2010000
 	Delli                     uint32 = 2095000
 )
