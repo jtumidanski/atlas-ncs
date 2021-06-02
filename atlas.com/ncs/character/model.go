@@ -11,6 +11,7 @@ type Model struct {
 	mapId        uint32
 	gender       byte
 	hair         uint32
+	face         uint32
 }
 
 func (a Model) Id() uint32 {
@@ -47,4 +48,8 @@ func (a Model) Hair() uint32 {
 
 func (a Model) Strength() uint16 {
 	return a.strength
+}
+
+func (a Model) Face() uint32 {
+	return a.face
 }

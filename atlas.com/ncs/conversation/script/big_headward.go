@@ -70,7 +70,7 @@ func (r BigHeadward) GiveRoyalHair(l logrus.FieldLogger, c Context) State {
 	} else if gender == character.GenderFemale {
 		hair = r.RoyalFemaleHair()
 	}
-	hair = ApplyCharacterColor(l)(c.CharacterId, hair)
+	hair = ApplyHairColor(l)(c.CharacterId, hair)
 
 	character.GainItem(l)(c.CharacterId, item.RoyalHairCoupon, -1)
 	random := rand.Intn(len(hair))
@@ -96,12 +96,12 @@ func (r BigHeadward) SpecialRoyalHair(l logrus.FieldLogger, c Context) State {
 	} else if gender == character.GenderFemale {
 		hair = r.SpecialFemaleHair()
 	}
-	hair = ApplyCharacterColor(l)(c.CharacterId, hair)
+	hair = ApplyHairColor(l)(c.CharacterId, hair)
 
 	return SendStyle(l, c, m.String(), r.ValidateSpecialRoyal(hair), hair)
 }
 
-func (r BigHeadward) ValidateSpecialRoyal(options []uint32) func(selection int32) StateProducer {
+func (r BigHeadward) ValidateSpecialRoyal(options []uint32) ProcessSelection {
 	return func(selection int32) StateProducer {
 		if selection < 0 || int(selection) >= len(options) {
 			return Exit()

@@ -84,7 +84,7 @@ func (r Brittany) PerformRegularStyle(l logrus.FieldLogger, c Context) State {
 	} else if gender == character.GenderFemale {
 		hair = r.RegularFemaleHair()
 	}
-	hair = ApplyCharacterColor(l)(c.CharacterId, hair)
+	hair = ApplyHairColor(l)(c.CharacterId, hair)
 	hair = FilterCurrentHair(l)(c.CharacterId, hair)
 	randomHair := hair[rand.Intn(len(hair))]
 
@@ -125,7 +125,7 @@ func (r Brittany) PerformExperimentalStyle(l logrus.FieldLogger, c Context) Stat
 	} else if gender == character.GenderFemale {
 		hair = r.ExperimentalFemaleHair()
 	}
-	hair = ApplyCharacterColor(l)(c.CharacterId, hair)
+	hair = ApplyHairColor(l)(c.CharacterId, hair)
 	hair = FilterCurrentHair(l)(c.CharacterId, hair)
 	randomHair := hair[rand.Intn(len(hair))]
 

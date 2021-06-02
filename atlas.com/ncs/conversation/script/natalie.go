@@ -56,10 +56,10 @@ func (r Natalie) ICanTotallyStyle(l logrus.FieldLogger, c Context) State {
 	} else if gender == character.GenderFemale {
 		hair = r.BaseFemaleHair()
 	}
-	hair = ApplyCharacterColor(l)(c.CharacterId, hair)
+	hair = ApplyHairColor(l)(c.CharacterId, hair)
 	hair = FilterCurrentHair(l)(c.CharacterId, hair)
 
-	return SendStyle(l, c, m.String(), r.ProcessHairChange, hair)
+	return SendStyle(l, c, m.String(), r.ProcessHairChange(hair), hair)
 }
 
 func (r Natalie) BaseMaleHair() []uint32 {
@@ -70,7 +70,7 @@ func (r Natalie) BaseFemaleHair() []uint32 {
 	return []uint32{character.HairBlackAngelica, character.HairBlackChantelle, character.HairBlackFourtailBraids, character.HairBlackCrazyMedusa, character.HairBlackFrizzleDizzle, character.HairBlackAranHair, character.HairBlackFullBangs}
 }
 
-func ApplyCharacterColor(l logrus.FieldLogger) func(characterId uint32, hair []uint32) []uint32 {
+func ApplyHairColor(l logrus.FieldLogger) func(characterId uint32, hair []uint32) []uint32 {
 	return func(characterId uint32, hair []uint32) []uint32 {
 		color := character.GetHair(l)(characterId) % 10
 		results := make([]uint32, 0)
@@ -118,17 +118,20 @@ func ProduceColorOptions(l logrus.FieldLogger, c Context) []uint32 {
 	return hair
 }
 
-func (r Natalie) ProcessHairChange(selection int32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		if character.HasItem(l)(c.CharacterId, item.HenesysHairMembershipCoupon) {
-			character.SetHair(l)(c.CharacterId, uint32(selection))
-			return r.EnjoyHair(l, c)
-		} else if character.HasItem(l)(c.CharacterId, item.HenesysHairStyleCouponVIP) {
-			character.GainItem(l)(c.CharacterId, item.HenesysHairStyleCouponVIP, -1)
-			character.SetHair(l)(c.CharacterId, uint32(selection))
-			return r.EnjoyHair(l, c)
+func (r Natalie) ProcessHairChange(choices []uint32) ProcessSelection {
+	return func(selection int32) StateProducer {
+		choice := choices[selection]
+		return func(l logrus.FieldLogger, c Context) State {
+			if character.HasItem(l)(c.CharacterId, item.HenesysHairMembershipCoupon) {
+				character.SetHair(l)(c.CharacterId, choice)
+				return r.EnjoyHair(l, c)
+			} else if character.HasItem(l)(c.CharacterId, item.HenesysHairStyleCouponVIP) {
+				character.GainItem(l)(c.CharacterId, item.HenesysHairStyleCouponVIP, -1)
+				character.SetHair(l)(c.CharacterId, choice)
+				return r.EnjoyHair(l, c)
+			}
+			return r.MissingStyleCoupon(l, c)
 		}
-		return r.MissingStyleCoupon(l, c)
 	}
 }
 
