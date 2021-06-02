@@ -30,7 +30,7 @@ const (
 	SubwayTicketingBooth               uint32 = 103000100
 	KerningCityInternetCafe            uint32 = 193000000
 	Orbis                              uint32 = 200000000
-	OrbisStationEnterance              uint32 = 200000100
+	OrbisStationEntrance               uint32 = 200000100
 	KerningSquareLobby                 uint32 = 103040000
 	Line3ConstructionSiteB1Area1       uint32 = 103000900
 	Line3ConstructionSiteB2Area1       uint32 = 103000903
@@ -125,4 +125,8 @@ const (
 	EosTower71stFloor                  uint32 = 221022900
 	EosTower41stFloor                  uint32 = 221021700
 	EosTower1stFloor                   uint32 = 221020000
+	AbandonedTowerEndOfJourney         uint32 = 922010000
+	StationOrbis                       uint32 = 220000110
+	BeforeTheDepartureOrbis            uint32 = 220000111
+	StationLudibrium                   uint32 = 200000121
 )

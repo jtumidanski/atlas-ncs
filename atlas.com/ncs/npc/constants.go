@@ -296,5 +296,19 @@ const (
 	VioletBalloon             uint32 = 2040044
 	PinkBalloon               uint32 = 2040045
 	RobertHolly               uint32 = 2040046
+	SeargantAnderson          uint32 = 2040047
+	Nara                      uint32 = 2040048
+	EurekTheAlchemist         uint32 = 2040050
+	WizTheLibrarian           uint32 = 2040052
+	Tian                      uint32 = 2041000
+	Rosey                     uint32 = 2041001
+	Miyu                      uint32 = 2041007
+	Seppy                     uint32 = 2041008
+	Mini                      uint32 = 2041009
+	Ellie                     uint32 = 2041010
+	Gina                      uint32 = 2041013
+	AceOfHearts               uint32 = 2041017
+	Flo                       uint32 = 2041023
+	Tombstone                 uint32 = 2041024
 	Delli                     uint32 = 2095000
 )

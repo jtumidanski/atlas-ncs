@@ -439,4 +439,6 @@ const (
 	EOSRockScroll                       uint32 = 4001020
 	Pendulum                            uint32 = 4031094
 	WeaversLetter                       uint32 = 4031128
+	LudibriumSkinCoupon                 uint32 = 5153002
+	ChaosScroll60                       uint32 = 2049100
 )

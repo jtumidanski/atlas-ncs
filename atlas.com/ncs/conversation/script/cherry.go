@@ -22,7 +22,7 @@ func (r Cherry) Initial(l logrus.FieldLogger, c Context) State {
 		return r.CheckInventory(l, c)
 	}
 
-	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbis, _map.OrbisStationEnterance) {
+	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbis, _map.OrbisStationEntrance) {
 		return r.AlreadyTraveling(l, c)
 	}
 
@@ -54,7 +54,7 @@ func (r Cherry) TalkToMeAgain(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Cherry) ValidateTravel(l logrus.FieldLogger, c Context) State {
-	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbis, _map.OrbisStationEnterance) {
+	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbis, _map.OrbisStationEntrance) {
 		return r.BePatient(l, c)
 	}
 
