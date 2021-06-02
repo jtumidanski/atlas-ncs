@@ -347,5 +347,8 @@ const (
 	Legor                     uint32 = 2081300
 	Hellin                    uint32 = 2081400
 	Samuel                    uint32 = 2081500
+	Mue                       uint32 = 2082000
+	Tommie                    uint32 = 2082001
+	Harry                     uint32 = 2082002
 	Delli                     uint32 = 2095000
 )

@@ -22,7 +22,7 @@ func (r Cherry) Initial(l logrus.FieldLogger, c Context) State {
 		return r.CheckInventory(l, c)
 	}
 
-	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbis, _map.OrbisStationEntrance) {
+	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbisFromEllinia, _map.OrbisStationEntrance) {
 		return r.AlreadyTraveling(l, c)
 	}
 
@@ -54,14 +54,14 @@ func (r Cherry) TalkToMeAgain(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Cherry) ValidateTravel(l logrus.FieldLogger, c Context) State {
-	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbis, _map.OrbisStationEntrance) {
+	if !character.TransportBoarding(l)(c.CharacterId, _map.BeforeTakeoffToOrbisFromEllinia, _map.OrbisStationEntrance) {
 		return r.BePatient(l, c)
 	}
 
 	character.GainItem(l)(c.CharacterId, item.TicketToOrbisRegular, -1)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.BeforeTakeoffToOrbis, 0)
+	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.BeforeTakeoffToOrbisFromEllinia, 0)
 	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.BeforeTakeoffToOrbis, c.NPCId)
+		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.BeforeTakeoffToOrbisFromEllinia, c.NPCId)
 	}
 	return nil
 }

@@ -25,7 +25,7 @@ const (
 	Happyville                         uint32 = 209000000
 	TheForestOfPatienceStep1           uint32 = 101000100
 	TheForestOfPatienceStep3           uint32 = 101000102
-	BeforeTakeoffToOrbis               uint32 = 101000301
+	BeforeTakeoffToOrbisFromEllinia    uint32 = 101000301
 	ElliniaStation                     uint32 = 101000300
 	SubwayTicketingBooth               uint32 = 103000100
 	KerningCityInternetCafe            uint32 = 193000000
@@ -139,4 +139,6 @@ const (
 	WarpedDimension                    uint32 = 923000000
 	MoosesPracticeField                uint32 = 924000001
 	ForestCrossroad                    uint32 = 240010400
+	Station                            uint32 = 240000110
+	BeforeTakeoffToOrbisFromLeafre     uint32 = 240000111
 )
