@@ -449,4 +449,6 @@ const (
 	MiniaturePianus                     uint32 = 4000175
 	OldFoxsTail                         uint32 = 4031793
 	MagicSeed                           uint32 = 4031346
+	SkillEarningShield                  uint32 = 1092041
+	SkillBookMapleWarrior               uint32 = 2280003
 )

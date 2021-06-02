@@ -637,3 +637,15 @@ func PlaySound(l logrus.FieldLogger) func(characterId uint32, path string) {
 
 	}
 }
+
+func HasEquipped(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
+	return func(characterId uint32, itemId uint32) bool {
+		return false
+	}
+}
+
+func TeachSkill(l logrus.FieldLogger) func(characterId uint32, skillId uint32, level byte, masterLevel byte, expiration int64) {
+	return func(characterId uint32, skillId uint32, level byte, masterLevel byte, expiration int64) {
+
+	}
+}

@@ -137,4 +137,6 @@ const (
 	Aquarium                           uint32 = 230000000
 	HerbTown                           uint32 = 251000000
 	WarpedDimension                    uint32 = 923000000
+	MoosesPracticeField                uint32 = 924000001
+	ForestCrossroad                    uint32 = 240010400
 )

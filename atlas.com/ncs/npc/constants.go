@@ -339,5 +339,13 @@ const (
 	Mos                       uint32 = 2080000
 	Koscu                     uint32 = 2080005
 	ChiefTatamo               uint32 = 2081000
+	Keroben                   uint32 = 2081005
+	Moose                     uint32 = 2081009
+	MooseExit                 uint32 = 2081010
+	Harmonia                  uint32 = 2081100
+	Gritto                    uint32 = 2081200
+	Legor                     uint32 = 2081300
+	Hellin                    uint32 = 2081400
+	Samuel                    uint32 = 2081500
 	Delli                     uint32 = 2095000
 )
