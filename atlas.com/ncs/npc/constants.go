@@ -310,5 +310,25 @@ const (
 	AceOfHearts               uint32 = 2041017
 	Flo                       uint32 = 2041023
 	Tombstone                 uint32 = 2041024
+	MachineApparatus          uint32 = 2041025
+	GhostHunterBob            uint32 = 2041026
+	Karen                     uint32 = 2041029
+	Spiegelmann               uint32 = 2042000
+	Spiegelmann2              uint32 = 2042001
+	Spiegelmann3              uint32 = 2042002
+	AssistantRed              uint32 = 2042003
+	AssistantBlue             uint32 = 2042004
+	Spiegelmann4              uint32 = 2042005
+	Spiegelmann5              uint32 = 2042007
+	AssistantRed2             uint32 = 2042008
+	AssistantBlue2            uint32 = 2042009
+	Papulatus                 uint32 = 2043000
+	KuboTheStorageman         uint32 = 2050004
+	Meteorite1                uint32 = 2050014
+	Meteorite2                uint32 = 2050015
+	Meteorite3                uint32 = 2050016
+	Meteorite4                uint32 = 2050017
+	Meteorite5                uint32 = 2050018
+	Meteorite6                uint32 = 2050019
 	Delli                     uint32 = 2095000
 )

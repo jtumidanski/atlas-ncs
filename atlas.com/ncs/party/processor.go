@@ -13,3 +13,15 @@ func IsPartyLeader(l logrus.FieldLogger) func(characterId uint32) bool {
 		return false
 	}
 }
+
+func Warp(l logrus.FieldLogger) func(characterId uint32, mapId uint32) {
+	return func(characterId uint32, mapId uint32) {
+
+	}
+}
+
+func WarpById(l logrus.FieldLogger) func(characterId uint32, mapId uint32, portalId uint32) {
+	return func(characterId uint32, mapId uint32, portalId uint32) {
+
+	}
+}

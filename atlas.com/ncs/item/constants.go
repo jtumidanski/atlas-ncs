@@ -441,4 +441,6 @@ const (
 	WeaversLetter                       uint32 = 4031128
 	LudibriumSkinCoupon                 uint32 = 5153002
 	ChaosScroll60                       uint32 = 2049100
+	TimersEgg                           uint32 = 4220046
+	MeteoriteSample                     uint32 = 4031117
 )

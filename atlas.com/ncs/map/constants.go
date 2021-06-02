@@ -129,4 +129,7 @@ const (
 	StationOrbis                       uint32 = 220000110
 	BeforeTheDepartureOrbis            uint32 = 220000111
 	StationLudibrium                   uint32 = 200000121
+	DeepInsideTheClocktower            uint32 = 220080000
+	SpiegelmannsOffice                 uint32 = 980000000
+	SpiegelmannsOffice2                uint32 = 980030000
 )
