@@ -432,4 +432,11 @@ const (
 	FireOre                             uint32 = 4001018
 	AncientIcePowder                    uint32 = 2280011
 	DarkCrystalOre                      uint32 = 4004004
+	ReturnScrollToDeadMine              uint32 = 2030007
+	PieceOfFireOre                      uint32 = 4031061
+	TheBreathOfLava                     uint32 = 4031062
+	MachineParts                        uint32 = 4031092
+	EOSRockScroll                       uint32 = 4001020
+	Pendulum                            uint32 = 4031094
+	WeaversLetter                       uint32 = 4031128
 )

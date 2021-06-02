@@ -118,4 +118,11 @@ const (
 	SharpCliffI                        uint32 = 211040300
 	ZakumsAltar                        uint32 = 280030000
 	TheDoorToZakum                     uint32 = 211042300
+	ToyFactorySector4                  uint32 = 922000000
+	SecretPassage                      uint32 = 922000009
+	EosTower101stFloor                 uint32 = 221024500
+	EosTower100thFloor                 uint32 = 221024400
+	EosTower71stFloor                  uint32 = 221022900
+	EosTower41stFloor                  uint32 = 221021700
+	EosTower1stFloor                   uint32 = 221020000
 )

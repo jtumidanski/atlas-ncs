@@ -110,6 +110,11 @@ func HasAnyItem(l logrus.FieldLogger) func(characterId uint32, items ...uint32) 
 	}
 }
 
+type Item struct {
+	ItemId   uint32
+	Quantity uint32
+}
+
 func CanHold(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
 	return func(characterId uint32, itemId uint32) bool {
 		return CanHoldAll(l)(characterId, itemId, 1)
@@ -118,6 +123,12 @@ func CanHold(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool 
 
 func CanHoldAll(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quantity uint32) bool {
 	return func(characterId uint32, itemId uint32, quantity uint32) bool {
+		return CanHoldThese(l)(characterId, Item{ItemId: itemId, Quantity: quantity})
+	}
+}
+
+func CanHoldThese(l logrus.FieldLogger) func(characterId uint32, items ...Item) bool {
+	return func(characterId uint32, items ...Item) bool {
 		return true
 	}
 }
@@ -618,11 +629,5 @@ func ShowEffect(l logrus.FieldLogger) func(characterId uint32, path string) {
 func PlaySound(l logrus.FieldLogger) func(characterId uint32, path string) {
 	return func(characterId uint32, path string) {
 
-	}
-}
-
-func EventCleared(l logrus.FieldLogger) func(characterId uint32) bool {
-	return func(characterId uint32) bool {
-		return false
 	}
 }
