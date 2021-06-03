@@ -469,4 +469,13 @@ const (
 	MagicStoneOfHumility                uint32 = 4031739
 	MagicStoneOfHonesty                 uint32 = 4031740
 	MagicStoneOfTrust                   uint32 = 4031741
+	Rubble                              uint32 = 4000439
+	PerfectPitch                        uint32 = 4310000
+	BlackMushroomSpore                  uint32 = 4000437
+	MossSnailShell                      uint32 = 4000436
+	ToughLeather                        uint32 = 4000440
+	TreeTrunk                           uint32 = 4000438
+	PurpleStoneOfMagic                  uint32 = 4001163
+	MonsterMarble                       uint32 = 4001169
+	PurificationMarble                  uint32 = 2270004
 )

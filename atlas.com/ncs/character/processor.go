@@ -667,3 +667,9 @@ func BuffSource(l logrus.FieldLogger) func(characterId uint32, source int32) uin
 		return 0
 	}
 }
+
+func ItemQuantity(l logrus.FieldLogger) func(characterId uint32, itemId uint32) uint32 {
+	return func(characterId uint32, itemId uint32) uint32 {
+		return 0
+	}
+}
