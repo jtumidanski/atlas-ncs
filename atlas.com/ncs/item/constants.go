@@ -451,4 +451,9 @@ const (
 	MagicSeed                           uint32 = 4031346
 	SkillEarningShield                  uint32 = 1092041
 	SkillBookMapleWarrior               uint32 = 2280003
+	MiniDracoTransformation             uint32 = 2210016
+	CertificateOfTheDragonSquad         uint32 = 4001086
+	HolyCup                             uint32 = 4031454
+	HolyWaterOfLife                     uint32 = 4031455
+	MuLungSkinCareCoupon                uint32 = 5153006
 )
