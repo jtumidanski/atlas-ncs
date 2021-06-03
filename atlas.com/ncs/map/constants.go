@@ -157,4 +157,7 @@ const (
 	DuringTheRideToOrbis                   uint32 = 200090310
 	MuLungDojoEntrance                     uint32 = 925020000
 	SealedTemple                           uint32 = 925040100
+	Stage1MagikMirror                      uint32 = 670010200
+	BattleArenaLobby                       uint32 = 980010000
+	BeforeTakeoffToOrbisFromAriant         uint32 = 260000110
 )

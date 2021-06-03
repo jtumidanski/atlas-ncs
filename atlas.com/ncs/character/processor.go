@@ -649,3 +649,15 @@ func TeachSkill(l logrus.FieldLogger) func(characterId uint32, skillId uint32, l
 
 	}
 }
+
+func ChangeMusic(l logrus.FieldLogger) func(characterId uint32, path string) {
+	return func(characterId uint32, path string) {
+
+	}
+}
+
+func IsLevelBetweenCriteria(lower byte, upper byte) AttributeCriteria {
+	return func(c *Model) bool {
+		return c.Level() >= lower && c.Level() <= upper
+	}
+}

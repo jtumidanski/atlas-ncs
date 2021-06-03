@@ -393,4 +393,16 @@ const (
 	Byron                     uint32 = 2101005
 	LePetitPrince             uint32 = 2101006
 	Areda                     uint32 = 2101007
+	Schegerazade              uint32 = 2101008
+	AbdullahVIII              uint32 = 2101009
+	Jano                      uint32 = 2101010
+	Sejan                     uint32 = 2101011
+	Karcasa                   uint32 = 2101013
+	Cesar                     uint32 = 2101014
+	AbdullahVIII2             uint32 = 2101015
+	Areda2                    uint32 = 2101016
+	Cesar2                    uint32 = 2101017
+	Cesar3                    uint32 = 2101018
+	Asesson                   uint32 = 2102000
+	Slyn                      uint32 = 2102001
 )
