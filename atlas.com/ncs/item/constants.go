@@ -457,4 +457,8 @@ const (
 	HolyWaterOfLife                     uint32 = 4031455
 	MuLungSkinCareCoupon                uint32 = 5153006
 	AriantSkinCareCoupon                uint32 = 5153007
+	TigunTransformationBundle           uint32 = 2210005
+	QueensRing                          uint32 = 4031578
+	WrappedFood                         uint32 = 4031580
+	SmallSackOfJewelry                  uint32 = 4031579
 )

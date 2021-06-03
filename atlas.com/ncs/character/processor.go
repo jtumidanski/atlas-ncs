@@ -661,3 +661,9 @@ func IsLevelBetweenCriteria(lower byte, upper byte) AttributeCriteria {
 		return c.Level() >= lower && c.Level() <= upper
 	}
 }
+
+func BuffSource(l logrus.FieldLogger) func(characterId uint32, source int32) uint32 {
+	return func(characterId uint32, source int32) uint32 {
+		return 0
+	}
+}
