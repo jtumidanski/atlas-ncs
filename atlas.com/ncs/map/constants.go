@@ -160,4 +160,10 @@ const (
 	Stage1MagikMirror                      uint32 = 670010200
 	BattleArenaLobby                       uint32 = 980010000
 	BeforeTakeoffToOrbisFromAriant         uint32 = 260000110
+	OutsideNorthEntranceOfAriant           uint32 = 260020000
+	Magatia                                uint32 = 261000000
+	Ariant                                 uint32 = 260000000
+	ClosedLab                              uint32 = 926120100
+	WhereSnowRoseGrows                     uint32 = 926120300
+	DransLab                               uint32 = 926120200
 )

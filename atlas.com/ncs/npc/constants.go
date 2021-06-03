@@ -417,5 +417,16 @@ const (
 	AriantPrivateHouse2Cupboard uint32 = 2103010
 	AriantPrivateHouse4Cupboard uint32 = 2103011
 	AriantPrivateHouse6Cupboard uint32 = 2103012
-
+	Duarte                      uint32 = 2103013
+	Rosen                       uint32 = 2110000
+	Keol                        uint32 = 2110002
+	CamelCab                    uint32 = 2110005
+	Carson                      uint32 = 2111000
+	Maed                        uint32 = 2111001
+	HumanoidA                   uint32 = 2111003
+	Phyllia                     uint32 = 2111004
+	Keeny                       uint32 = 2111005
+	Parwen                      uint32 = 2111006
+	HanTheBroker                uint32 = 2111007
+	Bedin                       uint32 = 2111008
 )

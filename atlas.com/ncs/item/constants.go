@@ -461,4 +461,6 @@ const (
 	QueensRing                          uint32 = 4031578
 	WrappedFood                         uint32 = 4031580
 	SmallSackOfJewelry                  uint32 = 4031579
+	LightlessMagicDevice                uint32 = 4031709
+	SnowRose                            uint32 = 4031695
 )
