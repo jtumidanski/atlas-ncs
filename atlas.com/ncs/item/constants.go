@@ -463,4 +463,10 @@ const (
 	SmallSackOfJewelry                  uint32 = 4031579
 	LightlessMagicDevice                uint32 = 4031709
 	SnowRose                            uint32 = 4031695
+	SecretDocument                      uint32 = 4031708
+	SilverPendant                       uint32 = 4031697
+	RusselleonsPill                     uint32 = 2022198
+	MagicStoneOfHumility                uint32 = 4031739
+	MagicStoneOfHonesty                 uint32 = 4031740
+	MagicStoneOfTrust                   uint32 = 4031741
 )

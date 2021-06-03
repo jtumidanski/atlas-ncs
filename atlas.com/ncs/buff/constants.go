@@ -1,3 +1,6 @@
 package buff
 
-const BuffMorph = 0
+const (
+	BuffMorph      = 0x2
+	BuffHPRecovery = 0x2000000
+)

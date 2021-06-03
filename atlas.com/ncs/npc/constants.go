@@ -429,4 +429,17 @@ const (
 	Parwen                      uint32 = 2111006
 	HanTheBroker                uint32 = 2111007
 	Bedin                       uint32 = 2111008
+	Russellon                   uint32 = 2111009
+	AlcandosCabinet             uint32 = 2111010
+	PictureFrame                uint32 = 2111013
+	Desk                        uint32 = 2111014
+	RussellonsDesk              uint32 = 2111015
+	FirstPipeHandle             uint32 = 2111017
+	SecondPipeHandle            uint32 = 2111018
+	ThirdPipeHandle             uint32 = 2111019
+	FirstMagicPentagram         uint32 = 2111020
+	SecondMagicPentagram        uint32 = 2111021
+	ThirdMagicPentagram         uint32 = 2111022
+	CenterOfTheMagicPentagram   uint32 = 2111023
+	ControlDevice               uint32 = 2111025
 )

@@ -166,4 +166,5 @@ const (
 	ClosedLab                              uint32 = 926120100
 	WhereSnowRoseGrows                     uint32 = 926120300
 	DransLab                               uint32 = 926120200
+	HomeOfTheMissingAlchemist              uint32 = 261000001
 )
