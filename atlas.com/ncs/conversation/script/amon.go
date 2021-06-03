@@ -1,7 +1,7 @@
 package script
 
 import (
-	"atlas-ncs/character"
+	"atlas-ncs/event"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
@@ -21,7 +21,7 @@ func (r Amon) Initial(l logrus.FieldLogger, c Context) State {
 		return r.LeaveNow(l, c)
 	}
 
-	if !character.EventCleared(l)(c.CharacterId) {
+	if !event.Cleared(l)(c.CharacterId) {
 		return r.LeaveNow(l, c)
 	}
 

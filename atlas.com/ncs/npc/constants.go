@@ -378,4 +378,19 @@ const (
 	Guon2                     uint32 = 2094002
 	Delli                     uint32 = 2095000
 	PracticeChart             uint32 = 2096000
+	Ahmad                     uint32 = 2100000
+	Muhamad                   uint32 = 2100001
+	Shati                     uint32 = 2100005
+	Mazra                     uint32 = 2100006
+	Lila                      uint32 = 2100007
+	Vard                      uint32 = 2100008
+	Aldin                     uint32 = 2100009
+	Sirin                     uint32 = 2101000
+	Jiyur                     uint32 = 2101001
+	Eleska                    uint32 = 2101002
+	Ardin                     uint32 = 2101003
+	Tigun                     uint32 = 2101004
+	Byron                     uint32 = 2101005
+	LePetitPrince             uint32 = 2101006
+	Areda                     uint32 = 2101007
 )
