@@ -478,4 +478,6 @@ const (
 	PurpleStoneOfMagic                  uint32 = 4001163
 	MonsterMarble                       uint32 = 4001169
 	PurificationMarble                  uint32 = 2270004
+	ScrollOfSecrets                     uint32 = 4031019
+	WoodenClub                          uint32 = 1322005
 )

@@ -476,4 +476,19 @@ const (
 	ForgottenTempleKeeper       uint32 = 2141001
 	ForgottenTempleKeeper2      uint32 = 2141002
 	Paul                        uint32 = 9000000
+	Jean                        uint32 = 9000001
+	Pietro                      uint32 = 9000002
+	Vikon                       uint32 = 9000004
+	ChunJi                      uint32 = 9000007
+	MrPickall                   uint32 = 9000008
+	Vikin                       uint32 = 9000009
+	Pietra                      uint32 = 9000010
+	Martin                      uint32 = 9000011
+	HarryCoconut                uint32 = 9000012
+	Tony                        uint32 = 9000013
+	Coco                        uint32 = 9000017
+	RockPaperScissorAdmin       uint32 = 9000019
+	Spinel                      uint32 = 9000020
+	Gaga                        uint32 = 9000021
+	Audrey                      uint32 = 9201135
 )

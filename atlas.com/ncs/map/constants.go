@@ -169,4 +169,9 @@ const (
 	HomeOfTheMissingAlchemist              uint32 = 261000001
 	RomeoAndJuliet                         uint32 = 926100600
 	OuterForestExit                        uint32 = 930000800
+	CoconutHarvest                         uint32 = 109080000
+	EventMapEntrance                       uint32 = 109060001
+	MushroomShrine                         uint32 = 800000000
+	TrendZoneMetropolis                    uint32 = 550000000
+	BoatQuayTown                           uint32 = 541000000
 )
