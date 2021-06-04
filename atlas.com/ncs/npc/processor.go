@@ -145,3 +145,9 @@ func Destroy(l logrus.FieldLogger) func(worldId byte, channelId byte, mapId uint
 
 	}
 }
+
+func SendDimensionalMirror(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string) error {
+	return func(message string) error {
+		return nil
+	}
+}

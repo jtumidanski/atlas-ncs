@@ -480,4 +480,5 @@ const (
 	PurificationMarble                  uint32 = 2270004
 	ScrollOfSecrets                     uint32 = 4031019
 	WoodenClub                          uint32 = 1322005
+	Rubian                              uint32 = 4001024
 )

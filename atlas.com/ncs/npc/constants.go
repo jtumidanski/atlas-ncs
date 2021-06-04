@@ -503,5 +503,23 @@ const (
 	Ria                         uint32 = 9010003
 	Mia2                        uint32 = 9010004
 	WolfSpiritRyko              uint32 = 9010021
+	DimensionalMirror           uint32 = 9010022
+	Lakelis                     uint32 = 9020000
+	Cloto                       uint32 = 9020001
+	Nella                       uint32 = 9020002
+	Fredrick                    uint32 = 9030000
+	Scrooge                     uint32 = 9030100
+	Shuang                      uint32 = 9040000
+	Nuris                       uint32 = 9040001
+	Shawn                       uint32 = 9040002
+	SharenIIIsSoul              uint32 = 9040003
+	ReturningRock               uint32 = 9040005
+	GuardStatus                 uint32 = 9040006
+	SharenIIIsWill              uint32 = 9040007
+	GuildRankBoard              uint32 = 9040008
+	Gatekeeper                  uint32 = 9040009
+	TigerStatue                 uint32 = 9040010
+	BulletinBoard               uint32 = 9040011
+	KnightArmor                 uint32 = 9040012
 	Audrey                      uint32 = 9201135
 )

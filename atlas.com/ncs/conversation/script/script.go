@@ -314,3 +314,26 @@ func doAcceptDecline(accept StateProducer, decline StateProducer) ProcessStateFu
 		}
 	}
 }
+
+func SendDimensionalMirror(l logrus.FieldLogger, c Context, message string, selection ProcessSelection) State {
+	err := npc.SendDimensionalMirror(l, c.CharacterId, c.NPCId)(message)
+	if err != nil {
+		l.WithError(err).Errorf("Sending next message for npc %d to character %d.", c.NPCId, c.CharacterId)
+	}
+	return doDimensionalMirror(Exit(), selection)
+}
+
+func doDimensionalMirror(e StateProducer, s ProcessSelection) State {
+	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		if mode == 0 && theType == 4 {
+			return e(l, c)
+		}
+
+		f := s(selection)
+		if f == nil {
+			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
+			return nil
+		}
+		return f(l, c)
+	}
+}

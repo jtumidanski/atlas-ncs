@@ -176,4 +176,9 @@ const (
 	BoatQuayTown                           uint32 = 541000000
 	ExclusiveTrainingCenter                uint32 = 970030000
 	MoonCorner                             uint32 = 922240200
+	PyramidDunes                           uint32 = 926010000
+	AbandonedSubwayStation                 uint32 = 910320000
+	FirstAccompanimentExit                 uint32 = 103000890
+	FirstAccompanimentBonus                uint32 = 103000805
+	ExcavationSiteCamp                     uint32 = 101030104
 )

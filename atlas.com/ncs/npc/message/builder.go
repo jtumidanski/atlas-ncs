@@ -126,3 +126,8 @@ func (b *builder) ShowProgressBar(amount uint32) *builder {
 	b.b.WriteString(fmt.Sprintf("#B%d#", amount))
 	return b
 }
+
+func (b *builder) DimensionalMirrorOption(index int, selection string) *builder {
+	b.b.WriteString(fmt.Sprintf("#%d# %s", index, selection))
+	return b
+}
