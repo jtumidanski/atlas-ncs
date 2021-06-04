@@ -174,4 +174,6 @@ const (
 	MushroomShrine                         uint32 = 800000000
 	TrendZoneMetropolis                    uint32 = 550000000
 	BoatQuayTown                           uint32 = 541000000
+	ExclusiveTrainingCenter                uint32 = 970030000
+	MoonCorner                             uint32 = 922240200
 )

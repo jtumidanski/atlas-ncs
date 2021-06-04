@@ -490,5 +490,18 @@ const (
 	RockPaperScissorAdmin       uint32 = 9000019
 	Spinel                      uint32 = 9000020
 	Gaga                        uint32 = 9000021
+	AgentE                      uint32 = 9000036
+	AgentMeow                   uint32 = 9000037
+	AgentKitty                  uint32 = 9000038
+	Dalair                      uint32 = 9000040
+	DonationBox                 uint32 = 9000041
+	FairytaleCrackers           uint32 = 9000049
+	BabyMoonBunny               uint32 = 9001102
+	GrandpaMoonBunny            uint32 = 9001105
+	Tia                         uint32 = 9010001
+	Mia                         uint32 = 9010002
+	Ria                         uint32 = 9010003
+	Mia2                        uint32 = 9010004
+	WolfSpiritRyko              uint32 = 9010021
 	Audrey                      uint32 = 9201135
 )
