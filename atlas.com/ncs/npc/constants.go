@@ -475,4 +475,5 @@ const (
 	Kirston                     uint32 = 2141000
 	ForgottenTempleKeeper       uint32 = 2141001
 	ForgottenTempleKeeper2      uint32 = 2141002
+	Paul                        uint32 = 9000000
 )

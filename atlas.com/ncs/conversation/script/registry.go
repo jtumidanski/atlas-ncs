@@ -239,6 +239,7 @@ func initRegistry() *Registry {
 	s.addConversation(Papulatus{})
 	s.addConversation(Parwen{})
 	s.addConversation(Pason{})
+	s.addConversation(Paul{})
 	s.addConversation(Pelace{})
 	s.addConversation(Perzen{})
 	s.addConversation(Phil{})
