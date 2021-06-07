@@ -181,4 +181,14 @@ const (
 	FirstAccompanimentExit                 uint32 = 103000890
 	FirstAccompanimentBonus                uint32 = 103000805
 	ExcavationSiteCamp                     uint32 = 101030104
+	LockerRoomM                            uint32 = 801000100
+	LockerRoomF                            uint32 = 801000200
+	NearTheHideout                         uint32 = 801040000
+	ShowaTown                              uint32 = 801000000
+	UntamedHeartsHuntingGround             uint32 = 680000400
+	TheLovePinata                          uint32 = 680000401
+	WeddingExitMap                         uint32 = 680000500
+	Amoria                                 uint32 = 680000000
+	ShalomTemple                           uint32 = 681000000
+	EntranceOfAmorianChallenge             uint32 = 670010100
 )

@@ -481,4 +481,11 @@ const (
 	ScrollOfSecrets                     uint32 = 4031019
 	WoodenClub                          uint32 = 1322005
 	Rubian                              uint32 = 4001024
+	HiddenNote                          uint32 = 4031921
+	PetPoop                             uint32 = 4031922
+	OrangeMarble                        uint32 = 4031064
+	GoldenMapleLeaf                     uint32 = 4000313
+	GoldenKey                           uint32 = 4031217
+	EntranceTicket                      uint32 = 4031592
+	LipLockKey                          uint32 = 4031593
 )
