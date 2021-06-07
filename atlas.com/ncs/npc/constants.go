@@ -662,4 +662,10 @@ const (
 	Eric                        uint32 = 9270036
 	Jimmy                       uint32 = 9270037
 	Shalon                      uint32 = 9270038
+	Irene                       uint32 = 9270041
+	MrHwang                     uint32 = 9270042
+	Gachapon                    uint32 = 9270043
+	Aldol2                      uint32 = 9270047
+	EncikMusa                   uint32 = 9270054
+	Santa2                      uint32 = 9310058
 )

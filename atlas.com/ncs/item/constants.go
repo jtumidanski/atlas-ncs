@@ -509,4 +509,5 @@ const (
 	InkSack                             uint32 = 4032489
 	WildEyesGasMask                     uint32 = 1003036
 	TicketToKerningCityFromCBD          uint32 = 4031732
+	TicketToSingaporeFromKerningCity    uint32 = 4031731
 )

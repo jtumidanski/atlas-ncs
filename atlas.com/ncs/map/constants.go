@@ -220,4 +220,5 @@ const (
 	BeforeDepartureToKerningCity            uint32 = 540010001
 	OnTheWayToKerningCity                   uint32 = 540010002
 	ChangiAirport                           uint32 = 540010000
+	KerningAirport                          uint32 = 540010100
 )
