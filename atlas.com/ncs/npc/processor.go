@@ -151,3 +151,9 @@ func SendDimensionalMirror(l logrus.FieldLogger, characterId uint32, npcId uint3
 		return nil
 	}
 }
+
+func OpenShop(l logrus.FieldLogger) func(characterId uint32, shopId uint32) {
+	return func(characterId uint32, shopId uint32) {
+		
+	}
+}

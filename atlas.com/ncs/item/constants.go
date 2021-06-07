@@ -488,4 +488,6 @@ const (
 	GoldenKey                           uint32 = 4031217
 	EntranceTicket                      uint32 = 4031592
 	LipLockKey                          uint32 = 4031593
+	SubwayTicketToKerningCityRegular    uint32 = 4031713
+	CrimsonwoodKeystone                 uint32 = 3992041
 )

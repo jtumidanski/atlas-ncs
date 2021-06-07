@@ -133,9 +133,9 @@ func (r TheTicketGate) ProcessBoarding(l logrus.FieldLogger, c Context) State {
 		return r.BePatient(l, c)
 	}
 	character.GainItem(l)(c.CharacterId, item.SubwayTicketToNLCRegular, -1)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.WaitingRoomFromKCToNLC, 0)
+	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.WaitingRoomFromKerningCityToNewLeafCity, 0)
 	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WaitingRoomFromKCToNLC, c.NPCId)
+		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WaitingRoomFromKerningCityToNewLeafCity, c.NPCId)
 	}
 	return nil
 }
