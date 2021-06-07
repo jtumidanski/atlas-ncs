@@ -67,17 +67,7 @@ func (r RobinTheHuntress) SmashBoxesSelection(selection int32) StateProducer {
 }
 
 func (r RobinTheHuntress) WarpToUntamedHearts(l logrus.FieldLogger, c Context) State {
-	return r.Warp(_map.UntamedHeartsHuntingGround)(l, c)
-}
-
-func (r RobinTheHuntress) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
+	return WarpById(_map.UntamedHeartsHuntingGround, 0)(l, c)
 }
 
 func (r RobinTheHuntress) LovePinataSelection(selection int32) StateProducer {
@@ -89,7 +79,7 @@ func (r RobinTheHuntress) LovePinataSelection(selection int32) StateProducer {
 }
 
 func (r RobinTheHuntress) WarpToWeddingExit(l logrus.FieldLogger, c Context) State {
-	return r.Warp(_map.WeddingExitMap)(l, c)
+	return WarpById(_map.WeddingExitMap, 0)(l, c)
 }
 
 func (r RobinTheHuntress) ValidateUntamedHearts(l logrus.FieldLogger, c Context) State {
@@ -116,7 +106,7 @@ func (r RobinTheHuntress) ValidateSmashBoxes(l logrus.FieldLogger, c Context) St
 
 func (r RobinTheHuntress) ProcessSmashBoxes(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.GoldenKey, -7)
-	return r.Warp(_map.TheLovePinata)(l, c)
+	return WarpById(_map.TheLovePinata, 0)(l, c)
 }
 
 func (r RobinTheHuntress) MissingKeys(l logrus.FieldLogger, c Context) State {

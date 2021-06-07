@@ -65,9 +65,5 @@ func (r Karcasa) Process(l logrus.FieldLogger, c Context) State {
 	if err != nil {
 		l.WithError(err).Errorf("Unable to process payment for character %d.", c.CharacterId)
 	}
-	err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(mapId, 0)(l, c)
 }

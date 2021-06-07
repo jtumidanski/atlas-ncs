@@ -20,9 +20,5 @@ func (r Ali) Initial(l logrus.FieldLogger, c Context) State {
 	character.RemoveAll(l)(c.CharacterId, item.PaperDocument)
 	character.RemoveAll(l)(c.CharacterId, item.TheKey)
 	character.RemoveAll(l)(c.CharacterId, item.FireOre)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.TheDoorToZakum, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.TheDoorToZakum, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.TheDoorToZakum, 0)(l, c)
 }

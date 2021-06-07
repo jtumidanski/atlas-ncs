@@ -27,13 +27,5 @@ func (r Erin) GoodChoice(l logrus.FieldLogger, c Context) State {
 
 func (r Erin) Alright(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Alright, see you next time. Take care.")
-	return SendNext(l, c, m.String(), r.Warp)
-}
-
-func (r Erin) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.StationToEllinia, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.StationToEllinia, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendNext(l, c, m.String(), WarpById(_map.StationToEllinia, 0))
 }

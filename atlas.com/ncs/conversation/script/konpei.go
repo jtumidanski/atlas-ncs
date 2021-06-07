@@ -52,15 +52,7 @@ func (r Konpei) ToTheHideout(l logrus.FieldLogger, c Context) State {
 		AddText("the boss is too tough for even wise men to handle.").NewLine().
 		AddText("Looking at your eyes, however, I can see that eye of the").NewLine().
 		AddText("tiger, the eyes that tell me you can do this. Let's go!")
-	return SendNext(l, c, m.String(), r.Warp)
-}
-
-func (r Konpei) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.NearTheHideout, "in00")
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.NearTheHideout, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendNext(l, c, m.String(), WarpByName(_map.NearTheHideout, "in00"))
 }
 
 func (r Konpei) IAmBusy(l logrus.FieldLogger, c Context) State {

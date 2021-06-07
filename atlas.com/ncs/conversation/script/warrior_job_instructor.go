@@ -43,11 +43,7 @@ func (r WarriorJobInstructor) LetYouIn(l logrus.FieldLogger, c Context) State {
 }
 
 func (r WarriorJobInstructor) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.WarriorsRockyMountain, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WarriorsRockyMountain, c.NPCId)
-	}
-	return nil
+	return WarpById(_map.WarriorsRockyMountain, 0)(l, c)
 }
 
 func (r WarriorJobInstructor) ExplainTest(l logrus.FieldLogger, c Context) State {

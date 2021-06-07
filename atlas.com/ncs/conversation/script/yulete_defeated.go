@@ -34,9 +34,5 @@ func (r YuleteDefeated) Process(l logrus.FieldLogger, c Context) State {
 	if !character.QuestCompleted(l)(c.CharacterId, 7770) {
 		character.CompleteQuest(l)(c.CharacterId, 7770)
 	}
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.RomeoAndJuliet, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.RomeoAndJuliet, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.RomeoAndJuliet, 0)(l, c)
 }

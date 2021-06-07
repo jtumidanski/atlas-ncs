@@ -53,9 +53,5 @@ func (r Hikari) Process(l logrus.FieldLogger, c Context) State {
 	} else if gender == character.GenderFemale {
 		destination = _map.LockerRoomF
 	}
-	err = npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, destination, "out00")
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, destination, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpByName(destination, "out00")(l, c)
 }

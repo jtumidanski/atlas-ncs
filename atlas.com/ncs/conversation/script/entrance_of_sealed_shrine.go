@@ -33,7 +33,7 @@ func (r EntranceOfSealedShrine) ProcessPassword(text string) StateProducer {
 			return r.AlreadyAttending(l, c)
 		}
 		if character.QuestStarted(l)(c.CharacterId, 21747) && character.QuestProgressInt(l)(c.CharacterId, 21747, 9300351) == 0 {
-			return r.WarpToTemple(l, c)
+			return WarpById(_map.SealedTemple, 0)(l, c)
 		} else {
 			return r.CorrectButMissingPrerequisites(l, c)
 		}
@@ -42,14 +42,6 @@ func (r EntranceOfSealedShrine) ProcessPassword(text string) StateProducer {
 
 func (r EntranceOfSealedShrine) CorrectButMissingPrerequisites(l logrus.FieldLogger, c Context) State {
 	character.SendNotice(l)(c.CharacterId, "PINK_TEXT", "Although you said the right answer, some mysterious forces are blocking the way in.")
-	return Exit()(l, c)
-}
-
-func (r EntranceOfSealedShrine) WarpToTemple(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.SealedTemple, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.SealedTemple, c.NPCId)
-	}
 	return Exit()(l, c)
 }
 

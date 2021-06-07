@@ -35,11 +35,7 @@ func (r FirstPipeHandle) GetPassword(l logrus.FieldLogger, c Context) State {
 }
 
 func (r FirstPipeHandle) WarpInMap(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.HomeOfTheMissingAlchemist, 1)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.HomeOfTheMissingAlchemist, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.HomeOfTheMissingAlchemist, 1)(l, c)
 }
 
 func (r FirstPipeHandle) Progress(l logrus.FieldLogger, c Context) State {

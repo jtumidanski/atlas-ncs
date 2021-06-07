@@ -31,16 +31,6 @@ func (r PowerBForeWarrior) UnderLevel20(l logrus.FieldLogger, c Context) State {
 	return SendOk(l, c, m.String())
 }
 
-func (r PowerBForeWarrior) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
-}
-
 func (r PowerBForeWarrior) ChooseRoom(l logrus.FieldLogger, c Context) State {
 	format := "Training Center %d (%d/%d)"
 	m := message.NewBuilder().
@@ -74,7 +64,7 @@ func (r PowerBForeWarrior) RoomSelection(selection int32) StateProducer {
 			return r.RoomFull(l, c)
 		}
 
-		return r.Warp(r.TrainingMap()+uint32(selection))(l, c)
+		return Warp(r.TrainingMap()+uint32(selection))(l, c)
 	}
 }
 

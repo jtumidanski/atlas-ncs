@@ -48,35 +48,25 @@ func (r DimensionalMirror) Initial(l logrus.FieldLogger, c Context) State {
 func (r DimensionalMirror) Selection(selection int32) StateProducer {
 	switch selection {
 	case 0:
-		return r.WarpById(_map.BattleArenaLobby, 3)
+		return WarpById(_map.BattleArenaLobby, 3)
 	case 1:
-		return r.WarpById(_map.MuLungDojoEntrance, 0)
+		return WarpById(_map.MuLungDojoEntrance, 0)
 	case 2:
 		return r.SaveAndWarpById("MONSTER_CARNIVAL", _map.SpiegelmannsOffice, 3)
 	case 3:
 		return r.SaveAndWarpById("MONSTER_CARNIVAL", _map.SpiegelmannsOffice2, 3)
 	case 5:
-		return r.WarpById(_map.PyramidDunes, 4)
+		return WarpById(_map.PyramidDunes, 4)
 	case 6:
-		return r.WarpById(_map.AbandonedSubwayStation, 2)
+		return WarpById(_map.AbandonedSubwayStation, 2)
 
 	}
 	return nil
 }
 
-func (r DimensionalMirror) WarpById(mapId uint32, portalId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
-}
-
 func (r DimensionalMirror) SaveAndWarpById(location string, mapId uint32, portalId uint32) StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
 		character.SaveLocation(l)(c.CharacterId, location)
-		return r.WarpById(mapId, portalId)(l, c)
+		return WarpById(mapId, portalId)(l, c)
 	}
 }

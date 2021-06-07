@@ -145,16 +145,8 @@ func (r Dolphin) ProcessSharpUnknown(ticket bool) StateProducer {
 				l.WithError(err).Errorf("Unable to process payment for character %d.", c.CharacterId)
 			}
 		}
-		return r.WarpToSharpUnknown(l, c)
+		return WarpById(_map.TheSharpUnknown, 2)(l, c)
 	}
-}
-
-func (r Dolphin) WarpToSharpUnknown(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.TheSharpUnknown, 2)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.TheSharpUnknown, c.NPCId)
-	}
-	return Exit()(l, c)
 }
 
 func (r Dolphin) NotEnoughMeso(l logrus.FieldLogger, c Context) State {
@@ -177,10 +169,6 @@ func (r Dolphin) ProcessTown(destination uint32) StateProducer {
 		if err != nil {
 			l.WithError(err).Errorf("Unable to process payment for character %d.", c.CharacterId)
 		}
-		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, destination, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, destination, c.NPCId)
-		}
-		return Exit()(l, c)
+		return WarpById(destination, 0)(l, c)
 	}
 }

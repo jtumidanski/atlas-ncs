@@ -38,14 +38,10 @@ func (r AssistantCheng) CallMe(l logrus.FieldLogger, c Context) State {
 }
 
 func (r AssistantCheng) ProcessExit(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.SecretPassage, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.SecretPassage, c.NPCId)
-	}
 	if !(character.QuestStarted(l)(c.CharacterId, 3239) && character.HasItems(l)(c.CharacterId, item.MachineParts, 10)) {
 		character.RemoveAll(l)(c.CharacterId, item.MachineParts)
 	}
-	return Exit()(l, c)
+	return WarpById(_map.SecretPassage, 0)(l, c)
 }
 
 func (r AssistantCheng) ConfirmEnter(l logrus.FieldLogger, c Context) State {
@@ -77,12 +73,8 @@ func (r AssistantCheng) AlreadyAttempting(l logrus.FieldLogger, c Context) State
 }
 
 func (r AssistantCheng) WarpEnter(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ToyFactorySector4, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ToyFactorySector4, c.NPCId)
-	}
 	if !(character.QuestStarted(l)(c.CharacterId, 3239) && character.HasItems(l)(c.CharacterId, item.MachineParts, 10)) {
 		character.RemoveAll(l)(c.CharacterId, item.MachineParts)
 	}
-	return Exit()(l, c)
+	return WarpById(_map.ToyFactorySector4, 0)(l, c)
 }

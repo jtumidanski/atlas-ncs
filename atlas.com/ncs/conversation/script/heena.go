@@ -34,13 +34,5 @@ func (r Heena) No(l logrus.FieldLogger, c Context) State {
 func (r Heena) Yes(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Then, I will send you out from here. Good job.")
-	return SendNext(l, c, m.String(), r.Warp)
-}
-
-func (r Heena) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.InASmallForest, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.InASmallForest, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendNext(l, c, m.String(), WarpById(_map.InASmallForest, 0))
 }

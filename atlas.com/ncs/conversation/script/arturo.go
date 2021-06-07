@@ -27,7 +27,7 @@ func (r Arturo) Validate(l logrus.FieldLogger, c Context) State {
 	if !ok {
 		return r.NeedInventorySpace(l, c)
 	}
-	return r.Warp(l, c)
+	return WarpById(_map.EosTower101stFloor, 0)(l, c)
 }
 
 func (r Arturo) NeedInventorySpace(l logrus.FieldLogger, c Context) State {
@@ -40,12 +40,4 @@ func (r Arturo) NeedInventorySpace(l logrus.FieldLogger, c Context) State {
 		RedText().AddText("Etc").
 		BlackText().AddText(" inventories. Please make some room and try again.")
 	return SendOk(l, c, m.String())
-}
-
-func (r Arturo) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.EosTower101stFloor, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.EosTower101stFloor, c.NPCId)
-	}
-	return Exit()(l, c)
 }

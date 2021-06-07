@@ -21,9 +21,5 @@ func (r Gate) Initial(l logrus.FieldLogger, c Context) State {
 		character.SendNotice(l)(c.CharacterId, "PINK_TEXT", "The giant gate of iron will not budge no matter what, however there is a visible key-shaped socket.")
 		return Exit()(l, c)
 	}
-	err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.HallToInnerSanctum, "out00")
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.HallToInnerSanctum, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpByName(_map.HallToInnerSanctum, "out00")(l, c)
 }

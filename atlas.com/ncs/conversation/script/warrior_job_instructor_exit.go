@@ -38,11 +38,7 @@ func (r WarriorJobInstructorExit) ExitSelection(_ int32) StateProducer {
 }
 
 func (r WarriorJobInstructorExit) WarpExit(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.WestRockyMountainIV, 2)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WestRockyMountainIV, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.WestRockyMountainIV, 2)(l, c)
 }
 
 func (r WarriorJobInstructorExit) Passed(l logrus.FieldLogger, c Context) State {

@@ -19,11 +19,7 @@ func (r HumanoidA) NPCId() uint32 {
 
 func (r HumanoidA) Initial(l logrus.FieldLogger, c Context) State {
 	if character.QuestStarted(l)(c.CharacterId, 3335) && !character.HasItem(l)(c.CharacterId, item.SnowRose) {
-		err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.WhereSnowRoseGrows, "out00")
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WhereSnowRoseGrows, c.NPCId)
-		}
-		return Exit()(l, c)
+		return WarpByName(_map.WhereSnowRoseGrows, "out00")(l, c)
 	}
 	m := message.NewBuilder().AddText("Emotion that I feel is real? Or just illusion coming from mechanical error?")
 	return SendOk(l, c, m.String())

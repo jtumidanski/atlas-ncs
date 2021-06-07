@@ -80,11 +80,7 @@ func (r Pason) ProcessMeso(l logrus.FieldLogger, c Context) State {
 
 func (r Pason) Warp(l logrus.FieldLogger, c Context) State {
 	character.SaveLocation(l)(c.CharacterId, "FLORINA")
-	err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.FlorinaBeach, "st00")
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.FlorinaBeach, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpByName(_map.FlorinaBeach, "st00")(l, c)
 }
 
 func (r Pason) VIPTicket(l logrus.FieldLogger, c Context) State {

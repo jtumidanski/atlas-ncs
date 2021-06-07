@@ -19,17 +19,9 @@ func (r Jeff) NPCId() uint32 {
 
 func (r Jeff) Initial(l logrus.FieldLogger, c Context) State {
 	if character.HasItem(l)(c.CharacterId, item.OrihalconHammer) {
-		return r.ToIceValley(l, c)
+		return WarpById(_map.IceValley, 1)(l, c)
 	}
 	return r.FurtherAndDeeper(l, c)
-}
-
-func (r Jeff) ToIceValley(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.IceValley, 1)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.IceValley, c.NPCId)
-	}
-	return Exit()(l, c)
 }
 
 func (r Jeff) FurtherAndDeeper(l logrus.FieldLogger, c Context) State {
@@ -53,18 +45,10 @@ func (r Jeff) ToWeak(l logrus.FieldLogger, c Context) State {
 func (r Jeff) DoYouWantTo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("If you are thinking of going in, I suggest you change your mind. But if you really want to go in... I'm only letting in the ones that are strong enough to stay alive in there. I do not wish to see anyone else die. Let's see... Hmmm...! You look pretty strong. All right, do you want to go in?")
-	return SendYesNo(l, c, m.String(), r.Warp, r.ChangeYourMind)
+	return SendYesNo(l, c, m.String(), WarpById(_map.SharpCliffI, 5), r.ChangeYourMind)
 }
 
 func (r Jeff) ChangeYourMind(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Even if your level's high it's hard to actually go in there, but if you ever change your mind, please find me. After all, my job is to protect this place.")
 	return SendNext(l, c, m.String(), Exit())
-}
-
-func (r Jeff) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.SharpCliffI, 5)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.SharpCliffI, c.NPCId)
-	}
-	return nil
 }

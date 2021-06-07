@@ -32,12 +32,7 @@ func (r DancesWithBalrogDemo) Demo(l logrus.FieldLogger, c Context) State {
 
 func (r DancesWithBalrogDemo) DoDemo(l logrus.FieldLogger, c Context) State {
     npc.LockUI(l)(c.CharacterId)
-
-    err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.WarriorDemo, 0)
-    if err != nil {
-        l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WarriorDemo, c.NPCId)
-    }
-    return nil
+    return WarpById(_map.WarriorDemo, 0)(l, c)
 }
 
 func (r DancesWithBalrogDemo) SeeMeAgain(l logrus.FieldLogger, c Context) State {

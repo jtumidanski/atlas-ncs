@@ -51,11 +51,11 @@ func (r MysteriousStatue) ChooseDestination(l logrus.FieldLogger, c Context) Sta
 func (r MysteriousStatue) DestinationSelection(selection int32) StateProducer {
 	switch selection {
 	case 0:
-		return r.Warp(_map.TheDeepForestOfPatienceStep1)
+		return WarpById(_map.TheDeepForestOfPatienceStep1, 0)
 	case 1:
-		return r.Warp(_map.TheDeepForestOfPatienceStep3)
+		return WarpById(_map.TheDeepForestOfPatienceStep3, 0)
 	case 2:
-		return r.Warp(_map.TheDeepForestOfPatienceStep5)
+		return WarpById(_map.TheDeepForestOfPatienceStep5, 0)
 	}
 	return nil
 }
@@ -63,14 +63,4 @@ func (r MysteriousStatue) DestinationSelection(selection int32) StateProducer {
 func (r MysteriousStatue) SeeYouNextTime(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Alright, see you next time.")
 	return SendOk(l, c, m.String())
-}
-
-func (r MysteriousStatue) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return nil
-	}
 }

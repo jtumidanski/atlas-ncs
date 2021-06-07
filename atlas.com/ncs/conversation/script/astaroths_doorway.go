@@ -55,17 +55,7 @@ func (r AstarothsDoorway) MoveTo(mapId uint32) StateProducer {
 			AddText("Would you like to move to ").
 			BlueText().ShowMap(mapId).
 			BlackText().AddText("?")
-		return SendYesNo(l, c, m.String(), r.Warp(mapId), Exit())
-	}
-}
-
-func (r AstarothsDoorway) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
+		return SendYesNo(l, c, m.String(), Warp(mapId), Exit())
 	}
 }
 
@@ -74,5 +64,5 @@ func (r AstarothsDoorway) Exit(l logrus.FieldLogger, c Context) State {
 		AddText("Would you like to ").
 		BlueText().AddText("exit this place").
 		BlackText().AddText("?")
-	return SendYesNo(l, c, m.String(), r.Warp(_map.DarkCave), Exit())
+	return SendYesNo(l, c, m.String(), Warp(_map.DarkCave), Exit())
 }

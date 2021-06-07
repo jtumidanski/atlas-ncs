@@ -37,21 +37,9 @@ func (r Nella) ExitBonus(l logrus.FieldLogger, c Context) State {
 
 func (r Nella) ExitTheExit(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("To return back to the city, follow this way.")
-	return SendNext(l, c, m.String(), r.WarpToKerning)
-}
-
-func (r Nella) WarpToKerning(l logrus.FieldLogger, c Context) State {
-	err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.KerningCity)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.KerningCity, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendNext(l, c, m.String(), Warp(_map.KerningCity))
 }
 
 func (r Nella) WarpToExit(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.FirstAccompanimentExit, "st00")
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.FirstAccompanimentExit, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpByName(_map.FirstAccompanimentExit, "st00")(l, c)
 }

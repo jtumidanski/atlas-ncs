@@ -26,9 +26,5 @@ func (r EllinForestMilepost) Yes(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.PurpleStoneOfMagic, -1)
 	character.GainItem(l)(c.CharacterId, item.MonsterMarble, -1)
 	character.GainItem(l)(c.CharacterId, item.PurificationMarble, -1)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.OuterForestExit, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.OuterForestExit, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.OuterForestExit, 0)(l, c)
 }

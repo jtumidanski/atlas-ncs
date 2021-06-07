@@ -48,13 +48,5 @@ func (r BabyMoonBunny) LevelRequirement(l logrus.FieldLogger, c Context) State {
 func (r BabyMoonBunny) ThankYou(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().
 		AddText("Thank you so much. Please rescue Gaga! Grandpa from the moon will help you.")
-	return SendNext(l, c, m.String(), r.Warp)
-}
-
-func (r BabyMoonBunny) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.MoonCorner, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.MoonCorner, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendNext(l, c, m.String(), WarpById(_map.MoonCorner, 0))
 }

@@ -21,11 +21,11 @@ func (r Roodolph) Initial(l logrus.FieldLogger, c Context) State {
 			AddText("Do you wish to head to where the ").
 			BlueText().AddText("Snow Sprinkler").
 			BlackText().AddText(" is?")
-		return SendYesNo(l, c, m.String(), r.Warp(_map.ExtraFrostySnowZone), r.WhenYouWantTo)
+		return SendYesNo(l, c, m.String(), WarpById(_map.ExtraFrostySnowZone, 0), r.WhenYouWantTo)
 	} else if c.MapId == _map.ExtraFrostySnowZone {
 		m := message.NewBuilder().
 			AddText("Do you wish to return to Happyville?")
-		return SendYesNo(l, c, m.String(), r.Warp(_map.Happyville), r.WhenYouWantTo)
+		return SendYesNo(l, c, m.String(), WarpById(_map.Happyville, 0), r.WhenYouWantTo)
 	}
 	m := message.NewBuilder().AddText("You Alright?")
 	return SendOk(l, c, m.String())
@@ -34,14 +34,4 @@ func (r Roodolph) Initial(l logrus.FieldLogger, c Context) State {
 func (r Roodolph) WhenYouWantTo(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Talk to me again when you want to.")
 	return SendOk(l, c, m.String())
-}
-
-func (r Roodolph) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
 }

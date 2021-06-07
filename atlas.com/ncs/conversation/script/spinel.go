@@ -81,11 +81,7 @@ func (r Spinel) AlrightHome(mapId uint32) StateProducer {
 func (r Spinel) WarpBack(mapId uint32) StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
 		character.ClearSavedLocation(l)(c.CharacterId, "WORLDTOUR")
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
+		return WarpById(mapId, 0)(l, c)
 	}
 }
 
@@ -191,10 +187,6 @@ func (r Spinel) Process(mapId uint32, fee int) StateProducer {
 		if err != nil {
 			l.WithError(err).Errorf("Unable to process payment for character %d.", c.CharacterId)
 		}
-		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
+		return WarpById(mapId, 0)(l, c)
 	}
 }

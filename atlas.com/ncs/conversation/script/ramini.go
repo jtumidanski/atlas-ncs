@@ -53,11 +53,7 @@ func (r Ramini) Validate(l logrus.FieldLogger, c Context) State {
 
 func (r Ramini) Process(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.TicketToLeafreRegular, -1)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.CabinToLeafre2, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.CabinToLeafre2, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.CabinToLeafre2, 0)(l, c)
 }
 
 func (r Ramini) ChangeYourMind(l logrus.FieldLogger, c Context) State {

@@ -46,9 +46,5 @@ func (r FourthEOSRock) NeedRock(l logrus.FieldLogger, c Context) State {
 
 func (r FourthEOSRock) Process(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.EOSRockScroll, -1)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.EosTower41stFloor, 3)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.EosTower41stFloor, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.EosTower41stFloor, 3)(l, c)
 }

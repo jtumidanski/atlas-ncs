@@ -41,7 +41,7 @@ func (r MagicianStatue) Initial(l logrus.FieldLogger, c Context) State {
 		BlackText().AddText(" if you want to be a ").
 		BlueText().AddText("Magician").
 		BlackText().AddText(". Do you want to go now?")
-	return SendYesNoExit(l, c, m.String(), r.Warp, r.ComeBack, r.ComeBack)
+	return SendYesNoExit(l, c, m.String(), WarpById(_map.MagicLibrary, 0), r.ComeBack, r.ComeBack)
 }
 
 func (r MagicianStatue) ComeBack(l logrus.FieldLogger, c Context) State {
@@ -50,12 +50,4 @@ func (r MagicianStatue) ComeBack(l logrus.FieldLogger, c Context) State {
 		BlueText().AddText("Magician").
 		BlackText().AddText(".")
 	return SendOk(l, c, m.String())
-}
-
-func (r MagicianStatue) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.MagicLibrary, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.MagicLibrary, c.NPCId)
-	}
-	return Exit()(l, c)
 }

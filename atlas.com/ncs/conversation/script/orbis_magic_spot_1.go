@@ -3,7 +3,6 @@ package script
 import (
 	"atlas-ncs/character"
 	"atlas-ncs/item"
-	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"github.com/sirupsen/logrus"
@@ -46,9 +45,5 @@ func (r OrbisMagicSpot1) Confirm(l logrus.FieldLogger, c Context) State {
 
 func (r OrbisMagicSpot1) Warp(l logrus.FieldLogger, c Context) State {
 	character.GainItem(l)(c.CharacterId, item.OrbisRockScroll, -1)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.OrbisTower20thFloor, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.OrbisTower20thFloor, c.NPCId)
-	}
 	return Exit()(l, c)
 }

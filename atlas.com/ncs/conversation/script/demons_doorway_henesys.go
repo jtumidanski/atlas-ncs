@@ -45,9 +45,5 @@ func (r DemonsDoorwayHenesys) Process(l logrus.FieldLogger, c Context) State {
 	if character.HasItem(l)(c.CharacterId, item.SolomonsSealedBow) {
 		character.GainItem(l)(c.CharacterId, item.SolomonsSealedBow, -1)
 	}
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.AmdusiasStrollingPath, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.AmdusiasStrollingPath, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.AmdusiasStrollingPath, 0)(l, c)
 }

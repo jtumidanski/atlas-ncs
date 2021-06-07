@@ -82,11 +82,7 @@ func (r Shalon) ValidateWarp(l logrus.FieldLogger, c Context) State {
 		return SendOk(l, c, m.String())
 	}
 	character.GainItem(l)(c.CharacterId, item.TicketToKerningCityFromCBD, -1)
-	err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.BeforeDepartureToKerningCity)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.BeforeDepartureToKerningCity, c.NPCId)
-	}
-	return Exit()(l, c)
+	return Warp(_map.BeforeDepartureToKerningCity)(l, c)
 }
 
 func (r Shalon) MissingTicket(l logrus.FieldLogger, c Context) State {

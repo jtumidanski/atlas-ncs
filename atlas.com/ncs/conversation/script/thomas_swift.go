@@ -33,19 +33,9 @@ func (r ThomasSwift) HangAround(l logrus.FieldLogger, c Context) State {
 	return SendOk(l, c, m.String())
 }
 
-func (r ThomasSwift) WarpById(mapId uint32, portalId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
-}
-
 func (r ThomasSwift) HaveAGreatTime(mapId uint32, portalId uint32) StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
 		m := message.NewBuilder().AddText("I hope you had a great time! See you around!")
-		return SendNext(l, c, m.String(), r.WarpById(mapId, portalId))
+		return SendNext(l, c, m.String(), WarpById(mapId, portalId))
 	}
 }

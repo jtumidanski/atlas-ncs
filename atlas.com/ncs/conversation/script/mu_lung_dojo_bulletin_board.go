@@ -48,11 +48,7 @@ func (r MuLungDojoBulletinBoard) No(l logrus.FieldLogger, c Context) State {
 
 func (r MuLungDojoBulletinBoard) Warp(l logrus.FieldLogger, c Context) State {
 	character.SaveLocation(l)(c.CharacterId, "MIRROR")
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.MuLungDojoEntrance, 4)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.MuLungDojoEntrance, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.MuLungDojoEntrance, 4)(l, c)
 }
 
 func (r MuLungDojoBulletinBoard) Detail(l logrus.FieldLogger, c Context) State {

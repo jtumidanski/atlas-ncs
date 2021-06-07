@@ -40,17 +40,7 @@ func (r PowerBForeHenesys) GoToSpecial(l logrus.FieldLogger, c Context) State {
 }
 
 func (r PowerBForeHenesys) WarpSpecial(l logrus.FieldLogger, c Context) State {
-	return r.Warp(r.TrainingSpecial())(l, c)
-}
-
-func (r PowerBForeHenesys) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
+	return Warp(r.TrainingSpecial())(l, c)
 }
 
 func (r PowerBForeHenesys) ChooseRoom(l logrus.FieldLogger, c Context) State {

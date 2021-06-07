@@ -32,12 +32,7 @@ func (r KyrinDemo) Demo(l logrus.FieldLogger, c Context) State {
 
 func (r KyrinDemo) DoDemo(l logrus.FieldLogger, c Context) State {
 	npc.LockUI(l)(c.CharacterId)
-
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.PirateDemo, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.PirateDemo, c.NPCId)
-	}
-	return nil
+	return WarpById(_map.PirateDemo, 0)(l, c)
 }
 
 func (r KyrinDemo) SeeMeAgain(l logrus.FieldLogger, c Context) State {

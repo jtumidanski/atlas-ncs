@@ -24,9 +24,5 @@ func (r TylusComplete) Initial(l logrus.FieldLogger, c Context) State {
 }
 
 func (r TylusComplete) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ElNath, "in01")
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ElNath, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpByName(_map.ElNath, "in01")(l, c)
 }

@@ -22,9 +22,5 @@ func (r ScarfSnowman) Initial(l logrus.FieldLogger, c Context) State {
 }
 
 func (r ScarfSnowman) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.Happyville, 3)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.Happyville, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.Happyville, 5)(l, c)
 }

@@ -17,9 +17,5 @@ func (r Jano) NPCId() uint32 {
 
 func (r Jano) Initial(l logrus.FieldLogger, c Context) State {
 	character.ChangeMusic(l)(c.CharacterId, "Bgm14/Ariant")
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.Stage1MagikMirror, 3)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.Stage1MagikMirror, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.Stage1MagikMirror, 3)(l, c)
 }

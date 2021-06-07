@@ -33,13 +33,5 @@ func (r Milla) Initial(l logrus.FieldLogger, c Context) State {
 		return SendOk(l, c, m.String())
 	}
 	m := message.NewBuilder().AddText("Are you sure you want to return? By returning now you are leaving your partners behind, do you really want to do it?")
-	return SendYesNo(l, c, m.String(), r.Warp, Exit())
-}
-
-func (r Milla) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.EntranceToMVsLair)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.EntranceToMVsLair, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendYesNo(l, c, m.String(), Warp(_map.EntranceToMVsLair), Exit())
 }

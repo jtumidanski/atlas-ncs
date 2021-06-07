@@ -23,20 +23,10 @@ func (r NeinheartDemo) Initial(l logrus.FieldLogger, c Context) State {
 }
 
 func (r NeinheartDemo) WarpToEreve(l logrus.FieldLogger, c Context) State {
-	return r.Warp(_map.Ereve)(l, c)
+	return Warp(_map.Ereve)(l, c)
 }
 
 func (r NeinheartDemo) WarpBack(l logrus.FieldLogger, c Context) State {
 	mapId := character.SavedLocation(l)(c.CharacterId, "CYGNUSINTRO")
-	return r.Warp(mapId)(l, c)
-}
-
-func (r NeinheartDemo) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
+	return Warp(mapId)(l, c)
 }

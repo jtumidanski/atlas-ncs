@@ -110,11 +110,7 @@ func (r TutorialLilin) SaidTooMuch(l logrus.FieldLogger, c Context) State {
 
 func (r TutorialLilin) Warp(l logrus.FieldLogger, c Context) State {
 	character.SpawnGuide(l)(c.CharacterId)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ColdForest1, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ColdForest1, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.ColdForest1, 0)(l, c)
 }
 
 func (r TutorialLilin) AnythingStillCurious(l logrus.FieldLogger, c Context) State {

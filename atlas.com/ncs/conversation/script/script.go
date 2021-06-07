@@ -337,3 +337,33 @@ func doDimensionalMirror(e StateProducer, s ProcessSelection) State {
 		return f(l, c)
 	}
 }
+
+func Warp(mapId uint32) StateProducer {
+	return func(l logrus.FieldLogger, c Context) State {
+		err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
+		}
+		return Exit()(l, c)
+	}
+}
+
+func WarpById(mapId uint32, portalId uint32) StateProducer {
+	return func(l logrus.FieldLogger, c Context) State {
+		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalId)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
+		}
+		return Exit()(l, c)
+	}
+}
+
+func WarpByName(mapId uint32, portalName string) StateProducer {
+	return func(l logrus.FieldLogger, c Context) State {
+		err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalName)
+		if err != nil {
+			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
+		}
+		return Exit()(l, c)
+	}
+}

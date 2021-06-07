@@ -20,9 +20,5 @@ func (r ReturningRock) Initial(l logrus.FieldLogger, c Context) State {
 }
 
 func (r ReturningRock) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ExcavationSiteCamp)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ExcavationSiteCamp, c.NPCId)
-	}
-	return Exit()(l, c)
+	return Warp(_map.ExcavationSiteCamp)(l, c)
 }

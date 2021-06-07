@@ -34,15 +34,7 @@ func (r BowmanJobInstructorExit) CollectMarbles(l logrus.FieldLogger, c Context)
 }
 
 func (r BowmanJobInstructorExit) ExitSelection(_ int32) StateProducer {
-	return r.WarpExit
-}
-
-func (r BowmanJobInstructorExit) WarpExit(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.TheRoadToTheDungeon, 9)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.TheRoadToTheDungeon, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.TheRoadToTheDungeon, 9)
 }
 
 func (r BowmanJobInstructorExit) Passed(l logrus.FieldLogger, c Context) State {
@@ -58,5 +50,5 @@ func (r BowmanJobInstructorExit) Reward(l logrus.FieldLogger, c Context) State {
 	character.CompleteQuest(l)(c.CharacterId, 100001)
 	character.StartQuest(l)(c.CharacterId, 100002)
 	character.GainItem(l)(c.CharacterId, item.ProofOfHero, 1)
-	return r.WarpExit(l, c)
+	return WarpById(_map.TheRoadToTheDungeon, 9)(l, c)
 }

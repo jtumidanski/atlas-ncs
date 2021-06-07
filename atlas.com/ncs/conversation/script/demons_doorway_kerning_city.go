@@ -42,9 +42,5 @@ func (r DemonsDoorwayKerningCity) Process(l logrus.FieldLogger, c Context) State
 	if character.HasItem(l)(c.CharacterId, item.GoldenFeather) {
 		character.GainItem(l)(c.CharacterId, item.GoldenFeather, -1)
 	}
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ValeforStrollingPath, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ValeforStrollingPath, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.ValeforStrollingPath, 0)(l, c)
 }

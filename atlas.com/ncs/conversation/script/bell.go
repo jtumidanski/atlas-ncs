@@ -38,11 +38,11 @@ func (r Bell) Initial(l logrus.FieldLogger, c Context) State {
 	} else if c.MapId == _map.WaitingRoomFromNewLeafCityToKerningCity {
 		m := message.NewBuilder().
 			AddText("Do you want to leave before the train start? There will be no refund.")
-		return SendYesNo(l, c, m.String(), r.ReturnTo(_map.NLCSubwayStation), Exit())
+		return SendYesNo(l, c, m.String(), Warp(_map.NLCSubwayStation), Exit())
 	} else if c.MapId == _map.WaitingRoomFromKerningCityToNewLeafCity {
 		m := message.NewBuilder().
 			AddText("Do you want to leave before the train start? There will be no refund.")
-		return SendYesNo(l, c, m.String(), r.ReturnTo(_map.SubwayTicketingBooth), Exit())
+		return SendYesNo(l, c, m.String(), Warp(_map.SubwayTicketingBooth), Exit())
 	}
 	return Exit()(l, c)
 }
@@ -83,14 +83,4 @@ func (r Bell) NeedInventoryRoom(l logrus.FieldLogger, c Context) State {
 func (r Bell) NotEnoughMeso(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("You don't have enough mesos.")
 	return SendOk(l, c, m.String())
-}
-
-func (r Bell) ReturnTo(station uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, station)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, station, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
 }

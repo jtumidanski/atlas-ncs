@@ -26,9 +26,5 @@ func (r StrangeLookingStatue) Hello(l logrus.FieldLogger, c Context) State {
 }
 
 func (r StrangeLookingStatue) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.PuppeteersHidingPlace, 2)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.PuppeteersHidingPlace, c.NPCId)
-	}
-	return nil
+	return WarpById(_map.PuppeteersHidingPlace, 2)(l, c)
 }

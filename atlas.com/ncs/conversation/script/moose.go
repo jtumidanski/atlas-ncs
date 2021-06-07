@@ -55,13 +55,5 @@ func (r Moose) PleaseEquip(l logrus.FieldLogger, c Context) State {
 
 func (r Moose) KeepItEquipped(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Have your shield equipped until the end of the quest, or else you will need to start all over again!")
-	return SendNext(l, c, m.String(), r.Warp)
-}
-
-func (r Moose) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.MoosesPracticeField, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.MoosesPracticeField, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendNext(l, c, m.String(), WarpById(_map.MoosesPracticeField, 0))
 }

@@ -39,15 +39,7 @@ func (r MagicianJobInstructor) LetYouIn(l logrus.FieldLogger, c Context) State {
 		AddText("Alright I'll let you in! Defeat the monsters inside, collect 30 Dark Marbles, then strike up a conversation with a colleague of mine inside. He'll give you ").
 		BlueText().AddText("The Proof of a Hero").
 		BlackText().AddText(", the proof that you've passed the test. Best of luck to you.")
-	return SendNext(l, c, m.String(), r.Warp)
-}
-
-func (r MagicianJobInstructor) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.MagiciansTreeDungeon, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.MagiciansTreeDungeon, c.NPCId)
-	}
-	return nil
+	return SendNext(l, c, m.String(), WarpById(_map.MagiciansTreeDungeon, 0))
 }
 
 func (r MagicianJobInstructor) ExplainTest(l logrus.FieldLogger, c Context) State {

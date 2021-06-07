@@ -31,11 +31,7 @@ func (r MonstrousLookingStatue) Validate(l logrus.FieldLogger, c Context) State 
 		return r.SomeoneAlreadyChallengine(l, c)
 	}
 	monster.SpawnMonster(l)(c.WorldId, c.ChannelId, _map.PuppeteersCave, monster.Puppeteer, 95, 200)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.PuppeteersCave, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.PuppeteersCave, c.NPCId)
-	}
-	return nil
+	return WarpById(_map.PuppeteersCave, 0)(l, c)
 }
 
 func (r MonstrousLookingStatue) SomeoneAlreadyChallengine(l logrus.FieldLogger, c Context) State {

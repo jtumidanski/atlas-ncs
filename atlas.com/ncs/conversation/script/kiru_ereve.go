@@ -62,9 +62,5 @@ func (r KiruEreve) Process(l logrus.FieldLogger, c Context) State {
 	if err != nil {
 		l.WithError(err).Errorf("Unable to process payment by character %d.", c.CharacterId)
 	}
-	err = npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.EmpressRoadToOrbis)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.EmpressRoadToOrbis, c.NPCId)
-	}
-	return Exit()(l, c)
+	return Warp(_map.EmpressRoadToOrbis)(l, c)
 }

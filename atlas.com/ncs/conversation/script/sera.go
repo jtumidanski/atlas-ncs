@@ -48,19 +48,11 @@ func (r Sera) Skip(l logrus.FieldLogger, c Context) State {
 }
 
 func (r Sera) WarpTraining(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.UpperLevelOfTheTrainingCamp, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.UpperLevelOfTheTrainingCamp, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.UpperLevelOfTheTrainingCamp, 0)(l, c)
 }
 
 func (r Sera) WarpSkip(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.InASmallForest, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.InASmallForest, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.InASmallForest, 0)(l, c)
 }
 
 func (r Sera) CancelSkip(l logrus.FieldLogger, c Context) State {

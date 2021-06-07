@@ -17,13 +17,5 @@ func (r KonpeiExpeditionSuccessExit) NPCId() uint32 {
 
 func (r KonpeiExpeditionSuccessExit) Initial(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Ah, The Boss has been defeated. What a happy day this turns out to be! Congratulations, everyone. Follow this way back to town.")
-	return SendNext(l, c, m.String(), r.Warp)
-}
-
-func (r KonpeiExpeditionSuccessExit) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ShowaTown)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ShowaTown, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendNext(l, c, m.String(), Warp(_map.ShowaTown))
 }

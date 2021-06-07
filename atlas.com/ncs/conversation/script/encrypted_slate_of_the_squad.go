@@ -22,7 +22,7 @@ func (r EncryptedSlateOfTheSquad) Initial(l logrus.FieldLogger, c Context) State
 		m := message.NewBuilder().AddText("Do you want to access ").
 			BlueText().ShowMap(_map.EntranceToHorntailsCave).
 			BlackText().AddText(" right now?")
-		return SendYesNo(l, c, m.String(), r.Warp, Exit())
+		return SendYesNo(l, c, m.String(), WarpById(_map.EntranceToHorntailsCave, 0), Exit())
 	}
 	return r.MustProveValor(l, c)
 }
@@ -35,12 +35,4 @@ func (r EncryptedSlateOfTheSquad) MustProveValor(l logrus.FieldLogger, c Context
 		BlueText().AddText("Horntail").
 		BlackText().AddText(".")
 	return SendOk(l, c, m.String())
-}
-
-func (r EncryptedSlateOfTheSquad) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.EntranceToHorntailsCave, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.EntranceToHorntailsCave, c.NPCId)
-	}
-	return Exit()(l, c)
 }

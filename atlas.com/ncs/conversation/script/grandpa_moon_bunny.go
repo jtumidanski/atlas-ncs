@@ -96,9 +96,5 @@ func (r GrandpaMoonBunny) StartRescueGaga(l logrus.FieldLogger, c Context) State
 }
 
 func (r GrandpaMoonBunny) GiveUp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.MoonCorner, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.MoonCorner, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.MoonCorner, 0)(l, c)
 }

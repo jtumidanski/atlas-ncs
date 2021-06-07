@@ -39,18 +39,10 @@ func (r FallenKnight) Validate(l logrus.FieldLogger, c Context) State {
 	if _map.CharacterCount(l)(c.WorldId, c.ChannelId, _map.QuietEreve) > 0 {
 		return r.AlreadyChallenging(l, c)
 	}
-	return r.Warp(l, c)
+	return WarpById(_map.QuietEreve, 0)(l, c)
 }
 
 func (r FallenKnight) AlreadyChallenging(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("There's someone already challenging her. Please wait awhile.")
 	return SendOk(l, c, m.String())
-}
-
-func (r FallenKnight) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.QuietEreve, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.QuietEreve, c.NPCId)
-	}
-	return Exit()(l, c)
 }

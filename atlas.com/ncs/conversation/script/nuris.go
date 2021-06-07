@@ -28,7 +28,7 @@ func (r Nuris) Process(l logrus.FieldLogger, c Context) State {
 			return r.MakeRoom(l, c)
 		}
 	}
-	return r.WarpToCamp(l, c)
+	return Warp(_map.ExcavationSiteCamp)(l, c)
 }
 
 func (r Nuris) MakeRoom(l logrus.FieldLogger, c Context) State {
@@ -41,12 +41,4 @@ func (r Nuris) MakeRoom(l logrus.FieldLogger, c Context) State {
 		RedText().AddText("Etc").
 		BlackText().AddText(" inventories. Please make some room first.")
 	return SendOk(l, c, m.String())
-}
-
-func (r Nuris) WarpToCamp(l logrus.FieldLogger, c Context) State {
-	err := npc.Warp(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ExcavationSiteCamp)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ExcavationSiteCamp, c.NPCId)
-	}
-	return Exit()(l, c)
 }

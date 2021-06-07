@@ -17,13 +17,5 @@ func (r MooseExit) NPCId() uint32 {
 
 func (r MooseExit) Initial(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Do you want to exit the area? If you quit, you will need to start this task from the scratch.")
-	return SendYesNo(l, c, m.String(), r.Warp, Exit())
-}
-
-func (r MooseExit) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ForestCrossroad, "st00")
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ForestCrossroad, c.NPCId)
-	}
-	return Exit()(l, c)
+	return SendYesNo(l, c, m.String(), WarpByName(_map.ForestCrossroad, "st00"), Exit())
 }

@@ -21,11 +21,11 @@ func (r Simon) Initial(l logrus.FieldLogger, c Context) State {
 			AddText("The Shalom Temple is unlike any other place in Happyville, would you like to head to ").
 			BlueText().AddText("Shalom Temple").
 			BlackText().AddText("?")
-		return SendYesNo(l, c, m.String(), r.Warp(_map.ShalomTemple), r.LetMeKnow)
+		return SendYesNo(l, c, m.String(), WarpById(_map.ShalomTemple,0), r.LetMeKnow)
 	} else if c.MapId == _map.ShalomTemple {
 		m := message.NewBuilder().
 			AddText("Would you like to head back to Happyville?")
-		return SendYesNo(l, c, m.String(), r.Warp(_map.Happyville), r.LetMeKnow)
+		return SendYesNo(l, c, m.String(), WarpById(_map.Happyville, 0), r.LetMeKnow)
 	}
 	return Exit()(l, c)
 }
@@ -33,14 +33,4 @@ func (r Simon) Initial(l logrus.FieldLogger, c Context) State {
 func (r Simon) LetMeKnow(l logrus.FieldLogger, c Context) State {
 	m := message.NewBuilder().AddText("Let me know if you've changed your mind!")
 	return SendOk(l, c, m.String())
-}
-
-func (r Simon) Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
-	}
 }

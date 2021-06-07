@@ -29,11 +29,7 @@ func (r SeargantAnderson) Confirm(l logrus.FieldLogger, c Context) State {
 }
 
 func (r SeargantAnderson) WarpExit(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.AbandonedTowerEndOfJourney, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.AbandonedTowerEndOfJourney, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.AbandonedTowerEndOfJourney, 0)(l, c)
 }
 
 func (r SeargantAnderson) ToReturn(l logrus.FieldLogger, c Context) State {
@@ -42,9 +38,5 @@ func (r SeargantAnderson) ToReturn(l logrus.FieldLogger, c Context) State {
 }
 
 func (r SeargantAnderson) WarpToTower(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.EosTower101stFloor, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.EosTower101stFloor, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.EosTower101stFloor, 0)(l, c)
 }

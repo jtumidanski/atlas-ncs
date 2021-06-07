@@ -23,9 +23,5 @@ func (r Rupi) Initial(l logrus.FieldLogger, c Context) State {
 
 func (r Rupi) Warp(l logrus.FieldLogger, c Context) State {
 	mapId := character.SavedLocation(l)(c.CharacterId, "HAPPYVILLE")
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(mapId, 0)(l, c)
 }

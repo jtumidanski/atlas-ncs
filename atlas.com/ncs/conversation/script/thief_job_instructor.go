@@ -43,11 +43,7 @@ func (r ThiefJobInstructor) LetYouIn(l logrus.FieldLogger, c Context) State {
 }
 
 func (r ThiefJobInstructor) Warp(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ThiefsConstructionSite, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ThiefsConstructionSite, c.NPCId)
-	}
-	return nil
+	return WarpById(_map.ThiefsConstructionSite, 0)(l, c)
 }
 
 func (r ThiefJobInstructor) IsntThisALetter(l logrus.FieldLogger, c Context) State {

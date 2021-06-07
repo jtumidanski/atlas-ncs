@@ -19,11 +19,7 @@ func (r Carson) NPCId() uint32 {
 
 func (r Carson) Initial(l logrus.FieldLogger, c Context) State {
 	if character.QuestStarted(l)(c.CharacterId, 3310) && !character.HasItem(l)(c.CharacterId, item.LightlessMagicDevice) {
-		err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ClosedLab, "out00")
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.ClosedLab, c.NPCId)
-		}
-		return Exit()(l, c)
+		return WarpByName( _map.ClosedLab, "out00")(l, c)
 	}
 
 	m := message.NewBuilder().

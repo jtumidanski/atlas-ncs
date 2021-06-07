@@ -39,11 +39,7 @@ func (r NLCTaxi) NextTime(l logrus.FieldLogger, c Context) State {
 }
 
 func (r NLCTaxi) WarpToNLC(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.NewLeafCityTownCenter, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.NewLeafCityTownCenter, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.NewLeafCityTownCenter, 0)(l, c)
 }
 
 func (r NLCTaxi) ToNLC(l logrus.FieldLogger, c Context) State {
@@ -55,11 +51,7 @@ func (r NLCTaxi) ToHauntedHouse(l logrus.FieldLogger, c Context) State {
 }
 
 func (r NLCTaxi) WarpToHauntedHouse(l logrus.FieldLogger, c Context) State {
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.HauntedHouse, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.HauntedHouse, c.NPCId)
-	}
-	return Exit()(l, c)
+	return WarpById(_map.HauntedHouse, 0)(l, c)
 }
 
 func (r NLCTaxi) Validate(warp func(l logrus.FieldLogger, c Context) State) StateProducer {

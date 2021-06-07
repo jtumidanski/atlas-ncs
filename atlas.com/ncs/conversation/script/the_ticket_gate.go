@@ -102,11 +102,7 @@ func (r TheTicketGate) PickConstructionTicket(selection int32) StateProducer {
 func (r TheTicketGate) UseConstructionTicket(itemId uint32, mapId uint32) StateProducer {
 	return func(l logrus.FieldLogger, c Context) State {
 		character.GainItem(l)(c.CharacterId, itemId, -1)
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return nil
+		return WarpById(mapId, 0)(l, c)
 	}
 }
 
@@ -133,9 +129,5 @@ func (r TheTicketGate) ProcessBoarding(l logrus.FieldLogger, c Context) State {
 		return r.BePatient(l, c)
 	}
 	character.GainItem(l)(c.CharacterId, item.SubwayTicketToNLCRegular, -1)
-	err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.WaitingRoomFromKerningCityToNewLeafCity, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, _map.WaitingRoomFromKerningCityToNewLeafCity, c.NPCId)
-	}
-	return nil
+	return WarpById(_map.WaitingRoomFromKerningCityToNewLeafCity, 0)(l, c)
 }
