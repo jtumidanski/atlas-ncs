@@ -580,5 +580,16 @@ const (
 	Claudia                     uint32 = 9201039
 	MrSandman                   uint32 = 9201042
 	AmosTheStrong               uint32 = 9201043
+	AmosTheStrong2              uint32 = 9201044
+	AmosTheStrong3              uint32 = 9201045
+	AmosTheStrong4              uint32 = 9201046
+	TheGlimmerMan               uint32 = 9201047
+	AmosTheStrong5              uint32 = 9201048
+	AmesTheWiseExit             uint32 = 9201049
+	IcebyrdSlimm                uint32 = 9201050
+	JohnBarricade               uint32 = 9201051
+	ProfessorFoxwit             uint32 = 9201052
+	LitaLawless                 uint32 = 9201054
+	NLCTaxi                     uint32 = 9201056
 	Audrey                      uint32 = 9201135
 )

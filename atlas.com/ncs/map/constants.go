@@ -191,4 +191,6 @@ const (
 	Amoria                                 uint32 = 680000000
 	ShalomTemple                           uint32 = 681000000
 	EntranceOfAmorianChallenge             uint32 = 670010100
+	HauntedHouse                           uint32 = 682000000
+	NewLeafCityTownCenter                  uint32 = 600000000
 )
