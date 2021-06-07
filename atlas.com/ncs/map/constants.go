@@ -199,4 +199,25 @@ const (
 	ThePathOfStrength                       uint32 = 610020003
 	ThePathOfPeril                          uint32 = 610020004
 	UpperAscent                             uint32 = 610020005
+	HallToInnerSanctum                      uint32 = 610030020
+	WarriorsSanctuary                       uint32 = 102000003
+	BowmanInstructionalSchool               uint32 = 100000201
+	MagicLibrary                            uint32 = 101000003
+	ThievesHideout                          uint32 = 103000003
+	AndrasStrollingPath                     uint32 = 677000004
+	MarbasStrollingPath                     uint32 = 677000000
+	ValeforStrollingPath                    uint32 = 677000008
+	AmdusiasStrollingPath                   uint32 = 677000002
+	CrocellStrollingPath                    uint32 = 677000006
+	FogForest                               uint32 = 677000010
+	AstarothStrollingPlace                  uint32 = 677000011
+	AstarothHidingPlace                     uint32 = 677000012
+	DarkCave                                uint32 = 105050400
+	ExtraFrostySnowZone                     uint32 = 209080000
+	EntranceToMVsLair                       uint32 = 674030100
+	TreasureDungeon                         uint32 = 674030300
+	OnTheWayToCBD                           uint32 = 540010101
+	BeforeDepartureToKerningCity            uint32 = 540010001
+	OnTheWayToKerningCity                   uint32 = 540010002
+	ChangiAirport                           uint32 = 540010000
 )

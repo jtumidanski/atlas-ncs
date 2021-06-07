@@ -490,4 +490,23 @@ const (
 	LipLockKey                          uint32 = 4031593
 	SubwayTicketToKerningCityRegular    uint32 = 4031713
 	CrimsonwoodKeystone                 uint32 = 3992041
+	AndrasEmblem                        uint32 = 4032491
+	BrokenIronFragment                  uint32 = 4001341
+	OrangeMushroomWine                  uint32 = 4032478
+	MarbasEmblem                        uint32 = 4032495
+	ValeforsEmblem                      uint32 = 4032493
+	LargeModelOfACoin                   uint32 = 4032485
+	GoldenFeather                       uint32 = 4001355
+	AmdusiasEmblem                      uint32 = 4032492
+	UnseenlyOcarina                     uint32 = 4032481
+	DarkweensMonsterDrum                uint32 = 4032482
+	SolomonsSealedBow                   uint32 = 4032483
+	CrocellsEmblem                      uint32 = 4032494
+	OldWornOutPaper                     uint32 = 4001362
+	OldKey                              uint32 = 4001363
+	GreenSlimeEraser                    uint32 = 4032486
+	AyanMercurysMicrophone              uint32 = 4032488
+	InkSack                             uint32 = 4032489
+	WildEyesGasMask                     uint32 = 1003036
+	TicketToKerningCityFromCBD          uint32 = 4031732
 )
