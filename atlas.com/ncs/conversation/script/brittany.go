@@ -2,6 +2,7 @@ package script
 
 import (
 	"atlas-ncs/character"
+	"atlas-ncs/conversation/script/generic/care"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
@@ -84,8 +85,8 @@ func (r Brittany) PerformRegularStyle(l logrus.FieldLogger, c Context) State {
 	} else if gender == character.GenderFemale {
 		hair = r.RegularFemaleHair()
 	}
-	hair = ApplyHairColor(l)(c.CharacterId, hair)
-	hair = FilterCurrentHair(l)(c.CharacterId, hair)
+	hair = care.ApplyCurrentColor(l)(c.CharacterId, hair)
+	hair = care.FilterCurrent(l)(c.CharacterId, hair)
 	randomHair := hair[rand.Intn(len(hair))]
 
 	character.GainItem(l)(c.CharacterId, item.HenesysHairStyleCouponREG, -1)
@@ -125,8 +126,8 @@ func (r Brittany) PerformExperimentalStyle(l logrus.FieldLogger, c Context) Stat
 	} else if gender == character.GenderFemale {
 		hair = r.ExperimentalFemaleHair()
 	}
-	hair = ApplyHairColor(l)(c.CharacterId, hair)
-	hair = FilterCurrentHair(l)(c.CharacterId, hair)
+	hair = care.ApplyCurrentColor(l)(c.CharacterId, hair)
+	hair = care.FilterCurrent(l)(c.CharacterId, hair)
 	randomHair := hair[rand.Intn(len(hair))]
 
 	character.GainItem(l)(c.CharacterId, item.HenesysHairStyleCouponEXP, -1)
@@ -146,7 +147,7 @@ func (r Brittany) PerformRegularColor(l logrus.FieldLogger, c Context) State {
 	if !character.HasItem(l)(c.CharacterId, item.HenesysHairColorCouponREG) {
 		return r.MissingColorCoupon(l, c)
 	}
-	hair := ProduceColorOptions(l, c)
+	hair := care.ProduceColorOptions(l, c)
 	randomHair := hair[rand.Intn(len(hair))]
 	character.GainItem(l)(c.CharacterId, item.HenesysHairColorCouponREG, -1)
 	character.SetHair(l)(c.CharacterId, randomHair)
