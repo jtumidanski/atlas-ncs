@@ -2,6 +2,7 @@ package npc
 
 import (
 	"atlas-ncs/kafka/producers"
+	"atlas-ncs/map/portal"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +23,7 @@ const (
 	SpeakerCharacterLeft  = "CHARACTER_LEFT"
 	SpeakerCharacterRight = "CHARACTER_RIGHT"
 	SpeakerUnknown        = "UNKNOWN"
-	SpeakerUnknown2        = "UNKNOWN2"
+	SpeakerUnknown2       = "UNKNOWN2"
 )
 
 func Dispose(l logrus.FieldLogger) func(characterId uint32) error {
@@ -37,22 +38,27 @@ func LockUI(l logrus.FieldLogger) func(characterId uint32) {
 	}
 }
 
-func Warp(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32) error {
+func WarpToPortal(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) error {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) error {
+		return producers.ChangeMap(l)(worldId, channelId, characterId, mapId, p())
+	}
+}
+
+func WarpRandom(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32) error {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32) error {
-		//TODO random portal id
-		return producers.ChangeMap(l)(worldId, channelId, characterId, mapId, 0)
+		return WarpToPortal(l)(worldId, channelId, characterId, mapId, portal.RandomPortalIdProvider(l)(mapId))
 	}
 }
 
 func WarpById(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
-		return producers.ChangeMap(l)(worldId, channelId, characterId, mapId, portalId)
+		return WarpToPortal(l)(worldId, channelId, characterId, mapId, portal.FixedPortalIdProvider(portalId))
 	}
 }
 
 func WarpByName(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
-		return nil
+		return WarpToPortal(l)(worldId, channelId, characterId, mapId, portal.ByNamePortalIdProvider(l)(mapId, portalName))
 	}
 }
 
@@ -86,34 +92,34 @@ func SetSpeaker(speaker string) TalkConfigurator {
 	}
 }
 
-type TalkFunc func(message string, configurations ... TalkConfigurator) error
+type TalkFunc func(message string, configurations ...TalkConfigurator) error
 
 func SendSimple(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeSimple, speaker: SpeakerNPCLeft})
+	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeSimple, speaker: SpeakerNPCLeft})
 }
 
 func SendNext(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeNext, speaker: SpeakerNPCLeft})
+	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeNext, speaker: SpeakerNPCLeft})
 }
 
 func SendNextPrevious(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeNextPrevious, speaker: SpeakerNPCLeft})
+	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeNextPrevious, speaker: SpeakerNPCLeft})
 }
 
 func SendPrevious(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypePrevious, speaker: SpeakerNPCLeft})
+	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypePrevious, speaker: SpeakerNPCLeft})
 }
 
 func SendYesNo(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeYesNo, speaker: SpeakerNPCLeft})
+	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeYesNo, speaker: SpeakerNPCLeft})
 }
 
 func SendOk(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeOk, speaker: SpeakerNPCLeft})
+	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeOk, speaker: SpeakerNPCLeft})
 }
 
 func SendAcceptDecline(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId,&TalkConfig{messageType: MessageTypeAcceptDecline, speaker: SpeakerNPCLeft})
+	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeAcceptDecline, speaker: SpeakerNPCLeft})
 }
 
 func SendGetNumber(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
@@ -154,6 +160,6 @@ func SendDimensionalMirror(l logrus.FieldLogger, characterId uint32, npcId uint3
 
 func OpenShop(l logrus.FieldLogger) func(characterId uint32, shopId uint32) {
 	return func(characterId uint32, shopId uint32) {
-		
+
 	}
 }
