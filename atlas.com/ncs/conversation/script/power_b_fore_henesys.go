@@ -80,7 +80,7 @@ func (r PowerBForeHenesys) RoomSelection(selection int32) StateProducer {
 			return r.RoomFull(l, c)
 		}
 
-		return r.Warp(r.TrainingMap()+uint32(selection))(l, c)
+		return Warp(r.TrainingMap()+uint32(selection))(l, c)
 	}
 }
 

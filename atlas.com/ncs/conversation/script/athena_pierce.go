@@ -35,7 +35,7 @@ func (r AthenaPierce) FirstJobInitial(l logrus.FieldLogger, c Context) State {
 }
 
 func (r AthenaPierce) FirstJobRequirementCheck(l logrus.FieldLogger, c Context) State {
-	if character.IsLevel(l)(c.CharacterId, 10) && character.HasDexterity(l)(c.CharacterId, 25) {
+	if character.MeetsCriteria(l)(c.CharacterId, character.IsLevelCriteria(10), character.HasDexterityCriteria(25)) {
 		m := message.NewBuilder().
 			AddText("It is an important and final choice. You will not be able to turn back.")
 		return SendNextPrevious(l, c, m.String(), r.AwardFirstJob, r.FirstJobInitial)

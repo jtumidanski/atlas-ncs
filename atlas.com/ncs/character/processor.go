@@ -76,7 +76,7 @@ func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quan
 		count := uint32(0)
 		for _, i := range items.Data {
 			count += i.Attributes.Quantity
-			if count > quantity {
+			if count >= quantity {
 				return true
 			}
 		}
@@ -163,33 +163,15 @@ func LevelBetweenCriteria(lower byte, upper byte) AttributeCriteria {
 	}
 }
 
-func HasStrength(l logrus.FieldLogger) func(characterId uint32, amount uint16) bool {
-	return func(characterId uint32, amount uint16) bool {
-		return MeetsCriteria(l)(characterId, HasStrengthCriteria(amount))
-	}
-}
-
 func HasStrengthCriteria(amount uint16) AttributeCriteria {
 	return func(c *Model) bool {
 		return c.Strength() >= amount
 	}
 }
 
-func HasDexterity(l logrus.FieldLogger) func(characterId uint32, amount uint16) bool {
-	return func(characterId uint32, amount uint16) bool {
-		return MeetsCriteria(l)(characterId, HasDexterityCriteria(amount))
-	}
-}
-
 func HasDexterityCriteria(amount uint16) AttributeCriteria {
 	return func(c *Model) bool {
 		return c.Dexterity() >= amount
-	}
-}
-
-func HasIntelligence(l logrus.FieldLogger) func(characterId uint32, amount uint16) bool {
-	return func(characterId uint32, amount uint16) bool {
-		return MeetsCriteria(l)(characterId, HasIntelligenceCriteria(amount))
 	}
 }
 
@@ -237,7 +219,7 @@ func GainItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32, amou
 
 func GainFame(l logrus.FieldLogger) func(characterId uint32, amount int32) {
 	return func(characterId uint32, amount int32) {
-
+		//TODO implement fame gain.
 	}
 }
 
@@ -284,85 +266,93 @@ func IsAJobCriteria(options ...uint16) AttributeCriteria {
 
 func CompleteQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
 	return func(characterId uint32, questId uint32) {
-
+		//TODO
 	}
 }
 
 func CompleteQuestViaNPC(l logrus.FieldLogger) func(characterId uint32, questId uint32, npcId uint32) {
 	return func(characterId uint32, questId uint32, npcId uint32) {
-
+		//TODO
 	}
 }
 
 func QuestStarted(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
 	return func(characterId uint32, questId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func QuestCompleted(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
 	return func(characterId uint32, questId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func StartQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
 	return func(characterId uint32, questId uint32) {
-
+		//TODO
 	}
 }
 
 func SaveLocation(l logrus.FieldLogger) func(characterId uint32, location string) {
 	return func(characterId uint32, location string) {
-
+		//TODO
 	}
 }
 
 func BuddyCapacity(l logrus.FieldLogger) func(characterId uint32) uint8 {
 	return func(characterId uint32) uint8 {
+		//TODO
 		return 0
 	}
 }
 
 func IncreaseBuddyCapacity(l logrus.FieldLogger) func(characterId uint32, amount int8) error {
 	return func(characterId uint32, amount int8) error {
+		//TODO
 		return nil
 	}
 }
 
 func HasPets(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func HasPet(l logrus.FieldLogger) func(characterId uint32, slot int16) bool {
 	return func(characterId uint32, slot int16) bool {
+		//TODO
 		return false
 	}
 }
 
 func PetIs(l logrus.FieldLogger) func(characterId uint32, slot int16, petId ...uint32) bool {
 	return func(characterId uint32, slot int16, petId ...uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func PetIsLevel(l logrus.FieldLogger) func(characterId uint32, slot int16, level byte) bool {
 	return func(characterId uint32, slot int16, level byte) bool {
+		//TODO
 		return false
 	}
 }
 
 func EvolvePet(l logrus.FieldLogger) func(characterId uint32, slot int16, itemId uint32) {
 	return func(characterId uint32, slot int16, itemId uint32) {
-
+		//TODO
 	}
 }
 
 func GainCloseness(l logrus.FieldLogger) func(characterId uint32, amount int8) {
 	return func(characterId uint32, amount int8) {
-
+		//TODO
 	}
 }
 
@@ -401,31 +391,32 @@ func GetFace(l logrus.FieldLogger) func(characterId uint32) uint32 {
 
 func SetHair(l logrus.FieldLogger) func(characterId uint32, hair uint32) {
 	return func(characterId uint32, hair uint32) {
-
+		//TODO
 	}
 }
 
 func SetSkin(l logrus.FieldLogger) func(characterId uint32, skin byte) {
 	return func(characterId uint32, skin byte) {
-
+		//TODO
 	}
 }
 
 func SetFace(l logrus.FieldLogger) func(characterId uint32, face uint32) {
 	return func(characterId uint32, face uint32) {
-
+		//TODO
 	}
 }
 
 func QuestNotStarted(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
 	return func(characterId uint32, questId uint32) bool {
+		//TODO
 		return true
 	}
 }
 
 func ForceCompleteQuest(l logrus.FieldLogger) func(characterId uint32, questId uint32) {
 	return func(characterId uint32, questId uint32) {
-
+		//TODO
 	}
 }
 
@@ -443,72 +434,79 @@ func AnyQuestActive(l logrus.FieldLogger) func(characterId uint32, questId ...ui
 
 func QuestActive(l logrus.FieldLogger) func(characterId uint32, questId uint32) bool {
 	return func(characterId uint32, questId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func TransportBoarding(l logrus.FieldLogger) func(characterId uint32, departureMapId uint32, destinationMapId uint32) bool {
 	return func(characterId uint32, departureMapId uint32, destinationMapId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func RemoveFromSlot(l logrus.FieldLogger) func(characterId uint32, inventoryType string, slot int16, amount int32) {
 	return func(characterId uint32, inventoryType string, slot int16, amount int32) {
-
+		//TODO
 	}
 }
 
 func GainExperience(l logrus.FieldLogger) func(characterId uint32, amount int32) {
 	return func(characterId uint32, amount int32) {
-
+		//TODO
 	}
 }
 
 func HasParty(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func QuestProgress(l logrus.FieldLogger) func(characterId uint32, questId uint32) string {
 	return func(characterId uint32, questId uint32) string {
+		//TODO
 		return ""
 	}
 }
 
 func QuestProgressInt(l logrus.FieldLogger) func(characterId uint32, questId uint32, infoNumber int) int {
 	return func(characterId uint32, questId uint32, infoNumber int) int {
+		//TODO
 		return 0
 	}
 }
 
 func SetQuestProgress(l logrus.FieldLogger) func(characterId uint32, questId uint32, infoNumber int, progress uint32) {
 	return func(characterId uint32, questId uint32, infoNumber int, progress uint32) {
-
+		//TODO
 	}
 }
 
 func SetQuestProgressString(l logrus.FieldLogger) func(characterId uint32, questId uint32, progress string) {
 	return func(characterId uint32, questId uint32, progress string) {
-
+		//TODO
 	}
 }
 
 func RemoveAll(l logrus.FieldLogger) func(characterId uint32, itemId uint32) {
 	return func(characterId uint32, itemId uint32) {
-
+		//TODO
 	}
 }
 
 func SavedLocation(l logrus.FieldLogger) func(characterId uint32, location string) uint32 {
 	return func(characterId uint32, location string) uint32 {
+		//TODO
 		return 0
 	}
 }
 
 func ClearSavedLocation(l logrus.FieldLogger) func(characterId uint32, location string) {
 	return func(characterId uint32, location string) {
+		//TODO
 	}
 }
 
@@ -520,6 +518,7 @@ func IsCygnus(l logrus.FieldLogger) func(characterId uint32) bool {
 
 func IsCygnusCriteria() AttributeCriteria {
 	return func(c *Model) bool {
+		//TODO
 		return false
 	}
 }
@@ -532,127 +531,138 @@ func IsJobBranch(l logrus.FieldLogger) func(characterId uint32, branch uint32) b
 
 func IsJobBranchCriteria(branch uint32) AttributeCriteria {
 	return func(c *Model) bool {
+		//TODO
 		return false
 	}
 }
 
 func UseItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) {
 	return func(characterId uint32, itemId uint32) {
-
+		//TODO
 	}
 }
 
 func GuideHint(l logrus.FieldLogger) func(characterId uint32, hint uint32) {
 	return func(characterId uint32, hint uint32) {
-
+		//TODO
 	}
 }
 
 func SendNotice(l logrus.FieldLogger) func(characterId uint32, noticeType string, message string) {
 	return func(characterId uint32, noticeType string, message string) {
-
+		//TODO
 	}
 }
 
 func AreaInfo(l logrus.FieldLogger) func(characterId uint32, areaId uint16, property string) bool {
 	return func(characterId uint32, areaId uint16, property string) bool {
+		//TODO
 		return false
 	}
 }
 
 func ShowIntro(l logrus.FieldLogger) func(characterId uint32, path string) {
 	return func(characterId uint32, path string) {
-
+		//TODO
 	}
 }
 
 func SetAreaInfo(l logrus.FieldLogger) func(characterId uint32, areaId uint16, property string) {
 	return func(characterId uint32, areaId uint16, property string) {
-
+		//TODO
 	}
 }
 
 func SpawnGuide(l logrus.FieldLogger) func(characterId uint32) {
 	return func(characterId uint32) {
-
+		//TODO
 	}
 }
 
 func HasGuild(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func IsGuildLeader(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func GuildHasAlliance(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func AllianceLeader(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func ValidAllianceName(l logrus.FieldLogger) func(text string) bool {
 	return func(text string) bool {
+		//TODO
 		return false
 	}
 }
 
 func CreateAlliance(l logrus.FieldLogger) func(characterId uint32, name string) error {
 	return func(characterId uint32, name string) error {
+		//TODO
 		return nil
 	}
 }
 
 func AllianceAtCapacity(l logrus.FieldLogger) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func ExpandAlliance(l logrus.FieldLogger) func(characterId uint32) error {
 	return func(characterId uint32) error {
+		//TODO
 		return nil
 	}
 }
 
 func ShowEffect(l logrus.FieldLogger) func(characterId uint32, path string) {
 	return func(characterId uint32, path string) {
-
+		//TODO
 	}
 }
 
 func PlaySound(l logrus.FieldLogger) func(characterId uint32, path string) {
 	return func(characterId uint32, path string) {
-
+		//TODO
 	}
 }
 
 func HasEquipped(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
 	return func(characterId uint32, itemId uint32) bool {
+		//TODO
 		return false
 	}
 }
 
 func TeachSkill(l logrus.FieldLogger) func(characterId uint32, skillId uint32, level byte, masterLevel byte, expiration int64) {
 	return func(characterId uint32, skillId uint32, level byte, masterLevel byte, expiration int64) {
-
+		//TODO
 	}
 }
 
 func ChangeMusic(l logrus.FieldLogger) func(characterId uint32, path string) {
 	return func(characterId uint32, path string) {
-
+		//TODO
 	}
 }
 
@@ -664,12 +674,14 @@ func IsLevelBetweenCriteria(lower byte, upper byte) AttributeCriteria {
 
 func BuffSource(l logrus.FieldLogger) func(characterId uint32, source int32) uint32 {
 	return func(characterId uint32, source int32) uint32 {
+		//TODO
 		return 0
 	}
 }
 
 func ItemQuantity(l logrus.FieldLogger) func(characterId uint32, itemId uint32) uint32 {
 	return func(characterId uint32, itemId uint32) uint32 {
+		//TODO
 		return 0
 	}
 }

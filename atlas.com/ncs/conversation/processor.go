@@ -15,6 +15,11 @@ var Processor = func(l logrus.FieldLogger) *processor {
 
 func (p processor) Start(worldId byte, channelId byte, mapId uint32, npcId uint32, npcObjectId uint32, characterId uint32) {
 	p.l.Debugf("Start conversation with NPC %d with character %d in map %d.", npcId, characterId, mapId)
+	s, err := GetRegistry().GetPreviousContext(characterId)
+	if err == nil {
+		p.l.Debugf("Previous conversation between character %d and npc %d exists, avoiding starting new conversation with %d.", characterId, s.ctx.NPCId, npcId)
+		return
+	}
 
 	c, err := script.GetRegistry().GetScript(npcId)
 	if err != nil {

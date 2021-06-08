@@ -44,7 +44,7 @@ func (r GrendelTheReallyOld) FirstJobInitial(l logrus.FieldLogger, c Context) St
 }
 
 func (r GrendelTheReallyOld) FirstJobRequirementCheck(l logrus.FieldLogger, c Context) State {
-	if character.IsLevel(l)(c.CharacterId, 8) && character.HasIntelligence(l)(c.CharacterId, 20) {
+	if character.MeetsCriteria(l)(c.CharacterId, character.IsLevelCriteria(8), character.HasIntelligenceCriteria(20)) {
 		m := message.NewBuilder().
 			AddText("Oh...! You look like someone that can definitely be a part of us... all you need is a little sinister mind, and... yeah... so, what do you think? Wanna be the Magician?")
 		return SendYesNo(l, c, m.String(), r.AwardFirstJob, r.FirstJobInitial)
