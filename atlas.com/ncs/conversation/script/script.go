@@ -1,7 +1,9 @@
 package script
 
 import (
+	"atlas-ncs/character"
 	"atlas-ncs/npc"
+	"atlas-ncs/npc/message"
 	"github.com/sirupsen/logrus"
 )
 
@@ -366,4 +368,70 @@ func WarpByName(mapId uint32, portalName string) StateProducer {
 		}
 		return Exit()(l, c)
 	}
+}
+
+type SkinCareScript interface {
+	NPCId() uint32
+
+	Coupon() uint32
+
+	HelloMessage() string
+
+	MissingMessage() string
+
+	ChooseStyleMessage() string
+}
+
+type GenericSkinCare struct {
+	s SkinCareScript
+}
+
+func (g GenericSkinCare) NPCId() uint32 {
+	return g.s.NPCId()
+}
+
+func (g GenericSkinCare) Initial(l logrus.FieldLogger, c Context) State {
+	return SendListSelection(l, c, g.s.HelloMessage(), g.Choices)
+}
+
+func (g GenericSkinCare) Choices(selection int32) StateProducer {
+	switch selection {
+	case 0:
+		return g.SkinCoupon
+	}
+	return nil
+}
+
+func (g GenericSkinCare) SkinCoupon(l logrus.FieldLogger, c Context) State {
+	if !character.HasItem(l)(c.CharacterId, g.s.Coupon()) {
+		return g.MissingCoupon(l, c)
+	}
+
+	return g.ChooseStyle(l, c)
+}
+
+func (g GenericSkinCare) MissingCoupon(l logrus.FieldLogger, c Context) State {
+	m := message.NewBuilder().
+		AddText(g.s.MissingMessage())
+	return SendOk(l, c, m.String())
+}
+
+func (g GenericSkinCare) ChooseStyle(l logrus.FieldLogger, c Context) State {
+	m := message.NewBuilder().
+		AddText(g.s.ChooseStyleMessage())
+	return SendStyle(l, c, m.String(), g.ProcessSelection, []uint32{0, 1, 2, 3, 4})
+}
+
+func (g GenericSkinCare) ProcessSelection(selection int32) StateProducer {
+	return func(l logrus.FieldLogger, c Context) State {
+		character.GainItem(l)(c.CharacterId, g.s.Coupon(), -1)
+		character.SetSkin(l)(c.CharacterId, byte(selection))
+		return g.Enjoy(l, c)
+	}
+}
+
+func (g GenericSkinCare) Enjoy(l logrus.FieldLogger, c Context) State {
+	m := message.NewBuilder().
+		AddText("Enjoy your new and improved skin!")
+	return SendOk(l, c, m.String())
 }
