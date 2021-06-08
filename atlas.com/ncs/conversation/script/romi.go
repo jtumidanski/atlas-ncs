@@ -1,7 +1,7 @@
 package script
 
 import (
-	"atlas-ncs/conversation/script/generic/skin"
+	"atlas-ncs/conversation/script/generic/care"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
@@ -22,5 +22,5 @@ func (r Romi) Initial(l logrus.FieldLogger, c Context) State {
 		BlueText().ShowItemName1(item.OrbisSkinCoupon).
 		BlackText().AddText(", you can let us take care of the rest and have the kind of skin you've always wanted~!").
 		String()
-	return skin.NewGenericCare(item.OrbisSkinCoupon, hello)(l, c)
+	return care.NewGenericSkinCare(item.OrbisSkinCoupon, hello)(l, c)
 }
