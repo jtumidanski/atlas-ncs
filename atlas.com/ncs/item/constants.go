@@ -550,4 +550,14 @@ const (
 	MuLungCosmeticLensCouponVIP            uint32 = 5152041
 	MuLungPlasticSurgeryCouponRegular      uint32 = 5152027
 	MuLungCosmeticLensCouponRegular        uint32 = 5152042
+	AriantHairStyleCouponRegular           uint32 = 5150026
+	AriantHairColorCouponRegular           uint32 = 5151021
+	ShowaHairStyleCouponVIP                uint32 = 5150009
+	ShowaHairColorCouponVIP                uint32 = 5151009
+	ShowaHairStyleCouponRegular            uint32 = 5150008
+	ShowaHairColorCouponRegular            uint32 = 5151008
+	ShowaFaceCouponVIP                     uint32 = 5152009
+	ShowaCosmeticLensCouponVIP             uint32 = 5152045
+	ShowaFaceCouponRegular                 uint32 = 5152008
+	ShowaCosmeticLensCouponRegular         uint32 = 5152046
 )

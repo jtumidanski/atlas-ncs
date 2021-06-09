@@ -22,7 +22,11 @@ func (r Mini) Initial(l logrus.FieldLogger, c script.Context) script.State {
 }
 
 func (r Mini) CareOptions() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.RegularStyleHair(item.LudibriumHairStyleCouponRegular), r.ExperimentalStyleHair(item.LudibriumHairStyleCouponExperimental), care.ColorCareRandom(item.LudibriumHairColorCouponRegular, r.Initial)}
+	return []care.ChoiceConfig{
+		r.RegularStyleHair(item.LudibriumHairStyleCouponRegular),
+		r.ExperimentalStyleHair(item.LudibriumHairStyleCouponExperimental),
+		care.ColorCareRandom(item.LudibriumHairColorCouponRegular, r.Initial),
+	}
 }
 
 func (r Mini) Hello() string {
