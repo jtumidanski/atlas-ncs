@@ -573,4 +573,23 @@ const (
 	AmoriaCosmeticLensCouponVIP            uint32 = 5152026
 	AmoriaFaceCouponVIP                    uint32 = 5152022
 	AmoriaFaceCouponRegular                uint32 = 5152021
+	NLCCosmeticLensCouponRegular           uint32 = 5152035
+	NLCCosmeticLensCouponVIP               uint32 = 5152036
+	NLCHairStyleCouponExperimental         uint32 = 5150030
+	NLCHairColorCouponRegular              uint32 = 5151025
+	NLCHairStyleCouponVIP                  uint32 = 5150031
+	NLCHairColorCouponVIP                  uint32 = 5151026
+	NLCHairMembershipCoupon                uint32 = 5420001
+	NLCSkinCoupon                          uint32 = 5153009
+	NLCFaceCouponVIP                       uint32 = 5152034
+	NLFFaceCouponRegular                   uint32 = 5152033
+	CBDFaceCouponRegular                   uint32 = 5152037
+	CBDFaceCouponVIP                       uint32 = 5152038
+	CBDSkinCoupon                          uint32 = 5153010
+	CBDCosmeticLensCouponRegular           uint32 = 5152039
+	CBDCosmeticLensCouponVIP               uint32 = 5152040
+	CBDHairStyleCouponVIP                  uint32 = 5150033
+	CBDHairColorCouponVIP                  uint32 = 5151028
+	CBDHairStyleCouponRegular              uint32 = 5150032
+	CBDHairColorCouponRegular              uint32 = 5151027
 )
