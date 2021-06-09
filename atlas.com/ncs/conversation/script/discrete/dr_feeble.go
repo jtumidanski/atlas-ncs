@@ -18,12 +18,15 @@ func (r DrFeeble) NPCId() uint32 {
 }
 
 func (r DrFeeble) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	hello := message.NewBuilder().
+	return care.NewGenericCare(r.Hello(), r.ProvidedCare())(l, c)
+}
+
+func (r DrFeeble) Hello() string {
+	return message.NewBuilder().
 		AddText("Hi, I pretty much shouldn't be doing this, but with a ").
 		BlueText().ShowItemName1(item.HenesysFaceCouponRegular).
 		BlackText().AddText(", I will do it anyways for you. But don't forget, it will be random!").
 		String()
-	return care.NewGenericCare(hello, r.ProvidedCare())(l, c)
 }
 
 func (r DrFeeble) ProvidedCare() []care.ChoiceConfig {

@@ -18,12 +18,15 @@ func (r DenmaTheOwner) NPCId() uint32 {
 }
 
 func (r DenmaTheOwner) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	hello := message.NewBuilder().
+	return care.NewGenericCare(r.Hello(), r.ProvidedCare())(l, c)
+}
+
+func (r DenmaTheOwner) Hello() string {
+	return message.NewBuilder().
 		AddText("Well, hello! Welcome to the Henesys Plastic Surgery! Would you like to transform your face into something new? With a ").
 		BlueText().ShowItemName1(item.HenesysFaceCouponVIP).
 		BlackText().AddText(", you can let us take care of the rest and have the face you've always wanted~!").
 		String()
-	return care.NewGenericCare(hello, r.ProvidedCare())(l, c)
 }
 
 func (r DenmaTheOwner) ProvidedCare() []care.ChoiceConfig {

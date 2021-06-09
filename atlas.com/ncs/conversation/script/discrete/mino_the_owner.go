@@ -19,16 +19,15 @@ func (r MinoTheOwner) NPCId() uint32 {
 }
 
 func (r MinoTheOwner) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+	return care.NewGenericCare(r.Hello(), []care.ChoiceConfig{r.StyleHair(), care.ColorCareChoice(item.OrbisHairColorCouponVIP)})(l, c)
 }
 
-func (r MinoTheOwner) Hello(l logrus.FieldLogger, c script.Context) script.State {
-	hello := message.NewBuilder().
+func (r MinoTheOwner) Hello() string {
+	return message.NewBuilder().
 		AddText("Hello I'm Mino. If you have either a ").
 		BlueText().ShowItemName1(item.OrbisHairStyleCouponVIP).
 		BlackText().AddText(", then please let me take care of your hair. Choose what you want to do with it.").
 		String()
-	return care.NewGenericCare(hello, []care.ChoiceConfig{r.StyleHair(), care.ColorCareChoice(item.OrbisHairColorCouponVIP)})(l, c)
 }
 
 func (r MinoTheOwner) StyleHair() care.ChoiceConfig {
