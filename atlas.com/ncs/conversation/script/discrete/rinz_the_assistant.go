@@ -36,7 +36,12 @@ func (r RinzTheAssistant) Hello() string {
 }
 
 func (r RinzTheAssistant) CareOptions() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.DirtyHair(), r.RegularStyleHair(), r.ExperimentalStyleHair(), care.ColorCareRandom(item.OrbisHairColorCouponRegular, r.Initial)}
+	return []care.ChoiceConfig{
+		r.DirtyHair(),
+		r.RegularStyleHair(item.OrbisHairStyleCouponRegular),
+		r.ExperimentalStyleHair(item.OrbisHairStyleCouponExperimental),
+		care.ColorCareRandom(item.OrbisHairColorCouponRegular, r.Initial),
+	}
 }
 
 func (r RinzTheAssistant) DirtyHair() care.ChoiceConfig {
@@ -52,29 +57,15 @@ func (r RinzTheAssistant) DirtyHair() care.ChoiceConfig {
 	return care.NewChoiceConfig(next, care.HairStyleCouponListText(item.OrbisDirtyHairCoupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
 }
 
-func (r RinzTheAssistant) RegularStyleHair() care.ChoiceConfig {
-	hairStyle := message.NewBuilder().
-		AddText("If you use this REGULAR coupon, your hair may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(item.OrbisHairStyleCouponRegular).
-		BlackText().AddText(", I will do it anyways for you. But don't forget, it will be random!").
-		String()
-
+func (r RinzTheAssistant) RegularStyleHair(coupon uint32) care.ChoiceConfig {
 	maleHair := []uint32{30230, 30260, 30280, 30340, 30490, 30530, 30630, 30740}
 	femaleHair := []uint32{31110, 31220, 31230, 31630, 31650, 31710, 31790, 31890, 31930}
-	next := care.WarnRandomStyle(hairStyle, item.OrbisHairStyleCouponRegular, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(item.OrbisHairStyleCouponRegular), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.RegularHairCare(coupon, maleHair, femaleHair, r.Initial)
 }
 
-func (r RinzTheAssistant) ExperimentalStyleHair() care.ChoiceConfig {
-	hairStyle := message.NewBuilder().
-		AddText("If you use the EXP coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that even you didn't think was possible. Are you going to use ").
-		BlueText().ShowItemName1(item.OrbisHairStyleCouponExperimental).
-		BlackText().AddText(" and really change your hairstyle?").
-		String()
-
+func (r RinzTheAssistant) ExperimentalStyleHair(coupon uint32) care.ChoiceConfig {
 	maleHair := []uint32{30230, 30280, 30340, 30490, 30530, 30740}
 	femaleHair := []uint32{31110, 31220, 31230, 31710, 31790, 31890, 31930}
-	next := care.WarnRandomStyle(hairStyle, item.OrbisHairStyleCouponExperimental, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(item.OrbisHairStyleCouponExperimental), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.ExperimentalHairCare(coupon, maleHair, femaleHair, r.Initial)
 }
 

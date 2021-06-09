@@ -34,18 +34,7 @@ func (r Kelvin) ProvidedCare() []care.ChoiceConfig {
 }
 
 func (r Kelvin) FaceVIP(coupon uint32) care.ChoiceConfig {
-	prompt := message.NewBuilder().
-		AddText("Let's see... I can totally transform your face into something new. Don't you want to try it? For ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText(", you can get the face of your liking. Take your time in choosing the face of your preference.").
-		String()
-
 	male := []uint32{20005, 20012, 20013, 20020, 20021, 20026}
 	female := []uint32{21006, 21009, 21011, 21012, 21021, 21025}
-	choiceSupplier := care.FaceChoices(male, female)
-
-	vip := care.ProcessCoupon(coupon, care.SetFace, care.SetSingleUse(true))
-	next := care.ShowChoices(prompt, choiceSupplier, vip)
-
-	return care.NewChoiceConfig(next, care.FaceCouponListText(coupon), care.FaceCouponMissing(), care.FaceEnjoy())
+	return care.FaceVIPCare(coupon, male, female)
 }

@@ -27,22 +27,8 @@ func (r JJ) Initial(l logrus.FieldLogger, c script.Context) script.State {
 }
 
 func (r JJ) ProvidedCare() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.CosmeticVIP(item.NLCCosmeticLensCouponVIP), r.CosmeticOneTime()}
-}
-
-func (r JJ) CosmeticVIP(coupon uint32) care.ChoiceConfig {
-	prompt := "With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking."
-
-	special := care.ProcessCoupon(coupon, care.SetFace, care.SetSingleUse(true))
-	next := care.ShowChoices(prompt, care.LensColorChoices, special)
-	return care.NewChoiceConfig(next, care.LensCouponListText(coupon), care.LensCouponMissing(), care.LensEnjoy())
-}
-
-func (r JJ) CosmeticOneTime() care.ChoiceConfig {
-	//TODO coupon consumption might need to be reviewed
-	prompt := "With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking."
-
-	special := care.ProcessCoupon(item.OneTimeCosmeticLensBlack, care.SetFace, care.SetSingleUse(true))
-	next := care.ShowChoicesWithNone(prompt, care.LensColorOneTimeChoices, special)
-	return care.NewChoiceConfig(next, care.LensCouponOneTimeListText(item.OneTimeCosmeticLensBlack), care.LensCouponMissing(), care.LensEnjoy())
+	return []care.ChoiceConfig{
+		care.CosmeticVIPCare(item.NLCCosmeticLensCouponVIP),
+		care.CosmeticOneTimeCare(),
+	}
 }

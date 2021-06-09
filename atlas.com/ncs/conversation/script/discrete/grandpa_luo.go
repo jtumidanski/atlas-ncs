@@ -18,8 +18,14 @@ func (r GrandpaLuo) NPCId() uint32 {
 }
 
 func (r GrandpaLuo) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return care.NewGenericCare(r.Hello(), []care.ChoiceConfig{r.StyleHair(item.MuLungHairStyleCouponVIP, item.MuLungHairMembershipCoupon),
-		care.ColorCareChoice(item.MuLungHairColorCouponVIP)})(l, c)
+	return care.NewGenericCare(r.Hello(), r.CareOptions())(l, c)
+}
+
+func (r GrandpaLuo) CareOptions() []care.ChoiceConfig {
+	return []care.ChoiceConfig{
+		r.StyleHair(item.MuLungHairStyleCouponVIP, item.MuLungHairMembershipCoupon),
+		care.ColorCareChoice(item.MuLungHairColorCouponVIP),
+	}
 }
 
 func (r GrandpaLuo) Hello() string {
@@ -35,12 +41,5 @@ func (r GrandpaLuo) Hello() string {
 func (r GrandpaLuo) StyleHair(coupon uint32, membershipCoupon uint32) care.ChoiceConfig {
 	maleHair := []uint32{30150, 30240, 30370, 30420, 30640, 30710, 30750, 30810}
 	femaleHair := []uint32{31140, 31160, 31180, 31300, 31460, 31470, 31660, 31910}
-	choiceSupplier := care.HairStyleChoices(maleHair, femaleHair)
-
-	vip := care.ProcessCoupon(coupon, care.SetHair, care.SetSingleUse(true))
-	membership := care.ProcessCoupon(membershipCoupon, care.SetHair, care.SetSingleUse(false), care.SetFailFunction(vip))
-
-	hairStyle := care.StylePrompt(coupon)
-	next := care.ShowChoices(hairStyle, choiceSupplier, membership)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.VIPHairCareWithMembership(coupon, membershipCoupon, maleHair, femaleHair)
 }

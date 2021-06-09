@@ -32,30 +32,14 @@ func (r Saeko) Hello() string {
 }
 
 func (r Saeko) ProvidedCare() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.PlasticSurgery(item.ShowaFaceCouponRegular), r.CosmeticRegular(item.ShowaCosmeticLensCouponRegular)}
+	return []care.ChoiceConfig{
+		r.PlasticSurgery(item.ShowaFaceCouponRegular),
+		care.CosmeticRegularCare(item.ShowaCosmeticLensCouponRegular, r.Initial),
+	}
 }
 
 func (r Saeko) PlasticSurgery(coupon uint32) care.ChoiceConfig {
-	prompt := message.NewBuilder().
-		AddText("If you use the regular coupon, your face may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText("?").
-		String()
-
 	maleFace := []uint32{20000, 20016, 20019, 20020, 20021, 20024, 20026}
 	femaleFace := []uint32{21000, 21002, 21009, 21016, 21022, 21025, 21027}
-
-	next := care.WarnRandomFace(prompt, coupon, maleFace, femaleFace, care.SetFace, r.Initial)
-	return care.NewChoiceConfig(next, care.FaceCouponListText(coupon), care.FaceCouponMissing(), care.FaceEnjoy())
-}
-
-func (r Saeko) CosmeticRegular(coupon uint32) care.ChoiceConfig {
-	prompt := message.NewBuilder().
-		AddText("If you use the regular coupon, you'll be awarded a random pair of cosmetic lenses. Are you going to use a ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText(" and really make the change to your eyes?").
-		String()
-
-	next := care.WarnRandomLensColor(prompt, coupon, care.SetFace, r.Initial)
-	return care.NewChoiceConfig(next, care.LensCouponListText(coupon), care.LensCouponMissing(), care.LensEnjoy())
+	return care.FaceRegularCare(coupon, maleFace, femaleFace, r.Initial)
 }

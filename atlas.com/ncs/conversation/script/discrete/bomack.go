@@ -27,16 +27,5 @@ func (r Bomack) Initial(l logrus.FieldLogger, c script.Context) script.State {
 }
 
 func (r Bomack) ProvidedCare() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.CosmeticRegular(item.NLCCosmeticLensCouponRegular)}
-}
-
-func (r Bomack) CosmeticRegular(coupon uint32) care.ChoiceConfig {
-	prompt := message.NewBuilder().
-		AddText("If you use the regular coupon, you'll be awarded a random pair of cosmetic lenses. Are you going to use a ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText(" and really make the change to your eyes?").
-		String()
-
-	next := care.WarnRandomLensColor(prompt, coupon, care.SetFace, r.Initial)
-	return care.NewChoiceConfig(next, care.LensCouponListText(coupon), care.LensCouponMissing(), care.LensEnjoy())
+	return []care.ChoiceConfig{care.CosmeticRegularCare(item.NLCCosmeticLensCouponRegular, r.Initial)}
 }

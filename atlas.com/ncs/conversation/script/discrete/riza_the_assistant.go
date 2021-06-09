@@ -34,15 +34,7 @@ func (r RizaTheAssistant) ProvidedCare() []care.ChoiceConfig {
 }
 
 func (r RizaTheAssistant) PlasticSurgery(coupon uint32) care.ChoiceConfig {
-	prompt := message.NewBuilder().
-		AddText("If you use the regular coupon, your face may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText("?").
-		String()
-
 	maleFace := []uint32{20003, 20011, 20021, 20022, 20023, 20027, 20031}
 	femaleFace := []uint32{21004, 21007, 21010, 21012, 21020, 21021, 21030}
-
-	next := care.WarnRandomFace(prompt, coupon, maleFace, femaleFace, care.SetFace, r.Initial)
-	return care.NewChoiceConfig(next, care.FaceCouponListText(coupon), care.FaceCouponMissing(), care.FaceEnjoy())
+	return care.FaceRegularCare(coupon, maleFace, femaleFace, r.Initial)
 }

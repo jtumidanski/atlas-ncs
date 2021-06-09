@@ -39,14 +39,7 @@ func (r Jimmy) Hello() string {
 }
 
 func (r Jimmy) RegularStyleHair(coupon uint32) care.ChoiceConfig {
-	hairStyle := message.NewBuilder().
-		AddText("If you use this REGULAR coupon, your hair may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText(", I will do it anyways for you. But don't forget, it will be random!").
-		String()
-
 	maleHair := []uint32{30110, 30180, 30260, 30290, 30300, 30350, 30470, 30720, 30840}
 	femaleHair := []uint32{31110, 31200, 31250, 31280, 31600, 31640, 31670, 31810, 34020}
-	next := care.WarnRandomStyle(hairStyle, coupon, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.RegularHairCare(coupon, maleHair, femaleHair, r.Initial)
 }

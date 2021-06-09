@@ -582,7 +582,7 @@ const (
 	NLCHairMembershipCoupon                uint32 = 5420001
 	NLCSkinCoupon                          uint32 = 5153009
 	NLCFaceCouponVIP                       uint32 = 5152034
-	NLFFaceCouponRegular                   uint32 = 5152033
+	NLCFaceCouponRegular                   uint32 = 5152033
 	CBDFaceCouponRegular                   uint32 = 5152037
 	CBDFaceCouponVIP                       uint32 = 5152038
 	CBDSkinCoupon                          uint32 = 5153010

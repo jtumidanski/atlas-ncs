@@ -39,14 +39,7 @@ func (r Shati) Hello() string {
 }
 
 func (r Shati) RegularStyleHair(coupon uint32) care.ChoiceConfig {
-	hairStyle := message.NewBuilder().
-		AddText("If you use this REGULAR coupon, your hair may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText(", I will do it anyways for you. But don't forget, it will be random!").
-		String()
-
 	maleHair := []uint32{30150, 30170, 30180, 30320, 30330, 30410, 30460, 30680, 30800, 30820, 30900}
 	femaleHair := []uint32{31090, 31190, 31330, 31340, 31400, 31420, 31520, 31620, 31650, 31660, 34000}
-	next := care.WarnRandomStyle(hairStyle, coupon, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.RegularHairCare(coupon, maleHair, femaleHair, r.Initial)
 }

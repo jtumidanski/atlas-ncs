@@ -155,3 +155,57 @@ func FilterCurrentFace(l logrus.FieldLogger) func(characterId uint32, faces []ui
 		return results
 	}
 }
+
+func CosmeticRegularCare(coupon uint32, no script.StateProducer) ChoiceConfig {
+	prompt := message.NewBuilder().
+		AddText("If you use the regular coupon, you'll be awarded a random pair of cosmetic lenses. Are you going to use a ").
+		BlueText().ShowItemName1(coupon).
+		BlackText().AddText(" and really make the change to your eyes?").
+		String()
+
+	next := WarnRandomLensColor(prompt, coupon, SetFace, no)
+	return NewChoiceConfig(next, LensCouponListText(coupon), LensCouponMissing(), LensEnjoy())
+}
+
+func CosmeticVIPCare(coupon uint32) ChoiceConfig {
+	prompt := "With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking."
+
+	special := ProcessCoupon(coupon, SetFace, SetSingleUse(true))
+	next := ShowChoices(prompt, LensColorChoices, special)
+	return NewChoiceConfig(next, LensCouponListText(coupon), LensCouponMissing(), LensEnjoy())
+}
+
+func CosmeticOneTimeCare() ChoiceConfig {
+	//TODO coupon consumption might need to be reviewed
+	prompt := "With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking."
+
+	special := ProcessCoupon(item.OneTimeCosmeticLensBlack, SetFace, SetSingleUse(true))
+	next := ShowChoicesWithNone(prompt, LensColorOneTimeChoices, special)
+	return NewChoiceConfig(next, LensCouponOneTimeListText(item.OneTimeCosmeticLensBlack), LensCouponMissing(), LensEnjoy())
+}
+
+func FaceVIPCare(coupon uint32, male []uint32, female []uint32) ChoiceConfig {
+	prompt := message.NewBuilder().
+		AddText("Let's see... I can totally transform your face into something new. Don't you want to try it? For ").
+		BlueText().ShowItemName1(coupon).
+		BlackText().AddText(", you can get the face of your liking. Take your time in choosing the face of your preference.").
+		String()
+
+	choiceSupplier := FaceChoices(male, female)
+
+	vip := ProcessCoupon(coupon, SetFace, SetSingleUse(true))
+	next := ShowChoices(prompt, choiceSupplier, vip)
+
+	return NewChoiceConfig(next, FaceCouponListText(coupon), FaceCouponMissing(), FaceEnjoy())
+}
+
+func FaceRegularCare(coupon uint32, male []uint32, female []uint32, no script.StateProducer) ChoiceConfig {
+	prompt := message.NewBuilder().
+		AddText("If you use the regular coupon, your face may transform into a random new look...do you still want to do it using ").
+		BlueText().ShowItemName1(coupon).
+		BlackText().AddText("?").
+		String()
+
+	next := WarnRandomFace(prompt, coupon, male, female, SetFace, no)
+	return NewChoiceConfig(next, FaceCouponListText(coupon), FaceCouponMissing(), FaceEnjoy())
+}

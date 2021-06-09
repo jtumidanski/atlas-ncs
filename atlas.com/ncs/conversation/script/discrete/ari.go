@@ -22,7 +22,10 @@ func (r Ari) Initial(l logrus.FieldLogger, c script.Context) script.State {
 }
 
 func (r Ari) CareOptions() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.ExperimentalStyleHair(item.NLCHairStyleCouponExperimental), care.ColorCareRandom(item.NLCHairColorCouponRegular, r.Initial)}
+	return []care.ChoiceConfig{
+		r.ExperimentalStyleHair(item.NLCHairStyleCouponExperimental),
+		care.ColorCareRandom(item.NLCHairColorCouponRegular, r.Initial),
+	}
 }
 
 func (r Ari) Hello() string {
@@ -36,14 +39,7 @@ func (r Ari) Hello() string {
 }
 
 func (r Ari) ExperimentalStyleHair(coupon uint32) care.ChoiceConfig {
-	hairStyle := message.NewBuilder().
-		AddText("If you use the EXP coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that even you didn't think was possible. Are you going to use ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText(" and really change your hairstyle?").
-		String()
-
 	maleHair := []uint32{30250, 30400, 30430, 30440, 30490, 30730, 30830, 30870, 30880, 33100}
 	femaleHair := []uint32{31320, 31450, 31560, 31570, 31690, 31720, 31730, 31830, 34010}
-	next := care.WarnRandomStyle(hairStyle, coupon, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.ExperimentalHairCare(coupon, maleHair, femaleHair, r.Initial)
 }

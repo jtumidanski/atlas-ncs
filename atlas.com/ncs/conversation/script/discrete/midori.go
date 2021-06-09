@@ -39,14 +39,7 @@ func (r Midori) Hello() string {
 }
 
 func (r Midori) RegularStyleHair(coupon uint32) care.ChoiceConfig {
-	hairStyle := message.NewBuilder().
-		AddText("If you use this REGULAR coupon, your hair may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText(", I will do it anyways for you. But don't forget, it will be random!").
-		String()
-
 	maleHair := []uint32{30260, 30280, 30340, 30360, 30710, 30780, 30790, 30800, 30810, 30820, 30920}
 	femaleHair := []uint32{31350, 31410, 31460, 31540, 31550, 31710, 31720, 31770, 31790, 31800, 31850, 34000}
-	next := care.WarnRandomStyle(hairStyle, coupon, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.RegularHairCare(coupon, maleHair, femaleHair, r.Initial)
 }

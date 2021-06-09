@@ -34,15 +34,7 @@ func (r Everton) ProvidedCare() []care.ChoiceConfig {
 }
 
 func (r Everton) PlasticSurgery(coupon uint32) care.ChoiceConfig {
-	prompt := message.NewBuilder().
-		AddText("If you use the regular coupon, your face may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(coupon).
-		BlackText().AddText("?").
-		String()
-
 	maleFace := []uint32{20001, 20003, 20007, 20013, 20021, 20023, 20025}
 	femaleFace := []uint32{21002, 21004, 21006, 21008, 21022, 21027, 21029}
-
-	next := care.WarnRandomFace(prompt, coupon, maleFace, femaleFace, care.SetFace, r.Initial)
-	return care.NewChoiceConfig(next, care.FaceCouponListText(coupon), care.FaceCouponMissing(), care.FaceEnjoy())
+	return care.FaceRegularCare(coupon, maleFace, femaleFace, r.Initial)
 }
