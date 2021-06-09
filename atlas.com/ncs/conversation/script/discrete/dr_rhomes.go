@@ -9,30 +9,34 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// DrLenu is located in Victoria Road - Henesys Plastic Surgery (100000103)
-type DrLenu struct {
+// DrRhomes is located in Orbis Park - Orbis Plastic Surgery (200000201)
+type DrRhomes struct {
 }
 
-func (r DrLenu) NPCId() uint32 {
-	return npc.DrLenu
+func (r DrRhomes) NPCId() uint32 {
+	return npc.DrRhomes
 }
 
-func (r DrLenu) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	hello := message.NewBuilder().
-		AddText("Hi, there~! I'm Dr. Lenu, in charge of the cosmetic lenses here at the Henesys Plastic Surgery Shop! With ").
-		BlueText().ShowItemName1(item.HenesysCosmeticLensCouponRegular).
+func (r DrRhomes) Initial(l logrus.FieldLogger, c script.Context) script.State {
+	return care.NewGenericCare(r.Hello(), r.ProvidedCare())(l, c)
+}
+
+func (r DrRhomes) Hello() string {
+	return message.NewBuilder().
+		AddText("Hello, I'm Dr. Rhomes, head of the cosmetic lens department here at the Orbis Plastic Surgery Shop.").NewLine().
+		AddText("My goal here is to add personality to everyone's eyes through the wonders of cosmetic lenses, and with ").
+		BlueText().ShowItemName1(item.OrbisCosmeticLensCouponRegular).
 		BlackText().AddText(" or ").
-		BlueText().ShowItemName1(item.HenesysCosmeticLensCouponVIP).
-		BlackText().AddText(", you can let us take care of the rest and have the kind of beautiful look you've always craved~! Remember, the first thing everyone notices about you is the eyes, and we can help you find the cosmetic lens that most fits you! Now, what would you like to use?").
+		BlueText().ShowItemName1(item.OrbisCosmeticLensCouponVIP).
+		BlackText().AddText(", I can do the same for you, too! Now, what would you like to use?").
 		String()
-	return care.NewGenericCare(hello, r.ProvidedCare())(l, c)
 }
 
-func (r DrLenu) ProvidedCare() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.CosmeticRegular(item.HenesysCosmeticLensCouponRegular), r.CosmeticVIP(item.HenesysCosmeticLensCouponVIP), r.CosmeticOneTime()}
+func (r DrRhomes) ProvidedCare() []care.ChoiceConfig {
+	return []care.ChoiceConfig{r.CosmeticRegular(item.OrbisCosmeticLensCouponRegular), r.CosmeticVIP(item.OrbisCosmeticLensCouponVIP), r.CosmeticOneTime()}
 }
 
-func (r DrLenu) CosmeticRegular(coupon uint32) care.ChoiceConfig {
+func (r DrRhomes) CosmeticRegular(coupon uint32) care.ChoiceConfig {
 	prompt := message.NewBuilder().
 		AddText("If you use the regular coupon, you'll be awarded a random pair of cosmetic lenses. Are you going to use a ").
 		BlueText().ShowItemName1(coupon).
@@ -43,7 +47,7 @@ func (r DrLenu) CosmeticRegular(coupon uint32) care.ChoiceConfig {
 	return care.NewChoiceConfig(next, care.LensCouponListText(coupon), care.LensCouponMissing(), care.LensEnjoy())
 }
 
-func (r DrLenu) CosmeticVIP(coupon uint32) care.ChoiceConfig {
+func (r DrRhomes) CosmeticVIP(coupon uint32) care.ChoiceConfig {
 	prompt := "With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking."
 
 	special := care.ProcessCoupon(coupon, care.SetFace, care.SetSingleUse(true))
@@ -51,7 +55,7 @@ func (r DrLenu) CosmeticVIP(coupon uint32) care.ChoiceConfig {
 	return care.NewChoiceConfig(next, care.LensCouponListText(coupon), care.LensCouponMissing(), care.LensEnjoy())
 }
 
-func (r DrLenu) CosmeticOneTime() care.ChoiceConfig {
+func (r DrRhomes) CosmeticOneTime() care.ChoiceConfig {
 	//TODO coupon consumption might need to be reviewed
 	prompt := "With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking."
 
