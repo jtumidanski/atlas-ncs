@@ -521,4 +521,5 @@ const (
 	OneTimeCosmeticLensEmerald          uint32 = 5152105
 	OneTimeCosmeticLensPurple           uint32 = 5152106
 	OneTimeCosmeticLensAmethyst         uint32 = 5152107
+	HenesysFaceCouponVIP                uint32 = 5152001
 )

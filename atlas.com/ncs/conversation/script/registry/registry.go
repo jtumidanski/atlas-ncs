@@ -117,6 +117,7 @@ func initRegistry() *Registry {
 	s.addConversation(discrete.DemonsDoorwayHenesys{})
 	s.addConversation(discrete.DemonsDoorwayKerningCity{})
 	s.addConversation(discrete.DemonsDoorwayPerion{})
+	s.addConversation(discrete.DenmaTheOwner{})
 	s.addConversation(discrete.Desk{})
 	s.addConversation(discrete.DimensionalMirror{})
 	s.addConversation(discrete.DocumentRoll{})

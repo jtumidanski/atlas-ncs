@@ -127,3 +127,31 @@ func LensColorOneTimeChoices(l logrus.FieldLogger, c script.Context) []uint32 {
 	}
 	return colors
 }
+
+func FaceChoices(male []uint32, female []uint32) ChoicesSupplier {
+	return func(l logrus.FieldLogger, c script.Context) []uint32 {
+		choices := make([]uint32, 0)
+		gender := character.GetGender(l)(c.CharacterId)
+		if gender == character.GenderMale {
+			choices = male
+		} else if gender == character.GenderFemale {
+			choices = female
+		}
+		choices = ApplyEyeColor(l)(c.CharacterId, choices)
+		choices = FilterCurrentFace(l)(c.CharacterId, choices)
+		return choices
+	}
+}
+
+func FilterCurrentFace(l logrus.FieldLogger) func(characterId uint32, faces []uint32) []uint32 {
+	return func(characterId uint32, faces []uint32) []uint32 {
+		current := character.GetFace(l)(characterId)
+		results := make([]uint32, 0)
+		for _, h := range faces {
+			if h != current {
+				results = append(results, h)
+			}
+		}
+		return results
+	}
+}
