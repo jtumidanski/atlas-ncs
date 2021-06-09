@@ -537,4 +537,17 @@ const (
 	LudibriumHairMembership                uint32 = 5420005
 	LudibriumHairStyleCouponVIP            uint32 = 5150007
 	LudibriumHairColorCouponVIP            uint32 = 5151007
+	LudibriumHairStyleCouponRegular        uint32 = 5150006
+	LudibriumHairStyleCouponExperimental   uint32 = 5150012
+	LudibriumHairColorCouponRegular        uint32 = 5151006
+	LudibriumFaceCouponVIP                 uint32 = 5152007
+	MuLungHairStyleCouponVIP               uint32 = 5150025
+	MuLungHairColorCouponVIP               uint32 = 5151020
+	MuLungHairMembershipCoupon             uint32 = 5420006
+	MuLungHairStyleCouponExperimental      uint32 = 5150024
+	MuLungHairColorCouponRegular           uint32 = 5151019
+	MuLungPlasticSurgeryCouponVIP          uint32 = 5152028
+	MuLungCosmeticLensCouponVIP            uint32 = 5152041
+	MuLungPlasticSurgeryCouponRegular      uint32 = 5152027
+	MuLungCosmeticLensCouponRegular        uint32 = 5152042
 )

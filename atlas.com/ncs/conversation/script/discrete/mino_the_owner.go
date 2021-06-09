@@ -19,7 +19,8 @@ func (r MinoTheOwner) NPCId() uint32 {
 }
 
 func (r MinoTheOwner) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return care.NewGenericCare(r.Hello(), []care.ChoiceConfig{r.StyleHair(), care.ColorCareChoice(item.OrbisHairColorCouponVIP)})(l, c)
+	return care.NewGenericCare(r.Hello(), []care.ChoiceConfig{r.StyleHair(item.OrbisHairStyleCouponVIP, item.OrbisHairMembershipCoupon),
+		care.ColorCareChoice(item.OrbisHairColorCouponVIP)})(l, c)
 }
 
 func (r MinoTheOwner) Hello() string {
@@ -30,16 +31,16 @@ func (r MinoTheOwner) Hello() string {
 		String()
 }
 
-func (r MinoTheOwner) StyleHair() care.ChoiceConfig {
+func (r MinoTheOwner) StyleHair(coupon uint32, membershipCoupon uint32) care.ChoiceConfig {
 	maleHair := []uint32{character.HairBlackFoilPerm, character.HairBlackMetrosexual, character.HairBlackMohecanShaggyDo, character.HairBlackTristan, character.HairBlackMessySpike}
 	femaleHair := []uint32{character.HairBlackMonica, character.HairBlackCaspia, character.HairBlackRose, character.HairBlackTheHoneybun, character.HairBlackPrincessa}
 	choiceSupplier := care.HairStyleChoices(maleHair, femaleHair)
 
 
-	vip := care.ProcessCoupon(item.OrbisHairStyleCouponVIP, care.SetHair, care.SetSingleUse(true))
-	membership := care.ProcessCoupon(item.OrbisHairMembershipCoupon, care.SetHair, care.SetSingleUse(false), care.SetFailFunction(vip))
+	vip := care.ProcessCoupon(coupon, care.SetHair, care.SetSingleUse(true))
+	membership := care.ProcessCoupon(membershipCoupon, care.SetHair, care.SetSingleUse(false), care.SetFailFunction(vip))
 
-	hairStyle := care.StylePrompt(item.OrbisHairStyleCouponVIP)
+	hairStyle := care.StylePrompt(coupon)
 	next := care.ShowChoices(hairStyle, choiceSupplier, membership)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(item.OrbisHairStyleCouponVIP), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
 }

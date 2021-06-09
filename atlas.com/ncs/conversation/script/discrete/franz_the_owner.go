@@ -30,13 +30,13 @@ func (r FranzTheOwner) Hello() string {
 }
 
 func (r FranzTheOwner) ProvidedCare() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.FaceVIP()}
+	return []care.ChoiceConfig{r.FaceVIP(item.OrbisFaceCouponVIP)}
 }
 
-func (r FranzTheOwner) FaceVIP() care.ChoiceConfig {
+func (r FranzTheOwner) FaceVIP(coupon uint32) care.ChoiceConfig {
 	prompt := message.NewBuilder().
 		AddText("Let's see... I can totally transform your face into something new. Don't you want to try it? For ").
-		BlueText().ShowItemName1(item.OrbisFaceCouponVIP).
+		BlueText().ShowItemName1(coupon).
 		BlackText().AddText(", you can get the face of your liking. Take your time in choosing the face of your preference.").
 		String()
 
@@ -44,8 +44,8 @@ func (r FranzTheOwner) FaceVIP() care.ChoiceConfig {
 	female := []uint32{21000, 21001, 21002, 21003, 21004, 21005, 21006, 21007, 21008, 21012, 21014, 21023, 21026}
 	choiceSupplier := care.FaceChoices(male, female)
 
-	vip := care.ProcessCoupon(item.OrbisFaceCouponVIP, care.SetFace, care.SetSingleUse(true))
+	vip := care.ProcessCoupon(coupon, care.SetFace, care.SetSingleUse(true))
 	next := care.ShowChoices(prompt, choiceSupplier, vip)
 
-	return care.NewChoiceConfig(next, care.FaceCouponListText(item.OrbisFaceCouponVIP), care.FaceCouponMissing(), care.FaceEnjoy())
+	return care.NewChoiceConfig(next, care.FaceCouponListText(coupon), care.FaceCouponMissing(), care.FaceEnjoy())
 }

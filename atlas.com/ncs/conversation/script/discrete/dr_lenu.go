@@ -50,9 +50,10 @@ func (r DrLenu) CosmeticVIP() care.ChoiceConfig {
 }
 
 func (r DrLenu) CosmeticOneTime() care.ChoiceConfig {
+	//TODO coupon consumption might need to be reviewed
 	prompt := "With our specialized machine, you can see yourself after the treatment in advance. What kind of lens would you like to wear? Choose the style of your liking."
 
-	special := care.ProcessCoupon(item.HenesysCosmeticLensCouponVIP, care.SetFace, care.SetSingleUse(true))
+	special := care.ProcessCoupon(item.OneTimeCosmeticLensBlack, care.SetFace, care.SetSingleUse(true))
 	next := care.ShowChoicesWithNone(prompt, care.LensColorOneTimeChoices, special)
 	return care.NewChoiceConfig(next, care.LensCouponOneTimeListText(item.OneTimeCosmeticLensBlack), care.LensCouponMissing(), care.LensEnjoy())
 }

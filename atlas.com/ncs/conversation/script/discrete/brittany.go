@@ -23,7 +23,7 @@ func (r Brittany) Initial(l logrus.FieldLogger, c script.Context) script.State {
 }
 
 func (r Brittany) CareOptions() []care.ChoiceConfig {
-	return []care.ChoiceConfig{r.RegularStyleHair(), r.ExperimentalStyleHair(), care.ColorCareRandom(item.HenesysHairColorCouponREG, r.Initial)}
+	return []care.ChoiceConfig{r.RegularStyleHair(item.HenesysHairStyleCouponREG), r.ExperimentalStyleHair(item.HenesysHairStyleCouponEXP), care.ColorCareRandom(item.HenesysHairColorCouponREG, r.Initial)}
 }
 
 func (r Brittany) Hello() string {
@@ -38,28 +38,28 @@ func (r Brittany) Hello() string {
 		String()
 }
 
-func (r Brittany) RegularStyleHair() care.ChoiceConfig {
+func (r Brittany) RegularStyleHair(coupon uint32) care.ChoiceConfig {
 	hairStyle := message.NewBuilder().
 		AddText("If you use this REGULAR coupon, your hair may transform into a random new look...do you still want to do it using ").
-		BlueText().ShowItemName1(item.HenesysHairStyleCouponREG).
+		BlueText().ShowItemName1(coupon).
 		BlackText().AddText(", I will do it anyways for you. But don't forget, it will be random!").
 		String()
 
 	maleHair := []uint32{character.HairBlackCatalyst, character.HairBlackTopknot, character.HairBlackWind, character.HairBlackShaggyWax, character.HairBlackAcorn, character.HairBlackTheMoRawk, character.HairBlackAranCut, character.HairBlackTheCoco}
 	femaleHair := []uint32{character.HairBlackStella, character.HairBlackRainbow, character.HairBlackAngelica, character.HairBlackChantelle, character.HairBlackFourtailBraids, character.HairBlackCrazyMedusa, character.HairBlackAranHair, character.HairBlackFullBangs}
-	next := care.WarnRandomStyle(hairStyle, item.HenesysHairStyleCouponREG, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(item.HenesysHairStyleCouponREG), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	next := care.WarnRandomStyle(hairStyle, coupon, maleHair, femaleHair, care.SetHair, r.Initial)
+	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
 }
 
-func (r Brittany) ExperimentalStyleHair() care.ChoiceConfig {
+func (r Brittany) ExperimentalStyleHair(coupon uint32) care.ChoiceConfig {
 	hairStyle := message.NewBuilder().
 		AddText("If you use the EXP coupon your hair will change RANDOMLY with a chance to obtain a new experimental style that even you didn't think was possible. Are you going to use ").
-		BlueText().ShowItemName1(item.HenesysHairStyleCouponEXP).
+		BlueText().ShowItemName1(coupon).
 		BlackText().AddText(" and really change your hairstyle?").
 		String()
 
 	maleHair := []uint32{character.HairBlackBuzz, character.HairBlackTopknot, character.HairBlackWind, character.HairBlackShaggyWax, character.HairBlackAcorn, character.HairBlackTheMoRawk, character.HairBlackAranCut, character.HairBlackTheCoco}
 	femaleHair := []uint32{character.HairBlackStella, character.HairBlackAngelica, character.HairBlackChantelle, character.HairBlackFourtailBraids, character.HairSkinHead, character.HairBlackCrazyMedusa, character.HairBlackAranHair, character.HairBlackFullBangs}
-	next := care.WarnRandomStyle(hairStyle, item.HenesysHairStyleCouponEXP, maleHair, femaleHair, care.SetHair, r.Initial)
-	return care.NewChoiceConfig(next, care.HairStyleCouponListText(item.HenesysHairStyleCouponEXP), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
+	next := care.WarnRandomStyle(hairStyle, coupon, maleHair, femaleHair, care.SetHair, r.Initial)
+	return care.NewChoiceConfig(next, care.HairStyleCouponListText(coupon), care.HairStyleCouponMissing(), care.HairStyleEnjoy())
 }
