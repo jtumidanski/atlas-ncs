@@ -1,0 +1,35 @@
+package discrete
+
+import (
+	"atlas-ncs/character"
+	"atlas-ncs/conversation/script"
+	"atlas-ncs/item"
+	"atlas-ncs/npc"
+	"github.com/sirupsen/logrus"
+)
+
+// Meteorite4 is located in Omega Sector - Kulan Field II (221040100)
+type Meteorite4 struct {
+}
+
+func (r Meteorite4) NPCId() uint32 {
+	return npc.Meteorite4
+}
+
+func (r Meteorite4) Initial(l logrus.FieldLogger, c script.Context) script.State {
+	if character.QuestStarted(l)(c.CharacterId, 3421) {
+		id := c.NPCId - 2050014
+
+		progress := character.QuestProgressInt(l)(c.CharacterId, 3421, 1)
+		if (progress>>id)%2 == 0 || (progress == 63 && !character.HasItems(l)(c.CharacterId, item.MeteoriteSample, 6)) {
+			if character.CanHold(l)(c.CharacterId, item.MeteoriteSample) {
+				progress |= 1 << id
+				character.GainItem(l)(c.CharacterId, item.MeteoriteSample, 1)
+				character.SetQuestProgress(l)(c.CharacterId, 3421, 1, uint32(progress))
+			} else {
+				character.SendNotice(l)(c.CharacterId, "POP_UP", "Have a ETC slot available for this item.")
+			}
+		}
+	}
+	return script.Exit()(l, c)
+}

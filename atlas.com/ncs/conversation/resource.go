@@ -1,7 +1,7 @@
 package conversation
 
 import (
-	"atlas-ncs/conversation/script"
+	registry2 "atlas-ncs/conversation/script/registry"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -18,7 +18,7 @@ func GetConversation(l logrus.FieldLogger) http.HandlerFunc {
 			return
 		}
 
-		_, err = script.GetRegistry().GetScript(uint32(npcId))
+		_, err = registry2.GetRegistry().GetScript(uint32(npcId))
 		if err != nil {
 			l.WithError(err).Debugf("Script for npc %d is not implemented.", npcId)
 			w.WriteHeader(http.StatusNotFound)

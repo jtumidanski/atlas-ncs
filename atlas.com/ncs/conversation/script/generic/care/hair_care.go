@@ -66,8 +66,26 @@ func WarnRandomStyle(prompt string, coupon uint32, maleHair []uint32, femaleHair
 	}
 }
 
+func WarnRandomColor(prompt string, choice ChoiceHandlerProducer, no script.StateProducer) ChoiceStateProducer {
+	return func(config ChoiceConfig) script.StateProducer {
+		return func(l logrus.FieldLogger, c script.Context) script.State {
+			randomSupplier := GetRandomHairColor(l, c)
+			choiceProcessor := choice(randomSupplier)
+			return script.SendYesNo(l, c, prompt, choiceProcessor(config), no)
+		}
+	}
+}
+
+func GetRandomHairColor(l logrus.FieldLogger, c script.Context) ChoiceSupplier {
+	return func() uint32 {
+		hair := HairColorChoices(l, c)
+		return hair[rand.Intn(len(hair))]
+	}
+}
+
 func ApplyCurrentColor(l logrus.FieldLogger) func(characterId uint32, hair []uint32) []uint32 {
 	return func(characterId uint32, hair []uint32) []uint32 {
+		//TODO need to verify color combination exists
 		color := character.GetHair(l)(characterId) % 10
 		results := make([]uint32, 0)
 		for _, h := range hair {
@@ -114,11 +132,16 @@ func StylePrompt(coupon uint32) string {
 		String()
 }
 
+func ColorCareRandom(coupon uint32, no script.StateProducer) ChoiceConfig {
+	hairColor := ColorRandomPrompt(coupon)
+	processCoupon := ProcessCoupon(coupon, SetHair, SetSingleUse(true))
+	return NewChoiceConfig(WarnRandomColor(hairColor, processCoupon, no), SetListText(DyeListEntry(coupon)), HairColorCouponMissing(), HairColorEnjoy())
+}
+
 func ColorCareChoice(coupon uint32) ChoiceConfig {
-	listText := DyeListEntry(coupon)
 	hairColor := ColorPrompt(coupon)
 	vip := ProcessCoupon(coupon, SetHair, SetSingleUse(true))
-	return ChoiceConfig{ListText: listText, NextState: ShowChoices(hairColor, HairColorChoices, vip)}
+	return NewChoiceConfig(ShowChoices(hairColor, HairColorChoices, vip), SetListText(DyeListEntry(coupon)), HairColorCouponMissing(), HairColorEnjoy())
 }
 
 func DyeListEntry(coupon uint32) string {
@@ -131,4 +154,20 @@ func ColorPrompt(coupon uint32) string {
 		BlueText().ShowItemName1(coupon).
 		BlackText().AddText(" I'll change it for you. Choose the one to your liking.").
 		String()
+}
+
+func ColorRandomPrompt(coupon uint32) string {
+	return message.NewBuilder().
+		AddText("If you use a regular coupon your hair will change RANDOMLY. Do you still want to use ").
+		BlueText().ShowItemName1(coupon).
+		BlackText().AddText(" and change it up?").
+		String()
+}
+
+func HairColorEnjoy() ChoiceConfigurator {
+	return SetEnjoy("Enjoy your new and improved haircolor!")
+}
+
+func HairColorCouponMissing() ChoiceConfigurator {
+	return SetMissingCoupon("Hmmm...it looks like you don't have our designated coupon...I'm afraid I can't dye your hair without it. I'm sorry...")
 }

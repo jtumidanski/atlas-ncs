@@ -2,6 +2,7 @@ package conversation
 
 import (
 	"atlas-ncs/conversation/script"
+	registry2 "atlas-ncs/conversation/script/registry"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,7 +22,7 @@ func (p processor) Start(worldId byte, channelId byte, mapId uint32, npcId uint3
 		return
 	}
 
-	c, err := script.GetRegistry().GetScript(npcId)
+	c, err := registry2.GetRegistry().GetScript(npcId)
 	if err != nil {
 		p.l.Errorf("Script for npc %d is not implemented.", npcId)
 		return

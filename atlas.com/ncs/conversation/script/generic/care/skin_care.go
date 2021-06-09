@@ -8,7 +8,7 @@ import (
 )
 
 func SkinCareChoice(coupon uint32) ChoiceConfig {
-	skinPrompt := Prompt(coupon)
+	skinPrompt := SkinCarePrompt(coupon)
 	skinColors := FixedChoices([]uint32{0, 1, 2, 3, 4})
 	couponProcessor := ProcessCoupon(coupon, SetSkin, SetSingleUse(true))
 
@@ -28,7 +28,7 @@ func MissingSkinCoupon() string {
 	return "Um... you don't have the skin-care coupon you need to receive the treatment. Sorry, but I am afraid we can't do it for you..."
 }
 
-func Prompt(_ uint32) string {
+func SkinCarePrompt(_ uint32) string {
 	return "With our specialized machine, you can see the way you'll look after the treatment PRIOR to the procedure. What kind of a look are you looking for? Go ahead and choose the style of your liking~!"
 }
 
