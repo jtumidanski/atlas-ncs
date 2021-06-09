@@ -123,6 +123,7 @@ func initRegistry() *Registry {
 	s.addConversation(discrete.Dolphin{})
 	s.addConversation(discrete.Dolphin2{})
 	s.addConversation(discrete.DrFeeble{})
+	s.addConversation(discrete.DrLenu{})
 	s.addConversation(discrete.Dunamis{})
 	s.addConversation(discrete.Duru{})
 	s.addConversation(discrete.Eckhart{})

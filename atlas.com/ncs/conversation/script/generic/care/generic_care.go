@@ -132,6 +132,23 @@ func ShowChoices(prompt string, s ChoicesSupplier, next ChoiceHandlerProducer) C
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, c script.Context) script.State {
 			choices := s(l, c)
+			if len(choices) == 0 {
+				l.Errorf("Zero choices available for care.")
+				return script.SendOk(l, c, message.NewBuilder().AddText("No styles available.").String())
+			}
+			return script.SendStyle(l, c, prompt, ChoiceSelection(config)(choices, next), choices)
+		}
+	}
+}
+
+func ShowChoicesWithNone(prompt string, s ChoicesSupplier, next ChoiceHandlerProducer) ChoiceStateProducer {
+	return func(config ChoiceConfig) script.StateProducer {
+		return func(l logrus.FieldLogger, c script.Context) script.State {
+			choices := s(l, c)
+			if len(choices) == 0 {
+				m := message.NewBuilder().AddText(config.MissingCoupon)
+				return script.SendOk(l, c, m.String())
+			}
 			return script.SendStyle(l, c, prompt, ChoiceSelection(config)(choices, next), choices)
 		}
 	}
@@ -208,8 +225,7 @@ func Enjoy(config ChoiceConfig) script.StateProducer {
 func MissingCoupon(_ ChoiceSupplier) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, c script.Context) script.State {
-			m := message.NewBuilder().
-				AddText(config.MissingCoupon)
+			m := message.NewBuilder().AddText(config.MissingCoupon)
 			return script.SendOk(l, c, m.String())
 		}
 	}

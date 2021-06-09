@@ -511,4 +511,14 @@ const (
 	TicketToKerningCityFromCBD          uint32 = 4031732
 	TicketToSingaporeFromKerningCity    uint32 = 4031731
 	HenesysFaceCouponRegular            uint32 = 5152000
+	HenesysCosmeticLensCouponRegular    uint32 = 5152010
+	HenesysCosmeticLensCouponVIP        uint32 = 5152013
+	OneTimeCosmeticLensBlack            uint32 = 5152100
+	OneTimeCosmeticLensBlue             uint32 = 5152101
+	OneTimeCosmeticLensRed              uint32 = 5152102
+	OneTimeCosmeticLensGreen            uint32 = 5152103
+	OneTimeCosmeticLensBrown            uint32 = 5152104
+	OneTimeCosmeticLensEmerald          uint32 = 5152105
+	OneTimeCosmeticLensPurple           uint32 = 5152106
+	OneTimeCosmeticLensAmethyst         uint32 = 5152107
 )
