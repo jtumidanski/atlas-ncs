@@ -510,4 +510,5 @@ const (
 	WildEyesGasMask                     uint32 = 1003036
 	TicketToKerningCityFromCBD          uint32 = 4031732
 	TicketToSingaporeFromKerningCity    uint32 = 4031731
+	HenesysFaceCouponRegular            uint32 = 5152000
 )
