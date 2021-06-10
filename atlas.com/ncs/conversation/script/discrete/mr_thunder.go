@@ -126,157 +126,157 @@ func (r MrThunder) UpgradeAShield() refine.RefinementCategory {
 	}
 }
 
-func (r MrThunder) BronzeRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeOre, Amount: 10}}, Cost: 300}
+func (r MrThunder) BronzeRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeOre, Amount: 10}}, refine.SetCost(300))
 }
 
-func (r MrThunder) SteelRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelOre, Amount: 10}}, Cost: 300}
+func (r MrThunder) SteelRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelOre, Amount: 10}}, refine.SetCost(300))
 }
 
-func (r MrThunder) MithrilRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilOre, Amount: 10}}, Cost: 300}
+func (r MrThunder) MithrilRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.MithrilOre, Amount: 10}}, refine.SetCost(300))
 }
 
-func (r MrThunder) AdamantiumRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AdamantiumOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) AdamantiumRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.AdamantiumOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) SilverRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SilverOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) SilverRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SilverOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) OrihalconRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OrihalconOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) OrihalconRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OrihalconOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) GoldRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GoldOre, Amount: 10}}, Cost: 800}
+func (r MrThunder) GoldRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.GoldOre, Amount: 10}}, refine.SetCost(800))
 }
 
-func (r MrThunder) GarnetRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GarnetOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) GarnetRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.GarnetOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) AmethystRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AmethystOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) AmethystRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.AmethystOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) AquamarineRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AquaMarineOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) AquamarineRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.AquaMarineOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) EmeraldRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.EmeraldOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) EmeraldRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.EmeraldOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) OpalRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OpalOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) OpalRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OpalOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) SapphireRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SapphireOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) SapphireRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SapphireOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) TopazRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.TopazOre, Amount: 10}}, Cost: 500}
+func (r MrThunder) TopazRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.TopazOre, Amount: 10}}, refine.SetCost(500))
 }
 
-func (r MrThunder) DiamondRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.DiamondOre, Amount: 10}}, Cost: 1000}
+func (r MrThunder) DiamondRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.DiamondOre, Amount: 10}}, refine.SetCost(1000))
 }
 
-func (r MrThunder) BlackCrystalRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlackCrystalOre, Amount: 10}}, Cost: 3000}
+func (r MrThunder) BlackCrystalRefineRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlackCrystalOre, Amount: 10}}, refine.SetCost(3000))
 }
 
-func (r MrThunder) BlueMetalGearRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MetalGear, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 500}
+func (r MrThunder) BlueMetalGearRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.MetalGear, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, refine.SetCost(500))
 }
-func (r MrThunder) YellowMetalGearRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MetalGear, Amount: 1}, {ItemId: item.Topaz, Amount: 1}}, Cost: 300}
+func (r MrThunder) YellowMetalGearRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.MetalGear, Amount: 1}, {ItemId: item.Topaz, Amount: 1}}, refine.SetCost(300))
 }
-func (r MrThunder) MetalKoifRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeKoif, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 500}
+func (r MrThunder) MetalKoifRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeKoif, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, refine.SetCost(500))
 }
-func (r MrThunder) MithrilKoifRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeKoif, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 800}
+func (r MrThunder) MithrilKoifRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeKoif, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, refine.SetCost(800))
 }
-func (r MrThunder) SteelHelmetRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeHelmet, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 500}
+func (r MrThunder) SteelHelmetRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeHelmet, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, refine.SetCost(500))
 }
-func (r MrThunder) MithrilHelmetRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeHelmet, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 800}
+func (r MrThunder) MithrilHelmetRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeHelmet, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, refine.SetCost(800))
 }
-func (r MrThunder) SteelFullHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFullHelm, Amount: 1}, {ItemId: item.SteelPlate, Amount: 2}}, Cost: 1000}
+func (r MrThunder) SteelFullHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeFullHelm, Amount: 1}, {ItemId: item.SteelPlate, Amount: 2}}, refine.SetCost(1000))
 }
-func (r MrThunder) MithrilFullHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFullHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 2}}, Cost: 1500}
+func (r MrThunder) MithrilFullHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeFullHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 2}}, refine.SetCost(1500))
 }
-func (r MrThunder) IronVikingHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeVikingHelm, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, Cost: 1500}
+func (r MrThunder) IronVikingHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeVikingHelm, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, refine.SetCost(1500))
 }
-func (r MrThunder) MithrilVikingHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeVikingHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, Cost: 2000}
+func (r MrThunder) MithrilVikingHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeVikingHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, refine.SetCost(2000))
 }
-func (r MrThunder) SteelFootballHelmetRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFootballHelmet, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, Cost: 1500}
+func (r MrThunder) SteelFootballHelmetRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeFootballHelmet, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, refine.SetCost(1500))
 }
-func (r MrThunder) MithrilFootballHelmetRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFootballHelmet, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, Cost: 2000}
+func (r MrThunder) MithrilFootballHelmetRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeFootballHelmet, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, refine.SetCost(2000))
 }
-func (r MrThunder) MithrilSharpHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSharpHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 4}}, Cost: 2000}
+func (r MrThunder) MithrilSharpHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelSharpHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 4}}, refine.SetCost(2000))
 }
-func (r MrThunder) GoldSharpHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSharpHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 4}}, Cost: 4000}
+func (r MrThunder) GoldSharpHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelSharpHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 4}}, refine.SetCost(4000))
 }
-func (r MrThunder) OrihalconBurgernetHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.IronBurgernetHelm, Amount: 1}, {ItemId: item.OrihalconPlate, Amount: 5}}, Cost: 4000}
+func (r MrThunder) OrihalconBurgernetHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.IronBurgernetHelm, Amount: 1}, {ItemId: item.OrihalconPlate, Amount: 5}}, refine.SetCost(4000))
 }
-func (r MrThunder) GoldBurgernetHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.IronBurgernetHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 5}}, Cost: 5000}
+func (r MrThunder) GoldBurgernetHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.IronBurgernetHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 5}}, refine.SetCost(5000))
 }
-func (r MrThunder) GreatRedHelmetRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GreatBrownHelmet, Amount: 1}, {ItemId: item.Garnet, Amount: 3}}, Cost: 8000}
+func (r MrThunder) GreatRedHelmetRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.GreatBrownHelmet, Amount: 1}, {ItemId: item.Garnet, Amount: 3}}, refine.SetCost(8000))
 }
-func (r MrThunder) GreatBlueHelmetRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GreatBrownHelmet, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, Cost: 10000}
+func (r MrThunder) GreatBlueHelmetRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.GreatBrownHelmet, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, refine.SetCost(10000))
 }
-func (r MrThunder) MithrilNordicHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelNordicHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 5}}, Cost: 12000}
+func (r MrThunder) MithrilNordicHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelNordicHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 5}}, refine.SetCost(12000))
 }
-func (r MrThunder) GoldNordicHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelNordicHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 6}}, Cost: 15000}
+func (r MrThunder) GoldNordicHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelNordicHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 6}}, refine.SetCost(15000))
 }
-func (r MrThunder) MithrilCrusaderHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeCrusaderHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 5}}, Cost: 20000}
+func (r MrThunder) MithrilCrusaderHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeCrusaderHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 5}}, refine.SetCost(20000))
 }
-func (r MrThunder) SilverCrusaderHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeCrusaderHelm, Amount: 1}, {ItemId: item.SilverPlate, Amount: 4}}, Cost: 25000}
+func (r MrThunder) SilverCrusaderHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeCrusaderHelm, Amount: 1}, {ItemId: item.SilverPlate, Amount: 4}}, refine.SetCost(25000))
 }
-func (r MrThunder) OldSteelNordicHelmRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OldBronzeNordicHelm, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SteelPlate, Amount: 7}}, Cost: 30000}
+func (r MrThunder) OldSteelNordicHelmRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OldBronzeNordicHelm, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SteelPlate, Amount: 7}}, refine.SetCost(30000))
 }
-func (r MrThunder) OldMithrilRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OldBronzeNordicHelm, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 7}}, Cost: 30000}
-}
-
-func (r MrThunder) AdamantiumTowerShieldRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelTowerShield, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 10}}, Cost: 100000}
+func (r MrThunder) OldMithrilRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OldBronzeNordicHelm, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 7}}, refine.SetCost(30000))
 }
 
-func (r MrThunder) MithrilTowerShieldRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelTowerShield, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 10}}, Cost: 100000}
+func (r MrThunder) AdamantiumTowerShieldRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelTowerShield, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 10}}, refine.SetCost(100000))
 }
 
-func (r MrThunder) SilverLegendShieldRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.WoodenLegendShield, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SilverPlate, Amount: 15}}, Cost: 120000}
+func (r MrThunder) MithrilTowerShieldRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelTowerShield, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 10}}, refine.SetCost(100000))
 }
 
-func (r MrThunder) AdamantiumLegendShieldRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.WoodenLegendShield, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 15}}, Cost: 120000}
+func (r MrThunder) SilverLegendShieldRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.WoodenLegendShield, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SilverPlate, Amount: 15}}, refine.SetCost(120000))
+}
+
+func (r MrThunder) AdamantiumLegendShieldRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.WoodenLegendShield, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 15}}, refine.SetCost(120000))
 }
 
 func (r MrThunder) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {

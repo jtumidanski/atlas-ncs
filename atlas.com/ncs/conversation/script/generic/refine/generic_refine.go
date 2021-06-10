@@ -24,9 +24,32 @@ type RefinementChoice struct {
 	Config          TerminalConfig
 }
 
-type RefinementRequirements struct {
-	Requirements []Requirement
-	Cost         uint32
+type Requirements struct {
+	requirements []Requirement
+	cost         uint32
+	awardAmount  uint32
+}
+
+type RequirementsConfigurator func(r Requirements)
+
+func SetCost(cost uint32) RequirementsConfigurator {
+	return func(r Requirements) {
+		r.cost = cost
+	}
+}
+
+func SetAwardAmount(amount uint32) RequirementsConfigurator {
+	return func(r Requirements) {
+		r.awardAmount = amount
+	}
+}
+
+func NewRequirements(requirements []Requirement, configurators ...RequirementsConfigurator) Requirements {
+	r := Requirements{requirements, 0, 1}
+	for _, configurator := range configurators {
+		configurator(r)
+	}
+	return r
 }
 
 type Requirement struct {
@@ -74,7 +97,7 @@ func choiceSelection(choices []RefinementChoice) script.ProcessSelection {
 
 type TerminalState func(config TerminalConfig) script.StateProducer
 
-func HowMany(itemId uint32, requirements RefinementRequirements) TerminalState {
+func HowMany(itemId uint32, requirements Requirements) TerminalState {
 	return func(config TerminalConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, c script.Context) script.State {
 			m := message.NewBuilder().
@@ -86,19 +109,19 @@ func HowMany(itemId uint32, requirements RefinementRequirements) TerminalState {
 	}
 }
 
-func Confirm(itemId uint32, requirements RefinementRequirements) TerminalState {
+func Confirm(itemId uint32, requirements Requirements) TerminalState {
 	return func(config TerminalConfig) script.StateProducer {
 		return confirmQuantity(itemId, 1, requirements, config)
 	}
 }
 
-func quantitySelection(itemId uint32, requirements RefinementRequirements, config TerminalConfig) script.ProcessNumber {
+func quantitySelection(itemId uint32, requirements Requirements, config TerminalConfig) script.ProcessNumber {
 	return func(selection int32) script.StateProducer {
 		return confirmQuantity(itemId, uint32(selection), requirements, config)
 	}
 }
 
-func confirmQuantity(itemId uint32, amount uint32, requirements RefinementRequirements, config TerminalConfig) script.StateProducer {
+func confirmQuantity(itemId uint32, amount uint32, requirements Requirements, config TerminalConfig) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("You want me to make ")
@@ -108,25 +131,26 @@ func confirmQuantity(itemId uint32, amount uint32, requirements RefinementRequir
 			m = m.AddText(fmt.Sprintf("%d ", amount)).ShowItemName1(itemId)
 		}
 		m = m.AddText("? In that case, I'm going to need specific items from you in order to make it. Make sure you have room in your inventory, though!").NewLine()
-		for _, req := range requirements.Requirements {
+		for _, req := range requirements.requirements {
 			m = m.ShowItemImage2(req.ItemId).AddText(fmt.Sprintf(" %d ", req.Amount)).ShowItemName1(req.ItemId).NewLine()
 		}
-		if requirements.Cost > 0 {
-			m = m.ShowItemImage2(item.MoneySack).AddText(fmt.Sprintf(" %d meso", requirements.Cost*amount))
+		if requirements.cost > 0 {
+			m = m.ShowItemImage2(item.MoneySack).AddText(fmt.Sprintf(" %d meso", requirements.cost*amount))
 		}
 		return script.SendYesNo(l, c, m.String(), validate(itemId, amount, requirements, config), script.Exit())
 	}
 }
 
-func validate(itemId uint32, amount uint32, requirements RefinementRequirements, config TerminalConfig) script.StateProducer {
+func validate(itemId uint32, amount uint32, requirements Requirements, config TerminalConfig) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.CanHoldAll(l)(c.CharacterId, itemId, amount) {
+		productionAmount := amount * requirements.awardAmount
+		if !character.CanHoldAll(l)(c.CharacterId, itemId, productionAmount) {
 			return config.InventoryError(l, c)
 		}
-		if !character.HasMeso(l)(c.CharacterId, requirements.Cost*amount) {
+		if !character.HasMeso(l)(c.CharacterId, requirements.cost*amount) {
 			return config.MesoError(l, c)
 		}
-		for _, req := range requirements.Requirements {
+		for _, req := range requirements.requirements {
 			if !character.HasItems(l)(c.CharacterId, req.ItemId, uint32(req.Amount)*amount) {
 				return config.RequirementError(req.ItemId)(l, c)
 			}
@@ -135,16 +159,17 @@ func validate(itemId uint32, amount uint32, requirements RefinementRequirements,
 	}
 }
 
-func performRefine(itemId uint32, amount uint32, requirements RefinementRequirements, config TerminalConfig) script.StateProducer {
+func performRefine(itemId uint32, amount uint32, requirements Requirements, config TerminalConfig) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -int32(amount*requirements.Cost))
+		err := character.GainMeso(l)(c.CharacterId, -int32(amount*requirements.cost))
 		if err != nil {
 			l.WithError(err).Errorf("Unable to process payment for refine.")
 		}
-		for _, req := range requirements.Requirements {
+		for _, req := range requirements.requirements {
 			character.GainItem(l)(c.CharacterId, req.ItemId, -int32(req.Amount)*int32(amount))
 		}
-		character.GainItem(l)(c.CharacterId, itemId, int32(amount))
+		productionAmount := amount * requirements.awardAmount
+		character.GainItem(l)(c.CharacterId, itemId, int32(productionAmount))
 		return config.Success(l, c)
 	}
 }

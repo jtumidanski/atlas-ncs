@@ -131,156 +131,156 @@ func (r Francois) MakeAStaff() refine.RefinementCategory {
 	}
 }
 
-func (r Francois) LemonaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 15}}, Cost: 7000}
+func (r Francois) LemonaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 15}}, refine.SetCost(7000))
 }
 
-func (r Francois) BlueMorricanRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 15000}
+func (r Francois) BlueMorricanRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.SteelPlate, Amount: 1}}, refine.SetCost(15000))
 }
 
-func (r Francois) OceanMesanaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 50}, {ItemId: item.GoldPlate, Amount: 2}}, Cost: 20000}
+func (r Francois) OceanMesanaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 50}, {ItemId: item.GoldPlate, Amount: 2}}, refine.SetCost(20000))
 }
 
-func (r Francois) RedLutiaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 60}, {ItemId: item.Topaz, Amount: 1}, {ItemId: item.Garnet, Amount: 2}}, Cost: 25000}
+func (r Francois) RedLutiaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 60}, {ItemId: item.Topaz, Amount: 1}, {ItemId: item.Garnet, Amount: 2}}, refine.SetCost(25000))
 }
 
-func (r Francois) RedNoelRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 70}, {ItemId: item.GoldPlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Garnet, Amount: 2}}, Cost: 30000}
+func (r Francois) RedNoelRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 70}, {ItemId: item.GoldPlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Garnet, Amount: 2}}, refine.SetCost(30000))
 }
 
-func (r Francois) RedArtenRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 80}, {ItemId: item.Garnet, Amount: 3}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.Screw, Amount: 30}}, Cost: 40000}
+func (r Francois) RedArtenRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 80}, {ItemId: item.Garnet, Amount: 3}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(40000))
 }
 
-func (r Francois) RedPennanceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Garnet, Amount: 3}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.DragonSkin, Amount: 35}, {ItemId: item.Screw, Amount: 40}}, Cost: 50000}
+func (r Francois) RedPennanceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Garnet, Amount: 3}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.DragonSkin, Amount: 35}, {ItemId: item.Screw, Amount: 40}}, refine.SetCost(50000))
 }
 
-func (r Francois) SteelManuteRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.DragonSkin, Amount: 50}, {ItemId: item.Screw, Amount: 50}}, Cost: 70000}
+func (r Francois) SteelManuteRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.DragonSkin, Amount: 50}, {ItemId: item.Screw, Amount: 50}}, refine.SetCost(70000))
 }
 
-func (r Francois) GreenMorricanRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlueMorrican, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 20000}
+func (r Francois) GreenMorricanRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueMorrican, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, refine.SetCost(20000))
 }
 
-func (r Francois) PurpleMorricanRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlueMorrican, Amount: 1}, {ItemId: item.Amethyst, Amount: 2}}, Cost: 25000}
+func (r Francois) PurpleMorricanRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueMorrican, Amount: 1}, {ItemId: item.Amethyst, Amount: 2}}, refine.SetCost(25000))
 }
 
-func (r Francois) BloodMesanaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OceanMesana, Amount: 1}, {ItemId: item.Garnet, Amount: 3}}, Cost: 30000}
+func (r Francois) BloodMesanaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OceanMesana, Amount: 1}, {ItemId: item.Garnet, Amount: 3}}, refine.SetCost(30000))
 }
 
-func (r Francois) DarkMesanaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OceanMesana, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 40000}
+func (r Francois) DarkMesanaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OceanMesana, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, refine.SetCost(40000))
 }
 
-func (r Francois) BlueLutiaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedLutia, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, Cost: 35000}
+func (r Francois) BlueLutiaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedLutia, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, refine.SetCost(35000))
 }
 
-func (r Francois) BlackLutiaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedLutia, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 40000}
+func (r Francois) BlackLutiaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedLutia, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, refine.SetCost(40000))
 }
 
-func (r Francois) BlueNoelRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedNoel, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, Cost: 40000}
+func (r Francois) BlueNoelRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedNoel, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, refine.SetCost(40000))
 }
 
-func (r Francois) DarkNoelRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedNoel, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 45000}
+func (r Francois) DarkNoelRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedNoel, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, refine.SetCost(45000))
 }
 
-func (r Francois) BlueArtenRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedArten, Amount: 1}, {ItemId: item.AquaMarine, Amount: 4}}, Cost: 45000}
+func (r Francois) BlueArtenRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedArten, Amount: 1}, {ItemId: item.AquaMarine, Amount: 4}}, refine.SetCost(45000))
 }
 
-func (r Francois) DarkArtenRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedArten, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, Cost: 50000}
+func (r Francois) DarkArtenRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedArten, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, refine.SetCost(50000))
 }
 
-func (r Francois) BluePennanceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedPennance, Amount: 1}, {ItemId: item.AquaMarine, Amount: 5}}, Cost: 55000}
+func (r Francois) BluePennanceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedPennance, Amount: 1}, {ItemId: item.AquaMarine, Amount: 5}}, refine.SetCost(55000))
 }
 
-func (r Francois) DarkPennanceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedPennance, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 3}}, Cost: 60000}
+func (r Francois) DarkPennanceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedPennance, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 3}}, refine.SetCost(60000))
 }
 
-func (r Francois) GoldManuteRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelManute, Amount: 1}, {ItemId: item.SilverPlate, Amount: 3}, {ItemId: item.GoldPlate, Amount: 5}}, Cost: 70000}
+func (r Francois) GoldManuteRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelManute, Amount: 1}, {ItemId: item.SilverPlate, Amount: 3}, {ItemId: item.GoldPlate, Amount: 5}}, refine.SetCost(70000))
 }
 
-func (r Francois) DarkManuteRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelManute, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}, {ItemId: item.GoldPlate, Amount: 3}}, Cost: 80000}
+func (r Francois) DarkManuteRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelManute, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}, {ItemId: item.GoldPlate, Amount: 3}}, refine.SetCost(80000))
 }
 
-func (r Francois) SteelPrideRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePride, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, Cost: 40000}
+func (r Francois) SteelPrideRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePride, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, refine.SetCost(40000))
 }
 
-func (r Francois) GoldenPrideRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePride, Amount: 1}, {ItemId: item.GoldPlate, Amount: 3}}, Cost: 50000}
+func (r Francois) GoldenPrideRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePride, Amount: 1}, {ItemId: item.GoldPlate, Amount: 3}}, refine.SetCost(50000))
 }
 
-func (r Francois) WoodenWandRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}}, Cost: 1000}
+func (r Francois) WoodenWandRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}}, refine.SetCost(1000))
 }
 
-func (r Francois) HardwoodWandRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 10}, {ItemId: item.OrangeMushroomCap, Amount: 50}}, Cost: 3000}
+func (r Francois) HardwoodWandRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 10}, {ItemId: item.OrangeMushroomCap, Amount: 50}}, refine.SetCost(3000))
 }
 
-func (r Francois) MetalWandRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.BlueMushroomCap, Amount: 30}, {ItemId: item.Screw, Amount: 5}}, Cost: 5000}
+func (r Francois) MetalWandRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.BlueMushroomCap, Amount: 30}, {ItemId: item.Screw, Amount: 5}}, refine.SetCost(5000))
 }
 
-func (r Francois) IceWandRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilPlate, Amount: 2}, {ItemId: item.PieceOfIce, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, Cost: 12000}
+func (r Francois) IceWandRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.MithrilPlate, Amount: 2}, {ItemId: item.PieceOfIce, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, refine.SetCost(12000))
 }
 
-func (r Francois) MithrilWandRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilPlate, Amount: 3}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, Cost: 30000}
+func (r Francois) MithrilWandRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.MithrilPlate, Amount: 3}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, refine.SetCost(30000))
 }
 
-func (r Francois) WizardWandRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Topaz, Amount: 5}, {ItemId: item.MithrilPlate, Amount: 3}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 15}}, Cost: 60000}
+func (r Francois) WizardWandRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Topaz, Amount: 5}, {ItemId: item.MithrilPlate, Amount: 3}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 15}}, refine.SetCost(60000))
 }
 
-func (r Francois) FairyWandRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Topaz, Amount: 5}, {ItemId: item.Sapphire, Amount: 5}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.FairyWing, Amount: 1}, {ItemId: item.Screw, Amount: 20}}, Cost: 120000}
+func (r Francois) FairyWandRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Topaz, Amount: 5}, {ItemId: item.Sapphire, Amount: 5}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.FairyWing, Amount: 1}, {ItemId: item.Screw, Amount: 20}}, refine.SetCost(120000))
 }
 
-func (r Francois) CromiRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GoldPlate, Amount: 4}, {ItemId: item.Emerald, Amount: 3}, {ItemId: item.Diamond, Amount: 2}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.PieceOfIce, Amount: 1}, {ItemId: item.Screw, Amount: 30}}, Cost: 200000}
+func (r Francois) CromiRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.GoldPlate, Amount: 4}, {ItemId: item.Emerald, Amount: 3}, {ItemId: item.Diamond, Amount: 2}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.PieceOfIce, Amount: 1}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(200000))
 }
 
-func (r Francois) WoodenStaffRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}}, Cost: 2000}
+func (r Francois) WoodenStaffRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}}, refine.SetCost(2000))
 }
 
-func (r Francois) SapphireStaffRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Sapphire, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 5}}, Cost: 2000}
+func (r Francois) SapphireStaffRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Sapphire, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 5}}, refine.SetCost(2000))
 }
 
-func (r Francois) EmeraldStaffRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Emerald, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 5}}, Cost: 2000}
+func (r Francois) EmeraldStaffRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Emerald, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 5}}, refine.SetCost(2000))
 }
 
-func (r Francois) OldWoodenStaffRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 50}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, Cost: 5000}
+func (r Francois) OldWoodenStaffRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 50}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, refine.SetCost(5000))
 }
 
-func (r Francois) WizardStaffRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Topaz, Amount: 2}, {ItemId: item.Amethyst, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 15}}, Cost: 12000}
+func (r Francois) WizardStaffRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Topaz, Amount: 2}, {ItemId: item.Amethyst, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 15}}, refine.SetCost(12000))
 }
 
-func (r Francois) ArcStaffRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.Topaz, Amount: 5}, {ItemId: item.Amethyst, Amount: 5}, {ItemId: item.Sapphire, Amount: 5}, {ItemId: item.Screw, Amount: 30}, {ItemId: item.SlimeBubble, Amount: 50}, {ItemId: item.FairyWing, Amount: 1}}, Cost: 180000}
+func (r Francois) ArcStaffRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.Topaz, Amount: 5}, {ItemId: item.Amethyst, Amount: 5}, {ItemId: item.Sapphire, Amount: 5}, {ItemId: item.Screw, Amount: 30}, {ItemId: item.SlimeBubble, Amount: 50}, {ItemId: item.FairyWing, Amount: 1}}, refine.SetCost(180000))
 }
 
 func (r Francois) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {

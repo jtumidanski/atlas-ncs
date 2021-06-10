@@ -141,196 +141,196 @@ func (r JMFromThaStreetz) CreateMaterials() refine.RefinementCategory {
 	}
 }
 
-func (r JMFromThaStreetz) ProcessedWoodFromTreeBranchRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.TreeBranch, Amount: 10}}, Cost: 0}
+func (r JMFromThaStreetz) ProcessedWoodFromTreeBranchRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.TreeBranch, Amount: 10}})
 }
 
-func (r JMFromThaStreetz) ProcessedWoodFromFirewoodRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Firewood, Amount: 5}}, Cost: 0}
+func (r JMFromThaStreetz) ProcessedWoodFromFirewoodRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Firewood, Amount: 5}})
 }
 
-func (r JMFromThaStreetz) ScrewRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 0}
+func (r JMFromThaStreetz) ScrewRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, refine.SetAwardAmount(15))
 }
 
-func (r JMFromThaStreetz) WorkGlovesRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 15}}, Cost: 1000}
+func (r JMFromThaStreetz) WorkGlovesRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 15}}, refine.SetCost(1000))
 }
 
-func (r JMFromThaStreetz) BrownDuoRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.Firewood, Amount: 20}}, Cost: 7000}
+func (r JMFromThaStreetz) BrownDuoRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.Firewood, Amount: 20}}, refine.SetCost(7000))
 }
 
-func (r JMFromThaStreetz) BlueDuoRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.HornyMushroomCap, Amount: 20}}, Cost: 7000}
+func (r JMFromThaStreetz) BlueDuoRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.HornyMushroomCap, Amount: 20}}, refine.SetCost(7000))
 }
 
-func (r JMFromThaStreetz) BlackDuoRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.WildBoarTooth, Amount: 20}}, Cost: 7000}
+func (r JMFromThaStreetz) BlackDuoRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.WildBoarTooth, Amount: 20}}, refine.SetCost(7000))
 }
 
-func (r JMFromThaStreetz) BronzeMischiefRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 2}, {ItemId: item.Leather, Amount: 40}}, Cost: 10000}
+func (r JMFromThaStreetz) BronzeMischiefRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 2}, {ItemId: item.Leather, Amount: 40}}, refine.SetCost(10000))
 }
 
-func (r JMFromThaStreetz) BronzeWolfskinRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 2}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Leather, Amount: 10}}, Cost: 15000}
+func (r JMFromThaStreetz) BronzeWolfskinRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 2}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Leather, Amount: 10}}, refine.SetCost(15000))
 }
 
-func (r JMFromThaStreetz) SteelSylviaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 50}, {ItemId: item.Screw, Amount: 10}}, Cost: 25000}
+func (r JMFromThaStreetz) SteelSylviaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 50}, {ItemId: item.Screw, Amount: 10}}, refine.SetCost(25000))
 }
 
-func (r JMFromThaStreetz) SteelArbionRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.Leather, Amount: 60}, {ItemId: item.Screw, Amount: 15}}, Cost: 30000}
+func (r JMFromThaStreetz) SteelArbionRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.Leather, Amount: 60}, {ItemId: item.Screw, Amount: 15}}, refine.SetCost(30000))
 }
 
-func (r JMFromThaStreetz) RedCleaveRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Garnet, Amount: 3}, {ItemId: item.DrakeSkull, Amount: 200}, {ItemId: item.Leather, Amount: 80}, {ItemId: item.Screw, Amount: 30}}, Cost: 40000}
+func (r JMFromThaStreetz) RedCleaveRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Garnet, Amount: 3}, {ItemId: item.DrakeSkull, Amount: 200}, {ItemId: item.Leather, Amount: 80}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(40000))
 }
 
-func (r JMFromThaStreetz) BlueMoonGloveRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Sapphire, Amount: 3}, {ItemId: item.BlackCrystal, Amount: 1}, {ItemId: item.DragonSkin, Amount: 40}, {ItemId: item.Screw, Amount: 30}}, Cost: 50000}
+func (r JMFromThaStreetz) BlueMoonGloveRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Sapphire, Amount: 3}, {ItemId: item.BlackCrystal, Amount: 1}, {ItemId: item.DragonSkin, Amount: 40}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(50000))
 }
 
-func (r JMFromThaStreetz) BronzePowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MoonRock, Amount: 1}, {ItemId: item.BronzePlate, Amount: 8}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.DragonSkin, Amount: 50}, {ItemId: item.Screw, Amount: 50}}, Cost: 70000}
+func (r JMFromThaStreetz) BronzePowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.MoonRock, Amount: 1}, {ItemId: item.BronzePlate, Amount: 8}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.DragonSkin, Amount: 50}, {ItemId: item.Screw, Amount: 50}}, refine.SetCost(70000))
 }
 
-func (r JMFromThaStreetz) MithrilMischiefRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeMischief, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 5000}
+func (r JMFromThaStreetz) MithrilMischiefRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeMischief, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, refine.SetCost(5000))
 }
 
-func (r JMFromThaStreetz) DarkMischiefRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeMischief, Amount: 1}, {ItemId: item.Opal, Amount: 1}}, Cost: 7000}
+func (r JMFromThaStreetz) DarkMischiefRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeMischief, Amount: 1}, {ItemId: item.Opal, Amount: 1}}, refine.SetCost(7000))
 }
 
-func (r JMFromThaStreetz) MithrilWolfskinRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeWolfskin, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 2}}, Cost: 10000}
+func (r JMFromThaStreetz) MithrilWolfskinRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeWolfskin, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 2}}, refine.SetCost(10000))
 }
 
-func (r JMFromThaStreetz) DarkWolfskinRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeWolfskin, Amount: 1}, {ItemId: item.Opal, Amount: 2}}, Cost: 12000}
+func (r JMFromThaStreetz) DarkWolfskinRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeWolfskin, Amount: 1}, {ItemId: item.Opal, Amount: 2}}, refine.SetCost(12000))
 }
 
-func (r JMFromThaStreetz) SilverSylviaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSylvia, Amount: 1}, {ItemId: item.SilverPlate, Amount: 2}}, Cost: 15000}
+func (r JMFromThaStreetz) SilverSylviaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelSylvia, Amount: 1}, {ItemId: item.SilverPlate, Amount: 2}}, refine.SetCost(15000))
 }
 
-func (r JMFromThaStreetz) GoldSylviaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSylvia, Amount: 1}, {ItemId: item.GoldPlate, Amount: 1}}, Cost: 20000}
+func (r JMFromThaStreetz) GoldSylviaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelSylvia, Amount: 1}, {ItemId: item.GoldPlate, Amount: 1}}, refine.SetCost(20000))
 }
 
-func (r JMFromThaStreetz) OrihalconArbionRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelArbion, Amount: 1}, {ItemId: item.OrihalconPlate, Amount: 3}}, Cost: 22000}
+func (r JMFromThaStreetz) OrihalconArbionRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelArbion, Amount: 1}, {ItemId: item.OrihalconPlate, Amount: 3}}, refine.SetCost(22000))
 }
 
-func (r JMFromThaStreetz) GoldArbionRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelArbion, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}}, Cost: 25000}
+func (r JMFromThaStreetz) GoldArbionRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelArbion, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}}, refine.SetCost(25000))
 }
 
-func (r JMFromThaStreetz) GoldCleaveRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedCleave, Amount: 1}, {ItemId: item.GoldPlate, Amount: 4}}, Cost: 40000}
+func (r JMFromThaStreetz) GoldCleaveRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedCleave, Amount: 1}, {ItemId: item.GoldPlate, Amount: 4}}, refine.SetCost(40000))
 }
 
-func (r JMFromThaStreetz) DarkCleaveRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedCleave, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, Cost: 50000}
+func (r JMFromThaStreetz) DarkCleaveRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.RedCleave, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, refine.SetCost(50000))
 }
 
-func (r JMFromThaStreetz) RedMoonGloveRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlueMoonGlove, Amount: 1}, {ItemId: item.Garnet, Amount: 5}}, Cost: 55000}
+func (r JMFromThaStreetz) RedMoonGloveRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueMoonGlove, Amount: 1}, {ItemId: item.Garnet, Amount: 5}}, refine.SetCost(55000))
 }
 
-func (r JMFromThaStreetz) BrownMoonGloveRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlueMoonGlove, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 60000}
+func (r JMFromThaStreetz) BrownMoonGloveRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueMoonGlove, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.BlackCrystal, Amount: 1}}, refine.SetCost(60000))
 }
 
-func (r JMFromThaStreetz) SilverPowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.StealPow, Amount: 1}, {ItemId: item.SteelPlate, Amount: 7}, {ItemId: item.DrakeSkull, Amount: 200}}, Cost: 70000}
+func (r JMFromThaStreetz) SilverPowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.StealPow, Amount: 1}, {ItemId: item.SteelPlate, Amount: 7}, {ItemId: item.DrakeSkull, Amount: 200}}, refine.SetCost(70000))
 }
 
-func (r JMFromThaStreetz) GoldPowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.StealPow, Amount: 1}, {ItemId: item.GoldPlate, Amount: 7}, {ItemId: item.WildKargoEye, Amount: 150}}, Cost: 80000}
+func (r JMFromThaStreetz) GoldPowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.StealPow, Amount: 1}, {ItemId: item.GoldPlate, Amount: 7}, {ItemId: item.WildKargoEye, Amount: 150}}, refine.SetCost(80000))
 }
 
-func (r JMFromThaStreetz) SteelTitansRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Leather, Amount: 20}, {ItemId: item.Screw, Amount: 5}}, Cost: 2000}
+func (r JMFromThaStreetz) SteelTitansRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Leather, Amount: 20}, {ItemId: item.Screw, Amount: 5}}, refine.SetCost(2000))
 }
 
-func (r JMFromThaStreetz) BronzeIgorRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 2}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Leather, Amount: 30}, {ItemId: item.Screw, Amount: 10}}, Cost: 3000}
+func (r JMFromThaStreetz) BronzeIgorRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 2}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Leather, Amount: 30}, {ItemId: item.Screw, Amount: 10}}, refine.SetCost(3000))
 }
 
-func (r JMFromThaStreetz) MebaRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Garnier, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Leather, Amount: 20}, {ItemId: item.ProcessedWood, Amount: 30}}, Cost: 5000}
+func (r JMFromThaStreetz) MebaRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Garnier, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Leather, Amount: 20}, {ItemId: item.ProcessedWood, Amount: 30}}, refine.SetCost(5000))
 }
 
-func (r JMFromThaStreetz) SteelGuardsRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 3}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 50}, {ItemId: item.Screw, Amount: 20}}, Cost: 15000}
+func (r JMFromThaStreetz) SteelGuardsRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 3}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 50}, {ItemId: item.Screw, Amount: 20}}, refine.SetCost(15000))
 }
 
-func (r JMFromThaStreetz) BronzeGuardianRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 4}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 80}, {ItemId: item.Screw, Amount: 25}}, Cost: 30000}
+func (r JMFromThaStreetz) BronzeGuardianRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 4}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 80}, {ItemId: item.Screw, Amount: 25}}, refine.SetCost(30000))
 }
 
-func (r JMFromThaStreetz) SteelAvariceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 3}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 100}, {ItemId: item.Screw, Amount: 30}}, Cost: 40000}
+func (r JMFromThaStreetz) SteelAvariceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 3}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Leather, Amount: 100}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(40000))
 }
 
-func (r JMFromThaStreetz) SteelSlainRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 4}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.DragonSkin, Amount: 40}, {ItemId: item.Screw, Amount: 35}}, Cost: 50000}
+func (r JMFromThaStreetz) SteelSlainRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 4}, {ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.DragonSkin, Amount: 40}, {ItemId: item.Screw, Amount: 35}}, refine.SetCost(50000))
 }
 
-func (r JMFromThaStreetz) MithrilTitansRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelTitans, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 1000}
+func (r JMFromThaStreetz) MithrilTitansRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelTitans, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, refine.SetCost(1000))
 }
 
-func (r JMFromThaStreetz) GoldTitansRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelTitans, Amount: 1}, {ItemId: item.GoldPlate, Amount: 1}}, Cost: 2000}
+func (r JMFromThaStreetz) GoldTitansRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelTitans, Amount: 1}, {ItemId: item.GoldPlate, Amount: 1}}, refine.SetCost(2000))
 }
 
-func (r JMFromThaStreetz) SteelIgorRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeIgor, Amount: 1}, {ItemId: item.SteelPlate, Amount: 2}}, Cost: 3000}
+func (r JMFromThaStreetz) SteelIgorRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeIgor, Amount: 1}, {ItemId: item.SteelPlate, Amount: 2}}, refine.SetCost(3000))
 }
 
-func (r JMFromThaStreetz) AdamantiumIgorRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeIgor, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 2}}, Cost: 5000}
+func (r JMFromThaStreetz) AdamantiumIgorRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeIgor, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 2}}, refine.SetCost(5000))
 }
 
-func (r JMFromThaStreetz) MithrilGuardsRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelGuards, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, Cost: 10000}
+func (r JMFromThaStreetz) MithrilGuardsRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelGuards, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, refine.SetCost(10000))
 }
 
-func (r JMFromThaStreetz) AdamantiumGuardsRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelGuards, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 3}}, Cost: 15000}
+func (r JMFromThaStreetz) AdamantiumGuardsRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelGuards, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 3}}, refine.SetCost(15000))
 }
 
-func (r JMFromThaStreetz) SilverGuardianRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGuardian, Amount: 1}, {ItemId: item.SilverPlate, Amount: 4}}, Cost: 20000}
+func (r JMFromThaStreetz) SilverGuardianRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeGuardian, Amount: 1}, {ItemId: item.SilverPlate, Amount: 4}}, refine.SetCost(20000))
 }
 
-func (r JMFromThaStreetz) DarkGuardianRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGuardian, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 25000}
+func (r JMFromThaStreetz) DarkGuardianRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeGuardian, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, refine.SetCost(25000))
 }
 
-func (r JMFromThaStreetz) BloodAvariceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelAvarice, Amount: 1}, {ItemId: item.Garnet, Amount: 5}}, Cost: 30000}
+func (r JMFromThaStreetz) BloodAvariceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelAvarice, Amount: 1}, {ItemId: item.Garnet, Amount: 5}}, refine.SetCost(30000))
 }
 
-func (r JMFromThaStreetz) AdamantiumAvariceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelAvarice, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 5}}, Cost: 30000}
+func (r JMFromThaStreetz) AdamantiumAvariceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelAvarice, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 5}}, refine.SetCost(30000))
 }
 
-func (r JMFromThaStreetz) DarkAvariceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelAvarice, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, Cost: 35000}
+func (r JMFromThaStreetz) DarkAvariceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelAvarice, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, refine.SetCost(35000))
 }
 
-func (r JMFromThaStreetz) BloodSlainRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSlain, Amount: 1}, {ItemId: item.Garnet, Amount: 6}}, Cost: 40000}
+func (r JMFromThaStreetz) BloodSlainRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelSlain, Amount: 1}, {ItemId: item.Garnet, Amount: 6}}, refine.SetCost(40000))
 }
 
-func (r JMFromThaStreetz) SapphireSlainRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSlain, Amount: 1}, {ItemId: item.Sapphire, Amount: 6}}, Cost: 40000}
+func (r JMFromThaStreetz) SapphireSlainRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelSlain, Amount: 1}, {ItemId: item.Sapphire, Amount: 6}}, refine.SetCost(40000))
 }
 
 func (r JMFromThaStreetz) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {

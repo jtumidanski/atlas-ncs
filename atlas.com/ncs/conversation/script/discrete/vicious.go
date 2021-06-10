@@ -150,326 +150,188 @@ func (r Vicious) CreateArrows() refine.RefinementCategory {
 	}
 }
 
-func (r Vicious) WarBowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}, {ItemId: item.BlueSnailShell, Amount: 30}},
-		Cost:         800,
-	}
+func (r Vicious) WarBowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}, {ItemId: item.BlueSnailShell, Amount: 30}}, refine.SetCost(80))
 }
 
-func (r Vicious) CompositeBowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 3}},
-		Cost:         2000,
-	}
+func (r Vicious) CompositeBowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 3}}, refine.SetCost(200))
 }
 
-func (r Vicious) HuntersBowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 30}, {ItemId: item.RedSnailShell, Amount: 50}},
-		Cost:         3000,
-	}
+func (r Vicious) HuntersBowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 30}, {ItemId: item.RedSnailShell, Amount: 50}}, refine.SetCost(300))
 }
 
-func (r Vicious) BattleBowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Topaz, Amount: 2}, {ItemId: item.Screw, Amount: 8}},
-		Cost:         5000,
-	}
+func (r Vicious) BattleBowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Topaz, Amount: 2}, {ItemId: item.Screw, Amount: 8}}, refine.SetCost(500))
 }
 
-func (r Vicious) RydenRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 5}, {ItemId: item.GoldPlate, Amount: 5}, {ItemId: item.Emerald, Amount: 3}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.Screw, Amount: 30}},
-		Cost:         30000,
-	}
+func (r Vicious) RydenRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 5}, {ItemId: item.GoldPlate, Amount: 5}, {ItemId: item.Emerald, Amount: 3}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(3000))
 }
 
-func (r Vicious) RedViperRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SilverPlate, Amount: 7}, {ItemId: item.Garnet, Amount: 6}, {ItemId: item.Opal, Amount: 3}, {ItemId: item.Screw, Amount: 35}},
-		Cost:         40000,
-	}
+func (r Vicious) RedViperRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SilverPlate, Amount: 7}, {ItemId: item.Garnet, Amount: 6}, {ItemId: item.Opal, Amount: 3}, {ItemId: item.Screw, Amount: 35}}, refine.SetCost(4000))
 }
 
-func (r Vicious) Vaulter2000Requirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlackCrystal, Amount: 1}, {ItemId: item.SteelPlate, Amount: 10}, {ItemId: item.GoldPlate, Amount: 3}, {ItemId: item.Screw, Amount: 40}, {ItemId: item.DrakeSkull, Amount: 50}},
-		Cost:         80000,
-	}
+func (r Vicious) Vaulter2000Requirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlackCrystal, Amount: 1}, {ItemId: item.SteelPlate, Amount: 10}, {ItemId: item.GoldPlate, Amount: 3}, {ItemId: item.Screw, Amount: 40}, {ItemId: item.DrakeSkull, Amount: 50}}, refine.SetCost(8000))
 }
 
-func (r Vicious) CrossbowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 7}, {ItemId: item.Screw, Amount: 2}},
-		Cost:         1000,
-	}
+func (r Vicious) CrossbowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 7}, {ItemId: item.Screw, Amount: 2}}, refine.SetCost(100))
 }
 
-func (r Vicious) BattleCrossbowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 20}, {ItemId: item.Screw, Amount: 5}},
-		Cost:         2000,
-	}
+func (r Vicious) BattleCrossbowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 20}, {ItemId: item.Screw, Amount: 5}}, refine.SetCost(200))
 }
 
-func (r Vicious) BalancheRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 50}, {ItemId: item.Screw, Amount: 8}},
-		Cost:         3000,
-	}
+func (r Vicious) BalancheRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 50}, {ItemId: item.Screw, Amount: 8}}, refine.SetCost(300))
 }
 
-func (r Vicious) MountainCrossbowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Topaz, Amount: 1}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.Screw, Amount: 10}},
-		Cost:         10000,
-	}
+func (r Vicious) MountainCrossbowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 2}, {ItemId: item.Topaz, Amount: 1}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, refine.SetCost(1000))
 }
 
-func (r Vicious) EagleCrowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 5}, {ItemId: item.OrihalconPlate, Amount: 5}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.ProcessedWood, Amount: 50}, {ItemId: item.Screw, Amount: 15}},
-		Cost:         30000,
-	}
+func (r Vicious) EagleCrowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 5}, {ItemId: item.OrihalconPlate, Amount: 5}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.ProcessedWood, Amount: 50}, {ItemId: item.Screw, Amount: 15}}, refine.SetCost(3000))
 }
 
-func (r Vicious) HecklerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlackCrystal, Amount: 1}, {ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.GoldPlate, Amount: 4}, {ItemId: item.Topaz, Amount: 2}, {ItemId: item.Screw, Amount: 30}},
-		Cost:         50000,
-	}
+func (r Vicious) HecklerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlackCrystal, Amount: 1}, {ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.GoldPlate, Amount: 4}, {ItemId: item.Topaz, Amount: 2}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(5000))
 }
 
-func (r Vicious) SilverCrowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlackCrystal, Amount: 2}, {ItemId: item.SilverPlate, Amount: 6}, {ItemId: item.ProcessedWood, Amount: 30}, {ItemId: item.Screw, Amount: 30}},
-		Cost:         80000,
-	}
+func (r Vicious) SilverCrowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlackCrystal, Amount: 2}, {ItemId: item.SilverPlate, Amount: 6}, {ItemId: item.ProcessedWood, Amount: 30}, {ItemId: item.Screw, Amount: 30}}, refine.SetCost(8000))
 }
 
-func (r Vicious) RowerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlackCrystal, Amount: 2}, {ItemId: item.GoldPlate, Amount: 5}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.ProcessedWood, Amount: 40}, {ItemId: item.Screw, Amount: 40}},
-		Cost:         200000,
-	}
+func (r Vicious) RowerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlackCrystal, Amount: 2}, {ItemId: item.GoldPlate, Amount: 5}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.ProcessedWood, Amount: 40}, {ItemId: item.Screw, Amount: 40}}, refine.SetCost(20000))
 }
 
-func (r Vicious) BasicArcherGlovesRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 15}, {ItemId: item.BlueMushroomCap, Amount: 20}},
-		Cost:         5000,
-	}
+func (r Vicious) BasicArcherGlovesRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 15}, {ItemId: item.BlueMushroomCap, Amount: 20}}, refine.SetCost(500))
 }
 
-func (r Vicious) BlueDirosRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 20}, {ItemId: item.BlueMushroomCap, Amount: 20}, {ItemId: item.SteelPlate, Amount: 2}},
-		Cost:         10000,
-	}
+func (r Vicious) BlueDirosRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 20}, {ItemId: item.BlueMushroomCap, Amount: 20}, {ItemId: item.SteelPlate, Amount: 2}}, refine.SetCost(1000))
 }
 
-func (r Vicious) BlueSavataRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 40}, {ItemId: item.BlueMushroomCap, Amount: 50}, {ItemId: item.GoldPlate, Amount: 2}},
-		Cost:         15000,
-	}
+func (r Vicious) BlueSavataRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 40}, {ItemId: item.BlueMushroomCap, Amount: 50}, {ItemId: item.GoldPlate, Amount: 2}}, refine.SetCost(1500))
 }
 
-func (r Vicious) BrownMarkerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 50}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.Amethyst, Amount: 1}},
-		Cost:         20000,
-	}
+func (r Vicious) BrownMarkerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Leather, Amount: 50}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.Amethyst, Amount: 1}}, refine.SetCost(2000))
 }
 
-func (r Vicious) BronzeScalerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Leather, Amount: 60}, {ItemId: item.Screw, Amount: 15}},
-		Cost:         30000,
-	}
+func (r Vicious) BronzeScalerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Leather, Amount: 60}, {ItemId: item.Screw, Amount: 15}}, refine.SetCost(3000))
 }
 
-func (r Vicious) AquaBraceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Garnet, Amount: 1}, {ItemId: item.AquaMarine, Amount: 3}, {ItemId: item.Leather, Amount: 80}, {ItemId: item.Screw, Amount: 25}},
-		Cost:         40000,
-	}
+func (r Vicious) AquaBraceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Garnet, Amount: 1}, {ItemId: item.AquaMarine, Amount: 3}, {ItemId: item.Leather, Amount: 80}, {ItemId: item.Screw, Amount: 25}}, refine.SetCost(4000))
 }
 
-func (r Vicious) BlueWillowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SilverPlate, Amount: 3}, {ItemId: item.GoldPlate, Amount: 1}, {ItemId: item.AquaMarine, Amount: 2}, {ItemId: item.DragonSkin, Amount: 40}, {ItemId: item.Screw, Amount: 35}},
-		Cost:         50000,
-	}
+func (r Vicious) BlueWillowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SilverPlate, Amount: 3}, {ItemId: item.GoldPlate, Amount: 1}, {ItemId: item.AquaMarine, Amount: 2}, {ItemId: item.DragonSkin, Amount: 40}, {ItemId: item.Screw, Amount: 35}}, refine.SetCost(5000))
 }
 
-func (r Vicious) OakerGarnerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.Topaz, Amount: 8}, {ItemId: item.DragonSkin, Amount: 50}, {ItemId: item.Screw, Amount: 50}},
-		Cost:         70000,
-	}
+func (r Vicious) OakerGarnerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.Topaz, Amount: 8}, {ItemId: item.DragonSkin, Amount: 50}, {ItemId: item.Screw, Amount: 50}}, refine.SetCost(7000))
 }
 
-func (r Vicious) GreenDirosRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlueDiros, Amount: 1}, {ItemId: item.Emerald, Amount: 2}},
-		Cost:         7000,
-	}
+func (r Vicious) GreenDirosRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueDiros, Amount: 1}, {ItemId: item.Emerald, Amount: 2}}, refine.SetCost(700))
 }
 
-func (r Vicious) RedDirosRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlueDiros, Amount: 1}, {ItemId: item.Garnet, Amount: 1}},
-		Cost:         7000,
-	}
+func (r Vicious) RedDirosRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueDiros, Amount: 1}, {ItemId: item.Garnet, Amount: 1}}, refine.SetCost(700))
 }
 
-func (r Vicious) RedSavataRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlueSavata, Amount: 1}, {ItemId: item.Garnet, Amount: 3}},
-		Cost:         10000,
-	}
+func (r Vicious) RedSavataRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueSavata, Amount: 1}, {ItemId: item.Garnet, Amount: 3}}, refine.SetCost(1000))
 }
 
-func (r Vicious) DarkSavataRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlueSavata, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}},
-		Cost:         12000,
-	}
+func (r Vicious) DarkSavataRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueSavata, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, refine.SetCost(1200))
 }
 
-func (r Vicious) GreenMarkerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BrownMarker, Amount: 1}, {ItemId: item.Emerald, Amount: 3}},
-		Cost:         15000,
-	}
+func (r Vicious) GreenMarkerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BrownMarker, Amount: 1}, {ItemId: item.Emerald, Amount: 3}}, refine.SetCost(1500))
 }
 
-func (r Vicious) BlackMarkerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BrownMarker, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}},
-		Cost:         20000,
-	}
+func (r Vicious) BlackMarkerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BrownMarker, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, refine.SetCost(2000))
 }
 
-func (r Vicious) MithrilScalerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BronzeScaler, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 4}},
-		Cost:         22000,
-	}
+func (r Vicious) MithrilScalerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeScaler, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 4}}, refine.SetCost(2200))
 }
 
-func (r Vicious) GoldScalerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BronzeScaler, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}},
-		Cost:         25000,
-	}
+func (r Vicious) GoldScalerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeScaler, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}}, refine.SetCost(2500))
 }
 
-func (r Vicious) GoldBraceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.AquaBrace, Amount: 1}, {ItemId: item.GoldPlate, Amount: 4}},
-		Cost:         30000,
-	}
+func (r Vicious) GoldBraceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.AquaBrace, Amount: 1}, {ItemId: item.GoldPlate, Amount: 4}}, refine.SetCost(3000))
 }
 
-func (r Vicious) DarkBraceRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.AquaBrace, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}},
-		Cost:         40000,
-	}
+func (r Vicious) DarkBraceRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.AquaBrace, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, refine.SetCost(4000))
 }
 
-func (r Vicious) RedWillowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlueWillow, Amount: 1}, {ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.Garnet, Amount: 5}},
-		Cost:         55000,
-	}
+func (r Vicious) RedWillowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueWillow, Amount: 1}, {ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.Garnet, Amount: 5}}, refine.SetCost(5500))
 }
 
-func (r Vicious) DarkWillowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BlueWillow, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.BlackCrystal, Amount: 2}},
-		Cost:         60000,
-	}
+func (r Vicious) DarkWillowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BlueWillow, Amount: 1}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.BlackCrystal, Amount: 2}}, refine.SetCost(6000))
 }
 
-func (r Vicious) SephiaGarnerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.OakerGarner, Amount: 1}, {ItemId: item.Garnet, Amount: 5}, {ItemId: item.Diamond, Amount: 1}},
-		Cost:         70000,
-	}
+func (r Vicious) SephiaGarnerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OakerGarner, Amount: 1}, {ItemId: item.Garnet, Amount: 5}, {ItemId: item.Diamond, Amount: 1}}, refine.SetCost(7000))
 }
 
-func (r Vicious) DarkGarnerRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.OakerGarner, Amount: 1}, {ItemId: item.Diamond, Amount: 2}, {ItemId: item.BlackCrystal, Amount: 2}},
-		Cost:         80000,
-	}
+func (r Vicious) DarkGarnerRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.OakerGarner, Amount: 1}, {ItemId: item.Diamond, Amount: 2}, {ItemId: item.BlackCrystal, Amount: 2}}, refine.SetCost(8000))
 }
 
-func (r Vicious) ProcessedWoodFromTreeBranchRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.TreeBranch, Amount: 10}},
-		Cost:         0,
-	}
+func (r Vicious) ProcessedWoodFromTreeBranchRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.TreeBranch, Amount: 10}})
 }
 
-func (r Vicious) ProcessedWoodFromFirewoodRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.Firewood, Amount: 5}},
-		Cost:         0,
-	}
+func (r Vicious) ProcessedWoodFromFirewoodRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.Firewood, Amount: 5}})
 }
 
-func (r Vicious) ScrewRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}},
-		Cost:         0,
-	}
+func (r Vicious) ScrewRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, refine.SetAwardAmount(15))
 }
 
-func (r Vicious) ArrowForBowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 1}, {ItemId: item.StiffFeather, Amount: 1}},
-		Cost:         0,
-	}
+func (r Vicious) ArrowForBowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 1}, {ItemId: item.StiffFeather, Amount: 1}}, refine.SetAwardAmount(1000))
 }
 
-func (r Vicious) ArrowForCrossbowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 1}, {ItemId: item.StiffFeather, Amount: 1}},
-		Cost:         0,
-	}
+func (r Vicious) ArrowForCrossbowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.ProcessedWood, Amount: 1}, {ItemId: item.StiffFeather, Amount: 1}}, refine.SetAwardAmount(1000))
 }
 
-func (r Vicious) BronzeArrowForBowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 3}, {ItemId: item.StiffFeather, Amount: 10}},
-		Cost:         0,
-	}
+func (r Vicious) BronzeArrowForBowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 3}, {ItemId: item.StiffFeather, Amount: 10}}, refine.SetAwardAmount(900))
 }
 
-func (r Vicious) BronzeArrowForCrossbowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 3}, {ItemId: item.StiffFeather, Amount: 10}},
-		Cost:         0,
-	}
+func (r Vicious) BronzeArrowForCrossbowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzePlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 3}, {ItemId: item.StiffFeather, Amount: 10}}, refine.SetAwardAmount(900))
 }
 
-func (r Vicious) SteelArrowForBowRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 5}, {ItemId: item.SoftFeather, Amount: 15}},
-		Cost:         0,
-	}
+func (r Vicious) SteelArrowForBowRequirements() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 5}, {ItemId: item.SoftFeather, Amount: 15}}, refine.SetAwardAmount(800))
 }
 
-func (r Vicious) SteelArrowForCrossbow() refine.RefinementRequirements {
-	return refine.RefinementRequirements{
-		Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 5}, {ItemId: item.SoftFeather, Amount: 15}},
-		Cost:         0,
-	}
+func (r Vicious) SteelArrowForCrossbow() refine.Requirements {
+	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 5}, {ItemId: item.SoftFeather, Amount: 15}}, refine.SetAwardAmount(800))
 }
 
 func (r Vicious) Sorry(l logrus.FieldLogger, c script.Context) script.State {
