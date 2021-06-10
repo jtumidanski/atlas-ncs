@@ -1,12 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
+	"atlas-ncs/conversation/script/generic/refine"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
-	"fmt"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,412 +18,281 @@ func (r Francois) NPCId() uint32 {
 }
 
 func (r Francois) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+	hello := "Welcome to my eco-safe refining operation! What would you like today?"
+	categories := r.CreateCategories()
+	return refine.NewGenericRefine(l, c, hello, categories)
 }
 
-func (r Francois) Hello(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("Welcome to my eco-safe refining operation! What would you like today?").NewLine().
-		OpenItem(0).BlueText().AddText("Make a glove").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Upgrade a glove").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Upgrade a hat").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Make a wand").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Make a staff").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.WhatToDo)
-}
-
-func (r Francois) WhatToDo(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.MakeGlove
-	case 1:
-		return r.UpgradeGlove
-	case 2:
-		return r.UpgradeHat
-	case 3:
-		return r.MakeWand
-	case 4:
-		return r.MakeStaff
-	}
-	return nil
-}
-
-func (r Francois) MakeGlove(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("So, what kind of glove would you like me to make?").NewLine().
-		OpenItem(0).BlueText().AddText("Lemona").BlackText().AddText(" - Magician Lv. 15").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Blue Morrican").BlackText().AddText(" - Magician Lv. 20").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Ocean Mesana").BlackText().AddText(" - Magician Lv. 25").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Red Lutia").BlackText().AddText(" - Magician Lv. 30").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Red Noel").BlackText().AddText(" - Magician Lv. 35").CloseItem().NewLine().
-		OpenItem(5).BlueText().AddText("Red Arten").BlackText().AddText(" - Magician Lv. 40").CloseItem().NewLine().
-		OpenItem(6).BlueText().AddText("Red Pennance").BlackText().AddText(" - Magician Lv. 50").CloseItem().NewLine().
-		OpenItem(7).BlueText().AddText("Steel Manute").BlackText().AddText(" - Magician Lv. 60").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.GloveSelection)
-}
-
-func (r Francois) UpgradeGlove(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("So, what kind of glove are you looking to upgrade to?").NewLine().
-		OpenItem(0).BlueText().AddText("Green Morrican").BlackText().AddText(" - Magician Lv. 20").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Purple Morrican").BlackText().AddText(" - Magician Lv. 20").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Blood Mesana").BlackText().AddText(" - Magician Lv. 25").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Dark Mesana").BlackText().AddText(" - Magician Lv. 25").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Blue Lutia").BlackText().AddText(" - Magician Lv. 30").CloseItem().NewLine().
-		OpenItem(5).BlueText().AddText("Black Lutia").BlackText().AddText(" - Magician Lv. 30").CloseItem().NewLine().
-		OpenItem(6).BlueText().AddText("Blue Noel").BlackText().AddText(" - Magician Lv. 35").CloseItem().NewLine().
-		OpenItem(7).BlueText().AddText("Dark Noel").BlackText().AddText(" - Magician Lv. 35").CloseItem().NewLine().
-		OpenItem(8).BlueText().AddText("Blue Arten").BlackText().AddText(" - Magician Lv. 40").CloseItem().NewLine().
-		OpenItem(9).BlueText().AddText("Dark Arten").BlackText().AddText(" - Magician Lv. 40").CloseItem().NewLine().
-		OpenItem(10).BlueText().AddText("Blue Pennance").BlackText().AddText(" - Magician Lv. 50").CloseItem().NewLine().
-		OpenItem(11).BlueText().AddText("Dark Pennance").BlackText().AddText(" - Magician Lv. 50").CloseItem().NewLine().
-		OpenItem(12).BlueText().AddText("Gold Manute").BlackText().AddText(" - Magician Lv. 60").CloseItem().NewLine().
-		OpenItem(13).BlueText().AddText("Dark Manute").BlackText().AddText(" - Magician Lv. 60").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.UpgradeGloveSelection)
-}
-
-func (r Francois) UpgradeHat(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("A hat? Which one were you thinking of?").NewLine().
-		OpenItem(0).BlueText().AddText("Steel Pride").BlackText().AddText(" - Magician Lv. 30").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Golden Pride").BlackText().AddText(" - Magician Lv. 30").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.UpgradeHatSelection)
-}
-
-func (r Francois) MakeWand(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("A wand, huh? Prefer the smaller weapon that fits in your pocket? Which type are you seeking?").NewLine().
-		OpenItem(0).BlueText().AddText("Wooden Wand").BlackText().AddText(" - Common Lv. 8").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Hardwood Wand").BlackText().AddText(" - Common Lv. 13").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Metal Wand").BlackText().AddText(" - Common Lv. 18").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Ice Wand").BlackText().AddText(" - Magician Lv. 23").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Mithril Wand").BlackText().AddText(" - Magician Lv. 28").CloseItem().NewLine().
-		OpenItem(5).BlueText().AddText("Wizard Wand").BlackText().AddText(" - Magician Lv. 33").CloseItem().NewLine().
-		OpenItem(6).BlueText().AddText("Fairy Wand").BlackText().AddText(" - Magician Lv. 38").CloseItem().NewLine().
-		OpenItem(7).BlueText().AddText("Cromi").BlackText().AddText(" - Magician Lv. 48").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.MakeWandSelection)
-}
-
-func (r Francois) MakeStaff(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("Ah, a staff, a great symbol of one's power! Which are you looking to make?").NewLine().
-		OpenItem(0).BlueText().AddText("Wooden Staff").BlackText().AddText(" - Magician Lv. 10").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Sapphire Staff").BlackText().AddText(" - Magician Lv. 15").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Emerald Staff").BlackText().AddText(" - Magician Lv. 15").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Old Wooden Staff").BlackText().AddText(" - Magician Lv. 20").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Wizard Staff").BlackText().AddText(" - Magician Lv. 25").CloseItem().NewLine().
-		OpenItem(5).BlueText().AddText("Arc Staff").BlackText().AddText(" - Magician Lv. 45").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.MakeStaffSelection)
-}
-
-func (r Francois) GloveSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.Confirm(item.Lemona, r.LemonaRequirements())
-	case 1:
-		return r.Confirm(item.BlueMorrican, r.BlueMorricanRequirements())
-	case 2:
-		return r.Confirm(item.OceanMesana, r.OceanMesanaRequirements())
-	case 3:
-		return r.Confirm(item.RedLutia, r.RedLutiaRequirements())
-	case 4:
-		return r.Confirm(item.RedNoel, r.RedNoelRequirements())
-	case 5:
-		return r.Confirm(item.RedArten, r.RedArtenRequirements())
-	case 6:
-		return r.Confirm(item.RedPennance, r.RedPennanceRequirements())
-	case 7:
-		return r.Confirm(item.SteelManute, r.SteelManuteRequirements())
-	}
-	return nil
-}
-
-func (r Francois) UpgradeGloveSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.Confirm(item.GreenMorrican, r.GreenMorricanRequirements())
-	case 1:
-		return r.Confirm(item.PurpleMorrican, r.PurpleMorricanRequirements())
-	case 2:
-		return r.Confirm(item.BloodMesana, r.BloodMesanaRequirements())
-	case 3:
-		return r.Confirm(item.DarkMesana, r.DarkMesanaRequirements())
-	case 4:
-		return r.Confirm(item.BlueLutia, r.BlueLutiaRequirements())
-	case 5:
-		return r.Confirm(item.BlackLutia, r.BlackLutiaRequirements())
-	case 6:
-		return r.Confirm(item.BlueNoel, r.BlueNoelRequirements())
-	case 7:
-		return r.Confirm(item.DarkNoel, r.DarkNoelRequirements())
-	case 8:
-		return r.Confirm(item.BlueArten, r.BlueArtenRequirements())
-	case 9:
-		return r.Confirm(item.DarkArten, r.DarkArtenRequirements())
-	case 10:
-		return r.Confirm(item.BluePennance, r.BluePennanceRequirements())
-	case 11:
-		return r.Confirm(item.DarkPennance, r.DarkPennanceRequirements())
-	case 12:
-		return r.Confirm(item.GoldManute, r.GoldManuteRequirements())
-	case 13:
-		return r.Confirm(item.DarkManute, r.DarkManuteRequirements())
-	}
-	return nil
-}
-
-func (r Francois) UpgradeHatSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.Confirm(item.SteelPride, r.SteelPrideRequirements())
-	case 1:
-		return r.Confirm(item.GoldenPride, r.GoldenPrideRequirements())
-	}
-	return nil
-}
-
-func (r Francois) MakeWandSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.Confirm(item.WoodenWand, r.WoodenWandRequirements())
-	case 1:
-		return r.Confirm(item.HardwoodWand, r.HardwoodWandRequirements())
-	case 2:
-		return r.Confirm(item.MetalWand, r.MetalWandRequirements())
-	case 3:
-		return r.Confirm(item.IceWand, r.IceWandRequirements())
-	case 4:
-		return r.Confirm(item.MithrilWand, r.MithrilWandRequirements())
-	case 5:
-		return r.Confirm(item.WizardWand, r.WizardWandRequirements())
-	case 6:
-		return r.Confirm(item.FairyWand, r.FairyWandRequirements())
-	case 7:
-		return r.Confirm(item.Cromi, r.CromiRequirements())
-	}
-	return nil
-}
-
-func (r Francois) MakeStaffSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.Confirm(item.WoodenStaff, r.WoodenStaffRequirements())
-	case 1:
-		return r.Confirm(item.SapphireStaff, r.SapphireStaffRequirements())
-	case 2:
-		return r.Confirm(item.EmeraldStaff, r.EmeraldStaffRequirements())
-	case 3:
-		return r.Confirm(item.OldWoodenStaff, r.OldWoodenStaffRequirements())
-	case 4:
-		return r.Confirm(item.WizardStaff, r.WizardStaffRequirements())
-	case 5:
-		return r.Confirm(item.ArcStaff, r.ArcStaffRequirements())
-	}
-	return nil
-}
-
-func (r Francois) Confirm(itemId uint32, requirements RefinementRequirements) script.StateProducer {
-	return r.ConfirmQuantity(itemId, 1, requirements)
-}
-
-func (r Francois) ConfirmQuantity(itemId uint32, amount uint32, requirements RefinementRequirements) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		m := message.NewBuilder().
-			AddText("You want me to make ")
-		if amount == 1 {
-			m = m.AddText("a ").ShowItemName1(itemId)
-		} else {
-			m = m.AddText(fmt.Sprintf("%d ", amount)).ShowItemName1(itemId)
-		}
-		m = m.AddText("? In that case, I'm going to need specific items from you in order to make it. Make sure you have room in your inventory, though!").NewLine()
-		for _, req := range requirements.requirements {
-			m = m.ShowItemImage2(req.itemId).AddText(fmt.Sprintf(" %d ", req.amount)).ShowItemName1(req.itemId).NewLine()
-		}
-		if requirements.cost > 0 {
-			m = m.ShowItemImage2(item.MoneySack).AddText(fmt.Sprintf(" %d meso", requirements.cost*amount))
-		}
-		return script.SendYesNo(l, c, m.String(), r.Validate(itemId, amount, requirements), script.Exit())
+func (r Francois) CreateCategories() []refine.RefinementCategory {
+	return []refine.RefinementCategory{
+		r.MakeAGlove(),
+		r.UpgradeAGlove(),
+		r.UpgradeAHat(),
+		r.MakeAWand(),
+		r.MakeAStaff(),
 	}
 }
 
-func (r Francois) LemonaRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 15}}, cost: 7000}
-}
-
-func (r Francois) BlueMorricanRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 30}, {itemId: item.SteelPlate, amount: 1}}, cost: 15000}
-}
-
-func (r Francois) OceanMesanaRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 50}, {itemId: item.GoldPlate, amount: 2}}, cost: 20000}
-}
-
-func (r Francois) RedLutiaRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 60}, {itemId: item.Topaz, amount: 1}, {itemId: item.Garnet, amount: 2}}, cost: 25000}
-}
-
-func (r Francois) RedNoelRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 70}, {itemId: item.GoldPlate, amount: 1}, {itemId: item.SteelPlate, amount: 3}, {itemId: item.Garnet, amount: 2}}, cost: 30000}
-}
-
-func (r Francois) RedArtenRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Leather, amount: 80}, {itemId: item.Garnet, amount: 3}, {itemId: item.Topaz, amount: 3}, {itemId: item.Screw, amount: 30}}, cost: 40000}
-}
-
-func (r Francois) RedPennanceRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Garnet, amount: 3}, {itemId: item.GoldPlate, amount: 2}, {itemId: item.DragonSkin, amount: 35}, {itemId: item.Screw, amount: 40}}, cost: 50000}
-}
-
-func (r Francois) SteelManuteRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.MoonRock, amount: 1}, {itemId: item.SteelPlate, amount: 8}, {itemId: item.Diamond, amount: 1}, {itemId: item.DragonSkin, amount: 50}, {itemId: item.Screw, amount: 50}}, cost: 70000}
-}
-
-func (r Francois) GreenMorricanRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BlueMorrican, amount: 1}, {itemId: item.SteelPlate, amount: 1}}, cost: 20000}
-}
-
-func (r Francois) PurpleMorricanRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BlueMorrican, amount: 1}, {itemId: item.Amethyst, amount: 2}}, cost: 25000}
-}
-
-func (r Francois) BloodMesanaRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.OceanMesana, amount: 1}, {itemId: item.Garnet, amount: 3}}, cost: 30000}
-}
-
-func (r Francois) DarkMesanaRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.OceanMesana, amount: 1}, {itemId: item.BlackCrystal, amount: 1}}, cost: 40000}
-}
-
-func (r Francois) BlueLutiaRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedLutia, amount: 1}, {itemId: item.Sapphire, amount: 3}}, cost: 35000}
-}
-
-func (r Francois) BlackLutiaRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedLutia, amount: 1}, {itemId: item.BlackCrystal, amount: 1}}, cost: 40000}
-}
-
-func (r Francois) BlueNoelRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedNoel, amount: 1}, {itemId: item.Sapphire, amount: 3}}, cost: 40000}
-}
-
-func (r Francois) DarkNoelRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedNoel, amount: 1}, {itemId: item.BlackCrystal, amount: 1}}, cost: 45000}
-}
-
-func (r Francois) BlueArtenRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedArten, amount: 1}, {itemId: item.AquaMarine, amount: 4}}, cost: 45000}
-}
-
-func (r Francois) DarkArtenRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedArten, amount: 1}, {itemId: item.BlackCrystal, amount: 2}}, cost: 50000}
-}
-
-func (r Francois) BluePennanceRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedPennance, amount: 1}, {itemId: item.AquaMarine, amount: 5}}, cost: 55000}
-}
-
-func (r Francois) DarkPennanceRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.RedPennance, amount: 1}, {itemId: item.BlackCrystal, amount: 3}}, cost: 60000}
-}
-
-func (r Francois) GoldManuteRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelManute, amount: 1}, {itemId: item.SilverPlate, amount: 3}, {itemId: item.GoldPlate, amount: 5}}, cost: 70000}
-}
-
-func (r Francois) DarkManuteRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelManute, amount: 1}, {itemId: item.BlackCrystal, amount: 2}, {itemId: item.GoldPlate, amount: 3}}, cost: 80000}
-}
-
-func (r Francois) SteelPrideRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzePride, amount: 1}, {itemId: item.SteelPlate, amount: 3}}, cost: 40000}
-}
-
-func (r Francois) GoldenPrideRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzePride, amount: 1}, {itemId: item.GoldPlate, amount: 3}}, cost: 50000}
-}
-
-func (r Francois) WoodenWandRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.ProcessedWood, amount: 5}}, cost: 1000}
-}
-
-func (r Francois) HardwoodWandRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.ProcessedWood, amount: 10}, {itemId: item.OrangeMushroomCap, amount: 50}}, cost: 3000}
-}
-
-func (r Francois) MetalWandRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelPlate, amount: 1}, {itemId: item.BlueMushroomCap, amount: 30}, {itemId: item.Screw, amount: 5}}, cost: 5000}
-}
-
-func (r Francois) IceWandRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.MithrilPlate, amount: 2}, {itemId: item.PieceOfIce, amount: 1}, {itemId: item.Screw, amount: 10}}, cost: 12000}
-}
-
-func (r Francois) MithrilWandRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.MithrilPlate, amount: 3}, {itemId: item.AquaMarine, amount: 1}, {itemId: item.Screw, amount: 10}}, cost: 30000}
-}
-
-func (r Francois) WizardWandRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Topaz, amount: 5}, {itemId: item.MithrilPlate, amount: 3}, {itemId: item.SteelPlate, amount: 1}, {itemId: item.Screw, amount: 15}}, cost: 60000}
-}
-
-func (r Francois) FairyWandRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Topaz, amount: 5}, {itemId: item.Sapphire, amount: 5}, {itemId: item.Diamond, amount: 1}, {itemId: item.FairyWing, amount: 1}, {itemId: item.Screw, amount: 20}}, cost: 120000}
-}
-
-func (r Francois) CromiRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.GoldPlate, amount: 4}, {itemId: item.Emerald, amount: 3}, {itemId: item.Diamond, amount: 2}, {itemId: item.AquaMarine, amount: 1}, {itemId: item.PieceOfIce, amount: 1}, {itemId: item.Screw, amount: 30}}, cost: 200000}
-}
-
-func (r Francois) WoodenStaffRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.ProcessedWood, amount: 5}}, cost: 2000}
-}
-
-func (r Francois) SapphireStaffRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Sapphire, amount: 1}, {itemId: item.SteelPlate, amount: 1}, {itemId: item.Screw, amount: 5}}, cost: 2000}
-}
-
-func (r Francois) EmeraldStaffRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Emerald, amount: 1}, {itemId: item.SteelPlate, amount: 1}, {itemId: item.Screw, amount: 5}}, cost: 2000}
-}
-
-func (r Francois) OldWoodenStaffRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.ProcessedWood, amount: 50}, {itemId: item.SteelPlate, amount: 1}, {itemId: item.Screw, amount: 10}}, cost: 5000}
-}
-
-func (r Francois) WizardStaffRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.Topaz, amount: 2}, {itemId: item.Amethyst, amount: 1}, {itemId: item.SteelPlate, amount: 1}, {itemId: item.Screw, amount: 15}}, cost: 12000}
-}
-
-func (r Francois) ArcStaffRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelPlate, amount: 8}, {itemId: item.Topaz, amount: 5}, {itemId: item.Amethyst, amount: 5}, {itemId: item.Sapphire, amount: 5}, {itemId: item.Screw, amount: 30}, {itemId: item.SlimeBubble, amount: 50}, {itemId: item.FairyWing, amount: 1}}, cost: 180000}
-}
-
-func (r Francois) Validate(itemId uint32, amount uint32, requirements RefinementRequirements) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.CanHoldAll(l)(c.CharacterId, itemId, amount) {
-			return r.MakeRoom(l, c)
-		}
-		if !character.HasMeso(l)(c.CharacterId, requirements.cost*amount) {
-			return r.CannotAfford(l, c)
-		}
-		for _, req := range requirements.requirements {
-			if !character.HasItems(l)(c.CharacterId, req.itemId, uint32(req.amount)*amount) {
-				return r.MissingSomething(req.itemId)(l, c)
-			}
-		}
-		return r.PerformRefine(itemId, amount, requirements)(l, c)
+func (r Francois) CreateRefinementChoice(itemText string, itemDescription string, selectionPrompt refine.TerminalState) refine.RefinementChoice {
+	return refine.RefinementChoice{
+		ListText:        message.NewBuilder().BlueText().AddText(itemText).BlackText().AddText(itemDescription).String(),
+		SelectionPrompt: selectionPrompt,
+		Config: refine.TerminalConfig{
+			Success:          r.Success,
+			MesoError:        r.CannotAfford,
+			RequirementError: r.MissingSomething,
+			InventoryError:   r.MakeRoom,
+		},
 	}
+}
+
+func (r Francois) MakeAGlove() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Make a glove",
+		Prompt:          "So, what kind of mineral ore would you like to refine?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateRefinementChoice("Lemona", " - Magician Lv. 15", refine.Confirm(item.Lemona, r.LemonaRequirements())),
+			r.CreateRefinementChoice("Blue Morrican", " - Magician Lv. 20", refine.Confirm(item.BlueMorrican, r.BlueMorricanRequirements())),
+			r.CreateRefinementChoice("Ocean Mesana", " - Magician Lv. 25", refine.Confirm(item.OceanMesana, r.OceanMesanaRequirements())),
+			r.CreateRefinementChoice("Red Lutia", " - Magician Lv. 30", refine.Confirm(item.RedLutia, r.RedLutiaRequirements())),
+			r.CreateRefinementChoice("Red Noel", " - Magician Lv. 35", refine.Confirm(item.RedNoel, r.RedNoelRequirements())),
+			r.CreateRefinementChoice("Red Arten", " - Magician Lv. 40", refine.Confirm(item.RedArten, r.RedArtenRequirements())),
+			r.CreateRefinementChoice("Red Pennance", " - Magician Lv. 50", refine.Confirm(item.RedPennance, r.RedPennanceRequirements())),
+			r.CreateRefinementChoice("Steel Manute", " - Magician Lv. 60", refine.Confirm(item.SteelManute, r.SteelManuteRequirements())),
+		},
+	}
+}
+
+func (r Francois) UpgradeAGlove() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Upgrade a glove",
+		Prompt:          "So, what kind of mineral ore would you like to refine?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateRefinementChoice("Green Morrican", " - Magician Lv. 20", refine.Confirm(item.GreenMorrican, r.GreenMorricanRequirements())),
+			r.CreateRefinementChoice("Purple Morrican", " - Magician Lv. 20", refine.Confirm(item.PurpleMorrican, r.PurpleMorricanRequirements())),
+			r.CreateRefinementChoice("Blood Mesana", " - Magician Lv. 25", refine.Confirm(item.BloodMesana, r.BloodMesanaRequirements())),
+			r.CreateRefinementChoice("Dark Mesana", " - Magician Lv. 25", refine.Confirm(item.DarkMesana, r.DarkMesanaRequirements())),
+			r.CreateRefinementChoice("Blue Lutia", " - Magician Lv. 30", refine.Confirm(item.BlueLutia, r.BlueLutiaRequirements())),
+			r.CreateRefinementChoice("Black Lutia", " - Magician Lv. 30", refine.Confirm(item.BlackLutia, r.BlackLutiaRequirements())),
+			r.CreateRefinementChoice("Blue Noel", " - Magician Lv. 35", refine.Confirm(item.BlueNoel, r.BlueNoelRequirements())),
+			r.CreateRefinementChoice("Dark Noel", " - Magician Lv. 35", refine.Confirm(item.DarkNoel, r.DarkNoelRequirements())),
+			r.CreateRefinementChoice("Blue Arten", " - Magician Lv. 40", refine.Confirm(item.BlueArten, r.BlueArtenRequirements())),
+			r.CreateRefinementChoice("Dark Arten", " - Magician Lv. 40", refine.Confirm(item.DarkArten, r.DarkArtenRequirements())),
+			r.CreateRefinementChoice("Blue Pennance", " - Magician Lv. 50", refine.Confirm(item.BluePennance, r.BluePennanceRequirements())),
+			r.CreateRefinementChoice("Dark Pennance", " - Magician Lv. 50", refine.Confirm(item.DarkPennance, r.DarkPennanceRequirements())),
+			r.CreateRefinementChoice("Gold Manute", " - Magician Lv. 60", refine.Confirm(item.GoldManute, r.GoldManuteRequirements())),
+			r.CreateRefinementChoice("Dark Manute", " - Magician Lv. 60", refine.Confirm(item.DarkManute, r.DarkManuteRequirements())),
+		},
+	}
+}
+
+func (r Francois) UpgradeAHat() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Upgrade a hat",
+		Prompt:          "So, what kind of mineral ore would you like to refine?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateRefinementChoice("Steel Pride", " - Magician Lv. 30", refine.Confirm(item.SteelPride, r.SteelPrideRequirements())),
+			r.CreateRefinementChoice("Golden Pride", " - Magician Lv. 30", refine.Confirm(item.GoldenPride, r.GoldenPrideRequirements())),
+		},
+	}
+}
+
+func (r Francois) MakeAWand() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Make a wand",
+		Prompt:          "So, what kind of mineral ore would you like to refine?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateRefinementChoice("Wooden Wand", " - Common Lv. 8", refine.Confirm(item.WoodenWand, r.WoodenWandRequirements())),
+			r.CreateRefinementChoice("Hardwood Wand", " - Common Lv. 13", refine.Confirm(item.HardwoodWand, r.HardwoodWandRequirements())),
+			r.CreateRefinementChoice("Metal Wand", " - Common Lv. 18", refine.Confirm(item.MetalWand, r.MetalWandRequirements())),
+			r.CreateRefinementChoice("Ice Wand", " - Magician Lv. 23", refine.Confirm(item.IceWand, r.IceWandRequirements())),
+			r.CreateRefinementChoice("Mithril Wand", " - Magician Lv. 28", refine.Confirm(item.MithrilWand, r.MithrilWandRequirements())),
+			r.CreateRefinementChoice("Wizard Wand", " - Magician Lv. 33", refine.Confirm(item.WizardWand, r.WizardWandRequirements())),
+			r.CreateRefinementChoice("Fairy Wand", " - Magician Lv. 38", refine.Confirm(item.FairyWand, r.FairyWandRequirements())),
+			r.CreateRefinementChoice("Cromi", " - Magician Lv. 48", refine.Confirm(item.Cromi, r.CromiRequirements())),
+		},
+	}
+}
+
+func (r Francois) MakeAStaff() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Make a staff",
+		Prompt:          "So, what kind of mineral ore would you like to refine?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateRefinementChoice("Wooden Staff", " - Magician Lv. 10", refine.Confirm(item.WoodenStaff, r.WoodenStaffRequirements())),
+			r.CreateRefinementChoice("Sapphire Staff", " - Magician Lv. 15", refine.Confirm(item.SapphireStaff, r.SapphireStaffRequirements())),
+			r.CreateRefinementChoice("Emerald Staff", " - Magician Lv. 15", refine.Confirm(item.EmeraldStaff, r.EmeraldStaffRequirements())),
+			r.CreateRefinementChoice("Old Wooden Staff", " - Magician Lv. 20", refine.Confirm(item.OldWoodenStaff, r.OldWoodenStaffRequirements())),
+			r.CreateRefinementChoice("Wizard Staff", " - Magician Lv. 25", refine.Confirm(item.WizardStaff, r.WizardStaffRequirements())),
+			r.CreateRefinementChoice("Arc Staff", " - Magician Lv. 45", refine.Confirm(item.ArcStaff, r.ArcStaffRequirements())),
+		},
+	}
+}
+
+func (r Francois) LemonaRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 15}}, Cost: 7000}
+}
+
+func (r Francois) BlueMorricanRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 30}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 15000}
+}
+
+func (r Francois) OceanMesanaRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 50}, {ItemId: item.GoldPlate, Amount: 2}}, Cost: 20000}
+}
+
+func (r Francois) RedLutiaRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 60}, {ItemId: item.Topaz, Amount: 1}, {ItemId: item.Garnet, Amount: 2}}, Cost: 25000}
+}
+
+func (r Francois) RedNoelRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 70}, {ItemId: item.GoldPlate, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}, {ItemId: item.Garnet, Amount: 2}}, Cost: 30000}
+}
+
+func (r Francois) RedArtenRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Leather, Amount: 80}, {ItemId: item.Garnet, Amount: 3}, {ItemId: item.Topaz, Amount: 3}, {ItemId: item.Screw, Amount: 30}}, Cost: 40000}
+}
+
+func (r Francois) RedPennanceRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Garnet, Amount: 3}, {ItemId: item.GoldPlate, Amount: 2}, {ItemId: item.DragonSkin, Amount: 35}, {ItemId: item.Screw, Amount: 40}}, Cost: 50000}
+}
+
+func (r Francois) SteelManuteRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.DragonSkin, Amount: 50}, {ItemId: item.Screw, Amount: 50}}, Cost: 70000}
+}
+
+func (r Francois) GreenMorricanRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlueMorrican, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 20000}
+}
+
+func (r Francois) PurpleMorricanRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlueMorrican, Amount: 1}, {ItemId: item.Amethyst, Amount: 2}}, Cost: 25000}
+}
+
+func (r Francois) BloodMesanaRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OceanMesana, Amount: 1}, {ItemId: item.Garnet, Amount: 3}}, Cost: 30000}
+}
+
+func (r Francois) DarkMesanaRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OceanMesana, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 40000}
+}
+
+func (r Francois) BlueLutiaRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedLutia, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, Cost: 35000}
+}
+
+func (r Francois) BlackLutiaRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedLutia, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 40000}
+}
+
+func (r Francois) BlueNoelRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedNoel, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, Cost: 40000}
+}
+
+func (r Francois) DarkNoelRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedNoel, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 1}}, Cost: 45000}
+}
+
+func (r Francois) BlueArtenRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedArten, Amount: 1}, {ItemId: item.AquaMarine, Amount: 4}}, Cost: 45000}
+}
+
+func (r Francois) DarkArtenRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedArten, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}}, Cost: 50000}
+}
+
+func (r Francois) BluePennanceRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedPennance, Amount: 1}, {ItemId: item.AquaMarine, Amount: 5}}, Cost: 55000}
+}
+
+func (r Francois) DarkPennanceRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.RedPennance, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 3}}, Cost: 60000}
+}
+
+func (r Francois) GoldManuteRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelManute, Amount: 1}, {ItemId: item.SilverPlate, Amount: 3}, {ItemId: item.GoldPlate, Amount: 5}}, Cost: 70000}
+}
+
+func (r Francois) DarkManuteRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelManute, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 2}, {ItemId: item.GoldPlate, Amount: 3}}, Cost: 80000}
+}
+
+func (r Francois) SteelPrideRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePride, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, Cost: 40000}
+}
+
+func (r Francois) GoldenPrideRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzePride, Amount: 1}, {ItemId: item.GoldPlate, Amount: 3}}, Cost: 50000}
+}
+
+func (r Francois) WoodenWandRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}}, Cost: 1000}
+}
+
+func (r Francois) HardwoodWandRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 10}, {ItemId: item.OrangeMushroomCap, Amount: 50}}, Cost: 3000}
+}
+
+func (r Francois) MetalWandRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.BlueMushroomCap, Amount: 30}, {ItemId: item.Screw, Amount: 5}}, Cost: 5000}
+}
+
+func (r Francois) IceWandRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilPlate, Amount: 2}, {ItemId: item.PieceOfIce, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, Cost: 12000}
+}
+
+func (r Francois) MithrilWandRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilPlate, Amount: 3}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, Cost: 30000}
+}
+
+func (r Francois) WizardWandRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Topaz, Amount: 5}, {ItemId: item.MithrilPlate, Amount: 3}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 15}}, Cost: 60000}
+}
+
+func (r Francois) FairyWandRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Topaz, Amount: 5}, {ItemId: item.Sapphire, Amount: 5}, {ItemId: item.Diamond, Amount: 1}, {ItemId: item.FairyWing, Amount: 1}, {ItemId: item.Screw, Amount: 20}}, Cost: 120000}
+}
+
+func (r Francois) CromiRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GoldPlate, Amount: 4}, {ItemId: item.Emerald, Amount: 3}, {ItemId: item.Diamond, Amount: 2}, {ItemId: item.AquaMarine, Amount: 1}, {ItemId: item.PieceOfIce, Amount: 1}, {ItemId: item.Screw, Amount: 30}}, Cost: 200000}
+}
+
+func (r Francois) WoodenStaffRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 5}}, Cost: 2000}
+}
+
+func (r Francois) SapphireStaffRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Sapphire, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 5}}, Cost: 2000}
+}
+
+func (r Francois) EmeraldStaffRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Emerald, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 5}}, Cost: 2000}
+}
+
+func (r Francois) OldWoodenStaffRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.ProcessedWood, Amount: 50}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 10}}, Cost: 5000}
+}
+
+func (r Francois) WizardStaffRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.Topaz, Amount: 2}, {ItemId: item.Amethyst, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.Screw, Amount: 15}}, Cost: 12000}
+}
+
+func (r Francois) ArcStaffRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelPlate, Amount: 8}, {ItemId: item.Topaz, Amount: 5}, {ItemId: item.Amethyst, Amount: 5}, {ItemId: item.Sapphire, Amount: 5}, {ItemId: item.Screw, Amount: 30}, {ItemId: item.SlimeBubble, Amount: 50}, {ItemId: item.FairyWing, Amount: 1}}, Cost: 180000}
 }
 
 func (r Francois) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("Check your inventory for a free slot first.")
+	m := message.NewBuilder().AddText("Check your inventory for a free slot first.")
 	return script.SendOk(l, c, m.String())
 }
 
 func (r Francois) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("Sorry, but all of us need money to live. Come back when you can pay my fees, yes?")
+	m := message.NewBuilder().AddText("Sorry, but all of us need money to live. Come back when you can pay my fees, yes?")
 	return script.SendOk(l, c, m.String())
 }
 
@@ -438,22 +306,7 @@ func (r Francois) MissingSomething(itemId uint32) script.StateProducer {
 	}
 }
 
-func (r Francois) PerformRefine(itemId uint32, amount uint32, requirements RefinementRequirements) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -int32(amount*requirements.cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process payment for refine.")
-		}
-		for _, req := range requirements.requirements {
-			character.GainItem(l)(c.CharacterId, req.itemId, -int32(req.amount)*int32(amount))
-		}
-		character.GainItem(l)(c.CharacterId, itemId, int32(amount))
-		return r.Success(l, c)
-	}
-}
-
 func (r Francois) Success(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("It's a success! Oh, I've never felt so alive! Please come back again!")
+	m := message.NewBuilder().AddText("It's a success! Oh, I've never felt so alive! Please come back again!")
 	return script.SendOk(l, c, m.String())
 }

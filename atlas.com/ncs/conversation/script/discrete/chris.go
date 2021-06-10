@@ -23,86 +23,6 @@ func (r Chris) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	return refine.NewGenericRefine(l, c, hello, categories)
 }
 
-func (r Chris) BronzeRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeOre, Amount: 10}}, Cost: 300}
-}
-
-func (r Chris) SteelRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelOre, Amount: 10}}, Cost: 300}
-}
-
-func (r Chris) MithrilRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilOre, Amount: 10}}, Cost: 300}
-}
-
-func (r Chris) AdamantiumRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AdamantiumOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) SilverRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SilverOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) OrihalconRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OrihalconOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) GoldRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GoldOre, Amount: 10}}, Cost: 800}
-}
-
-func (r Chris) GarnetRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GarnetOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) AmethystRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AmethystOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) AquamarineRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AquaMarineOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) EmeraldRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.EmeraldOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) OpalRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OpalOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) SapphireRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SapphireOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) TopazRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.TopazOre, Amount: 10}}, Cost: 500}
-}
-
-func (r Chris) DiamondRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.DiamondOre, Amount: 10}}, Cost: 1000}
-}
-
-func (r Chris) BlackCrystalRefineRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlackCrystalOre, Amount: 10}}, Cost: 3000}
-}
-
-func (r Chris) BloodGiganticRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGigantic, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.Garnet, Amount: 8}, {ItemId: item.DrakesBlood, Amount: 10}}, Cost: 80000}
-}
-
-func (r Chris) SapphireGiganticRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGigantic, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.Sapphire, Amount: 8}, {ItemId: item.SapOfAncientTree, Amount: 10}}, Cost: 80000}
-}
-
-func (r Chris) DarkGiganticRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGigantic, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 3}, {ItemId: item.TaurospearHorn, Amount: 5}}, Cost: 100000}
-}
-
-func (r Chris) SteelFromHogRequirements() refine.RefinementRequirements {
-	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.IronHogsMetalHoof, Amount: 100}}}
-}
-
 func (r Chris) CreateCategories() []refine.RefinementCategory {
 	return []refine.RefinementCategory{
 		r.RefineMineralOre(),
@@ -181,6 +101,86 @@ func (r Chris) CreateRefinementChoice(listText string, selectionPrompt refine.Te
 			InventoryError:   r.MakeRoom,
 		},
 	}
+}
+
+func (r Chris) BronzeRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeOre, Amount: 10}}, Cost: 300}
+}
+
+func (r Chris) SteelRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelOre, Amount: 10}}, Cost: 300}
+}
+
+func (r Chris) MithrilRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilOre, Amount: 10}}, Cost: 300}
+}
+
+func (r Chris) AdamantiumRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AdamantiumOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) SilverRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SilverOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) OrihalconRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OrihalconOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) GoldRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GoldOre, Amount: 10}}, Cost: 800}
+}
+
+func (r Chris) GarnetRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GarnetOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) AmethystRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AmethystOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) AquamarineRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AquaMarineOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) EmeraldRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.EmeraldOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) OpalRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OpalOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) SapphireRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SapphireOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) TopazRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.TopazOre, Amount: 10}}, Cost: 500}
+}
+
+func (r Chris) DiamondRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.DiamondOre, Amount: 10}}, Cost: 1000}
+}
+
+func (r Chris) BlackCrystalRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlackCrystalOre, Amount: 10}}, Cost: 3000}
+}
+
+func (r Chris) BloodGiganticRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGigantic, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.Garnet, Amount: 8}, {ItemId: item.DrakesBlood, Amount: 10}}, Cost: 80000}
+}
+
+func (r Chris) SapphireGiganticRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGigantic, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.Sapphire, Amount: 8}, {ItemId: item.SapOfAncientTree, Amount: 10}}, Cost: 80000}
+}
+
+func (r Chris) DarkGiganticRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeGigantic, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.BlackCrystal, Amount: 3}, {ItemId: item.TaurospearHorn, Amount: 5}}, Cost: 100000}
+}
+
+func (r Chris) SteelFromHogRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.IronHogsMetalHoof, Amount: 100}}}
 }
 
 func (r Chris) MetalHoof(category refine.RefinementCategory) script.StateProducer {
