@@ -181,7 +181,7 @@ const (
 	MithrilCrusaderHelm                    uint32 = 1002085
 	SilverCrusaderHelm                     uint32 = 1002028
 	OldSteelNordicHelm                     uint32 = 1002022
-	OldMithril                             uint32 = 1002101
+	OldMithrilNordicHelm                   uint32 = 1002101
 	MetalGear                              uint32 = 1002001
 	BronzeKoif                             uint32 = 1002043
 	BronzeHelmet                           uint32 = 1002039

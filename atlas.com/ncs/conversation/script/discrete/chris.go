@@ -92,9 +92,9 @@ func (r Chris) RefineUpgradeClaw() refine.RefinementCategory {
 		Prompt:          "Ah, you wish to upgrade a claw? Then tell me, which one?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemNameList("Blood Gigantic", " - Thief Lv. 60"), refine.Confirm(item.BloodGigantic, r.BloodGiganticRequirements())),
-			r.CreateChoice(refine.ItemNameList("Sapphire Gigantic", " - Thief Lv. 60"), refine.Confirm(item.SapphireGigantic, r.SapphireGiganticRequirements())),
-			r.CreateChoice(refine.ItemNameList("Dark Gigantic", " - Thief Lv. 60"), refine.Confirm(item.DarkGigantic, r.DarkGiganticRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodGigantic, " - Thief Lv. 60"), refine.Confirm(item.BloodGigantic, r.BloodGiganticRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SapphireGigantic, " - Thief Lv. 60"), refine.Confirm(item.SapphireGigantic, r.SapphireGiganticRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkGigantic, " - Thief Lv. 60"), refine.Confirm(item.DarkGigantic, r.DarkGiganticRequirements())),
 		},
 	}
 }

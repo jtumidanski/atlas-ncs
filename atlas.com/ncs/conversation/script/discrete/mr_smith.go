@@ -31,7 +31,6 @@ func (r MrSmith) CreateCategories() []refine.RefinementCategory {
 	}
 }
 
-
 func (r MrSmith) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
 	config := refine.TerminalConfig{
 		Success:          r.Success,
@@ -48,15 +47,15 @@ func (r MrSmith) MakeAGlove() refine.RefinementCategory {
 		Prompt:          "Okay, so which glove do you want me to make?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemNameList("Juno", " - Warrior Lv. 10"), refine.Confirm(item.Juno, r.JunoRequirements())),
-			r.CreateChoice(refine.ItemNameList("Steel Fingerless Gloves", " - Warrior Lv. 15"), refine.Confirm(item.SteelFingerlessGloves, r.SteelFingerlessGlovesRequirements())),
-			r.CreateChoice(refine.ItemNameList("Venon", " - Warrior Lv. 20"), refine.Confirm(item.Venon, r.VenonRequirements())),
-			r.CreateChoice(refine.ItemNameList("White Fingerless Gloves", " - Warrior Lv. 25"), refine.Confirm(item.WhiteFingerlessGloves, r.WhiteFingerlessGlovesRequirements())),
-			r.CreateChoice(refine.ItemNameList("Bronze Missel", " - Warrior Lv. 30"), refine.Confirm(item.BronzeMissel, r.BronzeMisselRequirements())),
-			r.CreateChoice(refine.ItemNameList("Steel Briggon", " - Warrior Lv. 35"), refine.Confirm(item.SteelBriggon, r.SteelBriggonRequirements())),
-			r.CreateChoice(refine.ItemNameList("Iron Knuckle", " - Warrior Lv. 40"), refine.Confirm(item.IronKnuckle, r.IronKnuckleRequirements())),
-			r.CreateChoice(refine.ItemNameList("Steel Brist", " - Warrior Lv. 50"), refine.Confirm(item.SteelBrist, r.SteelBristRequirements())),
-			r.CreateChoice(refine.ItemNameList("Bronze Clench", " - Warrior Lv. 60"), refine.Confirm(item.BronzeClench, r.BronzeClenchRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Juno, " - Warrior Lv. 10"), refine.Confirm(item.Juno, r.JunoRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelFingerlessGloves, " - Warrior Lv. 15"), refine.Confirm(item.SteelFingerlessGloves, r.SteelFingerlessGlovesRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Venon, " - Warrior Lv. 20"), refine.Confirm(item.Venon, r.VenonRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.WhiteFingerlessGloves, " - Warrior Lv. 25"), refine.Confirm(item.WhiteFingerlessGloves, r.WhiteFingerlessGlovesRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BronzeMissel, " - Warrior Lv. 30"), refine.Confirm(item.BronzeMissel, r.BronzeMisselRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelBriggon, " - Warrior Lv. 35"), refine.Confirm(item.SteelBriggon, r.SteelBriggonRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.IronKnuckle, " - Warrior Lv. 40"), refine.Confirm(item.IronKnuckle, r.IronKnuckleRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelBrist, " - Warrior Lv. 50"), refine.Confirm(item.SteelBrist, r.SteelBristRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BronzeClench, " - Warrior Lv. 60"), refine.Confirm(item.BronzeClench, r.BronzeClenchRequirements())),
 		},
 	}
 }
@@ -67,16 +66,16 @@ func (r MrSmith) UpgradeAGlove() refine.RefinementCategory {
 		Prompt:          "Upgrade a glove? That shouldn't be too difficult. Which did you have in mind?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemNameList("Steel Missel", " - Warrior Lv. 30"), refine.Confirm(item.SteelMissel, r.SteelMisselRequirements())),
-			r.CreateChoice(refine.ItemNameList("Orihalcon Missel", " - Warrior Lv. 30"), refine.Confirm(item.OrihalconMissel, r.OrihalconMisselRequirements())),
-			r.CreateChoice(refine.ItemNameList("Yellow Briggon", " - Warrior Lv. 35"), refine.Confirm(item.YellowBriggon, r.YellowBriggonRequirements())),
-			r.CreateChoice(refine.ItemNameList("Dark Briggon", " - Warrior Lv. 35"), refine.Confirm(item.DarkBriggon, r.DarkBriggonRequirements())),
-			r.CreateChoice(refine.ItemNameList("Adamantium Knuckle", " - Warrior Lv. 40"), refine.Confirm(item.AdamantiumKnuckle, r.AdamantiumKnuckleRequirements())),
-			r.CreateChoice(refine.ItemNameList("Dark Knuckle", " - Warrior Lv. 40"), refine.Confirm(item.DarkKnuckle, r.DarkKnuckleRequirements())),
-			r.CreateChoice(refine.ItemNameList("Mithril Brist", " - Warrior Lv. 50"), refine.Confirm(item.MithrilBrist, r.MithrilBristRequirements())),
-			r.CreateChoice(refine.ItemNameList("Gold Brist", " - Warrior Lv. 50"), refine.Confirm(item.GoldBrist, r.GoldBristRequirements())),
-			r.CreateChoice(refine.ItemNameList("Sapphire Clench", " - Warrior Lv. 60"), refine.Confirm(item.SapphireClench, r.SapphireClenchRequirements())),
-			r.CreateChoice(refine.ItemNameList("Dark Clench", " - Warrior Lv. 60"), refine.Confirm(item.DarkClench, r.DarkClenchRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelMissel, " - Warrior Lv. 30"), refine.Confirm(item.SteelMissel, r.SteelMisselRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrihalconMissel, " - Warrior Lv. 30"), refine.Confirm(item.OrihalconMissel, r.OrihalconMisselRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.YellowBriggon, " - Warrior Lv. 35"), refine.Confirm(item.YellowBriggon, r.YellowBriggonRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkBriggon, " - Warrior Lv. 35"), refine.Confirm(item.DarkBriggon, r.DarkBriggonRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.AdamantiumKnuckle, " - Warrior Lv. 40"), refine.Confirm(item.AdamantiumKnuckle, r.AdamantiumKnuckleRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkKnuckle, " - Warrior Lv. 40"), refine.Confirm(item.DarkKnuckle, r.DarkKnuckleRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilBrist, " - Warrior Lv. 50"), refine.Confirm(item.MithrilBrist, r.MithrilBristRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldBrist, " - Warrior Lv. 50"), refine.Confirm(item.GoldBrist, r.GoldBristRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SapphireClench, " - Warrior Lv. 60"), refine.Confirm(item.SapphireClench, r.SapphireClenchRequirements())),
+			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkClench, " - Warrior Lv. 60"), refine.Confirm(item.DarkClench, r.DarkClenchRequirements())),
 		},
 	}
 }

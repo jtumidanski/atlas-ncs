@@ -189,15 +189,15 @@ func SimpleList(value string) RefinementListTextProvider {
 	}
 }
 
-func ItemIdList(itemId uint32, description string) RefinementListTextProvider {
+func ItemIdList(itemId uint32) RefinementListTextProvider {
 	return func() string {
-		return message.NewBuilder().BlueText().ShowItemName1(itemId).BlackText().AddText(description).String()
+		return message.NewBuilder().BlueText().ShowItemName1(itemId).String()
 	}
 }
 
-func ItemNameList(itemName string, description string) RefinementListTextProvider {
+func ItemIdAndDescriptionList(itemId uint32, description string) RefinementListTextProvider {
 	return func() string {
-		return message.NewBuilder().BlueText().AddText(itemName).BlackText().AddText(description).String()
+		return message.NewBuilder().BlueText().ShowItemName1(itemId).BlackText().AddText(description).String()
 	}
 }
 
