@@ -1,12 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
+	"atlas-ncs/conversation/script/generic/refine"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
-	"fmt"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,421 +18,265 @@ func (r MrThunder) NPCId() uint32 {
 }
 
 func (r MrThunder) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+	hello := "Hm? Who might you be? Oh, you've heard about my forging skills? In that case, I'd be glad to process some of your ores... for a fee."
+	categories := r.CreateCategories()
+	return refine.NewGenericRefine(l, c, hello, categories)
 }
 
-func (r MrThunder) Hello(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("Hm? Who might you be? Oh, you've heard about my forging skills? In that case, I'd be glad to process some of your ores... for a fee.").NewLine().
-		OpenItem(0).BlueText().AddText("Refine a mineral ore").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Refine a jewel ore").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Upgrade a helmet").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Upgrade a shield").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.WhatToDo)
-}
-
-func (r MrThunder) WhatToDo(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.RefineMineral
-	case 1:
-		return r.RefineJewel
-	case 2:
-		return r.UpgradeHelmet
-	case 3:
-		return r.UpgradeShield
-	}
-	return nil
-}
-
-func (r MrThunder) RefineMineral(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("So, what kind of mineral ore would you like to refine?").NewLine().
-		OpenItem(0).BlueText().AddText("Bronze").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Steel").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Mithril").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Adamantium").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Silver").CloseItem().NewLine().
-		OpenItem(5).BlueText().AddText("Orihalcon").CloseItem().NewLine().
-		OpenItem(6).BlueText().AddText("Gold").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.MineralSelection)
-}
-
-func (r MrThunder) MineralSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.HowMany(item.BronzePlate, r.BronzeRefineRequirements())
-	case 1:
-		return r.HowMany(item.SteelPlate, r.SteelRefineRequirements())
-	case 2:
-		return r.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())
-	case 3:
-		return r.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())
-	case 4:
-		return r.HowMany(item.SilverPlate, r.SilverRefineRequirements())
-	case 5:
-		return r.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())
-	case 6:
-		return r.HowMany(item.GoldPlate, r.GoldRefineRequirements())
-	}
-	return nil
-}
-
-func (r MrThunder) RefineJewel(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("So, what kind of jewel ore would you like to refine?").NewLine().
-		OpenItem(0).BlueText().AddText("Garnet").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Amethyst").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("AquaMarine").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Emerald").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Opal").CloseItem().NewLine().
-		OpenItem(5).BlueText().AddText("Sapphire").CloseItem().NewLine().
-		OpenItem(6).BlueText().AddText("Topaz").CloseItem().NewLine().
-		OpenItem(7).BlueText().AddText("Diamond").CloseItem().NewLine().
-		OpenItem(8).BlueText().AddText("Black Crystal").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.JewelSelection)
-}
-
-func (r MrThunder) JewelSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.HowMany(item.Garnet, r.GarnetRefineRequirements())
-	case 1:
-		return r.HowMany(item.Amethyst, r.AmethystRefineRequirements())
-	case 2:
-		return r.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())
-	case 3:
-		return r.HowMany(item.Emerald, r.EmeraldRefineRequirements())
-	case 4:
-		return r.HowMany(item.Opal, r.OpalRefineRequirements())
-	case 5:
-		return r.HowMany(item.Sapphire, r.SapphireRefineRequirements())
-	case 6:
-		return r.HowMany(item.Topaz, r.TopazRefineRequirements())
-	case 7:
-		return r.HowMany(item.Diamond, r.DiamondRefineRequirements())
-	case 8:
-		return r.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements())
-	}
-	return nil
-}
-
-func (r MrThunder) UpgradeHelmet(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("Ah, you wish to upgrade a helmet? Then tell me, which one?").NewLine().
-		OpenItem(0).BlueText().AddText("Blue Metal Gear").BlackText().AddText(" - Common Lv. 15").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Yellow Metal Gear").BlackText().AddText(" - Common Lv. 15").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Metal Koif").BlackText().AddText(" - Warrior Lv. 10").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Mithril Koif").BlackText().AddText(" - Warrior Lv. 10").CloseItem().NewLine().
-		OpenItem(4).BlueText().AddText("Steel Helmet").BlackText().AddText(" - Warrior Lv. 12").CloseItem().NewLine().
-		OpenItem(5).BlueText().AddText("Mithril Helmet").BlackText().AddText(" - Warrior Lv. 12").CloseItem().NewLine().
-		OpenItem(6).BlueText().AddText("Steel Full Helm").BlackText().AddText(" - Warrior Lv. 15").CloseItem().NewLine().
-		OpenItem(7).BlueText().AddText("Mithril Full Helm").BlackText().AddText(" - Warrior Lv. 15").CloseItem().NewLine().
-		OpenItem(8).BlueText().AddText("Iron Viking Helm").BlackText().AddText(" - Warrior Lv. 20").CloseItem().NewLine().
-		OpenItem(9).BlueText().AddText("Mithril Viking Helm").BlackText().AddText(" - Warrior Lv. 20").CloseItem().NewLine().
-		OpenItem(10).BlueText().AddText("Steel Football Helmet").BlackText().AddText(" - Warrior Lv. 20").CloseItem().NewLine().
-		OpenItem(11).BlueText().AddText("Mithril Football Helmet").BlackText().AddText(" - Warrior Lv. 20").CloseItem().NewLine().
-		OpenItem(12).BlueText().AddText("Mithril Sharp Helm").BlackText().AddText(" - Warrior Lv. 22").CloseItem().NewLine().
-		OpenItem(13).BlueText().AddText("Gold Sharp Helm").BlackText().AddText(" - Warrior Lv. 22").CloseItem().NewLine().
-		OpenItem(14).BlueText().AddText("Orihalcon Burgernet Helm").BlackText().AddText(" - Warrior Lv. 25").CloseItem().NewLine().
-		OpenItem(15).BlueText().AddText("Gold Burgernet Helm").BlackText().AddText(" - Warrior Lv. 25").CloseItem().NewLine().
-		OpenItem(16).BlueText().AddText("Great Red Helmet").BlackText().AddText(" - Warrior Lv. 35").CloseItem().NewLine().
-		OpenItem(17).BlueText().AddText("Great Blue Helmet").BlackText().AddText(" - Warrior Lv. 35").CloseItem().NewLine().
-		OpenItem(18).BlueText().AddText("Mithril Nordic Helm").BlackText().AddText(" - Warrior Lv. 40").CloseItem().NewLine().
-		OpenItem(19).BlueText().AddText("Gold Nordic Helm").BlackText().AddText(" - Warrior Lv. 40").CloseItem().NewLine().
-		OpenItem(20).BlueText().AddText("Mithril Crusader Helm").BlackText().AddText(" - Warrior Lv. 50").CloseItem().NewLine().
-		OpenItem(21).BlueText().AddText("Silver Crusader Helm").BlackText().AddText(" - Warrior Lv. 50").CloseItem().NewLine().
-		OpenItem(22).BlueText().AddText("Old Steel Nordic Helm").BlackText().AddText(" - Warrior Lv. 55").CloseItem().NewLine().
-		OpenItem(23).BlueText().AddText("Old Mithril Nordic Helm").BlackText().AddText(" - Warrior Lv. 55").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.HelmetSelection)
-}
-
-func (r MrThunder) HelmetSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.Confirm(item.BlueMetalGear, r.BlueMetalGearRequirements())
-	case 1:
-		return r.Confirm(item.YellowMetalGear, r.YellowMetalGearRequirements())
-	case 2:
-		return r.Confirm(item.MetalKoif, r.MetalKoifRequirements())
-	case 3:
-		return r.Confirm(item.MithrilKoif, r.MithrilKoifRequirements())
-	case 4:
-		return r.Confirm(item.SteelHelmet, r.SteelHelmetRequirements())
-	case 5:
-		return r.Confirm(item.MithrilHelmet, r.MithrilHelmetRequirements())
-	case 6:
-		return r.Confirm(item.SteelFullHelm, r.SteelFullHelmRequirements())
-	case 7:
-		return r.Confirm(item.MithrilFullHelm, r.MithrilFullHelmRequirements())
-	case 8:
-		return r.Confirm(item.IronVikingHelm, r.IronVikingHelmRequirements())
-	case 9:
-		return r.Confirm(item.MithrilVikingHelm, r.MithrilVikingHelmRequirements())
-	case 10:
-		return r.Confirm(item.SteelFootballHelmet, r.SteelFootballHelmetRequirements())
-	case 11:
-		return r.Confirm(item.MithrilFootballHelmet, r.MithrilFootballHelmetRequirements())
-	case 12:
-		return r.Confirm(item.MithrilSharpHelm, r.MithrilSharpHelmRequirements())
-	case 13:
-		return r.Confirm(item.GoldSharpHelm, r.GoldSharpHelmRequirements())
-	case 14:
-		return r.Confirm(item.OrihalconBurgernetHelm, r.OrihalconBurgernetHelmRequirements())
-	case 15:
-		return r.Confirm(item.GoldBurgernetHelm, r.GoldBurgernetHelmRequirements())
-	case 16:
-		return r.Confirm(item.GreatRedHelmet, r.GreatRedHelmetRequirements())
-	case 17:
-		return r.Confirm(item.GreatBlueHelmet, r.GreatBlueHelmetRequirements())
-	case 18:
-		return r.Confirm(item.MithrilNordicHelm, r.MithrilNordicHelmRequirements())
-	case 19:
-		return r.Confirm(item.GoldNordicHelm, r.GoldNordicHelmRequirements())
-	case 20:
-		return r.Confirm(item.MithrilCrusaderHelm, r.MithrilCrusaderHelmRequirements())
-	case 21:
-		return r.Confirm(item.SilverCrusaderHelm, r.SilverCrusaderHelmRequirements())
-	case 22:
-		return r.Confirm(item.OldSteelNordicHelm, r.OldSteelNordicHelmRequirements())
-	case 23:
-		return r.Confirm(item.OldMithril, r.OldMithrilRequirements())
-	}
-	return nil
-}
-
-func (r MrThunder) UpgradeShield(l logrus.FieldLogger, c script.Context) script.State {
-	m := message.NewBuilder().
-		AddText("Ah, you wish to upgrade a shield? Then tell me, which one?").NewLine().
-		OpenItem(0).BlueText().AddText("Adamantium Tower Shield").BlackText().AddText(" - Warrior Lv. 40").CloseItem().NewLine().
-		OpenItem(1).BlueText().AddText("Mithril Tower Shield").BlackText().AddText(" - Warrior Lv. 40").CloseItem().NewLine().
-		OpenItem(2).BlueText().AddText("Silver Legend Shield").BlackText().AddText(" - Warrior Lv. 60").CloseItem().NewLine().
-		OpenItem(3).BlueText().AddText("Adamantium Legend Shield").BlackText().AddText(" - Warrior Lv. 60").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.ShieldSelection)
-}
-
-func (r MrThunder) ShieldSelection(selection int32) script.StateProducer {
-	switch selection {
-	case 0:
-		return r.Confirm(item.AdamantiumTowerShield, r.AdamantiumTowerShieldRequirements())
-	case 1:
-		return r.Confirm(item.MithrilTowerShield, r.MithrilTowerShieldRequirements())
-	case 2:
-		return r.Confirm(item.SilverLegendShield, r.SilverLegendShieldRequirements())
-	case 3:
-		return r.Confirm(item.AdamantiumLegendShield, r.AdamantiumLegendShieldRequirements())
-	}
-	return nil
-}
-
-func (r MrThunder) BronzeRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeOre, amount: 10}}, cost: 300}
-}
-
-func (r MrThunder) SteelRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelOre, amount: 10}}, cost: 300}
-}
-
-func (r MrThunder) MithrilRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.MithrilOre, amount: 10}}, cost: 300}
-}
-
-func (r MrThunder) AdamantiumRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.AdamantiumOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) SilverRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SilverOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) OrihalconRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.OrihalconOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) GoldRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.GoldOre, amount: 10}}, cost: 800}
-}
-
-func (r MrThunder) GarnetRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.GarnetOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) AmethystRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.AmethystOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) AquamarineRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.AquaMarineOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) EmeraldRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.EmeraldOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) OpalRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.OpalOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) SapphireRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SapphireOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) TopazRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.TopazOre, amount: 10}}, cost: 500}
-}
-
-func (r MrThunder) DiamondRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.DiamondOre, amount: 10}}, cost: 1000}
-}
-
-func (r MrThunder) BlackCrystalRefineRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BlackCrystalOre, amount: 10}}, cost: 3000}
-}
-
-func (r MrThunder) BlueMetalGearRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.MetalGear, amount: 1}, {itemId: item.MithrilPlate, amount: 1}}, cost: 500}
-}
-func (r MrThunder) YellowMetalGearRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.MetalGear, amount: 1}, {itemId: item.Topaz, amount: 1}}, cost: 300}
-}
-func (r MrThunder) MetalKoifRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeKoif, amount: 1}, {itemId: item.SteelPlate, amount: 1}}, cost: 500}
-}
-func (r MrThunder) MithrilKoifRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeKoif, amount: 1}, {itemId: item.MithrilPlate, amount: 1}}, cost: 800}
-}
-func (r MrThunder) SteelHelmetRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeHelmet, amount: 1}, {itemId: item.SteelPlate, amount: 1}}, cost: 500}
-}
-func (r MrThunder) MithrilHelmetRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeHelmet, amount: 1}, {itemId: item.MithrilPlate, amount: 1}}, cost: 800}
-}
-func (r MrThunder) SteelFullHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeFullHelm, amount: 1}, {itemId: item.SteelPlate, amount: 2}}, cost: 1000}
-}
-func (r MrThunder) MithrilFullHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeFullHelm, amount: 1}, {itemId: item.MithrilPlate, amount: 2}}, cost: 1500}
-}
-func (r MrThunder) IronVikingHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeVikingHelm, amount: 1}, {itemId: item.SteelPlate, amount: 3}}, cost: 1500}
-}
-func (r MrThunder) MithrilVikingHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeVikingHelm, amount: 1}, {itemId: item.MithrilPlate, amount: 3}}, cost: 2000}
-}
-func (r MrThunder) SteelFootballHelmetRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeFootballHelmet, amount: 1}, {itemId: item.SteelPlate, amount: 3}}, cost: 1500}
-}
-func (r MrThunder) MithrilFootballHelmetRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeFootballHelmet, amount: 1}, {itemId: item.MithrilPlate, amount: 3}}, cost: 2000}
-}
-func (r MrThunder) MithrilSharpHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelSharpHelm, amount: 1}, {itemId: item.MithrilPlate, amount: 4}}, cost: 2000}
-}
-func (r MrThunder) GoldSharpHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelSharpHelm, amount: 1}, {itemId: item.GoldPlate, amount: 4}}, cost: 4000}
-}
-func (r MrThunder) OrihalconBurgernetHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.IronBurgernetHelm, amount: 1}, {itemId: item.OrihalconPlate, amount: 5}}, cost: 4000}
-}
-func (r MrThunder) GoldBurgernetHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.IronBurgernetHelm, amount: 1}, {itemId: item.GoldPlate, amount: 5}}, cost: 5000}
-}
-func (r MrThunder) GreatRedHelmetRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.GreatBrownHelmet, amount: 1}, {itemId: item.Garnet, amount: 3}}, cost: 8000}
-}
-func (r MrThunder) GreatBlueHelmetRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.GreatBrownHelmet, amount: 1}, {itemId: item.Sapphire, amount: 3}}, cost: 10000}
-}
-func (r MrThunder) MithrilNordicHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelNordicHelm, amount: 1}, {itemId: item.MithrilPlate, amount: 5}}, cost: 12000}
-}
-func (r MrThunder) GoldNordicHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelNordicHelm, amount: 1}, {itemId: item.GoldPlate, amount: 6}}, cost: 15000}
-}
-func (r MrThunder) MithrilCrusaderHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeCrusaderHelm, amount: 1}, {itemId: item.MithrilPlate, amount: 5}}, cost: 20000}
-}
-func (r MrThunder) SilverCrusaderHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.BronzeCrusaderHelm, amount: 1}, {itemId: item.SilverPlate, amount: 4}}, cost: 25000}
-}
-func (r MrThunder) OldSteelNordicHelmRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.OldBronzeNordicHelm, amount: 1}, {itemId: item.MoonRock, amount: 1}, {itemId: item.SteelPlate, amount: 7}}, cost: 30000}
-}
-func (r MrThunder) OldMithrilRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.OldBronzeNordicHelm, amount: 1}, {itemId: item.MoonRock, amount: 1}, {itemId: item.MithrilPlate, amount: 7}}, cost: 30000}
-}
-
-func (r MrThunder) AdamantiumTowerShieldRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelTowerShield, amount: 1}, {itemId: item.AdamantiumPlate, amount: 10}}, cost: 100000}
-}
-
-func (r MrThunder) MithrilTowerShieldRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.SteelTowerShield, amount: 1}, {itemId: item.MithrilPlate, amount: 10}}, cost: 100000}
-}
-
-func (r MrThunder) SilverLegendShieldRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.WoodenLegendShield, amount: 1}, {itemId: item.MoonRock, amount: 1}, {itemId: item.SilverPlate, amount: 15}}, cost: 120000}
-}
-
-func (r MrThunder) AdamantiumLegendShieldRequirements() RefinementRequirements {
-	return RefinementRequirements{requirements: []Requirement{{itemId: item.WoodenLegendShield, amount: 1}, {itemId: item.MoonRock, amount: 1}, {itemId: item.AdamantiumPlate, amount: 15}}, cost: 120000}
-}
-
-func (r MrThunder) HowMany(itemId uint32, requirements RefinementRequirements) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		m := message.NewBuilder().
-			AddText("So, you want me to make some ").
-			ShowItemName1(itemId).
-			AddText("s? In that case, how many do you want me to make?")
-		return script.SendGetNumber(l, c, m.String(), r.QuantitySelection(itemId, requirements), 1, 1, 100)
+func (r MrThunder) CreateCategories() []refine.RefinementCategory {
+	return []refine.RefinementCategory{
+		r.RefineMineralOre(),
+		r.RefineJewelOre(),
+		r.UpgradeAHelmet(),
+		r.UpgradeAShield(),
 	}
 }
 
-func (r MrThunder) QuantitySelection(itemId uint32, requirements RefinementRequirements) script.ProcessNumber {
-	return func(selection int32) script.StateProducer {
-		return r.ConfirmQuantity(itemId, uint32(selection), requirements)
+func (r MrThunder) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
+	config := refine.TerminalConfig{
+		Success:          r.Success,
+		MesoError:        r.CannotAfford,
+		RequirementError: r.MissingSomething,
+		InventoryError:   r.MakeRoom,
+	}
+	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
+}
+
+func (r MrThunder) RefineMineralOre() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Refine a mineral ore",
+		Prompt:          "So, what kind of mineral ore would you like to refine?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateChoice(refine.SimpleList("Bronze"), refine.HowMany(item.BronzePlate, r.BronzeRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Steel"), refine.HowMany(item.SteelPlate, r.SteelRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Mithril"), refine.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Adamantium"), refine.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Silver"), refine.HowMany(item.SilverPlate, r.SilverRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Orihalcon"), refine.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Gold"), refine.HowMany(item.GoldPlate, r.GoldRefineRequirements())),
+		},
 	}
 }
 
-func (r MrThunder) Confirm(itemId uint32, requirements RefinementRequirements) script.StateProducer {
-	return r.ConfirmQuantity(itemId, 1, requirements)
-}
-
-func (r MrThunder) ConfirmQuantity(itemId uint32, amount uint32, requirements RefinementRequirements) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		m := message.NewBuilder().
-			AddText("You want me to make ")
-		if amount == 1 {
-			m = m.AddText("a ").ShowItemName1(itemId)
-		} else {
-			m = m.AddText(fmt.Sprintf("%d ", amount)).ShowItemName1(itemId)
-		}
-		m = m.AddText("? In that case, I'm going to need specific items from you in order to make it. Make sure you have room in your inventory, though!").NewLine()
-		for _, req := range requirements.requirements {
-			m = m.ShowItemImage2(req.itemId).AddText(fmt.Sprintf(" %d ", req.amount)).ShowItemName1(req.itemId).NewLine()
-		}
-		if requirements.cost > 0 {
-			m = m.ShowItemImage2(item.MoneySack).AddText(fmt.Sprintf(" %d meso", requirements.cost*amount))
-		}
-		return script.SendYesNo(l, c, m.String(), r.Validate(itemId, amount, requirements), script.Exit())
+func (r MrThunder) RefineJewelOre() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Refine a jewel ore",
+		Prompt:          "So, what kind of jewel ore would you like to refine?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateChoice(refine.SimpleList("Garnet"), refine.HowMany(item.Garnet, r.GarnetRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Amethyst"), refine.HowMany(item.Amethyst, r.AmethystRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Aquamarine"), refine.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Emerald"), refine.HowMany(item.Emerald, r.EmeraldRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Opal"), refine.HowMany(item.Opal, r.OpalRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Sapphire"), refine.HowMany(item.Sapphire, r.SapphireRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Topaz"), refine.HowMany(item.Topaz, r.TopazRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Diamond"), refine.HowMany(item.Diamond, r.DiamondRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Black Crystal"), refine.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements())),
+		},
 	}
 }
 
-func (r MrThunder) Validate(itemId uint32, amount uint32, requirements RefinementRequirements) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.CanHoldAll(l)(c.CharacterId, itemId, amount) {
-			return r.MakeRoom(l, c)
-		}
-		if !character.HasMeso(l)(c.CharacterId, requirements.cost*amount) {
-			return r.CannotAfford(l, c)
-		}
-		for _, req := range requirements.requirements {
-			if !character.HasItems(l)(c.CharacterId, req.itemId, uint32(req.amount)*amount) {
-				return r.MissingSomething(req.itemId)(l, c)
-			}
-		}
-		return r.PerformRefine(itemId, amount, requirements)(l, c)
+func (r MrThunder) UpgradeAHelmet() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Upgrade a helmet",
+		Prompt:          "Ah, you wish to upgrade a helmet? Then tell me, which one?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateChoice(refine.ItemNameList("Blue Metal Gear", " - Common Lv. 15"), refine.Confirm(item.BlueMetalGear, r.BlueMetalGearRequirements())),
+			r.CreateChoice(refine.ItemNameList("Yellow Metal Gear", " - Common Lv. 15"), refine.Confirm(item.YellowMetalGear, r.YellowMetalGearRequirements())),
+			r.CreateChoice(refine.ItemNameList("Metal Koif", " - Warrior Lv. 10"), refine.Confirm(item.MetalKoif, r.MetalKoifRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Koif", " - Warrior Lv. 10"), refine.Confirm(item.MithrilKoif, r.MithrilKoifRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Helmet", " - Warrior Lv. 12"), refine.Confirm(item.SteelHelmet, r.SteelHelmetRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Helmet", " - Warrior Lv. 12"), refine.Confirm(item.MithrilHelmet, r.MithrilHelmetRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Full Helm", " - Warrior Lv. 15"), refine.Confirm(item.SteelFullHelm, r.SteelFullHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Full Helm", " - Warrior Lv. 15"), refine.Confirm(item.MithrilFullHelm, r.MithrilFullHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Iron Viking Helm", " - Warrior Lv. 20"), refine.Confirm(item.IronVikingHelm, r.IronVikingHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Viking Helm", " - Warrior Lv. 20"), refine.Confirm(item.MithrilVikingHelm, r.MithrilVikingHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Football Helmet", " - Warrior Lv. 20"), refine.Confirm(item.SteelFootballHelmet, r.SteelFootballHelmetRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Football Helmet", " - Warrior Lv. 20"), refine.Confirm(item.MithrilFootballHelmet, r.MithrilFootballHelmetRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Sharp Helm", " - Warrior Lv. 22"), refine.Confirm(item.MithrilSharpHelm, r.MithrilSharpHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Sharp Helm", " - Warrior Lv. 22"), refine.Confirm(item.GoldSharpHelm, r.GoldSharpHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Orihalcon Burgernet Helm", " - Warrior Lv. 25"), refine.Confirm(item.OrihalconBurgernetHelm, r.OrihalconBurgernetHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Burgernet Helm", " - Warrior Lv. 25"), refine.Confirm(item.GoldBurgernetHelm, r.GoldBurgernetHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Great Red Helmet", " - Warrior Lv. 35"), refine.Confirm(item.GreatRedHelmet, r.GreatRedHelmetRequirements())),
+			r.CreateChoice(refine.ItemNameList("Great Blue Helmet", " - Warrior Lv. 35"), refine.Confirm(item.GreatBlueHelmet, r.GreatBlueHelmetRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Nordic Helm", " - Warrior Lv. 40"), refine.Confirm(item.MithrilNordicHelm, r.MithrilNordicHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Nordic Helm", " - Warrior Lv. 40"), refine.Confirm(item.GoldNordicHelm, r.GoldNordicHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Crusader Helm", " - Warrior Lv. 50"), refine.Confirm(item.MithrilCrusaderHelm, r.MithrilCrusaderHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Silver Crusader Helm", " - Warrior Lv. 50"), refine.Confirm(item.SilverCrusaderHelm, r.SilverCrusaderHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Old Steel Nordic Helm", " - Warrior Lv. 55"), refine.Confirm(item.OldSteelNordicHelm, r.OldSteelNordicHelmRequirements())),
+			r.CreateChoice(refine.ItemNameList("Old Mithril Nordic Helm", " - Warrior Lv. 55"), refine.Confirm(item.OldMithril, r.OldMithrilRequirements())),
+		},
 	}
+}
+
+func (r MrThunder) UpgradeAShield() refine.RefinementCategory {
+	return refine.RefinementCategory{
+		ListText:        "Upgrade a shield",
+		Prompt:          "Ah, you wish to upgrade a shield? Then tell me, which one?",
+		SelectionPrompt: refine.PromptCategory,
+		Choices: []refine.RefinementChoice{
+			r.CreateChoice(refine.ItemNameList("Adamantium Tower Shield", " - Warrior Lv. 40"), refine.Confirm(item.AdamantiumTowerShield, r.AdamantiumTowerShieldRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Tower Shield", " - Warrior Lv. 40"), refine.Confirm(item.MithrilTowerShield, r.MithrilTowerShieldRequirements())),
+			r.CreateChoice(refine.ItemNameList("Silver Legend Shield", " - Warrior Lv. 60"), refine.Confirm(item.SilverLegendShield, r.SilverLegendShieldRequirements())),
+			r.CreateChoice(refine.ItemNameList("Adamantium Legend Shield", " - Warrior Lv. 60"), refine.Confirm(item.AdamantiumLegendShield, r.AdamantiumLegendShieldRequirements())),
+		},
+	}
+}
+
+func (r MrThunder) BronzeRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeOre, Amount: 10}}, Cost: 300}
+}
+
+func (r MrThunder) SteelRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelOre, Amount: 10}}, Cost: 300}
+}
+
+func (r MrThunder) MithrilRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MithrilOre, Amount: 10}}, Cost: 300}
+}
+
+func (r MrThunder) AdamantiumRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AdamantiumOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) SilverRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SilverOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) OrihalconRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OrihalconOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) GoldRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GoldOre, Amount: 10}}, Cost: 800}
+}
+
+func (r MrThunder) GarnetRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GarnetOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) AmethystRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AmethystOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) AquamarineRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.AquaMarineOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) EmeraldRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.EmeraldOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) OpalRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OpalOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) SapphireRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SapphireOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) TopazRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.TopazOre, Amount: 10}}, Cost: 500}
+}
+
+func (r MrThunder) DiamondRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.DiamondOre, Amount: 10}}, Cost: 1000}
+}
+
+func (r MrThunder) BlackCrystalRefineRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BlackCrystalOre, Amount: 10}}, Cost: 3000}
+}
+
+func (r MrThunder) BlueMetalGearRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MetalGear, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 500}
+}
+func (r MrThunder) YellowMetalGearRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.MetalGear, Amount: 1}, {ItemId: item.Topaz, Amount: 1}}, Cost: 300}
+}
+func (r MrThunder) MetalKoifRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeKoif, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 500}
+}
+func (r MrThunder) MithrilKoifRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeKoif, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 800}
+}
+func (r MrThunder) SteelHelmetRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeHelmet, Amount: 1}, {ItemId: item.SteelPlate, Amount: 1}}, Cost: 500}
+}
+func (r MrThunder) MithrilHelmetRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeHelmet, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 1}}, Cost: 800}
+}
+func (r MrThunder) SteelFullHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFullHelm, Amount: 1}, {ItemId: item.SteelPlate, Amount: 2}}, Cost: 1000}
+}
+func (r MrThunder) MithrilFullHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFullHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 2}}, Cost: 1500}
+}
+func (r MrThunder) IronVikingHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeVikingHelm, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, Cost: 1500}
+}
+func (r MrThunder) MithrilVikingHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeVikingHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, Cost: 2000}
+}
+func (r MrThunder) SteelFootballHelmetRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFootballHelmet, Amount: 1}, {ItemId: item.SteelPlate, Amount: 3}}, Cost: 1500}
+}
+func (r MrThunder) MithrilFootballHelmetRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeFootballHelmet, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 3}}, Cost: 2000}
+}
+func (r MrThunder) MithrilSharpHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSharpHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 4}}, Cost: 2000}
+}
+func (r MrThunder) GoldSharpHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelSharpHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 4}}, Cost: 4000}
+}
+func (r MrThunder) OrihalconBurgernetHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.IronBurgernetHelm, Amount: 1}, {ItemId: item.OrihalconPlate, Amount: 5}}, Cost: 4000}
+}
+func (r MrThunder) GoldBurgernetHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.IronBurgernetHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 5}}, Cost: 5000}
+}
+func (r MrThunder) GreatRedHelmetRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GreatBrownHelmet, Amount: 1}, {ItemId: item.Garnet, Amount: 3}}, Cost: 8000}
+}
+func (r MrThunder) GreatBlueHelmetRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.GreatBrownHelmet, Amount: 1}, {ItemId: item.Sapphire, Amount: 3}}, Cost: 10000}
+}
+func (r MrThunder) MithrilNordicHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelNordicHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 5}}, Cost: 12000}
+}
+func (r MrThunder) GoldNordicHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelNordicHelm, Amount: 1}, {ItemId: item.GoldPlate, Amount: 6}}, Cost: 15000}
+}
+func (r MrThunder) MithrilCrusaderHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeCrusaderHelm, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 5}}, Cost: 20000}
+}
+func (r MrThunder) SilverCrusaderHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.BronzeCrusaderHelm, Amount: 1}, {ItemId: item.SilverPlate, Amount: 4}}, Cost: 25000}
+}
+func (r MrThunder) OldSteelNordicHelmRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OldBronzeNordicHelm, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SteelPlate, Amount: 7}}, Cost: 30000}
+}
+func (r MrThunder) OldMithrilRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.OldBronzeNordicHelm, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 7}}, Cost: 30000}
+}
+
+func (r MrThunder) AdamantiumTowerShieldRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelTowerShield, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 10}}, Cost: 100000}
+}
+
+func (r MrThunder) MithrilTowerShieldRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.SteelTowerShield, Amount: 1}, {ItemId: item.MithrilPlate, Amount: 10}}, Cost: 100000}
+}
+
+func (r MrThunder) SilverLegendShieldRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.WoodenLegendShield, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.SilverPlate, Amount: 15}}, Cost: 120000}
+}
+
+func (r MrThunder) AdamantiumLegendShieldRequirements() refine.RefinementRequirements {
+	return refine.RefinementRequirements{Requirements: []refine.Requirement{{ItemId: item.WoodenLegendShield, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 15}}, Cost: 120000}
 }
 
 func (r MrThunder) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
@@ -455,20 +298,6 @@ func (r MrThunder) MissingSomething(itemId uint32) script.StateProducer {
 			ShowItemName1(itemId).
 			AddText(". See you another time, yes?")
 		return script.SendOk(l, c, m.String())
-	}
-}
-
-func (r MrThunder) PerformRefine(itemId uint32, amount uint32, requirements RefinementRequirements) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -int32(amount*requirements.cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process payment for refine.")
-		}
-		for _, req := range requirements.requirements {
-			character.GainItem(l)(c.CharacterId, req.itemId, -int32(req.amount)*int32(amount))
-		}
-		character.GainItem(l)(c.CharacterId, itemId, int32(amount))
-		return r.Success(l, c)
 	}
 }
 

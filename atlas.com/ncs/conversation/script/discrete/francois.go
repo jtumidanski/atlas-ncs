@@ -33,17 +33,14 @@ func (r Francois) CreateCategories() []refine.RefinementCategory {
 	}
 }
 
-func (r Francois) CreateRefinementChoice(itemText string, itemDescription string, selectionPrompt refine.TerminalState) refine.RefinementChoice {
-	return refine.RefinementChoice{
-		ListText:        message.NewBuilder().BlueText().AddText(itemText).BlackText().AddText(itemDescription).String(),
-		SelectionPrompt: selectionPrompt,
-		Config: refine.TerminalConfig{
-			Success:          r.Success,
-			MesoError:        r.CannotAfford,
-			RequirementError: r.MissingSomething,
-			InventoryError:   r.MakeRoom,
-		},
+func (r Francois) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
+	config := refine.TerminalConfig{
+		Success:          r.Success,
+		MesoError:        r.CannotAfford,
+		RequirementError: r.MissingSomething,
+		InventoryError:   r.MakeRoom,
 	}
+	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
 }
 
 func (r Francois) MakeAGlove() refine.RefinementCategory {
@@ -52,14 +49,14 @@ func (r Francois) MakeAGlove() refine.RefinementCategory {
 		Prompt:          "So, what kind of mineral ore would you like to refine?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Lemona", " - Magician Lv. 15", refine.Confirm(item.Lemona, r.LemonaRequirements())),
-			r.CreateRefinementChoice("Blue Morrican", " - Magician Lv. 20", refine.Confirm(item.BlueMorrican, r.BlueMorricanRequirements())),
-			r.CreateRefinementChoice("Ocean Mesana", " - Magician Lv. 25", refine.Confirm(item.OceanMesana, r.OceanMesanaRequirements())),
-			r.CreateRefinementChoice("Red Lutia", " - Magician Lv. 30", refine.Confirm(item.RedLutia, r.RedLutiaRequirements())),
-			r.CreateRefinementChoice("Red Noel", " - Magician Lv. 35", refine.Confirm(item.RedNoel, r.RedNoelRequirements())),
-			r.CreateRefinementChoice("Red Arten", " - Magician Lv. 40", refine.Confirm(item.RedArten, r.RedArtenRequirements())),
-			r.CreateRefinementChoice("Red Pennance", " - Magician Lv. 50", refine.Confirm(item.RedPennance, r.RedPennanceRequirements())),
-			r.CreateRefinementChoice("Steel Manute", " - Magician Lv. 60", refine.Confirm(item.SteelManute, r.SteelManuteRequirements())),
+			r.CreateChoice(refine.ItemNameList("Lemona", " - Magician Lv. 15"), refine.Confirm(item.Lemona, r.LemonaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blue Morrican", " - Magician Lv. 20"), refine.Confirm(item.BlueMorrican, r.BlueMorricanRequirements())),
+			r.CreateChoice(refine.ItemNameList("Ocean Mesana", " - Magician Lv. 25"), refine.Confirm(item.OceanMesana, r.OceanMesanaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Red Lutia", " - Magician Lv. 30"), refine.Confirm(item.RedLutia, r.RedLutiaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Red Noel", " - Magician Lv. 35"), refine.Confirm(item.RedNoel, r.RedNoelRequirements())),
+			r.CreateChoice(refine.ItemNameList("Red Arten", " - Magician Lv. 40"), refine.Confirm(item.RedArten, r.RedArtenRequirements())),
+			r.CreateChoice(refine.ItemNameList("Red Pennance", " - Magician Lv. 50"), refine.Confirm(item.RedPennance, r.RedPennanceRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Manute", " - Magician Lv. 60"), refine.Confirm(item.SteelManute, r.SteelManuteRequirements())),
 		},
 	}
 }
@@ -70,20 +67,20 @@ func (r Francois) UpgradeAGlove() refine.RefinementCategory {
 		Prompt:          "So, what kind of mineral ore would you like to refine?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Green Morrican", " - Magician Lv. 20", refine.Confirm(item.GreenMorrican, r.GreenMorricanRequirements())),
-			r.CreateRefinementChoice("Purple Morrican", " - Magician Lv. 20", refine.Confirm(item.PurpleMorrican, r.PurpleMorricanRequirements())),
-			r.CreateRefinementChoice("Blood Mesana", " - Magician Lv. 25", refine.Confirm(item.BloodMesana, r.BloodMesanaRequirements())),
-			r.CreateRefinementChoice("Dark Mesana", " - Magician Lv. 25", refine.Confirm(item.DarkMesana, r.DarkMesanaRequirements())),
-			r.CreateRefinementChoice("Blue Lutia", " - Magician Lv. 30", refine.Confirm(item.BlueLutia, r.BlueLutiaRequirements())),
-			r.CreateRefinementChoice("Black Lutia", " - Magician Lv. 30", refine.Confirm(item.BlackLutia, r.BlackLutiaRequirements())),
-			r.CreateRefinementChoice("Blue Noel", " - Magician Lv. 35", refine.Confirm(item.BlueNoel, r.BlueNoelRequirements())),
-			r.CreateRefinementChoice("Dark Noel", " - Magician Lv. 35", refine.Confirm(item.DarkNoel, r.DarkNoelRequirements())),
-			r.CreateRefinementChoice("Blue Arten", " - Magician Lv. 40", refine.Confirm(item.BlueArten, r.BlueArtenRequirements())),
-			r.CreateRefinementChoice("Dark Arten", " - Magician Lv. 40", refine.Confirm(item.DarkArten, r.DarkArtenRequirements())),
-			r.CreateRefinementChoice("Blue Pennance", " - Magician Lv. 50", refine.Confirm(item.BluePennance, r.BluePennanceRequirements())),
-			r.CreateRefinementChoice("Dark Pennance", " - Magician Lv. 50", refine.Confirm(item.DarkPennance, r.DarkPennanceRequirements())),
-			r.CreateRefinementChoice("Gold Manute", " - Magician Lv. 60", refine.Confirm(item.GoldManute, r.GoldManuteRequirements())),
-			r.CreateRefinementChoice("Dark Manute", " - Magician Lv. 60", refine.Confirm(item.DarkManute, r.DarkManuteRequirements())),
+			r.CreateChoice(refine.ItemNameList("Green Morrican", " - Magician Lv. 20"), refine.Confirm(item.GreenMorrican, r.GreenMorricanRequirements())),
+			r.CreateChoice(refine.ItemNameList("Purple Morrican", " - Magician Lv. 20"), refine.Confirm(item.PurpleMorrican, r.PurpleMorricanRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blood Mesana", " - Magician Lv. 25"), refine.Confirm(item.BloodMesana, r.BloodMesanaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Mesana", " - Magician Lv. 25"), refine.Confirm(item.DarkMesana, r.DarkMesanaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blue Lutia", " - Magician Lv. 30"), refine.Confirm(item.BlueLutia, r.BlueLutiaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Black Lutia", " - Magician Lv. 30"), refine.Confirm(item.BlackLutia, r.BlackLutiaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blue Noel", " - Magician Lv. 35"), refine.Confirm(item.BlueNoel, r.BlueNoelRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Noel", " - Magician Lv. 35"), refine.Confirm(item.DarkNoel, r.DarkNoelRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blue Arten", " - Magician Lv. 40"), refine.Confirm(item.BlueArten, r.BlueArtenRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Arten", " - Magician Lv. 40"), refine.Confirm(item.DarkArten, r.DarkArtenRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blue Pennance", " - Magician Lv. 50"), refine.Confirm(item.BluePennance, r.BluePennanceRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Pennance", " - Magician Lv. 50"), refine.Confirm(item.DarkPennance, r.DarkPennanceRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Manute", " - Magician Lv. 60"), refine.Confirm(item.GoldManute, r.GoldManuteRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Manute", " - Magician Lv. 60"), refine.Confirm(item.DarkManute, r.DarkManuteRequirements())),
 		},
 	}
 }
@@ -94,8 +91,8 @@ func (r Francois) UpgradeAHat() refine.RefinementCategory {
 		Prompt:          "So, what kind of mineral ore would you like to refine?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Steel Pride", " - Magician Lv. 30", refine.Confirm(item.SteelPride, r.SteelPrideRequirements())),
-			r.CreateRefinementChoice("Golden Pride", " - Magician Lv. 30", refine.Confirm(item.GoldenPride, r.GoldenPrideRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Pride", " - Magician Lv. 30"), refine.Confirm(item.SteelPride, r.SteelPrideRequirements())),
+			r.CreateChoice(refine.ItemNameList("Golden Pride", " - Magician Lv. 30"), refine.Confirm(item.GoldenPride, r.GoldenPrideRequirements())),
 		},
 	}
 }
@@ -106,14 +103,14 @@ func (r Francois) MakeAWand() refine.RefinementCategory {
 		Prompt:          "So, what kind of mineral ore would you like to refine?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Wooden Wand", " - Common Lv. 8", refine.Confirm(item.WoodenWand, r.WoodenWandRequirements())),
-			r.CreateRefinementChoice("Hardwood Wand", " - Common Lv. 13", refine.Confirm(item.HardwoodWand, r.HardwoodWandRequirements())),
-			r.CreateRefinementChoice("Metal Wand", " - Common Lv. 18", refine.Confirm(item.MetalWand, r.MetalWandRequirements())),
-			r.CreateRefinementChoice("Ice Wand", " - Magician Lv. 23", refine.Confirm(item.IceWand, r.IceWandRequirements())),
-			r.CreateRefinementChoice("Mithril Wand", " - Magician Lv. 28", refine.Confirm(item.MithrilWand, r.MithrilWandRequirements())),
-			r.CreateRefinementChoice("Wizard Wand", " - Magician Lv. 33", refine.Confirm(item.WizardWand, r.WizardWandRequirements())),
-			r.CreateRefinementChoice("Fairy Wand", " - Magician Lv. 38", refine.Confirm(item.FairyWand, r.FairyWandRequirements())),
-			r.CreateRefinementChoice("Cromi", " - Magician Lv. 48", refine.Confirm(item.Cromi, r.CromiRequirements())),
+			r.CreateChoice(refine.ItemNameList("Wooden Wand", " - Common Lv. 8"), refine.Confirm(item.WoodenWand, r.WoodenWandRequirements())),
+			r.CreateChoice(refine.ItemNameList("Hardwood Wand", " - Common Lv. 13"), refine.Confirm(item.HardwoodWand, r.HardwoodWandRequirements())),
+			r.CreateChoice(refine.ItemNameList("Metal Wand", " - Common Lv. 18"), refine.Confirm(item.MetalWand, r.MetalWandRequirements())),
+			r.CreateChoice(refine.ItemNameList("Ice Wand", " - Magician Lv. 23"), refine.Confirm(item.IceWand, r.IceWandRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Wand", " - Magician Lv. 28"), refine.Confirm(item.MithrilWand, r.MithrilWandRequirements())),
+			r.CreateChoice(refine.ItemNameList("Wizard Wand", " - Magician Lv. 33"), refine.Confirm(item.WizardWand, r.WizardWandRequirements())),
+			r.CreateChoice(refine.ItemNameList("Fairy Wand", " - Magician Lv. 38"), refine.Confirm(item.FairyWand, r.FairyWandRequirements())),
+			r.CreateChoice(refine.ItemNameList("Cromi", " - Magician Lv. 48"), refine.Confirm(item.Cromi, r.CromiRequirements())),
 		},
 	}
 }
@@ -124,12 +121,12 @@ func (r Francois) MakeAStaff() refine.RefinementCategory {
 		Prompt:          "So, what kind of mineral ore would you like to refine?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Wooden Staff", " - Magician Lv. 10", refine.Confirm(item.WoodenStaff, r.WoodenStaffRequirements())),
-			r.CreateRefinementChoice("Sapphire Staff", " - Magician Lv. 15", refine.Confirm(item.SapphireStaff, r.SapphireStaffRequirements())),
-			r.CreateRefinementChoice("Emerald Staff", " - Magician Lv. 15", refine.Confirm(item.EmeraldStaff, r.EmeraldStaffRequirements())),
-			r.CreateRefinementChoice("Old Wooden Staff", " - Magician Lv. 20", refine.Confirm(item.OldWoodenStaff, r.OldWoodenStaffRequirements())),
-			r.CreateRefinementChoice("Wizard Staff", " - Magician Lv. 25", refine.Confirm(item.WizardStaff, r.WizardStaffRequirements())),
-			r.CreateRefinementChoice("Arc Staff", " - Magician Lv. 45", refine.Confirm(item.ArcStaff, r.ArcStaffRequirements())),
+			r.CreateChoice(refine.ItemNameList("Wooden Staff", " - Magician Lv. 10"), refine.Confirm(item.WoodenStaff, r.WoodenStaffRequirements())),
+			r.CreateChoice(refine.ItemNameList("Sapphire Staff", " - Magician Lv. 15"), refine.Confirm(item.SapphireStaff, r.SapphireStaffRequirements())),
+			r.CreateChoice(refine.ItemNameList("Emerald Staff", " - Magician Lv. 15"), refine.Confirm(item.EmeraldStaff, r.EmeraldStaffRequirements())),
+			r.CreateChoice(refine.ItemNameList("Old Wooden Staff", " - Magician Lv. 20"), refine.Confirm(item.OldWoodenStaff, r.OldWoodenStaffRequirements())),
+			r.CreateChoice(refine.ItemNameList("Wizard Staff", " - Magician Lv. 25"), refine.Confirm(item.WizardStaff, r.WizardStaffRequirements())),
+			r.CreateChoice(refine.ItemNameList("Arc Staff", " - Magician Lv. 45"), refine.Confirm(item.ArcStaff, r.ArcStaffRequirements())),
 		},
 	}
 }

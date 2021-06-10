@@ -32,19 +32,29 @@ func (r Chris) CreateCategories() []refine.RefinementCategory {
 	}
 }
 
+func (r Chris) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
+	config := refine.TerminalConfig{
+		Success:          r.Success,
+		MesoError:        r.CannotAfford,
+		RequirementError: r.MissingSomething,
+		InventoryError:   r.MakeRoom,
+	}
+	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
+}
+
 func (r Chris) RefineMineralOre() refine.RefinementCategory {
 	return refine.RefinementCategory{
 		ListText:        "Refine a mineral ore",
 		Prompt:          "So, what kind of mineral ore would you like to refine?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Bronze", refine.HowMany(item.BronzePlate, r.BronzeRefineRequirements())),
-			r.CreateRefinementChoice("Steel", refine.HowMany(item.SteelPlate, r.SteelRefineRequirements())),
-			r.CreateRefinementChoice("Mithril", refine.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())),
-			r.CreateRefinementChoice("Adamantium", refine.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())),
-			r.CreateRefinementChoice("Silver", refine.HowMany(item.SilverPlate, r.SilverRefineRequirements())),
-			r.CreateRefinementChoice("Orihalcon", refine.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())),
-			r.CreateRefinementChoice("Gold", refine.HowMany(item.GoldPlate, r.GoldRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Bronze"), refine.HowMany(item.BronzePlate, r.BronzeRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Steel"), refine.HowMany(item.SteelPlate, r.SteelRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Mithril"), refine.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Adamantium"), refine.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Silver"), refine.HowMany(item.SilverPlate, r.SilverRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Orihalcon"), refine.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Gold"), refine.HowMany(item.GoldPlate, r.GoldRefineRequirements())),
 		},
 	}
 }
@@ -55,15 +65,15 @@ func (r Chris) RefineJewelOre() refine.RefinementCategory {
 		Prompt:          "So, what kind of jewel ore would you like to refine?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Garnet", refine.HowMany(item.Garnet, r.GarnetRefineRequirements())),
-			r.CreateRefinementChoice("Amethyst", refine.HowMany(item.Amethyst, r.AmethystRefineRequirements())),
-			r.CreateRefinementChoice("Aquamarine", refine.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())),
-			r.CreateRefinementChoice("Emerald", refine.HowMany(item.Emerald, r.EmeraldRefineRequirements())),
-			r.CreateRefinementChoice("Opal", refine.HowMany(item.Opal, r.OpalRefineRequirements())),
-			r.CreateRefinementChoice("Sapphire", refine.HowMany(item.Sapphire, r.SapphireRefineRequirements())),
-			r.CreateRefinementChoice("Topaz", refine.HowMany(item.Topaz, r.TopazRefineRequirements())),
-			r.CreateRefinementChoice("Diamond", refine.HowMany(item.Diamond, r.DiamondRefineRequirements())),
-			r.CreateRefinementChoice("Black Crystal", refine.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Garnet"), refine.HowMany(item.Garnet, r.GarnetRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Amethyst"), refine.HowMany(item.Amethyst, r.AmethystRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Aquamarine"), refine.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Emerald"), refine.HowMany(item.Emerald, r.EmeraldRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Opal"), refine.HowMany(item.Opal, r.OpalRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Sapphire"), refine.HowMany(item.Sapphire, r.SapphireRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Topaz"), refine.HowMany(item.Topaz, r.TopazRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Diamond"), refine.HowMany(item.Diamond, r.DiamondRefineRequirements())),
+			r.CreateChoice(refine.SimpleList("Black Crystal"), refine.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements())),
 		},
 	}
 }
@@ -73,7 +83,6 @@ func (r Chris) RefineMetalHoof() refine.RefinementCategory {
 		ListText:        "I have Iron Hog's Metal Hoof...",
 		Prompt:          "You know about that? Not many people realize the potential in the Iron Hog's Metal Hoof... I can make this into something special, if you want me to.",
 		SelectionPrompt: r.MetalHoof,
-		Choices:         []refine.RefinementChoice{},
 	}
 }
 
@@ -83,22 +92,9 @@ func (r Chris) RefineUpgradeClaw() refine.RefinementCategory {
 		Prompt:          "Ah, you wish to upgrade a claw? Then tell me, which one?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Blood Gigantic#k - Thief Lv. 60", refine.Confirm(item.BloodGigantic, r.BloodGiganticRequirements())),
-			r.CreateRefinementChoice("Sapphire Gigantic#k - Thief Lv. 60", refine.Confirm(item.SapphireGigantic, r.SapphireGiganticRequirements())),
-			r.CreateRefinementChoice("Dark Gigantic#k - Thief Lv. 60", refine.Confirm(item.DarkGigantic, r.DarkGiganticRequirements())),
-		},
-	}
-}
-
-func (r Chris) CreateRefinementChoice(listText string, selectionPrompt refine.TerminalState) refine.RefinementChoice {
-	return refine.RefinementChoice{
-		ListText:        listText,
-		SelectionPrompt: selectionPrompt,
-		Config: refine.TerminalConfig{
-			Success:          r.Success,
-			MesoError:        r.CannotAfford,
-			RequirementError: r.MissingSomething,
-			InventoryError:   r.MakeRoom,
+			r.CreateChoice(refine.ItemNameList("Blood Gigantic", " - Thief Lv. 60"), refine.Confirm(item.BloodGigantic, r.BloodGiganticRequirements())),
+			r.CreateChoice(refine.ItemNameList("Sapphire Gigantic", " - Thief Lv. 60"), refine.Confirm(item.SapphireGigantic, r.SapphireGiganticRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Gigantic", " - Thief Lv. 60"), refine.Confirm(item.DarkGigantic, r.DarkGiganticRequirements())),
 		},
 	}
 }

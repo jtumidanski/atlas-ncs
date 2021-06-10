@@ -33,17 +33,14 @@ func (r JMFromThaStreetz) CreateCategories() []refine.RefinementCategory {
 	}
 }
 
-func (r JMFromThaStreetz) CreateRefinementChoice(itemText string, itemDescription string, selectionPrompt refine.TerminalState) refine.RefinementChoice {
-	return refine.RefinementChoice{
-		ListText:        message.NewBuilder().BlueText().AddText(itemText).BlackText().AddText(itemDescription).String(),
-		SelectionPrompt: selectionPrompt,
-		Config: refine.TerminalConfig{
-			Success:          r.Success,
-			MesoError:        r.CannotAfford,
-			RequirementError: r.MissingSomething,
-			InventoryError:   r.MakeRoom,
-		},
+func (r JMFromThaStreetz) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
+	config := refine.TerminalConfig{
+		Success:          r.Success,
+		MesoError:        r.CannotAfford,
+		RequirementError: r.MissingSomething,
+		InventoryError:   r.MakeRoom,
 	}
+	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
 }
 
 func (r JMFromThaStreetz) CreateAGlove() refine.RefinementCategory {
@@ -52,17 +49,17 @@ func (r JMFromThaStreetz) CreateAGlove() refine.RefinementCategory {
 		Prompt:          "So, what kind of glove would you like me to make?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Work Gloves", " - Common Lv. 10", refine.Confirm(item.WorkGloves, r.WorkGlovesRequirements())),
-			r.CreateRefinementChoice("Brown Duo", " - Thief Lv. 15", refine.Confirm(item.BrownDuo, r.BrownDuoRequirements())),
-			r.CreateRefinementChoice("Blue Duo", " - Thief Lv. 15", refine.Confirm(item.BlueDuo, r.BlueDuoRequirements())),
-			r.CreateRefinementChoice("Black Duo", " - Thief Lv. 15", refine.Confirm(item.BlackDuo, r.BlackDuoRequirements())),
-			r.CreateRefinementChoice("Bronze Mischief", " - Thief Lv. 20", refine.Confirm(item.BronzeMischief, r.BronzeMischiefRequirements())),
-			r.CreateRefinementChoice("Bronze Wolfskin", " - Thief Lv. 25", refine.Confirm(item.BronzeWolfskin, r.BronzeWolfskinRequirements())),
-			r.CreateRefinementChoice("Steel Sylvia", " - Thief Lv. 30", refine.Confirm(item.SteelSylvia, r.SteelSylviaRequirements())),
-			r.CreateRefinementChoice("Steel Arbion", " - Thief Lv. 35", refine.Confirm(item.SteelArbion, r.SteelArbionRequirements())),
-			r.CreateRefinementChoice("Red Cleave", " - Thief Lv. 40", refine.Confirm(item.RedCleave, r.RedCleaveRequirements())),
-			r.CreateRefinementChoice("Blue Moon Glove", " - Thief Lv. 50", refine.Confirm(item.BlueMoonGlove, r.BlueMoonGloveRequirements())),
-			r.CreateRefinementChoice("Bronze Pow", " - Thief Lv. 60", refine.Confirm(item.BronzePow, r.BronzePowRequirements())),
+			r.CreateChoice(refine.ItemNameList("Work Gloves", " - Common Lv. 10"), refine.Confirm(item.WorkGloves, r.WorkGlovesRequirements())),
+			r.CreateChoice(refine.ItemNameList("Brown Duo", " - Thief Lv. 15"), refine.Confirm(item.BrownDuo, r.BrownDuoRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blue Duo", " - Thief Lv. 15"), refine.Confirm(item.BlueDuo, r.BlueDuoRequirements())),
+			r.CreateChoice(refine.ItemNameList("Black Duo", " - Thief Lv. 15"), refine.Confirm(item.BlackDuo, r.BlackDuoRequirements())),
+			r.CreateChoice(refine.ItemNameList("Bronze Mischief", " - Thief Lv. 20"), refine.Confirm(item.BronzeMischief, r.BronzeMischiefRequirements())),
+			r.CreateChoice(refine.ItemNameList("Bronze Wolfskin", " - Thief Lv. 25"), refine.Confirm(item.BronzeWolfskin, r.BronzeWolfskinRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Sylvia", " - Thief Lv. 30"), refine.Confirm(item.SteelSylvia, r.SteelSylviaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Arbion", " - Thief Lv. 35"), refine.Confirm(item.SteelArbion, r.SteelArbionRequirements())),
+			r.CreateChoice(refine.ItemNameList("Red Cleave", " - Thief Lv. 40"), refine.Confirm(item.RedCleave, r.RedCleaveRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blue Moon Glove", " - Thief Lv. 50"), refine.Confirm(item.BlueMoonGlove, r.BlueMoonGloveRequirements())),
+			r.CreateChoice(refine.ItemNameList("Bronze Pow", " - Thief Lv. 60"), refine.Confirm(item.BronzePow, r.BronzePowRequirements())),
 		},
 	}
 }
@@ -73,20 +70,20 @@ func (r JMFromThaStreetz) UpgradeAGlove() refine.RefinementCategory {
 		Prompt:          "An upgraded glove? Sure thing, but note that upgrades won't carry over to the new item... ",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Mithril Mischief", " - Thief Lv. 20", refine.Confirm(item.MithrilMischief, r.MithrilMischiefRequirements())),
-			r.CreateRefinementChoice("Dark Mischief", " - Thief Lv. 20", refine.Confirm(item.DarkMischief, r.DarkMischiefRequirements())),
-			r.CreateRefinementChoice("Mithril Wolfskin", " - Thief Lv. 25", refine.Confirm(item.MithrilWolfskin, r.MithrilWolfskinRequirements())),
-			r.CreateRefinementChoice("Dark Wolfskin", " - Thief Lv. 25", refine.Confirm(item.DarkWolfskin, r.DarkWolfskinRequirements())),
-			r.CreateRefinementChoice("Silver Sylvia", " - Thief Lv. 30", refine.Confirm(item.SilverSylvia, r.SilverSylviaRequirements())),
-			r.CreateRefinementChoice("Gold Sylvia", " - Thief Lv. 30", refine.Confirm(item.GoldSylvia, r.GoldSylviaRequirements())),
-			r.CreateRefinementChoice("Orihalcon Arbion", " - Thief Lv. 35", refine.Confirm(item.OrihalconArbion, r.OrihalconArbionRequirements())),
-			r.CreateRefinementChoice("Gold Arbion", " - Thief Lv. 35", refine.Confirm(item.GoldArbion, r.GoldArbionRequirements())),
-			r.CreateRefinementChoice("Gold Cleave", " - Thief Lv. 40", refine.Confirm(item.GoldCleave, r.GoldCleaveRequirements())),
-			r.CreateRefinementChoice("Dark Cleave", " - Thief Lv. 40", refine.Confirm(item.DarkCleave, r.DarkCleaveRequirements())),
-			r.CreateRefinementChoice("Red Moon Glove", " - Thief Lv. 50", refine.Confirm(item.RedMoonGlove, r.RedMoonGloveRequirements())),
-			r.CreateRefinementChoice("Brown Moon Glove", " - Thief Lv. 50", refine.Confirm(item.BrownMoonGlove, r.BrownMoonGloveRequirements())),
-			r.CreateRefinementChoice("Steal Pow", " - Thief Lv. 60", refine.Confirm(item.StealPow, r.SilverPowRequirements())),
-			r.CreateRefinementChoice("Gold Pow", " - Thief Lv. 60", refine.Confirm(item.GoldPow, r.GoldPowRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Mischief", " - Thief Lv. 20"), refine.Confirm(item.MithrilMischief, r.MithrilMischiefRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Mischief", " - Thief Lv. 20"), refine.Confirm(item.DarkMischief, r.DarkMischiefRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Wolfskin", " - Thief Lv. 25"), refine.Confirm(item.MithrilWolfskin, r.MithrilWolfskinRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Wolfskin", " - Thief Lv. 25"), refine.Confirm(item.DarkWolfskin, r.DarkWolfskinRequirements())),
+			r.CreateChoice(refine.ItemNameList("Silver Sylvia", " - Thief Lv. 30"), refine.Confirm(item.SilverSylvia, r.SilverSylviaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Sylvia", " - Thief Lv. 30"), refine.Confirm(item.GoldSylvia, r.GoldSylviaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Orihalcon Arbion", " - Thief Lv. 35"), refine.Confirm(item.OrihalconArbion, r.OrihalconArbionRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Arbion", " - Thief Lv. 35"), refine.Confirm(item.GoldArbion, r.GoldArbionRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Cleave", " - Thief Lv. 40"), refine.Confirm(item.GoldCleave, r.GoldCleaveRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Cleave", " - Thief Lv. 40"), refine.Confirm(item.DarkCleave, r.DarkCleaveRequirements())),
+			r.CreateChoice(refine.ItemNameList("Red Moon Glove", " - Thief Lv. 50"), refine.Confirm(item.RedMoonGlove, r.RedMoonGloveRequirements())),
+			r.CreateChoice(refine.ItemNameList("Brown Moon Glove", " - Thief Lv. 50"), refine.Confirm(item.BrownMoonGlove, r.BrownMoonGloveRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steal Pow", " - Thief Lv. 60"), refine.Confirm(item.StealPow, r.SilverPowRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Pow", " - Thief Lv. 60"), refine.Confirm(item.GoldPow, r.GoldPowRequirements())),
 		},
 	}
 }
@@ -97,13 +94,13 @@ func (r JMFromThaStreetz) CreateAClaw() refine.RefinementCategory {
 		Prompt:          "So, what kind of claw would you like me to make?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Steel Titans", " - Thief Lv. 15", refine.Confirm(item.SteelTitans, r.SteelTitansRequirements())),
-			r.CreateRefinementChoice("Bronze Igor", " - Thief Lv. 20", refine.Confirm(item.BronzeIgor, r.BronzeIgorRequirements())),
-			r.CreateRefinementChoice("Meba", " - Thief Lv. 25", refine.Confirm(item.Meba, r.MebaRequirements())),
-			r.CreateRefinementChoice("Steel Guards", " - Thief Lv. 30", refine.Confirm(item.SteelGuards, r.SteelGuardsRequirements())),
-			r.CreateRefinementChoice("Bronze Guardian", " - Thief Lv. 35", refine.Confirm(item.BronzeGuardian, r.BronzeGuardianRequirements())),
-			r.CreateRefinementChoice("Steel Avarice", " - Thief Lv. 40", refine.Confirm(item.SteelAvarice, r.SteelAvariceRequirements())),
-			r.CreateRefinementChoice("Steel Slain", " - Thief Lv. 50", refine.Confirm(item.SteelSlain, r.SteelSlainRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Titans", " - Thief Lv. 15"), refine.Confirm(item.SteelTitans, r.SteelTitansRequirements())),
+			r.CreateChoice(refine.ItemNameList("Bronze Igor", " - Thief Lv. 20"), refine.Confirm(item.BronzeIgor, r.BronzeIgorRequirements())),
+			r.CreateChoice(refine.ItemNameList("Meba", " - Thief Lv. 25"), refine.Confirm(item.Meba, r.MebaRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Guards", " - Thief Lv. 30"), refine.Confirm(item.SteelGuards, r.SteelGuardsRequirements())),
+			r.CreateChoice(refine.ItemNameList("Bronze Guardian", " - Thief Lv. 35"), refine.Confirm(item.BronzeGuardian, r.BronzeGuardianRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Avarice", " - Thief Lv. 40"), refine.Confirm(item.SteelAvarice, r.SteelAvariceRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Slain", " - Thief Lv. 50"), refine.Confirm(item.SteelSlain, r.SteelSlainRequirements())),
 		},
 	}
 }
@@ -114,19 +111,19 @@ func (r JMFromThaStreetz) UpgradeAClaw() refine.RefinementCategory {
 		Prompt:          "An upgraded claw? Sure thing, but note that upgrades won't carry over to the new item...",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Mithril Titans", " - Thief Lv. 15", refine.Confirm(item.MithrilTitans, r.MithrilTitansRequirements())),
-			r.CreateRefinementChoice("Gold Titans", " - Thief Lv. 15", refine.Confirm(item.GoldTitans, r.GoldTitansRequirements())),
-			r.CreateRefinementChoice("Steel Igor", " - Thief Lv. 20", refine.Confirm(item.SteelIgor, r.SteelIgorRequirements())),
-			r.CreateRefinementChoice("Adamantium Igor", " - Thief Lv. 20", refine.Confirm(item.AdamantiumIgor, r.AdamantiumIgorRequirements())),
-			r.CreateRefinementChoice("Mithril Guards", " - Thief Lv. 30", refine.Confirm(item.MithrilGuards, r.MithrilGuardsRequirements())),
-			r.CreateRefinementChoice("Adamantium Guards", " - Thief Lv. 3", refine.Confirm(item.AdamantiumGuards, r.AdamantiumGuardsRequirements())),
-			r.CreateRefinementChoice("Silver Guardian", " - Thief Lv. 35", refine.Confirm(item.SilverGuardian, r.SilverGuardianRequirements())),
-			r.CreateRefinementChoice("Dark Guardian", " - Thief Lv. 35", refine.Confirm(item.DarkGuardian, r.DarkGuardianRequirements())),
-			r.CreateRefinementChoice("Blood Avarice", " - Thief Lv. 40", refine.Confirm(item.BloodAvarice, r.BloodAvariceRequirements())),
-			r.CreateRefinementChoice("Adamantium Avarice", " - Thief Lv. 40", refine.Confirm(item.AdamantiumAvarice, r.AdamantiumAvariceRequirements())),
-			r.CreateRefinementChoice("Dark Avarice", " - Thief Lv. 40", refine.Confirm(item.DarkAvarice, r.DarkAvariceRequirements())),
-			r.CreateRefinementChoice("Blood Slain", " - Thief Lv. 50", refine.Confirm(item.BloodSlain, r.BloodSlainRequirements())),
-			r.CreateRefinementChoice("Sapphire Slain", " - Thief Lv. 5", refine.Confirm(item.SapphireSlain, r.SapphireSlainRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Titans", " - Thief Lv. 15"), refine.Confirm(item.MithrilTitans, r.MithrilTitansRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Titans", " - Thief Lv. 15"), refine.Confirm(item.GoldTitans, r.GoldTitansRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Igor", " - Thief Lv. 20"), refine.Confirm(item.SteelIgor, r.SteelIgorRequirements())),
+			r.CreateChoice(refine.ItemNameList("Adamantium Igor", " - Thief Lv. 20"), refine.Confirm(item.AdamantiumIgor, r.AdamantiumIgorRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Guards", " - Thief Lv. 30"), refine.Confirm(item.MithrilGuards, r.MithrilGuardsRequirements())),
+			r.CreateChoice(refine.ItemNameList("Adamantium Guards", " - Thief Lv. 3"), refine.Confirm(item.AdamantiumGuards, r.AdamantiumGuardsRequirements())),
+			r.CreateChoice(refine.ItemNameList("Silver Guardian", " - Thief Lv. 35"), refine.Confirm(item.SilverGuardian, r.SilverGuardianRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Guardian", " - Thief Lv. 35"), refine.Confirm(item.DarkGuardian, r.DarkGuardianRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blood Avarice", " - Thief Lv. 40"), refine.Confirm(item.BloodAvarice, r.BloodAvariceRequirements())),
+			r.CreateChoice(refine.ItemNameList("Adamantium Avarice", " - Thief Lv. 40"), refine.Confirm(item.AdamantiumAvarice, r.AdamantiumAvariceRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Avarice", " - Thief Lv. 40"), refine.Confirm(item.DarkAvarice, r.DarkAvariceRequirements())),
+			r.CreateChoice(refine.ItemNameList("Blood Slain", " - Thief Lv. 50"), refine.Confirm(item.BloodSlain, r.BloodSlainRequirements())),
+			r.CreateChoice(refine.ItemNameList("Sapphire Slain", " - Thief Lv. 5"), refine.Confirm(item.SapphireSlain, r.SapphireSlainRequirements())),
 		},
 	}
 }
@@ -137,9 +134,9 @@ func (r JMFromThaStreetz) CreateMaterials() refine.RefinementCategory {
 		Prompt:          "Materials? I know of a few materials that I can make for you...",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Make Processed Wood with Tree Branch", "", refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromTreeBranchRequirements())),
-			r.CreateRefinementChoice("Make Processed Wood with Firewood", "", refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromFirewoodRequirements())),
-			r.CreateRefinementChoice("Make Screws (packs of 15)", "", refine.HowMany(item.Screw, r.ScrewRequirements())),
+			r.CreateChoice(refine.SimpleList("Make Processed Wood with Tree Branch"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromTreeBranchRequirements())),
+			r.CreateChoice(refine.SimpleList("Make Processed Wood with Firewood"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromFirewoodRequirements())),
+			r.CreateChoice(refine.SimpleList("Make Screws (packs of 15)"), refine.HowMany(item.Screw, r.ScrewRequirements())),
 		},
 	}
 }

@@ -56,7 +56,7 @@ func PromptCategory(category RefinementCategory) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
 		m := message.NewBuilder().AddText(category.Prompt)
 		for i, choice := range category.Choices {
-			m = m.OpenItem(i).BlueText().AddText(choice.ListText)
+			m = m.OpenItem(i).AddText(choice.ListText).CloseItem()
 		}
 		return script.SendListSelection(l, c, m.String(), choiceSelection(category.Choices))
 	}
@@ -154,4 +154,28 @@ type TerminalConfig struct {
 	MesoError        script.StateProducer
 	RequirementError func(itemId uint32) script.StateProducer
 	InventoryError   script.StateProducer
+}
+
+type RefinementListTextProvider func() string
+
+func SimpleList(value string) RefinementListTextProvider {
+	return func() string {
+		return message.NewBuilder().BlueText().AddText(value).String()
+	}
+}
+
+func ItemIdList(itemId uint32, description string) RefinementListTextProvider {
+	return func() string {
+		return message.NewBuilder().BlueText().ShowItemName1(itemId).BlackText().AddText(description).String()
+	}
+}
+
+func ItemNameList(itemName string, description string) RefinementListTextProvider {
+	return func() string {
+		return message.NewBuilder().BlueText().AddText(itemName).BlackText().AddText(description).String()
+	}
+}
+
+func CreateRefinementChoice(listTextProvider RefinementListTextProvider, selectionPrompt TerminalState, config TerminalConfig) RefinementChoice {
+	return RefinementChoice{ListText: listTextProvider(), SelectionPrompt: selectionPrompt, Config: config}
 }

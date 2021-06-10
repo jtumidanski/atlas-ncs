@@ -31,17 +31,15 @@ func (r MrSmith) CreateCategories() []refine.RefinementCategory {
 	}
 }
 
-func (r MrSmith) CreateRefinementChoice(itemText string, itemDescription string, selectionPrompt refine.TerminalState) refine.RefinementChoice {
-	return refine.RefinementChoice{
-		ListText:        message.NewBuilder().BlueText().AddText(itemText).BlackText().AddText(itemDescription).String(),
-		SelectionPrompt: selectionPrompt,
-		Config: refine.TerminalConfig{
-			Success:          r.Success,
-			MesoError:        r.CannotAfford,
-			RequirementError: r.MissingSomething,
-			InventoryError:   r.MakeRoom,
-		},
+
+func (r MrSmith) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
+	config := refine.TerminalConfig{
+		Success:          r.Success,
+		MesoError:        r.CannotAfford,
+		RequirementError: r.MissingSomething,
+		InventoryError:   r.MakeRoom,
 	}
+	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
 }
 
 func (r MrSmith) MakeAGlove() refine.RefinementCategory {
@@ -50,15 +48,15 @@ func (r MrSmith) MakeAGlove() refine.RefinementCategory {
 		Prompt:          "Okay, so which glove do you want me to make?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Juno", " - Warrior Lv. 10", refine.Confirm(item.Juno, r.JunoRequirements())),
-			r.CreateRefinementChoice("Steel Fingerless Gloves", " - Warrior Lv. 15", refine.Confirm(item.SteelFingerlessGloves, r.SteelFingerlessGlovesRequirements())),
-			r.CreateRefinementChoice("Venon", " - Warrior Lv. 20", refine.Confirm(item.Venon, r.VenonRequirements())),
-			r.CreateRefinementChoice("White Fingerless Gloves", " - Warrior Lv. 25", refine.Confirm(item.WhiteFingerlessGloves, r.WhiteFingerlessGlovesRequirements())),
-			r.CreateRefinementChoice("Bronze Missel", " - Warrior Lv. 30", refine.Confirm(item.BronzeMissel, r.BronzeMisselRequirements())),
-			r.CreateRefinementChoice("Steel Briggon", " - Warrior Lv. 35", refine.Confirm(item.SteelBriggon, r.SteelBriggonRequirements())),
-			r.CreateRefinementChoice("Iron Knuckle", " - Warrior Lv. 40", refine.Confirm(item.IronKnuckle, r.IronKnuckleRequirements())),
-			r.CreateRefinementChoice("Steel Brist", " - Warrior Lv. 50", refine.Confirm(item.SteelBrist, r.SteelBristRequirements())),
-			r.CreateRefinementChoice("Bronze Clench", " - Warrior Lv. 60", refine.Confirm(item.BronzeClench, r.BronzeClenchRequirements())),
+			r.CreateChoice(refine.ItemNameList("Juno", " - Warrior Lv. 10"), refine.Confirm(item.Juno, r.JunoRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Fingerless Gloves", " - Warrior Lv. 15"), refine.Confirm(item.SteelFingerlessGloves, r.SteelFingerlessGlovesRequirements())),
+			r.CreateChoice(refine.ItemNameList("Venon", " - Warrior Lv. 20"), refine.Confirm(item.Venon, r.VenonRequirements())),
+			r.CreateChoice(refine.ItemNameList("White Fingerless Gloves", " - Warrior Lv. 25"), refine.Confirm(item.WhiteFingerlessGloves, r.WhiteFingerlessGlovesRequirements())),
+			r.CreateChoice(refine.ItemNameList("Bronze Missel", " - Warrior Lv. 30"), refine.Confirm(item.BronzeMissel, r.BronzeMisselRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Briggon", " - Warrior Lv. 35"), refine.Confirm(item.SteelBriggon, r.SteelBriggonRequirements())),
+			r.CreateChoice(refine.ItemNameList("Iron Knuckle", " - Warrior Lv. 40"), refine.Confirm(item.IronKnuckle, r.IronKnuckleRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Brist", " - Warrior Lv. 50"), refine.Confirm(item.SteelBrist, r.SteelBristRequirements())),
+			r.CreateChoice(refine.ItemNameList("Bronze Clench", " - Warrior Lv. 60"), refine.Confirm(item.BronzeClench, r.BronzeClenchRequirements())),
 		},
 	}
 }
@@ -69,16 +67,16 @@ func (r MrSmith) UpgradeAGlove() refine.RefinementCategory {
 		Prompt:          "Upgrade a glove? That shouldn't be too difficult. Which did you have in mind?",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Steel Missel", " - Warrior Lv. 30", refine.Confirm(item.SteelMissel, r.SteelMisselRequirements())),
-			r.CreateRefinementChoice("Orihalcon Missel", " - Warrior Lv. 30", refine.Confirm(item.OrihalconMissel, r.OrihalconMisselRequirements())),
-			r.CreateRefinementChoice("Yellow Briggon", " - Warrior Lv. 35", refine.Confirm(item.YellowBriggon, r.YellowBriggonRequirements())),
-			r.CreateRefinementChoice("Dark Briggon", " - Warrior Lv. 35", refine.Confirm(item.DarkBriggon, r.DarkBriggonRequirements())),
-			r.CreateRefinementChoice("Adamantium Knuckle", " - Warrior Lv. 40", refine.Confirm(item.AdamantiumKnuckle, r.AdamantiumKnuckleRequirements())),
-			r.CreateRefinementChoice("Dark Knuckle", " - Warrior Lv. 40", refine.Confirm(item.DarkKnuckle, r.DarkKnuckleRequirements())),
-			r.CreateRefinementChoice("Mithril Brist", " - Warrior Lv. 50", refine.Confirm(item.MithrilBrist, r.MithrilBristRequirements())),
-			r.CreateRefinementChoice("Gold Brist", " - Warrior Lv. 50", refine.Confirm(item.GoldBrist, r.GoldBristRequirements())),
-			r.CreateRefinementChoice("Sapphire Clench", " - Warrior Lv. 60", refine.Confirm(item.SapphireClench, r.SapphireClenchRequirements())),
-			r.CreateRefinementChoice("Dark Clench", " - Warrior Lv. 60", refine.Confirm(item.DarkClench, r.DarkClenchRequirements())),
+			r.CreateChoice(refine.ItemNameList("Steel Missel", " - Warrior Lv. 30"), refine.Confirm(item.SteelMissel, r.SteelMisselRequirements())),
+			r.CreateChoice(refine.ItemNameList("Orihalcon Missel", " - Warrior Lv. 30"), refine.Confirm(item.OrihalconMissel, r.OrihalconMisselRequirements())),
+			r.CreateChoice(refine.ItemNameList("Yellow Briggon", " - Warrior Lv. 35"), refine.Confirm(item.YellowBriggon, r.YellowBriggonRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Briggon", " - Warrior Lv. 35"), refine.Confirm(item.DarkBriggon, r.DarkBriggonRequirements())),
+			r.CreateChoice(refine.ItemNameList("Adamantium Knuckle", " - Warrior Lv. 40"), refine.Confirm(item.AdamantiumKnuckle, r.AdamantiumKnuckleRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Knuckle", " - Warrior Lv. 40"), refine.Confirm(item.DarkKnuckle, r.DarkKnuckleRequirements())),
+			r.CreateChoice(refine.ItemNameList("Mithril Brist", " - Warrior Lv. 50"), refine.Confirm(item.MithrilBrist, r.MithrilBristRequirements())),
+			r.CreateChoice(refine.ItemNameList("Gold Brist", " - Warrior Lv. 50"), refine.Confirm(item.GoldBrist, r.GoldBristRequirements())),
+			r.CreateChoice(refine.ItemNameList("Sapphire Clench", " - Warrior Lv. 60"), refine.Confirm(item.SapphireClench, r.SapphireClenchRequirements())),
+			r.CreateChoice(refine.ItemNameList("Dark Clench", " - Warrior Lv. 60"), refine.Confirm(item.DarkClench, r.DarkClenchRequirements())),
 		},
 	}
 }
@@ -89,9 +87,9 @@ func (r MrSmith) CreateMaterials() refine.RefinementCategory {
 		Prompt:          "Materials? I know of a few materials that I can make for you...",
 		SelectionPrompt: refine.PromptCategory,
 		Choices: []refine.RefinementChoice{
-			r.CreateRefinementChoice("Make Processed Wood with Tree Branch", "", refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromTreeBranchRequirements())),
-			r.CreateRefinementChoice("Make Processed Wood with Firewood", "", refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromFirewoodRequirements())),
-			r.CreateRefinementChoice("Make Screws (packs of 15)", "", refine.HowMany(item.Screw, r.ScrewRequirements())),
+			r.CreateChoice(refine.SimpleList("Make Processed Wood with Tree Branch"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromTreeBranchRequirements())),
+			r.CreateChoice(refine.SimpleList("Make Processed Wood with Firewood"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromFirewoodRequirements())),
+			r.CreateChoice(refine.SimpleList("Make Screws (packs of 15)"), refine.HowMany(item.Screw, r.ScrewRequirements())),
 		},
 	}
 }
