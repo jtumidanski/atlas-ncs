@@ -681,4 +681,17 @@ const (
 	BloodMossBoots                         uint32 = 1072150
 	GoldMossBoots                          uint32 = 1072151
 	DarkMossBoots                          uint32 = 1072152
+	BalrogsSTRScroll30                     uint32 = 2040728
+	BalrogsINTScroll30                     uint32 = 2040729
+	BalrogsLUKScroll30                     uint32 = 2040730
+	BalrogsDEXScroll30                     uint32 = 2040731
+	BalrogsHPScroll30                      uint32 = 2040732
+	BalrogsMPScroll30                      uint32 = 2040733
+	BalrogsSpeedScroll30                   uint32 = 2040734
+	BalrogsJumpScroll30                    uint32 = 2040735
+	BalrogsAccuracyScroll30                uint32 = 2040736
+	BalrogsAvoidabilityScroll30            uint32 = 2040737
+	BalrogsDefenseScroll30                 uint32 = 2040738
+	BalrogsTwilightScroll5                 uint32 = 2040739
+	PieceOfBalrogLeather                   uint32 = 4001261
 )

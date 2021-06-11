@@ -436,6 +436,8 @@ func initRegistry() *Registry {
 	s.addConversation(discrete.SubwayTrashCan3{})
 	s.addConversation(discrete.SubwayTrashCan4{})
 	s.addConversation(discrete.Sunny{})
+	s.addConversation(discrete.SunstoneGrave{})
+	s.addConversation(discrete.SuspiciousMan{})
 	s.addConversation(discrete.Syras{})
 	s.addConversation(discrete.T1337{})
 	s.addConversation(discrete.Taggrin{})
