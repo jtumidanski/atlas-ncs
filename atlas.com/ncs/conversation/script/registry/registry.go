@@ -72,6 +72,7 @@ func initRegistry() *Registry {
 	s.addConversation(discrete.Bedin{})
 	s.addConversation(discrete.Bell{})
 	s.addConversation(discrete.BigHeadward{})
+	s.addConversation(discrete.Billy{})
 	s.addConversation(discrete.BlockedEntrance{})
 	s.addConversation(discrete.Bomack{})
 	s.addConversation(discrete.BossKitty{})
