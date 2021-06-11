@@ -98,6 +98,7 @@ func initRegistry() *Registry {
 	s.addConversation(discrete.Cherry{})
 	s.addConversation(discrete.ChiefTatamo{})
 	s.addConversation(discrete.Chris{})
+	s.addConversation(discrete.Chrishrama{})
 	s.addConversation(discrete.ChunJi{})
 	s.addConversation(discrete.Cliff{})
 	s.addConversation(discrete.Cloy{})
