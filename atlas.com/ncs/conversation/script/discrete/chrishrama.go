@@ -25,8 +25,8 @@ func (r Chrishrama) Hello() string {
 	return "Hello, I live here, but don't underestimate me. How about I help you by making you a new pair of shoes?"
 }
 
-func (r Chrishrama) Categories() []refine.RefinementCategory {
-	return []refine.RefinementCategory{
+func (r Chrishrama) Categories() []refine.ListItem {
+	return []refine.ListItem{
 		r.WarriorShoe(),
 		r.BowmanShoe(),
 		r.MagicianShoe(),
@@ -44,133 +44,121 @@ func (r Chrishrama) CreateChoice(listTextProvider refine.RefinementListTextProvi
 	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
 }
 
-func (r Chrishrama) WarriorShoe() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText: "Create a Warrior shoe",
-		Prompt:   "Warrior shoes? Sure thing, which kind?",
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverWarBoots, " - Warrior Lv. 25"), refine.Confirm(item.SilverWarBoots, r.SilverWarBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldWarBoots, " - Warrior Lv. 25"), refine.Confirm(item.GoldWarBoots, r.GoldWarBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkWarBoots, " - Warrior Lv. 25"), refine.Confirm(item.DarkWarBoots, r.DarkWarBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.EmeraldBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.EmeraldBattleGrieve, r.EmeraldBattleGrieveRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.MithrilBattleGrieve, r.MithrilBattleGrieveRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.SilverBattleGrieve, r.SilverBattleGrieveRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.BloodBattleGrieve, r.BloodBattleGrieveRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelTrigger, " - Warrior Lv. 35"), refine.Confirm(item.SteelTrigger, r.SteelTriggerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilTrigger, " - Warrior Lv. 35"), refine.Confirm(item.MithrilTrigger, r.MithrilTriggerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkTrigger, " - Warrior Lv. 35"), refine.Confirm(item.DarkTrigger, r.DarkTriggerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownJangoonBoots, " - Warrior Lv. 40"), refine.Confirm(item.BrownJangoonBoots, r.BrownJangoonBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MaroonJangoonBoots, " - Warrior Lv. 40"), refine.Confirm(item.MaroonJangoonBoots, r.MaroonJangoonBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueJangoonBoots, " - Warrior Lv. 40"), refine.Confirm(item.BlueJangoonBoots, r.BlueJangoonBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.EmeraldHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.EmeraldHildonBoots, r.EmeraldHildonBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.MithrilHildonBoots, r.MithrilHildonBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrihalconHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.OrihalconHildonBoots, r.OrihalconHildonBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.GoldHildonBoots, r.GoldHildonBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SapphireCamelBoots, " - Warrior Lv. 60"), refine.Confirm(item.SapphireCamelBoots, r.SapphireCamelBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrihalconCamelBoots, " - Warrior Lv. 60"), refine.Confirm(item.OrihalconCamelBoots, r.OrihalconCamelBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodCamelBoots, " - Warrior Lv. 60"), refine.Confirm(item.BloodCamelBoots, r.BloodCamelBootsRequirements())),
-		},
-		SelectionPrompt: refine.PromptCategory,
+func (r Chrishrama) WarriorShoe() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverWarBoots, " - Warrior Lv. 25"), refine.Confirm(item.SilverWarBoots, r.SilverWarBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldWarBoots, " - Warrior Lv. 25"), refine.Confirm(item.GoldWarBoots, r.GoldWarBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkWarBoots, " - Warrior Lv. 25"), refine.Confirm(item.DarkWarBoots, r.DarkWarBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.EmeraldBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.EmeraldBattleGrieve, r.EmeraldBattleGrieveRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.MithrilBattleGrieve, r.MithrilBattleGrieveRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.SilverBattleGrieve, r.SilverBattleGrieveRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodBattleGrieve, " - Warrior Lv. 30"), refine.Confirm(item.BloodBattleGrieve, r.BloodBattleGrieveRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelTrigger, " - Warrior Lv. 35"), refine.Confirm(item.SteelTrigger, r.SteelTriggerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilTrigger, " - Warrior Lv. 35"), refine.Confirm(item.MithrilTrigger, r.MithrilTriggerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkTrigger, " - Warrior Lv. 35"), refine.Confirm(item.DarkTrigger, r.DarkTriggerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownJangoonBoots, " - Warrior Lv. 40"), refine.Confirm(item.BrownJangoonBoots, r.BrownJangoonBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MaroonJangoonBoots, " - Warrior Lv. 40"), refine.Confirm(item.MaroonJangoonBoots, r.MaroonJangoonBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueJangoonBoots, " - Warrior Lv. 40"), refine.Confirm(item.BlueJangoonBoots, r.BlueJangoonBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.EmeraldHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.EmeraldHildonBoots, r.EmeraldHildonBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.MithrilHildonBoots, r.MithrilHildonBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrihalconHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.OrihalconHildonBoots, r.OrihalconHildonBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldHildonBoots, " - Warrior Lv. 50"), refine.Confirm(item.GoldHildonBoots, r.GoldHildonBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SapphireCamelBoots, " - Warrior Lv. 60"), refine.Confirm(item.SapphireCamelBoots, r.SapphireCamelBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrihalconCamelBoots, " - Warrior Lv. 60"), refine.Confirm(item.OrihalconCamelBoots, r.OrihalconCamelBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodCamelBoots, " - Warrior Lv. 60"), refine.Confirm(item.BloodCamelBoots, r.BloodCamelBootsRequirements())),
 	}
+	prompt := refine.PromptCategory("Warrior shoes? Sure thing, which kind?", choices)
+	return refine.ListItem{ListText: "Create a Warrior shoe", SelectionState: prompt}
 }
 
-func (r Chrishrama) BowmanShoe() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText: "Create a Bowman shoe",
-		Prompt:   "Bowman shoes? Sure thing, which kind?",
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownJackBoots, " - Bowman Lv. 25"), refine.Confirm(item.BrownJackBoots, r.BrownJackBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenJackBoots, " - Bowman Lv. 25"), refine.Confirm(item.GreenJackBoots, r.GreenJackBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedJackBoots, " - Bowman Lv. 25"), refine.Confirm(item.RedJackBoots, r.RedJackBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.RedHunterBoots, r.RedHunterBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.BlueHunterBoots, r.BlueHunterBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.GreenHunterBoots, r.GreenHunterBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.BlackHunterBoots, r.BlackHunterBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.BrownHunterBoots, r.BrownHunterBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueSilkyBoots, " - Bowman Lv. 35"), refine.Confirm(item.BlueSilkyBoots, r.BlueSilkyBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenSilkyBoots, " - Bowman Lv. 35"), refine.Confirm(item.GreenSilkyBoots, r.GreenSilkyBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedSilkyBoots, " - Bowman Lv. 35"), refine.Confirm(item.RedSilkyBoots, r.RedSilkyBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedPierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.RedPierreShoes, r.RedPierreShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.YellowPierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.YellowPierreShoes, r.YellowPierreShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownPierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.BrownPierreShoes, r.BrownPierreShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BluePierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.BluePierreShoes, r.BluePierreShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownSteelTippedBoots, " - Bowman Lv.50"), refine.Confirm(item.BrownSteelTippedBoots, r.BrownSteelTippedBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenSteelTippedBoots, " - Bowman Lv. 50"), refine.Confirm(item.GreenSteelTippedBoots, r.GreenSteelTippedBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueSteelTippedBoots, " - Bowman Lv. 50"), refine.Confirm(item.BlueSteelTippedBoots, r.BlueSteelTippedBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleSteelTippedBoots, " - Bowman Lv. 50"), refine.Confirm(item.PurpleSteelTippedBoots, r.PurpleSteelTippedBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedGoreBoots, " - Bowman Lv. 60"), refine.Confirm(item.RedGoreBoots, r.RedGoreBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoreBoots, " - Bowman Lv. 60"), refine.Confirm(item.BlueGoreBoots, r.BlueGoreBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoreBoots, " - Bowman Lv. 60"), refine.Confirm(item.GreenGoreBoots, r.GreenGoreBootsRequirements())),
-		},
-		SelectionPrompt: refine.PromptCategory,
+func (r Chrishrama) BowmanShoe() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownJackBoots, " - Bowman Lv. 25"), refine.Confirm(item.BrownJackBoots, r.BrownJackBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenJackBoots, " - Bowman Lv. 25"), refine.Confirm(item.GreenJackBoots, r.GreenJackBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedJackBoots, " - Bowman Lv. 25"), refine.Confirm(item.RedJackBoots, r.RedJackBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.RedHunterBoots, r.RedHunterBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.BlueHunterBoots, r.BlueHunterBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.GreenHunterBoots, r.GreenHunterBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.BlackHunterBoots, r.BlackHunterBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownHunterBoots, " - Bowman Lv. 30"), refine.Confirm(item.BrownHunterBoots, r.BrownHunterBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueSilkyBoots, " - Bowman Lv. 35"), refine.Confirm(item.BlueSilkyBoots, r.BlueSilkyBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenSilkyBoots, " - Bowman Lv. 35"), refine.Confirm(item.GreenSilkyBoots, r.GreenSilkyBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedSilkyBoots, " - Bowman Lv. 35"), refine.Confirm(item.RedSilkyBoots, r.RedSilkyBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedPierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.RedPierreShoes, r.RedPierreShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.YellowPierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.YellowPierreShoes, r.YellowPierreShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownPierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.BrownPierreShoes, r.BrownPierreShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BluePierreShoes, " - Bowman Lv. 40"), refine.Confirm(item.BluePierreShoes, r.BluePierreShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownSteelTippedBoots, " - Bowman Lv.50"), refine.Confirm(item.BrownSteelTippedBoots, r.BrownSteelTippedBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenSteelTippedBoots, " - Bowman Lv. 50"), refine.Confirm(item.GreenSteelTippedBoots, r.GreenSteelTippedBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueSteelTippedBoots, " - Bowman Lv. 50"), refine.Confirm(item.BlueSteelTippedBoots, r.BlueSteelTippedBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleSteelTippedBoots, " - Bowman Lv. 50"), refine.Confirm(item.PurpleSteelTippedBoots, r.PurpleSteelTippedBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedGoreBoots, " - Bowman Lv. 60"), refine.Confirm(item.RedGoreBoots, r.RedGoreBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoreBoots, " - Bowman Lv. 60"), refine.Confirm(item.BlueGoreBoots, r.BlueGoreBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoreBoots, " - Bowman Lv. 60"), refine.Confirm(item.GreenGoreBoots, r.GreenGoreBootsRequirements())),
 	}
+	prompt := refine.PromptCategory("Bowman shoes? Sure thing, which kind?", choices)
+	return refine.ListItem{ListText: "Create a Bowman shoe", SelectionState: prompt}
 }
 
-func (r Chrishrama) MagicianShoe() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText: "Create a Magician shoe",
-		Prompt:   "Magician shoes? Sure thing, which kind?",
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueJeweleryShoes, " - Magician Lv. 20"), refine.Confirm(item.BlueJeweleryShoes, r.BlueJeweleryShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleJeweleryShoes, " - Magician Lv. 20"), refine.Confirm(item.PurpleJeweleryShoes, r.PurpleJeweleryShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedJeweleryShoes, " - Magician Lv. 20"), refine.Confirm(item.RedJeweleryShoes, r.RedJeweleryShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverWindshoes, " - Magician Lv. 25"), refine.Confirm(item.SilverWindshoes, r.SilverWindshoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.YellowWindshoes, " - Magician Lv. 25"), refine.Confirm(item.YellowWindshoes, r.YellowWindshoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackWindshoes, " - Magician Lv. 25"), refine.Confirm(item.BlackWindshoes, r.BlackWindshoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.RedMagicshoes, r.RedMagicshoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.BlueMagicshoes, r.BlueMagicshoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.WhiteMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.WhiteMagicshoes, r.WhiteMagicshoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.BlackMagicshoes, r.BlackMagicshoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleSaltShoes, " - Magician Lv. 35"), refine.Confirm(item.PurpleSaltShoes, r.PurpleSaltShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedSaltShoes, " - Magician Lv. 35"), refine.Confirm(item.RedSaltShoes, r.RedSaltShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackSaltShoes, " - Magician Lv. 35"), refine.Confirm(item.BlackSaltShoes, r.BlackSaltShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.RedMoonShoes, r.RedMoonShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.BlueMoonShoes, r.BlueMoonShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.GoldMoonShoes, r.GoldMoonShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.DarkMoonShoes, r.DarkMoonShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.PinkGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.PinkGoldwindShoes, r.PinkGoldwindShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.BlueGoldwindShoes, r.BlueGoldwindShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.PurpleGoldwindShoes, r.PurpleGoldwindShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.GreenGoldwindShoes, r.GreenGoldwindShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.PinkGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.PinkGoldrunners, r.PinkGoldrunnersRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.GreenGoldrunners, r.GreenGoldrunnersRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrangeGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.OrangeGoldrunners, r.OrangeGoldrunnersRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.BlueGoldrunners, r.BlueGoldrunnersRequirements())),
-		},
-		SelectionPrompt: refine.PromptCategory,
+func (r Chrishrama) MagicianShoe() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueJeweleryShoes, " - Magician Lv. 20"), refine.Confirm(item.BlueJeweleryShoes, r.BlueJeweleryShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleJeweleryShoes, " - Magician Lv. 20"), refine.Confirm(item.PurpleJeweleryShoes, r.PurpleJeweleryShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedJeweleryShoes, " - Magician Lv. 20"), refine.Confirm(item.RedJeweleryShoes, r.RedJeweleryShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverWindshoes, " - Magician Lv. 25"), refine.Confirm(item.SilverWindshoes, r.SilverWindshoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.YellowWindshoes, " - Magician Lv. 25"), refine.Confirm(item.YellowWindshoes, r.YellowWindshoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackWindshoes, " - Magician Lv. 25"), refine.Confirm(item.BlackWindshoes, r.BlackWindshoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.RedMagicshoes, r.RedMagicshoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.BlueMagicshoes, r.BlueMagicshoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.WhiteMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.WhiteMagicshoes, r.WhiteMagicshoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackMagicshoes, " - Magician Lv. 30"), refine.Confirm(item.BlackMagicshoes, r.BlackMagicshoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleSaltShoes, " - Magician Lv. 35"), refine.Confirm(item.PurpleSaltShoes, r.PurpleSaltShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedSaltShoes, " - Magician Lv. 35"), refine.Confirm(item.RedSaltShoes, r.RedSaltShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackSaltShoes, " - Magician Lv. 35"), refine.Confirm(item.BlackSaltShoes, r.BlackSaltShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.RedMoonShoes, r.RedMoonShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.BlueMoonShoes, r.BlueMoonShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.GoldMoonShoes, r.GoldMoonShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkMoonShoes, " - Magician Lv. 40"), refine.Confirm(item.DarkMoonShoes, r.DarkMoonShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.PinkGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.PinkGoldwindShoes, r.PinkGoldwindShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.BlueGoldwindShoes, r.BlueGoldwindShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.PurpleGoldwindShoes, r.PurpleGoldwindShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoldwindShoes, " - Magician Lv. 50"), refine.Confirm(item.GreenGoldwindShoes, r.GreenGoldwindShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.PinkGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.PinkGoldrunners, r.PinkGoldrunnersRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.GreenGoldrunners, r.GreenGoldrunnersRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrangeGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.OrangeGoldrunners, r.OrangeGoldrunnersRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoldrunners, " - Magician Lv. 60"), refine.Confirm(item.BlueGoldrunners, r.BlueGoldrunnersRequirements())),
 	}
+	prompt := refine.PromptCategory("Magician shoes? Sure thing, which kind?", choices)
+	return refine.ListItem{ListText: "Create a Magician shoe", SelectionState: prompt}
 }
 
-func (r Chrishrama) ThiefShoe() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText: "Create a Thief shoe",
-		Prompt:   "Thief shoes? Sure thing, which kind?",
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.BlueLappyShoes, r.BlueLappyShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.RedLappyShoes, r.RedLappyShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.GreenLappyShoes, r.GreenLappyShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.BlackLappyShoes, r.BlackLappyShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BronzeChainBoots, " - Thief Lv. 30"), refine.Confirm(item.BronzeChainBoots, r.BronzeChainBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.IronChainBoots, " - Thief Lv. 30"), refine.Confirm(item.IronChainBoots, r.IronChainBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverChainBoots, " - Thief Lv. 30"), refine.Confirm(item.SilverChainBoots, r.SilverChainBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldChainBoots, " - Thief Lv. 30"), refine.Confirm(item.GoldChainBoots, r.GoldChainBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedWhiteLineBoots, " - Thief Lv. 35"), refine.Confirm(item.RedWhiteLineBoots, r.RedWhiteLineBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenWhiteLineBoots, " - Thief Lv. 35"), refine.Confirm(item.GreenWhiteLineBoots, r.GreenWhiteLineBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueWhiteLineBoots, " - Thief Lv. 35"), refine.Confirm(item.BlueWhiteLineBoots, r.BlueWhiteLineBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackRedLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackRedLinedShoes, r.BlackRedLinedShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackGreenLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackGreenLinedShoes, r.BlackGreenLinedShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackYellowLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackYellowLinedShoes, r.BlackYellowLinedShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackBlueLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackBlueLinedShoes, r.BlackBlueLinedShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.BlueGoniShoes, r.BlueGoniShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.RedGoniShoes, r.RedGoniShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.GreenGoniShoes, r.GreenGoniShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.PurpleGoniShoes, r.PurpleGoniShoesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodMossBoots, " - Thief Lv. 60"), refine.Confirm(item.BloodMossBoots, r.BloodMossBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldMossBoots, " - Thief Lv. 60"), refine.Confirm(item.GoldMossBoots, r.GoldMossBootsRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkMossBoots, " - Thief Lv. 60"), refine.Confirm(item.DarkMossBoots, r.DarkMossBootsRequirements())),
-		},
-		SelectionPrompt: refine.PromptCategory,
+func (r Chrishrama) ThiefShoe() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.BlueLappyShoes, r.BlueLappyShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.RedLappyShoes, r.RedLappyShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.GreenLappyShoes, r.GreenLappyShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackLappyShoes, " - Thief Lv. 25"), refine.Confirm(item.BlackLappyShoes, r.BlackLappyShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BronzeChainBoots, " - Thief Lv. 30"), refine.Confirm(item.BronzeChainBoots, r.BronzeChainBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.IronChainBoots, " - Thief Lv. 30"), refine.Confirm(item.IronChainBoots, r.IronChainBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverChainBoots, " - Thief Lv. 30"), refine.Confirm(item.SilverChainBoots, r.SilverChainBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldChainBoots, " - Thief Lv. 30"), refine.Confirm(item.GoldChainBoots, r.GoldChainBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedWhiteLineBoots, " - Thief Lv. 35"), refine.Confirm(item.RedWhiteLineBoots, r.RedWhiteLineBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenWhiteLineBoots, " - Thief Lv. 35"), refine.Confirm(item.GreenWhiteLineBoots, r.GreenWhiteLineBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueWhiteLineBoots, " - Thief Lv. 35"), refine.Confirm(item.BlueWhiteLineBoots, r.BlueWhiteLineBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackRedLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackRedLinedShoes, r.BlackRedLinedShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackGreenLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackGreenLinedShoes, r.BlackGreenLinedShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackYellowLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackYellowLinedShoes, r.BlackYellowLinedShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackBlueLinedShoes, " - Thief Lv. 40"), refine.Confirm(item.BlackBlueLinedShoes, r.BlackBlueLinedShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.BlueGoniShoes, r.BlueGoniShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.RedGoniShoes, r.RedGoniShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.GreenGoniShoes, r.GreenGoniShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.PurpleGoniShoes, " - Thief Lv. 50"), refine.Confirm(item.PurpleGoniShoes, r.PurpleGoniShoesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodMossBoots, " - Thief Lv. 60"), refine.Confirm(item.BloodMossBoots, r.BloodMossBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldMossBoots, " - Thief Lv. 60"), refine.Confirm(item.GoldMossBoots, r.GoldMossBootsRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkMossBoots, " - Thief Lv. 60"), refine.Confirm(item.DarkMossBoots, r.DarkMossBootsRequirements())),
 	}
+	prompt := refine.PromptCategory("Thief shoes? Sure thing, which kind?", choices)
+	return refine.ListItem{ListText: "Create a Thief shoe", SelectionState: prompt}
 }
 
 func (r Chrishrama) SilverWarBootsRequirements() refine.Requirements {

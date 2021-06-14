@@ -23,8 +23,8 @@ func (r Vicious) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	return refine.NewGenericRefine(l, c, hello, categories)
 }
 
-func (r Vicious) CreateCategories() []refine.RefinementCategory {
-	return []refine.RefinementCategory{
+func (r Vicious) CreateCategories() []refine.ListItem {
+	return []refine.ListItem{
 		r.CreateABow(),
 		r.CreateACrossbow(),
 		r.MakeAGlove(),
@@ -44,110 +44,92 @@ func (r Vicious) CreateChoice(listTextProvider refine.RefinementListTextProvider
 	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
 }
 
-func (r Vicious) CreateABow() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Create a bow",
-		Prompt:          "I may have been a Sniper, but bows and crossbows aren't too much different. Anyway, which would you like to make?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.WarBow, " - Bowman Lv. 10"), refine.Confirm(item.WarBow, r.WarBowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.CompositeBow, " - Bowman Lv. 15"), refine.Confirm(item.CompositeBow, r.CompositeBowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.HuntersBow, " - Bowman Lv. 20"), refine.Confirm(item.HuntersBow, r.HuntersBowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BattleBow, " - Bowman Lv. 25"), refine.Confirm(item.BattleBow, r.BattleBowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Ryden, " - Bowman Lv. 30"), refine.Confirm(item.Ryden, r.RydenRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedViper, " - Bowman Lv. 35"), refine.Confirm(item.RedViper, r.RedViperRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Vaulter2000, " - Bowman Lv. 40"), refine.Confirm(item.Vaulter2000, r.Vaulter2000Requirements())),
-		},
+func (r Vicious) CreateABow() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.WarBow, " - Bowman Lv. 10"), refine.Confirm(item.WarBow, r.WarBowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.CompositeBow, " - Bowman Lv. 15"), refine.Confirm(item.CompositeBow, r.CompositeBowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.HuntersBow, " - Bowman Lv. 20"), refine.Confirm(item.HuntersBow, r.HuntersBowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BattleBow, " - Bowman Lv. 25"), refine.Confirm(item.BattleBow, r.BattleBowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.Ryden, " - Bowman Lv. 30"), refine.Confirm(item.Ryden, r.RydenRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedViper, " - Bowman Lv. 35"), refine.Confirm(item.RedViper, r.RedViperRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.Vaulter2000, " - Bowman Lv. 40"), refine.Confirm(item.Vaulter2000, r.Vaulter2000Requirements())),
 	}
+	prompt := refine.PromptCategory("I may have been a Sniper, but bows and crossbows aren't too much different. Anyway, which would you like to make?", choices)
+	return refine.ListItem{ListText: "Create a bow", SelectionState: prompt}
 }
 
-func (r Vicious) CreateACrossbow() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Create a crossbow",
-		Prompt:          "I was a Sniper. Crossbows are my specialty. Which would you like me to make for you?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Crossbow, " - Bowman Lv. 10"), refine.Confirm(item.Crossbow, r.CrossbowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BattleCrossbow, " - Bowman Lv. 15"), refine.Confirm(item.BattleCrossbow, r.BattleCrossbowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Balanche, " - Bowman Lv. 20"), refine.Confirm(item.Balanche, r.BalancheRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MountainCrossbow, " - Bowman Lv. 25"), refine.Confirm(item.MountainCrossbow, r.MountainCrossbowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.EagleCrow, " - Bowman Lv. 30"), refine.Confirm(item.EagleCrow, r.EagleCrowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Heckler, " - Bowman Lv. 35"), refine.Confirm(item.Heckler, r.HecklerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverCrow, " - Bowman Lv. 40"), refine.Confirm(item.SilverCrow, r.SilverCrowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.Rower, " - Bowman Lv. 45"), refine.Confirm(item.Rower, r.RowerRequirements())),
-		},
+func (r Vicious) CreateACrossbow() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.Crossbow, " - Bowman Lv. 10"), refine.Confirm(item.Crossbow, r.CrossbowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BattleCrossbow, " - Bowman Lv. 15"), refine.Confirm(item.BattleCrossbow, r.BattleCrossbowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.Balanche, " - Bowman Lv. 20"), refine.Confirm(item.Balanche, r.BalancheRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MountainCrossbow, " - Bowman Lv. 25"), refine.Confirm(item.MountainCrossbow, r.MountainCrossbowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.EagleCrow, " - Bowman Lv. 30"), refine.Confirm(item.EagleCrow, r.EagleCrowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.Heckler, " - Bowman Lv. 35"), refine.Confirm(item.Heckler, r.HecklerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverCrow, " - Bowman Lv. 40"), refine.Confirm(item.SilverCrow, r.SilverCrowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.Rower, " - Bowman Lv. 45"), refine.Confirm(item.Rower, r.RowerRequirements())),
 	}
+	prompt := refine.PromptCategory("I was a Sniper. Crossbows are my specialty. Which would you like me to make for you?", choices)
+	return refine.ListItem{ListText: "Create a crossbow", SelectionState: prompt}
 }
 
-func (r Vicious) MakeAGlove() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Make a glove",
-		Prompt:          "Okay, so which glove do you want me to make?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BasicArcherGloves, " - Bowman Lv. 10"), refine.Confirm(item.BasicArcherGloves, r.BasicArcherGlovesRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueDiros, " - Bowman Lv. 15"), refine.Confirm(item.BlueDiros, r.BlueDirosRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueSavata, " - Bowman Lv. 25"), refine.Confirm(item.BlueSavata, r.BlueSavataRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownMarker, " - Bowman Lv. 30"), refine.Confirm(item.BrownMarker, r.BrownMarkerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BronzeScaler, " - Bowman Lv. 35"), refine.Confirm(item.BronzeScaler, r.BronzeScalerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.AquaBrace, " - Bowman Lv. 40"), refine.Confirm(item.AquaBrace, r.AquaBraceRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueWillow, " - Bowman Lv. 50"), refine.Confirm(item.BlueWillow, r.BlueWillowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OakerGarner, " - Bowman Lv. 60"), refine.Confirm(item.OakerGarner, r.OakerGarnerRequirements())),
-		},
+func (r Vicious) MakeAGlove() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BasicArcherGloves, " - Bowman Lv. 10"), refine.Confirm(item.BasicArcherGloves, r.BasicArcherGlovesRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueDiros, " - Bowman Lv. 15"), refine.Confirm(item.BlueDiros, r.BlueDirosRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueSavata, " - Bowman Lv. 25"), refine.Confirm(item.BlueSavata, r.BlueSavataRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BrownMarker, " - Bowman Lv. 30"), refine.Confirm(item.BrownMarker, r.BrownMarkerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BronzeScaler, " - Bowman Lv. 35"), refine.Confirm(item.BronzeScaler, r.BronzeScalerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.AquaBrace, " - Bowman Lv. 40"), refine.Confirm(item.AquaBrace, r.AquaBraceRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueWillow, " - Bowman Lv. 50"), refine.Confirm(item.BlueWillow, r.BlueWillowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.OakerGarner, " - Bowman Lv. 60"), refine.Confirm(item.OakerGarner, r.OakerGarnerRequirements())),
 	}
+	prompt := refine.PromptCategory("Okay, so which glove do you want me to make?", choices)
+	return refine.ListItem{ListText: "Make a glove", SelectionState: prompt}
 }
 
-func (r Vicious) UpgradeAGlove() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Upgrade a glove",
-		Prompt:          "Upgrade a glove? That shouldn't be too difficult. Which did you have in mind?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenDiros, " - Bowman Lv. 15"), refine.Confirm(item.GreenDiros, r.GreenDirosRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedDiros, " - Bowman Lv. 15"), refine.Confirm(item.RedDiros, r.RedDirosRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedSavata, " - Bowman Lv. 25"), refine.Confirm(item.RedSavata, r.RedSavataRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkSavata, " - Bowman Lv. 25"), refine.Confirm(item.DarkSavata, r.DarkSavataRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenMarker, " - Bowman Lv. 30"), refine.Confirm(item.GreenMarker, r.GreenMarkerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackMarker, " - Bowman Lv. 30"), refine.Confirm(item.BlackMarker, r.BlackMarkerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilScaler, " - Bowman Lv. 35"), refine.Confirm(item.MithrilScaler, r.MithrilScalerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldScaler, " - Bowman Lv. 35"), refine.Confirm(item.GoldScaler, r.GoldScalerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldBrace, " - Bowman Lv. 40"), refine.Confirm(item.GoldBrace, r.GoldBraceRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkBrace, " - Bowman Lv. 40"), refine.Confirm(item.DarkBrace, r.DarkBraceRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedWillow, " - Bowman Lv. 50"), refine.Confirm(item.RedWillow, r.RedWillowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkWillow, " - Bowman Lv. 50"), refine.Confirm(item.DarkWillow, r.DarkWillowRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SephiaGarner, " - Bowman Lv. 60"), refine.Confirm(item.SephiaGarner, r.SephiaGarnerRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkGarner, " - Bowman Lv. 60"), refine.Confirm(item.DarkGarner, r.DarkGarnerRequirements())),
-		},
+func (r Vicious) UpgradeAGlove() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenDiros, " - Bowman Lv. 15"), refine.Confirm(item.GreenDiros, r.GreenDirosRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedDiros, " - Bowman Lv. 15"), refine.Confirm(item.RedDiros, r.RedDirosRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedSavata, " - Bowman Lv. 25"), refine.Confirm(item.RedSavata, r.RedSavataRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkSavata, " - Bowman Lv. 25"), refine.Confirm(item.DarkSavata, r.DarkSavataRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreenMarker, " - Bowman Lv. 30"), refine.Confirm(item.GreenMarker, r.GreenMarkerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlackMarker, " - Bowman Lv. 30"), refine.Confirm(item.BlackMarker, r.BlackMarkerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilScaler, " - Bowman Lv. 35"), refine.Confirm(item.MithrilScaler, r.MithrilScalerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldScaler, " - Bowman Lv. 35"), refine.Confirm(item.GoldScaler, r.GoldScalerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldBrace, " - Bowman Lv. 40"), refine.Confirm(item.GoldBrace, r.GoldBraceRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkBrace, " - Bowman Lv. 40"), refine.Confirm(item.DarkBrace, r.DarkBraceRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.RedWillow, " - Bowman Lv. 50"), refine.Confirm(item.RedWillow, r.RedWillowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkWillow, " - Bowman Lv. 50"), refine.Confirm(item.DarkWillow, r.DarkWillowRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SephiaGarner, " - Bowman Lv. 60"), refine.Confirm(item.SephiaGarner, r.SephiaGarnerRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkGarner, " - Bowman Lv. 60"), refine.Confirm(item.DarkGarner, r.DarkGarnerRequirements())),
 	}
+	prompt := refine.PromptCategory("Upgrade a glove? That shouldn't be too difficult. Which did you have in mind?", choices)
+	return refine.ListItem{ListText: "Upgrade a glove", SelectionState: prompt}
 }
 
-func (r Vicious) CreateMaterials() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Create materials",
-		Prompt:          "Materials? I know of a few materials that I can make for you...",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.SimpleList("Make Processed Wood with Tree Branch"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromTreeBranchRequirements())),
-			r.CreateChoice(refine.SimpleList("Make Processed Wood with Firewood"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromFirewoodRequirements())),
-			r.CreateChoice(refine.SimpleList("Make Screws (packs of 15)"), refine.HowMany(item.Screw, r.ScrewRequirements())),
-		},
+func (r Vicious) CreateMaterials() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.SimpleList("Make Processed Wood with Tree Branch"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromTreeBranchRequirements())),
+		r.CreateChoice(refine.SimpleList("Make Processed Wood with Firewood"), refine.HowMany(item.ProcessedWood, r.ProcessedWoodFromFirewoodRequirements())),
+		r.CreateChoice(refine.SimpleList("Make Screws (packs of 15)"), refine.HowMany(item.Screw, r.ScrewRequirements())),
 	}
+	prompt := refine.PromptCategory("Materials? I know of a few materials that I can make for you...", choices)
+	return refine.ListItem{ListText: "Create materials", SelectionState: prompt}
 }
 
-func (r Vicious) CreateArrows() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Create arrows",
-		Prompt:          "Arrows? Not a problem at all.",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdList(item.ArrowForBow), refine.Confirm(item.ArrowForBow, r.ArrowForBowRequirements())),
-			r.CreateChoice(refine.ItemIdList(item.ArrowForCrossbow), refine.Confirm(item.ArrowForCrossbow, r.ArrowForCrossbowRequirements())),
-			r.CreateChoice(refine.ItemIdList(item.BronzeArrowForBow), refine.Confirm(item.BronzeArrowForBow, r.BronzeArrowForBowRequirements())),
-			r.CreateChoice(refine.ItemIdList(item.BronzeArrowForCrossbow), refine.Confirm(item.BronzeArrowForCrossbow, r.BronzeArrowForCrossbowRequirements())),
-			r.CreateChoice(refine.ItemIdList(item.SteelArrowForBow), refine.Confirm(item.SteelArrowForBow, r.SteelArrowForBowRequirements())),
-			r.CreateChoice(refine.ItemIdList(item.SteelArrowForCrossbow), refine.Confirm(item.SteelArrowForCrossbow, r.SteelArrowForCrossbow())),
-		},
+func (r Vicious) CreateArrows() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdList(item.ArrowForBow), refine.Confirm(item.ArrowForBow, r.ArrowForBowRequirements())),
+		r.CreateChoice(refine.ItemIdList(item.ArrowForCrossbow), refine.Confirm(item.ArrowForCrossbow, r.ArrowForCrossbowRequirements())),
+		r.CreateChoice(refine.ItemIdList(item.BronzeArrowForBow), refine.Confirm(item.BronzeArrowForBow, r.BronzeArrowForBowRequirements())),
+		r.CreateChoice(refine.ItemIdList(item.BronzeArrowForCrossbow), refine.Confirm(item.BronzeArrowForCrossbow, r.BronzeArrowForCrossbowRequirements())),
+		r.CreateChoice(refine.ItemIdList(item.SteelArrowForBow), refine.Confirm(item.SteelArrowForBow, r.SteelArrowForBowRequirements())),
+		r.CreateChoice(refine.ItemIdList(item.SteelArrowForCrossbow), refine.Confirm(item.SteelArrowForCrossbow, r.SteelArrowForCrossbow())),
 	}
+	prompt := refine.PromptCategory("Arrows? Not a problem at all.", choices)
+	return refine.ListItem{ListText: "Create arrows", SelectionState: prompt}
 }
 
 func (r Vicious) WarBowRequirements() refine.Requirements {

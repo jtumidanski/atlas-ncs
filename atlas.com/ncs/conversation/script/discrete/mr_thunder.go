@@ -23,8 +23,8 @@ func (r MrThunder) Initial(l logrus.FieldLogger, c script.Context) script.State 
 	return refine.NewGenericRefine(l, c, hello, categories)
 }
 
-func (r MrThunder) CreateCategories() []refine.RefinementCategory {
-	return []refine.RefinementCategory{
+func (r MrThunder) CreateCategories() []refine.ListItem {
+	return []refine.ListItem{
 		r.RefineMineralOre(),
 		r.RefineJewelOre(),
 		r.UpgradeAHelmet(),
@@ -42,88 +42,76 @@ func (r MrThunder) CreateChoice(listTextProvider refine.RefinementListTextProvid
 	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
 }
 
-func (r MrThunder) RefineMineralOre() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Refine a mineral ore",
-		Prompt:          "So, what kind of mineral ore would you like to refine?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.SimpleList("Bronze"), refine.HowMany(item.BronzePlate, r.BronzeRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Steel"), refine.HowMany(item.SteelPlate, r.SteelRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Mithril"), refine.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Adamantium"), refine.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Silver"), refine.HowMany(item.SilverPlate, r.SilverRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Orihalcon"), refine.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Gold"), refine.HowMany(item.GoldPlate, r.GoldRefineRequirements())),
-		},
+func (r MrThunder) RefineMineralOre() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.SimpleList("Bronze"), refine.HowMany(item.BronzePlate, r.BronzeRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Steel"), refine.HowMany(item.SteelPlate, r.SteelRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Mithril"), refine.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Adamantium"), refine.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Silver"), refine.HowMany(item.SilverPlate, r.SilverRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Orihalcon"), refine.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Gold"), refine.HowMany(item.GoldPlate, r.GoldRefineRequirements())),
 	}
+	prompt := refine.PromptCategory("So, what kind of mineral ore would you like to refine?", choices)
+	return refine.ListItem{ListText: "Refine a mineral ore", SelectionState: prompt}
 }
 
-func (r MrThunder) RefineJewelOre() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Refine a jewel ore",
-		Prompt:          "So, what kind of jewel ore would you like to refine?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.SimpleList("Garnet"), refine.HowMany(item.Garnet, r.GarnetRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Amethyst"), refine.HowMany(item.Amethyst, r.AmethystRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Aquamarine"), refine.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Emerald"), refine.HowMany(item.Emerald, r.EmeraldRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Opal"), refine.HowMany(item.Opal, r.OpalRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Sapphire"), refine.HowMany(item.Sapphire, r.SapphireRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Topaz"), refine.HowMany(item.Topaz, r.TopazRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Diamond"), refine.HowMany(item.Diamond, r.DiamondRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Black Crystal"), refine.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements())),
-		},
+func (r MrThunder) RefineJewelOre() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.SimpleList("Garnet"), refine.HowMany(item.Garnet, r.GarnetRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Amethyst"), refine.HowMany(item.Amethyst, r.AmethystRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Aquamarine"), refine.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Emerald"), refine.HowMany(item.Emerald, r.EmeraldRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Opal"), refine.HowMany(item.Opal, r.OpalRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Sapphire"), refine.HowMany(item.Sapphire, r.SapphireRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Topaz"), refine.HowMany(item.Topaz, r.TopazRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Diamond"), refine.HowMany(item.Diamond, r.DiamondRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Black Crystal"), refine.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements())),
 	}
+	prompt := refine.PromptCategory("So, what kind of jewel ore would you like to refine?", choices)
+	return refine.ListItem{ListText: "Refine a jewel ore", SelectionState: prompt}
 }
 
-func (r MrThunder) UpgradeAHelmet() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Upgrade a helmet",
-		Prompt:          "Ah, you wish to upgrade a helmet? Then tell me, which one?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueMetalGear, " - Common Lv. 15"), refine.Confirm(item.BlueMetalGear, r.BlueMetalGearRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.YellowMetalGear, " - Common Lv. 15"), refine.Confirm(item.YellowMetalGear, r.YellowMetalGearRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MetalKoif, " - Warrior Lv. 10"), refine.Confirm(item.MetalKoif, r.MetalKoifRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilKoif, " - Warrior Lv. 10"), refine.Confirm(item.MithrilKoif, r.MithrilKoifRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelHelmet, " - Warrior Lv. 12"), refine.Confirm(item.SteelHelmet, r.SteelHelmetRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilHelmet, " - Warrior Lv. 12"), refine.Confirm(item.MithrilHelmet, r.MithrilHelmetRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelFullHelm, " - Warrior Lv. 15"), refine.Confirm(item.SteelFullHelm, r.SteelFullHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilFullHelm, " - Warrior Lv. 15"), refine.Confirm(item.MithrilFullHelm, r.MithrilFullHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.IronVikingHelm, " - Warrior Lv. 20"), refine.Confirm(item.IronVikingHelm, r.IronVikingHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilVikingHelm, " - Warrior Lv. 20"), refine.Confirm(item.MithrilVikingHelm, r.MithrilVikingHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelFootballHelmet, " - Warrior Lv. 20"), refine.Confirm(item.SteelFootballHelmet, r.SteelFootballHelmetRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilFootballHelmet, " - Warrior Lv. 20"), refine.Confirm(item.MithrilFootballHelmet, r.MithrilFootballHelmetRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilSharpHelm, " - Warrior Lv. 22"), refine.Confirm(item.MithrilSharpHelm, r.MithrilSharpHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldSharpHelm, " - Warrior Lv. 22"), refine.Confirm(item.GoldSharpHelm, r.GoldSharpHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrihalconBurgernetHelm, " - Warrior Lv. 25"), refine.Confirm(item.OrihalconBurgernetHelm, r.OrihalconBurgernetHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldBurgernetHelm, " - Warrior Lv. 25"), refine.Confirm(item.GoldBurgernetHelm, r.GoldBurgernetHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreatRedHelmet, " - Warrior Lv. 35"), refine.Confirm(item.GreatRedHelmet, r.GreatRedHelmetRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreatBlueHelmet, " - Warrior Lv. 35"), refine.Confirm(item.GreatBlueHelmet, r.GreatBlueHelmetRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilNordicHelm, " - Warrior Lv. 40"), refine.Confirm(item.MithrilNordicHelm, r.MithrilNordicHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldNordicHelm, " - Warrior Lv. 40"), refine.Confirm(item.GoldNordicHelm, r.GoldNordicHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilCrusaderHelm, " - Warrior Lv. 50"), refine.Confirm(item.MithrilCrusaderHelm, r.MithrilCrusaderHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverCrusaderHelm, " - Warrior Lv. 50"), refine.Confirm(item.SilverCrusaderHelm, r.SilverCrusaderHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OldSteelNordicHelm, " - Warrior Lv. 55"), refine.Confirm(item.OldSteelNordicHelm, r.OldSteelNordicHelmRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.OldMithrilNordicHelm, " - Warrior Lv. 55"), refine.Confirm(item.OldMithrilNordicHelm, r.OldMithrilRequirements())),
-		},
+func (r MrThunder) UpgradeAHelmet() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BlueMetalGear, " - Common Lv. 15"), refine.Confirm(item.BlueMetalGear, r.BlueMetalGearRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.YellowMetalGear, " - Common Lv. 15"), refine.Confirm(item.YellowMetalGear, r.YellowMetalGearRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MetalKoif, " - Warrior Lv. 10"), refine.Confirm(item.MetalKoif, r.MetalKoifRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilKoif, " - Warrior Lv. 10"), refine.Confirm(item.MithrilKoif, r.MithrilKoifRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelHelmet, " - Warrior Lv. 12"), refine.Confirm(item.SteelHelmet, r.SteelHelmetRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilHelmet, " - Warrior Lv. 12"), refine.Confirm(item.MithrilHelmet, r.MithrilHelmetRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelFullHelm, " - Warrior Lv. 15"), refine.Confirm(item.SteelFullHelm, r.SteelFullHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilFullHelm, " - Warrior Lv. 15"), refine.Confirm(item.MithrilFullHelm, r.MithrilFullHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.IronVikingHelm, " - Warrior Lv. 20"), refine.Confirm(item.IronVikingHelm, r.IronVikingHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilVikingHelm, " - Warrior Lv. 20"), refine.Confirm(item.MithrilVikingHelm, r.MithrilVikingHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SteelFootballHelmet, " - Warrior Lv. 20"), refine.Confirm(item.SteelFootballHelmet, r.SteelFootballHelmetRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilFootballHelmet, " - Warrior Lv. 20"), refine.Confirm(item.MithrilFootballHelmet, r.MithrilFootballHelmetRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilSharpHelm, " - Warrior Lv. 22"), refine.Confirm(item.MithrilSharpHelm, r.MithrilSharpHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldSharpHelm, " - Warrior Lv. 22"), refine.Confirm(item.GoldSharpHelm, r.GoldSharpHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.OrihalconBurgernetHelm, " - Warrior Lv. 25"), refine.Confirm(item.OrihalconBurgernetHelm, r.OrihalconBurgernetHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldBurgernetHelm, " - Warrior Lv. 25"), refine.Confirm(item.GoldBurgernetHelm, r.GoldBurgernetHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreatRedHelmet, " - Warrior Lv. 35"), refine.Confirm(item.GreatRedHelmet, r.GreatRedHelmetRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GreatBlueHelmet, " - Warrior Lv. 35"), refine.Confirm(item.GreatBlueHelmet, r.GreatBlueHelmetRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilNordicHelm, " - Warrior Lv. 40"), refine.Confirm(item.MithrilNordicHelm, r.MithrilNordicHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.GoldNordicHelm, " - Warrior Lv. 40"), refine.Confirm(item.GoldNordicHelm, r.GoldNordicHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilCrusaderHelm, " - Warrior Lv. 50"), refine.Confirm(item.MithrilCrusaderHelm, r.MithrilCrusaderHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverCrusaderHelm, " - Warrior Lv. 50"), refine.Confirm(item.SilverCrusaderHelm, r.SilverCrusaderHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.OldSteelNordicHelm, " - Warrior Lv. 55"), refine.Confirm(item.OldSteelNordicHelm, r.OldSteelNordicHelmRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.OldMithrilNordicHelm, " - Warrior Lv. 55"), refine.Confirm(item.OldMithrilNordicHelm, r.OldMithrilRequirements())),
 	}
+	prompt := refine.PromptCategory("Ah, you wish to upgrade a helmet? Then tell me, which one?", choices)
+	return refine.ListItem{ListText: "Upgrade a helmet", SelectionState: prompt}
 }
 
-func (r MrThunder) UpgradeAShield() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Upgrade a shield",
-		Prompt:          "Ah, you wish to upgrade a shield? Then tell me, which one?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.AdamantiumTowerShield, " - Warrior Lv. 40"), refine.Confirm(item.AdamantiumTowerShield, r.AdamantiumTowerShieldRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilTowerShield, " - Warrior Lv. 40"), refine.Confirm(item.MithrilTowerShield, r.MithrilTowerShieldRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverLegendShield, " - Warrior Lv. 60"), refine.Confirm(item.SilverLegendShield, r.SilverLegendShieldRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.AdamantiumLegendShield, " - Warrior Lv. 60"), refine.Confirm(item.AdamantiumLegendShield, r.AdamantiumLegendShieldRequirements())),
-		},
+func (r MrThunder) UpgradeAShield() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.AdamantiumTowerShield, " - Warrior Lv. 40"), refine.Confirm(item.AdamantiumTowerShield, r.AdamantiumTowerShieldRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.MithrilTowerShield, " - Warrior Lv. 40"), refine.Confirm(item.MithrilTowerShield, r.MithrilTowerShieldRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SilverLegendShield, " - Warrior Lv. 60"), refine.Confirm(item.SilverLegendShield, r.SilverLegendShieldRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.AdamantiumLegendShield, " - Warrior Lv. 60"), refine.Confirm(item.AdamantiumLegendShield, r.AdamantiumLegendShieldRequirements())),
 	}
+	prompt := refine.PromptCategory("Ah, you wish to upgrade a shield? Then tell me, which one?", choices)
+	return refine.ListItem{ListText: "Upgrade a shield", SelectionState: prompt}
 }
 
 func (r MrThunder) BronzeRefineRequirements() refine.Requirements {

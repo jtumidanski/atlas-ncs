@@ -23,8 +23,8 @@ func (r Chris) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	return refine.NewGenericRefine(l, c, hello, categories)
 }
 
-func (r Chris) CreateCategories() []refine.RefinementCategory {
-	return []refine.RefinementCategory{
+func (r Chris) CreateCategories() []refine.ListItem {
+	return []refine.ListItem{
 		r.RefineMineralOre(),
 		r.RefineJewelOre(),
 		r.RefineMetalHoof(),
@@ -42,61 +42,53 @@ func (r Chris) CreateChoice(listTextProvider refine.RefinementListTextProvider, 
 	return refine.CreateRefinementChoice(listTextProvider, selectionPrompt, config)
 }
 
-func (r Chris) RefineMineralOre() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Refine a mineral ore",
-		Prompt:          "So, what kind of mineral ore would you like to refine?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.SimpleList("Bronze"), refine.HowMany(item.BronzePlate, r.BronzeRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Steel"), refine.HowMany(item.SteelPlate, r.SteelRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Mithril"), refine.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Adamantium"), refine.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Silver"), refine.HowMany(item.SilverPlate, r.SilverRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Orihalcon"), refine.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Gold"), refine.HowMany(item.GoldPlate, r.GoldRefineRequirements())),
-		},
+func (r Chris) RefineMineralOre() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.SimpleList("Bronze"), refine.HowMany(item.BronzePlate, r.BronzeRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Steel"), refine.HowMany(item.SteelPlate, r.SteelRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Mithril"), refine.HowMany(item.MithrilPlate, r.MithrilRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Adamantium"), refine.HowMany(item.AdamantiumPlate, r.AdamantiumRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Silver"), refine.HowMany(item.SilverPlate, r.SilverRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Orihalcon"), refine.HowMany(item.OrihalconPlate, r.OrihalconRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Gold"), refine.HowMany(item.GoldPlate, r.GoldRefineRequirements())),
+	}
+	categoryPrompt := refine.PromptCategory("So, what kind of mineral ore would you like to refine?", choices)
+	return refine.ListItem{ListText: "Refine a mineral ore", SelectionState: categoryPrompt}
+}
+
+func (r Chris) RefineJewelOre() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.SimpleList("Garnet"), refine.HowMany(item.Garnet, r.GarnetRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Amethyst"), refine.HowMany(item.Amethyst, r.AmethystRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Aquamarine"), refine.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Emerald"), refine.HowMany(item.Emerald, r.EmeraldRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Opal"), refine.HowMany(item.Opal, r.OpalRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Sapphire"), refine.HowMany(item.Sapphire, r.SapphireRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Topaz"), refine.HowMany(item.Topaz, r.TopazRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Diamond"), refine.HowMany(item.Diamond, r.DiamondRefineRequirements())),
+		r.CreateChoice(refine.SimpleList("Black Crystal"), refine.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements()))}
+	prompt := refine.PromptCategory("So, what kind of jewel ore would you like to refine?", choices)
+	return refine.ListItem{
+		ListText:       "Refine a jewel ore",
+		SelectionState: prompt,
 	}
 }
 
-func (r Chris) RefineJewelOre() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Refine a jewel ore",
-		Prompt:          "So, what kind of jewel ore would you like to refine?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.SimpleList("Garnet"), refine.HowMany(item.Garnet, r.GarnetRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Amethyst"), refine.HowMany(item.Amethyst, r.AmethystRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Aquamarine"), refine.HowMany(item.AquaMarine, r.AquamarineRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Emerald"), refine.HowMany(item.Emerald, r.EmeraldRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Opal"), refine.HowMany(item.Opal, r.OpalRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Sapphire"), refine.HowMany(item.Sapphire, r.SapphireRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Topaz"), refine.HowMany(item.Topaz, r.TopazRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Diamond"), refine.HowMany(item.Diamond, r.DiamondRefineRequirements())),
-			r.CreateChoice(refine.SimpleList("Black Crystal"), refine.HowMany(item.BlackCrystal, r.BlackCrystalRefineRequirements())),
-		},
+func (r Chris) RefineMetalHoof() refine.ListItem {
+	return refine.ListItem{
+		ListText:       "I have Iron Hog's Metal Hoof...",
+		SelectionState: r.MetalHoof("You know about that? Not many people realize the potential in the Iron Hog's Metal Hoof... I can make this into something special, if you want me to.", r.SpecialRefinement),
 	}
 }
 
-func (r Chris) RefineMetalHoof() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "I have Iron Hog's Metal Hoof...",
-		Prompt:          "You know about that? Not many people realize the potential in the Iron Hog's Metal Hoof... I can make this into something special, if you want me to.",
-		SelectionPrompt: r.MetalHoof,
+func (r Chris) RefineUpgradeClaw() refine.ListItem {
+	choices := []refine.RefinementChoice{
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodGigantic, " - Thief Lv. 60"), refine.Confirm(item.BloodGigantic, r.BloodGiganticRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.SapphireGigantic, " - Thief Lv. 60"), refine.Confirm(item.SapphireGigantic, r.SapphireGiganticRequirements())),
+		r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkGigantic, " - Thief Lv. 60"), refine.Confirm(item.DarkGigantic, r.DarkGiganticRequirements())),
 	}
-}
-
-func (r Chris) RefineUpgradeClaw() refine.RefinementCategory {
-	return refine.RefinementCategory{
-		ListText:        "Upgrade a claw",
-		Prompt:          "Ah, you wish to upgrade a claw? Then tell me, which one?",
-		SelectionPrompt: refine.PromptCategory,
-		Choices: []refine.RefinementChoice{
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.BloodGigantic, " - Thief Lv. 60"), refine.Confirm(item.BloodGigantic, r.BloodGiganticRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.SapphireGigantic, " - Thief Lv. 60"), refine.Confirm(item.SapphireGigantic, r.SapphireGiganticRequirements())),
-			r.CreateChoice(refine.ItemIdAndDescriptionList(item.DarkGigantic, " - Thief Lv. 60"), refine.Confirm(item.DarkGigantic, r.DarkGiganticRequirements())),
-		},
-	}
+	prompt := refine.PromptCategory("Ah, you wish to upgrade a claw? Then tell me, which one?", choices)
+	return refine.ListItem{ListText: "Upgrade a claw", SelectionState: prompt}
 }
 
 func (r Chris) BronzeRefineRequirements() refine.Requirements {
@@ -179,9 +171,9 @@ func (r Chris) SteelFromHogRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: item.IronHogsMetalHoof, Amount: 100}})
 }
 
-func (r Chris) MetalHoof(category refine.RefinementCategory) script.StateProducer {
+func (r Chris) MetalHoof(prompt string, next script.StateProducer) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
-		return script.SendYesNo(l, c, category.Prompt, r.SpecialRefinement, script.Exit())
+		return script.SendYesNo(l, c, prompt, next, script.Exit())
 	}
 }
 

@@ -7,16 +7,15 @@ import (
 	"atlas-ncs/npc/message"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"math/rand"
 )
 
-type RefinementCategory struct {
-	ListText        string
-	Prompt          string
-	Choices         []RefinementChoice
-	SelectionPrompt CategoryStateProducer
+type ListItem struct {
+	ListText       string
+	SelectionState script.StateProducer
 }
 
-type CategoryStateProducer func(RefinementCategory) script.StateProducer
+type CategoryStateProducer func(string, []RefinementChoice) script.StateProducer
 
 type RefinementChoice struct {
 	ListText        string
@@ -28,6 +27,14 @@ type Requirements struct {
 	requirements []Requirement
 	cost         uint32
 	awardAmount  uint32
+}
+
+func (r Requirements) AddRequirement(itemId uint32, amount uint8) Requirements {
+	return Requirements{
+		requirements: append(r.requirements, Requirement{ItemId: itemId, Amount: amount}),
+		cost:         r.cost,
+		awardAmount:  r.awardAmount,
+	}
 }
 
 type RequirementsConfigurator func(r Requirements)
@@ -57,31 +64,39 @@ type Requirement struct {
 	Amount uint8
 }
 
-func NewGenericRefine(l logrus.FieldLogger, c script.Context, hello string, categories []RefinementCategory) script.State {
+func NewGenericRefine(l logrus.FieldLogger, c script.Context, hello string, categories []ListItem) script.State {
 	m := message.NewBuilder().AddText(hello).NewLine()
 	for i, category := range categories {
 		m = m.OpenItem(i).BlueText().AddText(category.ListText).CloseItem().NewLine()
 	}
-	return script.SendListSelection(l, c, m.String(), categorySelection(categories))
+	return script.SendListSelection(l, c, m.String(), itemSelection(categories))
 }
 
-func categorySelection(categories []RefinementCategory) script.ProcessSelection {
+func NewSingleCategoryRefine(l logrus.FieldLogger, c script.Context, hello string, choices []RefinementChoice) script.State {
+	m := message.NewBuilder().AddText(hello)
+	for i, choice := range choices {
+		m = m.OpenItem(i).AddText(choice.ListText).CloseItem()
+	}
+	return script.SendListSelection(l, c, m.String(), choiceSelection(choices))
+}
+
+func itemSelection(items []ListItem) script.ProcessSelection {
 	return func(selection int32) script.StateProducer {
-		if selection < 0 || int(selection) > len(categories) {
+		if selection < 0 || int(selection) > len(items) {
 			return script.Exit()
 		}
-		category := categories[selection]
-		return category.SelectionPrompt(category)
+		category := items[selection]
+		return category.SelectionState
 	}
 }
 
-func PromptCategory(category RefinementCategory) script.StateProducer {
+func PromptCategory(prompt string, choices []RefinementChoice) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
-		m := message.NewBuilder().AddText(category.Prompt)
-		for i, choice := range category.Choices {
+		m := message.NewBuilder().AddText(prompt)
+		for i, choice := range choices {
 			m = m.OpenItem(i).AddText(choice.ListText).CloseItem()
 		}
-		return script.SendListSelection(l, c, m.String(), choiceSelection(category.Choices))
+		return script.SendListSelection(l, c, m.String(), choiceSelection(choices))
 	}
 }
 
@@ -165,13 +180,36 @@ func performRefine(itemId uint32, amount uint32, requirements Requirements, conf
 		if err != nil {
 			l.WithError(err).Errorf("Unable to process payment for refine.")
 		}
+		includesStimulator := false
 		for _, req := range requirements.requirements {
+			if isStimulator(req.ItemId) {
+				includesStimulator = true
+			}
 			character.GainItem(l)(c.CharacterId, req.ItemId, -int32(req.Amount)*int32(amount))
 		}
-		productionAmount := amount * requirements.awardAmount
-		character.GainItem(l)(c.CharacterId, itemId, int32(productionAmount))
-		return config.Success(l, c)
+
+		awardItem := true
+		if includesStimulator && !stimulatorSucceeds() {
+			awardItem = false
+		}
+
+		if awardItem {
+			// TODO if a stimulator was used, refinement will produce an average or above item.
+			productionAmount := amount * requirements.awardAmount
+			character.GainItem(l)(c.CharacterId, itemId, int32(productionAmount))
+			return config.Success(l, c)
+		} else {
+			return config.StimulatorError(l, c)
+		}
 	}
+}
+
+func stimulatorSucceeds() bool {
+	return rand.Intn(10) == 0
+}
+
+func isStimulator(itemId uint32) bool {
+	return itemId == item.GlovesProductionStimulator || itemId == item.ShoesProductionStimulator
 }
 
 type TerminalConfig struct {
@@ -179,6 +217,7 @@ type TerminalConfig struct {
 	MesoError        script.StateProducer
 	RequirementError func(itemId uint32) script.StateProducer
 	InventoryError   script.StateProducer
+	StimulatorError  script.StateProducer
 }
 
 type RefinementListTextProvider func() string
@@ -192,6 +231,12 @@ func SimpleList(value string) RefinementListTextProvider {
 func ItemIdList(itemId uint32) RefinementListTextProvider {
 	return func() string {
 		return message.NewBuilder().BlueText().ShowItemName1(itemId).String()
+	}
+}
+
+func ItemIdAndImageList(itemId uint32) RefinementListTextProvider {
+	return func() string {
+		return message.NewBuilder().BlueText().ShowItemImage2(itemId).AddText(" ").ShowItemName1(itemId).String()
 	}
 }
 
