@@ -249,3 +249,8 @@ func ItemIdAndDescriptionList(itemId uint32, description string) RefinementListT
 func CreateRefinementChoice(listTextProvider RefinementListTextProvider, selectionPrompt TerminalState, config TerminalConfig) RefinementChoice {
 	return RefinementChoice{ListText: listTextProvider(), SelectionPrompt: selectionPrompt, Config: config}
 }
+
+func GenericStimulatorError(l logrus.FieldLogger, c script.Context) script.State {
+	m := message.NewBuilder().AddText("Whoops, I missed that up. All of your ingredients are gone.")
+	return script.SendOk(l, c, m.String())
+}

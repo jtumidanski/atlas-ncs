@@ -291,6 +291,7 @@ func initRegistry() *Registry {
 	s.addConversation(discrete.MoonstoneGrave{})
 	s.addConversation(discrete.Moose{})
 	s.addConversation(discrete.MooseExit{})
+	s.addConversation(discrete.Mos{})
 	s.addConversation(discrete.MotherMilkCow1{})
 	s.addConversation(discrete.MotherMilkCow2{})
 	s.addConversation(discrete.MrGoldstein{})
