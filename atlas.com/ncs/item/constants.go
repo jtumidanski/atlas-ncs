@@ -781,4 +781,21 @@ const (
 	PandaTeddyAndTrixterOmokSet            uint32 = 4080011
 	GlovesProductionStimulator             uint32 = 4130000
 	ShoesProductionStimulator              uint32 = 4130001
+	Lidium                                 uint32 = 4011008
+	BalancedFury                           uint32 = 2070018
+	CrimsonArcanon                         uint32 = 1382060
+	CrimsonArcglaive                       uint32 = 1442068
+	CrimsonArclancer                       uint32 = 1452060
+	DawnRavensClaw                         uint32 = 1472074
+	NightRavensClaw                        uint32 = 1472073
+	DuskRavensClaw                         uint32 = 1472075
+	DawnRavensBeak                         uint32 = 1332079
+	NightRavensBeak                        uint32 = 1332078
+	DuskRavensBeak                         uint32 = 1332080
+	DawnRavensEye                          uint32 = 1462054
+	NightRavensEye                         uint32 = 1462053
+	DuskRavensEye                          uint32 = 1462055
+	DawnRavensWing                         uint32 = 1402050
+	NightRavensWing                        uint32 = 1402049
+	DuskRavensWing                         uint32 = 1402051
 )
