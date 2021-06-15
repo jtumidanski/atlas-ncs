@@ -13,7 +13,7 @@ func GetConversation(l logrus.FieldLogger) http.HandlerFunc {
 		vars := mux.Vars(r)
 		npcId, err := strconv.Atoi(vars["npcId"])
 		if err != nil {
-			l.WithError(err).Errorf("Error parsing characterId as uint32")
+			l.WithError(err).Errorf("Error parsing npcId as uint32")
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}

@@ -1,7 +1,7 @@
 package npc
 
 import (
-	"atlas-ncs/rest/attributes"
+	"atlas-ncs/json"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -25,7 +25,7 @@ type SpeechAttributes struct {
 func SendSpeech(l logrus.FieldLogger) http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		li := &SpeechInputDataContainer{}
-		err := attributes.FromJSON(li, r.Body)
+		err := json.FromJSON(li, r.Body)
 		if err != nil {
 			l.WithError(err).Errorf("Deserializing input.")
 			rw.WriteHeader(http.StatusBadRequest)
