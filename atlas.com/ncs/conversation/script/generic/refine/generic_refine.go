@@ -29,7 +29,7 @@ type Requirements struct {
 	awardAmount  uint32
 }
 
-func (r Requirements) AddRequirement(itemId uint32, amount uint8) Requirements {
+func (r Requirements) AddRequirement(itemId uint32, amount uint16) Requirements {
 	return Requirements{
 		requirements: append(r.requirements, Requirement{ItemId: itemId, Amount: amount}),
 		cost:         r.cost,
@@ -61,7 +61,7 @@ func NewRequirements(requirements []Requirement, configurators ...RequirementsCo
 
 type Requirement struct {
 	ItemId uint32
-	Amount uint8
+	Amount uint16
 }
 
 func NewGenericRefine(l logrus.FieldLogger, c script.Context, hello string, categories []ListItem) script.State {
@@ -73,9 +73,9 @@ func NewGenericRefine(l logrus.FieldLogger, c script.Context, hello string, cate
 }
 
 func NewSingleCategoryRefine(l logrus.FieldLogger, c script.Context, hello string, choices []RefinementChoice) script.State {
-	m := message.NewBuilder().AddText(hello)
+	m := message.NewBuilder().AddText(hello).NewLine()
 	for i, choice := range choices {
-		m = m.OpenItem(i).AddText(choice.ListText).CloseItem()
+		m = m.OpenItem(i).AddText(choice.ListText).CloseItem().NewLine()
 	}
 	return script.SendListSelection(l, c, m.String(), choiceSelection(choices))
 }
@@ -92,9 +92,9 @@ func itemSelection(items []ListItem) script.ProcessSelection {
 
 func PromptCategory(prompt string, choices []RefinementChoice) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
-		m := message.NewBuilder().AddText(prompt)
+		m := message.NewBuilder().AddText(prompt).NewLine()
 		for i, choice := range choices {
-			m = m.OpenItem(i).AddText(choice.ListText).CloseItem()
+			m = m.OpenItem(i).AddText(choice.ListText).CloseItem().NewLine()
 		}
 		return script.SendListSelection(l, c, m.String(), choiceSelection(choices))
 	}

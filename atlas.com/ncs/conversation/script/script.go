@@ -232,7 +232,7 @@ func SendGetNumberExit(l logrus.FieldLogger, c Context, message string, s Proces
 
 func doGetNumberExit(e StateProducer, s ProcessNumber) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
-		if mode == 0 && theType == 4 {
+		if mode == 0 && theType == 3 {
 			return e(l, c)
 		}
 
@@ -259,7 +259,7 @@ func SendGetTextExit(l logrus.FieldLogger, c Context, message string, s ProcessT
 
 func doGetTextExit(e StateProducer, s ProcessText) State {
 	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
-		if mode == 0 && theType == 4 {
+		if mode == 0 && theType == 3 {
 			return e(l, c)
 		}
 
