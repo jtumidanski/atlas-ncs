@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/event"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +18,7 @@ func (r LordJonathan) NPCId() uint32 {
 }
 
 func (r LordJonathan) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 6400) {
+	if !quest.IsStarted(l)(c.CharacterId, 6400) {
 		return r.BotherSomeoneElse(l, c)
 	}
 	return r.AQuestion(l, c)
@@ -31,7 +31,7 @@ func (r LordJonathan) BotherSomeoneElse(l logrus.FieldLogger, c script.Context) 
 }
 
 func (r LordJonathan) AQuestion(l logrus.FieldLogger, c script.Context) script.State {
-	progress := character.QuestProgressInt(l)(c.CharacterId, 6400, 1)
+	progress := quest.ProgressInt(l)(c.CharacterId, 6400, 1)
 	if progress == 0 {
 		return r.FirstQuestion(l, c)
 	} else if progress == 1 {
@@ -69,7 +69,7 @@ func (r LordJonathan) NotRight(l logrus.FieldLogger, c script.Context) script.St
 }
 
 func (r LordJonathan) FirstResponseCorrect(l logrus.FieldLogger, c script.Context) script.State {
-	character.SetQuestProgress(l)(c.CharacterId, 6400, 1, 1)
+	quest.SetProgress(l)(c.CharacterId, 6400, 1, 1)
 	m := message.NewBuilder().
 		AddText("What! I can't believe how incredibly smart you are! Incredible! In the seagull world, that kind of intelligence would give you a Ph.D. and then some. You're really amazing... I can't believe it... I simply can't believe it!")
 	return script.SendNext(l, c, m.String(), script.Exit())

@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -20,7 +21,7 @@ func (r MrDo) NPCId() uint32 {
 }
 
 func (r MrDo) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestActive(l)(c.CharacterId, 3821) && !character.HasItem(l)(c.CharacterId, item.PeachTreeErbPouch) && !character.HasItem(l)(c.CharacterId, item.BookOnHerbalMedicine) && character.QuestCompleted(l)(c.CharacterId, 3830) {
+	if quest.IsActive(l)(c.CharacterId, 3821) && !character.HasItem(l)(c.CharacterId, item.PeachTreeErbPouch) && !character.HasItem(l)(c.CharacterId, item.BookOnHerbalMedicine) && quest.IsCompleted(l)(c.CharacterId, 3830) {
 		if character.CanHold(l)(c.CharacterId, item.PeachTreeErbPouch) {
 			character.GainItem(l)(c.CharacterId, item.PeachTreeErbPouch, 1)
 			m := message.NewBuilder().

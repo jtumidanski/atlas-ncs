@@ -6,6 +6,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -21,7 +22,7 @@ func (r PowerBForeHenesys) NPCId() uint32 {
 func (r PowerBForeHenesys) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	if character.IsLevel(l)(c.CharacterId, 20) {
 		return r.UnderLevel20(l, c)
-	} else if character.AnyQuestActive(l)(c.CharacterId, 22515, 22516, 22517, 22518) {
+	} else if quest.AnyActive(l)(c.CharacterId, 22515, 22516, 22517, 22518) {
 		return r.GoToSpecial(l, c)
 	} else {
 		return r.ChooseRoom(l, c)

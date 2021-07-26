@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r FountainOfLife) NPCId() uint32 {
 }
 
 func (r FountainOfLife) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 6280) {
+	if quest.IsStarted(l)(c.CharacterId, 6280) {
 		if character.HasItem(l)(c.CharacterId, item.HolyCup) {
 			character.GainItem(l)(c.CharacterId, item.HolyCup, -1)
 			character.GainItem(l)(c.CharacterId, item.HolyWaterOfLife, 1)

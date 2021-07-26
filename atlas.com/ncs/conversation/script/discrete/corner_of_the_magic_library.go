@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/monster"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r CornerOfTheMagicLibrary) NPCId() uint32 {
 }
 
 func (r CornerOfTheMagicLibrary) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 20718) {
+	if !quest.IsStarted(l)(c.CharacterId, 20718) {
 		return script.Exit()(l, c)
 	}
 	return r.AngryMonsters(l, c)
@@ -40,7 +41,7 @@ func (r CornerOfTheMagicLibrary) Spawn(l logrus.FieldLogger, c script.Context) s
 	for i := 0; i < 10; i++ {
 		monster.SpawnMonster(l)(c.WorldId, c.ChannelId, c.MapId, monster.BlueMushroom, -109, 183)
 	}
-	character.CompleteQuestViaNPC(l)(c.CharacterId, 20718, npc.Hersha)
+	quest.CompleteViaNPC(l)(c.CharacterId, 20718, npc.Hersha)
 	character.GainExperience(l)(c.CharacterId, 4000)
 	return script.Exit()(l, c)
 }

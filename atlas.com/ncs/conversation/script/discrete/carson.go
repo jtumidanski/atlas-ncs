@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func (r Carson) NPCId() uint32 {
 }
 
 func (r Carson) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3310) && !character.HasItem(l)(c.CharacterId, item.LightlessMagicDevice) {
+	if quest.IsStarted(l)(c.CharacterId, 3310) && !character.HasItem(l)(c.CharacterId, item.LightlessMagicDevice) {
 		return script.WarpByName( _map.ClosedLab, "out00")(l, c)
 	}
 

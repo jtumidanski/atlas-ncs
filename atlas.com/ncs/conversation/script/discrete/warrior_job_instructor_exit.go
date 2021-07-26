@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -52,8 +53,8 @@ func (r WarriorJobInstructorExit) Passed(l logrus.FieldLogger, c script.Context)
 
 func (r WarriorJobInstructorExit) Reward(l logrus.FieldLogger, c script.Context) script.State {
 	character.RemoveAll(l)(c.CharacterId, item.DarkMarble)
-	character.CompleteQuest(l)(c.CharacterId, 100004)
-	character.StartQuest(l)(c.CharacterId, 100005)
+	quest.Complete(l)(c.CharacterId, 100004)
+	quest.Start(l)(c.CharacterId, 100005)
 	character.GainItem(l)(c.CharacterId, item.ProofOfHero, 1)
 	return r.WarpExit(l, c)
 }

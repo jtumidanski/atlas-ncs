@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,11 +20,11 @@ func (r MagicianJobInstructor) NPCId() uint32 {
 }
 
 func (r MagicianJobInstructor) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestCompleted(l)(c.CharacterId, 100007) {
+	if quest.IsCompleted(l)(c.CharacterId, 100007) {
 		return r.TrueHero(l, c)
-	} else if character.QuestCompleted(l)(c.CharacterId, 100006) {
+	} else if quest.IsCompleted(l)(c.CharacterId, 100006) {
 		return r.LetYouIn(l, c)
-	} else if character.QuestStarted(l)(c.CharacterId, 100006) {
+	} else if quest.IsStarted(l)(c.CharacterId, 100006) {
 		return r.ExplainTest(l, c)
 	}
 	return r.OnceYouAreReady(l, c)
@@ -72,8 +73,8 @@ func (r MagicianJobInstructor) CannotLeave(l logrus.FieldLogger, c script.Contex
 }
 
 func (r MagicianJobInstructor) Begin(l logrus.FieldLogger, c script.Context) script.State {
-	character.CompleteQuest(l)(c.CharacterId, 100006)
-	character.StartQuest(l)(c.CharacterId, 100007)
+	quest.Complete(l)(c.CharacterId, 100006)
+	quest.Start(l)(c.CharacterId, 100007)
 	character.GainItem(l)(c.CharacterId, item.GrendelTheReallyOldsLetter, -1)
 	return r.LetYouIn(l, c)
 }

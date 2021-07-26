@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func (r RussellonsDesk) NPCId() uint32 {
 }
 
 func (r RussellonsDesk) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3314) && !character.HasItem(l)(c.CharacterId, item.RusselleonsPill) && RusselleonsPillUsed(l)(c.CharacterId) {
+	if quest.IsStarted(l)(c.CharacterId, 3314) && !character.HasItem(l)(c.CharacterId, item.RusselleonsPill) && RusselleonsPillUsed(l)(c.CharacterId) {
 		if character.CanHold(l)(c.CharacterId, item.RusselleonsPill) {
 			character.GainItem(l)(c.CharacterId, item.RusselleonsPill, 1)
 			m := message.NewBuilder().AddText("You took the pills that were laying on the desk.")

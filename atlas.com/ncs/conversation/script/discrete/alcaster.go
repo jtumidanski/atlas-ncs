@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -19,7 +20,7 @@ func (r Alcaster) NPCId() uint32 {
 }
 
 func (r Alcaster) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestCompleted(l)(c.CharacterId, 3035) {
+	if !quest.IsCompleted(l)(c.CharacterId, 3035) {
 		return r.HelpMeOut(l, c)
 	}
 	return r.ThanksToYou(l, c)

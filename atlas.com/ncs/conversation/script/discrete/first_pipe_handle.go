@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,10 +18,10 @@ func (r FirstPipeHandle) NPCId() uint32 {
 }
 
 func (r FirstPipeHandle) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3339) {
+	if quest.IsStarted(l)(c.CharacterId, 3339) {
 		return r.Progress(l, c)
 	}
-	if character.QuestCompleted(l)(c.CharacterId, 3339) {
+	if quest.IsCompleted(l)(c.CharacterId, 3339) {
 		return r.WarpInMap(l, c)
 	}
 	return script.Exit()(l, c)
@@ -40,14 +40,14 @@ func (r FirstPipeHandle) WarpInMap(l logrus.FieldLogger, c script.Context) scrip
 }
 
 func (r FirstPipeHandle) Progress(l logrus.FieldLogger, c script.Context) script.State {
-	progress := character.QuestProgressInt(l)(c.CharacterId, 23339, 1)
+	progress := quest.ProgressInt(l)(c.CharacterId, 23339, 1)
 	if progress == 3 {
 		return r.GetPassword(l, c)
 	} else if progress == 0 {
-		character.SetQuestProgress(l)(c.CharacterId, 23339, 1, 1)
+		quest.SetProgress(l)(c.CharacterId, 23339, 1, 1)
 		return script.Exit()(l, c)
 	} else if progress < 3 {
-		character.SetQuestProgress(l)(c.CharacterId, 23339, 1, 0)
+		quest.SetProgress(l)(c.CharacterId, 23339, 1, 0)
 		return script.Exit()(l, c)
 	} else {
 		return r.WarpInMap(l, c)
@@ -60,7 +60,7 @@ func (r FirstPipeHandle) Validate(text string) script.StateProducer {
 			m := message.NewBuilder().RedText().AddText("Wrong!")
 			return script.SendOk(l, c, m.String())
 		}
-		character.SetQuestProgress(l)(c.CharacterId, 23339, 1, 4)
+		quest.SetProgress(l)(c.CharacterId, 23339, 1, 4)
 		return r.WarpInMap(l, c)
 	}
 }

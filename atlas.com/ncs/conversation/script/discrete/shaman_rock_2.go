@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,11 +20,11 @@ func (r ShamanRock2) NPCId() uint32 {
 }
 
 func (r ShamanRock2) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 2236) || !character.HasItems(l)(c.CharacterId, item.ShamanCharm, 1) {
+	if !quest.IsStarted(l)(c.CharacterId, 2236) || !character.HasItems(l)(c.CharacterId, item.ShamanCharm, 1) {
 		return script.Exit()(l, c)
 	}
 
-	progress := character.QuestProgress(l)(c.CharacterId, 100300)
+	progress := quest.Progress(l)(c.CharacterId, 100300)
 	if c.MapId == _map.AntTunnelIII {
 		return r.ActiveShamanRock(0, progress)(l, c)
 	} else if c.MapId == _map.DangerousSteam {
@@ -31,7 +32,7 @@ func (r ShamanRock2) Initial(l logrus.FieldLogger, c script.Context) script.Stat
 	} else if c.MapId == _map.DeepAntTunnelII {
 		return r.ActiveShamanRock(2, progress)(l, c)
 	} else if c.MapId == _map.TheTunnelThatLostLightI {
-		id := character.QuestProgressInt(l)(c.CharacterId, 2236, 1)
+		id := quest.ProgressInt(l)(c.CharacterId, 2236, 1)
 		if id == 0 {
 			return r.ProgressQuest(progress)(l, c)
 		} else if c.NPCObjectId != uint32(id) {
@@ -53,7 +54,7 @@ func (r ShamanRock2) ActiveShamanRock(i int, progress string) script.StateProduc
 		}
 
 		next := progress[0:i] + string('1') + progress[i+1:]
-		character.SetQuestProgressString(l)(c.CharacterId, 2236, next)
+		quest.SetProgressString(l)(c.CharacterId, 2236, next)
 		character.GainItem(l)(c.CharacterId, item.ShamanCharm, -1)
 		m := message.NewBuilder().
 			AddText("The seal took it's place, repelling the evil in the area.")
@@ -63,7 +64,7 @@ func (r ShamanRock2) ActiveShamanRock(i int, progress string) script.StateProduc
 
 func (r ShamanRock2) ProgressQuest(progress string) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
-		character.SetQuestProgress(l)(c.CharacterId, 100300, 1, c.NPCObjectId)
+		quest.SetProgress(l)(c.CharacterId, 100300, 1, c.NPCObjectId)
 		return r.ActiveShamanRock(3, progress)(l, c)
 	}
 }

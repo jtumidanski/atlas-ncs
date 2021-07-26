@@ -1,10 +1,10 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,11 +17,11 @@ func (r HenesysForest) NPCId() uint32 {
 }
 
 func (r HenesysForest) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestNotStarted(l)(c.CharacterId, 20706) {
+	if quest.IsNotStarted(l)(c.CharacterId, 20706) {
 		return r.NothingSuspicious(l, c)
-	} else if character.QuestStarted(l)(c.CharacterId, 20706) {
+	} else if quest.IsStarted(l)(c.CharacterId, 20706) {
 		return r.Complete(l, c)
-	} else if character.QuestCompleted(l)(c.CharacterId, 20706) {
+	} else if quest.IsCompleted(l)(c.CharacterId, 20706) {
 		return r.AlreadyComplete(l, c)
 	}
 	return script.Exit()(l, c)
@@ -34,7 +34,7 @@ func (r HenesysForest) NothingSuspicious(l logrus.FieldLogger, c script.Context)
 }
 
 func (r HenesysForest) Complete(l logrus.FieldLogger, c script.Context) script.State {
-	character.ForceCompleteQuest(l)(c.CharacterId, 20706)
+	quest.ForceComplete(l)(c.CharacterId, 20706)
 	m := message.NewBuilder().
 		AddText("You have spotted the shadow! Better report to ").ShowNPC(npc.Roca).AddText(".")
 	return script.SendNext(l, c, m.String(), script.Exit())

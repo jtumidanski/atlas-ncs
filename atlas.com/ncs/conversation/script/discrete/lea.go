@@ -1,8 +1,8 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
+	"atlas-ncs/guild"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
@@ -37,7 +37,7 @@ func (r Lea) Selection(selection int32) script.StateProducer {
 }
 
 func (r Lea) ChangeEmblem(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.IsGuildLeader(l)(c.CharacterId) {
+	if !guild.IsLeader(l)(c.CharacterId) {
 		return r.MustBeLeader(l, c)
 	}
 	return r.Confirmation(l, c)

@@ -1,10 +1,10 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +17,7 @@ func (r Mo) NPCId() uint32 {
 }
 
 func (r Mo) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestCompleted(l)(c.CharacterId, 8224) {
+	if !quest.IsCompleted(l)(c.CharacterId, 8224) {
 		m := message.NewBuilder().AddText("Hm, at who do you think you are looking at?")
 		return script.SendOk(l, c, m.String())
 	}

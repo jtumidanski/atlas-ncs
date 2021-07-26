@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,11 +20,11 @@ func (r WarriorJobInstructor) NPCId() uint32 {
 }
 
 func (r WarriorJobInstructor) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestCompleted(l)(c.CharacterId, 100004) {
+	if quest.IsCompleted(l)(c.CharacterId, 100004) {
 		return r.TrueHero(l, c)
-	} else if character.QuestCompleted(l)(c.CharacterId, 100003) {
+	} else if quest.IsCompleted(l)(c.CharacterId, 100003) {
 		return r.LetYouIn(l, c)
-	} else if character.QuestStarted(l)(c.CharacterId, 100003) {
+	} else if quest.IsStarted(l)(c.CharacterId, 100003) {
 		return r.ExplainTest(l, c)
 	}
 	return r.OnceYouAreReady(l, c)
@@ -76,8 +77,8 @@ func (r WarriorJobInstructor) CannotLeave(l logrus.FieldLogger, c script.Context
 }
 
 func (r WarriorJobInstructor) Begin(l logrus.FieldLogger, c script.Context) script.State {
-	character.CompleteQuest(l)(c.CharacterId, 100003)
-	character.StartQuest(l)(c.CharacterId, 100004)
+	quest.Complete(l)(c.CharacterId, 100003)
+	quest.Start(l)(c.CharacterId, 100004)
 	character.GainItem(l)(c.CharacterId, item.DancesWithBalrogsLetter, -1)
 	return r.LetYouIn(l, c)
 }

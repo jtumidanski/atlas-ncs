@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -19,9 +20,9 @@ func (r Jane) NPCId() uint32 {
 }
 
 func (r Jane) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestCompleted(l)(c.CharacterId, 2013) {
+	if quest.IsCompleted(l)(c.CharacterId, 2013) {
 		return r.ItsYou(l, c)
-	} else if character.QuestCompleted(l)(c.CharacterId, 2010) {
+	} else if quest.IsCompleted(l)(c.CharacterId, 2010) {
 		return r.NotStrongEnough(l, c)
 	} else {
 		return r.MyDream(l, c)

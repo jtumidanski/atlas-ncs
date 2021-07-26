@@ -1,10 +1,10 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +17,8 @@ func (r SecretWall) NPCId() uint32 {
 }
 
 func (r SecretWall) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3927) {
-		character.SetQuestProgress(l)(c.CharacterId, 3927, 0, 1)
+	if quest.IsStarted(l)(c.CharacterId, 3927) {
+		quest.SetProgress(l)(c.CharacterId, 3927, 0, 1)
 		m := message.NewBuilder().AddText("If I had an iron hammer and a dagger, a bow and an arrow...")
 		return script.SendOk(l, c, m.String())
 	}

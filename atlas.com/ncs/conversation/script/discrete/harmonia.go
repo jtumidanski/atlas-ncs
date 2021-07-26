@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/job"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"atlas-ncs/skill"
 	"github.com/sirupsen/logrus"
 )
@@ -23,7 +24,7 @@ func (r Harmonia) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	if !character.MeetsCriteria(l)(c.CharacterId, character.IsLevelCriteria(120), character.IsAJobCriteria(job.DragonKnight, job.Crusader, job.WhiteKnight, job.Hero, job.Paladin, job.DarkKnight)) {
 		return r.DoNotBotherMe(l, c)
 	}
-	if !character.QuestCompleted(l)(c.CharacterId, 6904) {
+	if !quest.IsCompleted(l)(c.CharacterId, 6904) {
 		return r.NotPassedTrials(l, c)
 	}
 

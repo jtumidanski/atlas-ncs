@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,6 +30,6 @@ func (r Francis2) ReportToTru(l logrus.FieldLogger, c script.Context) script.Sta
 }
 
 func (r Francis2) Process(l logrus.FieldLogger, c script.Context) script.State {
-	character.CompleteQuest(l)(c.CharacterId, 21719)
+	quest.Complete(l)(c.CharacterId, 21719)
 	return script.WarpById(_map.HuntingGroundInTheDeepForestII, 0)(l, c)
 }

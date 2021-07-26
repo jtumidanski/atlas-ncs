@@ -1,13 +1,13 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/event"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/party"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 	"strconv"
 )
@@ -22,7 +22,7 @@ func (r BlockedEntrance) NPCId() uint32 {
 
 func (r BlockedEntrance) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	if c.MapId == _map.TheLastCastleTower {
-		if !character.QuestCompleted(l)(c.CharacterId, 2331) {
+		if !quest.IsCompleted(l)(c.CharacterId, 2331) {
 			return script.Exit()(l, c)
 		}
 		return r.ShowBossFights(l, c)
@@ -60,7 +60,7 @@ func (r BlockedEntrance) KingPepe(l logrus.FieldLogger, c script.Context) script
 }
 
 func (r BlockedEntrance) PrimeMinister(l logrus.FieldLogger, c script.Context) script.State {
-	p, err := party.GetParty(l)(c.CharacterId)
+	p, err := party.GetForCharacter(l)(c.CharacterId)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to retrieve character %d party.", c.CharacterId)
 	}
@@ -84,11 +84,11 @@ func (r BlockedEntrance) AnotherParty(l logrus.FieldLogger, c script.Context) sc
 }
 
 func (r BlockedEntrance) LimitedSelection(l logrus.FieldLogger, c script.Context) script.State {
-	questProgress := character.QuestProgressInt(l)(c.CharacterId, 2330, 3300005)
-	questProgress += character.QuestProgressInt(l)(c.CharacterId, 2330, 3300006)
-	questProgress += character.QuestProgressInt(l)(c.CharacterId, 2330, 3300007)
+	questProgress := quest.ProgressInt(l)(c.CharacterId, 2330, 3300005)
+	questProgress += quest.ProgressInt(l)(c.CharacterId, 2330, 3300006)
+	questProgress += quest.ProgressInt(l)(c.CharacterId, 2330, 3300007)
 
-	if !(questProgress < 3 && character.QuestStarted(l)(c.CharacterId, 2330)) {
+	if !(questProgress < 3 && quest.IsStarted(l)(c.CharacterId, 2330)) {
 		return script.Exit()(l, c)
 	}
 	return r.ShowBossFight(l, c)

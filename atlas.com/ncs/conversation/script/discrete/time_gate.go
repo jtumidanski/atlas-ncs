@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,14 +18,14 @@ func (r TimeGate) NPCId() uint32 {
 }
 
 func (r TimeGate) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestCompleted(l)(c.CharacterId, 3718) {
+	if !quest.IsCompleted(l)(c.CharacterId, 3718) {
 		return r.NotActiveYet(l, c)
 	}
 
 	limit := 0
 	quests := []uint32{3719, 3724, 3730, 3736, 3742, 3748}
-	for _, quest := range quests {
-		if !character.QuestCompleted(l)(c.CharacterId, quest) {
+	for _, q := range quests {
+		if !quest.IsCompleted(l)(c.CharacterId, q) {
 			break
 		}
 		limit++

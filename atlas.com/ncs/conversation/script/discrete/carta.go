@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func (r Carta) NPCId() uint32 {
 }
 
 func (r Carta) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 6301) {
+	if !quest.IsStarted(l)(c.CharacterId, 6301) {
 		return r.DoNotFoolAround(l, c)
 	}
 	if !character.HasItem(l)(c.CharacterId, item.MiniaturePianus) {

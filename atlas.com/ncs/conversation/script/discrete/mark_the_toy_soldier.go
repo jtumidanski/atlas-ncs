@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func (r MarkTheToySoldier) NPCId() uint32 {
 }
 
 func (r MarkTheToySoldier) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 3230) {
+	if !quest.IsStarted(l)(c.CharacterId, 3230) {
 		return r.ThankYou(l, c)
 	}
 	if !character.HasItem(l)(c.CharacterId, item.Pendulum) {
@@ -39,7 +40,7 @@ func (r MarkTheToySoldier) YouHaveNot(l logrus.FieldLogger, c script.Context) sc
 }
 
 func (r MarkTheToySoldier) Process(l logrus.FieldLogger, c script.Context) script.State {
-	character.CompleteQuest(l)(c.CharacterId, 3230)
+	quest.Complete(l)(c.CharacterId, 3230)
 	character.GainItem(l)(c.CharacterId, item.Pendulum, -1)
 	return r.ThankYou(l, c)
 }

@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func (r DemonsDoorwayEllinia) NPCId() uint32 {
 }
 
 func (r DemonsDoorwayEllinia) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 28198) {
+	if !quest.IsStarted(l)(c.CharacterId, 28198) {
 		m := message.NewBuilder().AddText("The entrance is blocked by a strange force.")
 		return script.SendOk(l, c, m.String())
 	}

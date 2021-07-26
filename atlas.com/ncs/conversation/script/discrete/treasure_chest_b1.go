@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -19,7 +20,7 @@ func (r TreasureChestB1) NPCId() uint32 {
 }
 
 func (r TreasureChestB1) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 2055) {
+	if quest.IsStarted(l)(c.CharacterId, 2055) {
 		character.GainItem(l)(c.CharacterId, item.ShumisCoin, 1)
 	} else {
 		prizes := []uint32{item.GarnetOre, item.AmethystOre, item.AquaMarineOre, item.EmeraldOre, item.OpalOre}

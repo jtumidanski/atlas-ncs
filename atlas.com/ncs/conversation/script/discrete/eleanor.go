@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/monster"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +18,7 @@ func (r Eleanor) NPCId() uint32 {
 }
 
 func (r Eleanor) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 20407) {
+	if !quest.IsStarted(l)(c.CharacterId, 20407) {
 		return r.NoChallenging(l, c)
 	}
 	return r.DoYouWantToFace(l, c)

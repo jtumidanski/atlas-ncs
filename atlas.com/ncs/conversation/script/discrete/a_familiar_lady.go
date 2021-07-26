@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r AFamiliarLady) NPCId() uint32 {
 }
 
 func (r AFamiliarLady) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestProgressInt(l)(c.CharacterId, 23647, 1) != 0 {
+	if quest.ProgressInt(l)(c.CharacterId, 23647, 1) != 0 {
 		return script.Exit()(l, c)
 	}
 
@@ -48,7 +49,7 @@ func (r AFamiliarLady) Confirm(l logrus.FieldLogger, c script.Context) script.St
 func (r AFamiliarLady) Process(l logrus.FieldLogger, c script.Context) script.State {
 	character.GainItem(l)(c.CharacterId, item.OldFoxsTail, -1)
 	character.GainFame(l)(c.CharacterId, -5)
-	character.SetQuestProgress(l)(c.CharacterId, 23647, 1, 1)
+	quest.SetProgress(l)(c.CharacterId, 23647, 1, 1)
 	return r.Success(l, c)
 }
 

@@ -1,8 +1,8 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
+	"atlas-ncs/guild"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
@@ -43,21 +43,21 @@ func (r Heracle) Selection(selection int32) script.StateProducer {
 }
 
 func (r Heracle) Create(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasGuild(l)(c.CharacterId) {
+	if guild.HasGuild(l)(c.CharacterId) {
 		return r.AlreadyHaveGuild(l, c)
 	}
 	return r.CreateConfirmation(l, c)
 }
 
 func (r Heracle) Disband(l logrus.FieldLogger, c script.Context) script.State {
-	if character.IsGuildLeader(l)(c.CharacterId) {
+	if guild.IsLeader(l)(c.CharacterId) {
 		return r.MustBeLeaderToDisband(l, c)
 	}
 	return r.DisbandConfirmation(l, c)
 }
 
 func (r Heracle) IncreaseCapacity(l logrus.FieldLogger, c script.Context) script.State {
-	if character.IsGuildLeader(l)(c.CharacterId) {
+	if guild.IsLeader(l)(c.CharacterId) {
 		return r.MustBeLeaderToIncrease(l, c)
 	}
 	return r.IncreaseConfirmation(l, c)

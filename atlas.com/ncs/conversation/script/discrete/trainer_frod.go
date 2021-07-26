@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/pet"
 	"github.com/sirupsen/logrus"
 )
 
@@ -37,7 +38,7 @@ func (r TrainerFrod) BrotherToldMe(l logrus.FieldLogger, c script.Context) scrip
 }
 
 func (r TrainerFrod) Action(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasPets(l)(c.CharacterId) {
+	if pet.HasPets(l)(c.CharacterId) {
 		return r.CompleteCourse(l, c)
 	}
 	return r.CompleteCourseNoPets(l, c)
@@ -51,7 +52,7 @@ func (r TrainerFrod) CompleteCourseNoPets(l logrus.FieldLogger, c script.Context
 
 func (r TrainerFrod) CompleteCourse(l logrus.FieldLogger, c script.Context) script.State {
 	character.GainItem(l)(c.CharacterId, item.BartosLetter, -1)
-	character.GainCloseness(l)(c.CharacterId, 2)
+	pet.GainCloseness(l)(c.CharacterId, 2)
 	m := message.NewBuilder().
 		AddText("What do you think? Don't you think you have gotten much closer with your pet? If you have time, train your pet again on this obstacle course...of course, with my brother's permission.")
 	return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.BrothersLetter)

@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +23,7 @@ func (r AssistantCheng) Initial(l logrus.FieldLogger, c script.Context) script.S
 	if c.MapId == _map.ToyFactorySector4 {
 		return r.ConfirmQuit(l, c)
 	}
-	if character.QuestStarted(l)(c.CharacterId, 3239) {
+	if quest.IsStarted(l)(c.CharacterId, 3239) {
 		return r.ConfirmEnter(l, c)
 	}
 	return r.AccessRestricted(l, c)
@@ -39,7 +40,7 @@ func (r AssistantCheng) CallMe(l logrus.FieldLogger, c script.Context) script.St
 }
 
 func (r AssistantCheng) ProcessExit(l logrus.FieldLogger, c script.Context) script.State {
-	if !(character.QuestStarted(l)(c.CharacterId, 3239) && character.HasItems(l)(c.CharacterId, item.MachineParts, 10)) {
+	if !(quest.IsStarted(l)(c.CharacterId, 3239) && character.HasItems(l)(c.CharacterId, item.MachineParts, 10)) {
 		character.RemoveAll(l)(c.CharacterId, item.MachineParts)
 	}
 	return script.WarpById(_map.SecretPassage, 0)(l, c)
@@ -74,7 +75,7 @@ func (r AssistantCheng) AlreadyAttempting(l logrus.FieldLogger, c script.Context
 }
 
 func (r AssistantCheng) WarpEnter(l logrus.FieldLogger, c script.Context) script.State {
-	if !(character.QuestStarted(l)(c.CharacterId, 3239) && character.HasItems(l)(c.CharacterId, item.MachineParts, 10)) {
+	if !(quest.IsStarted(l)(c.CharacterId, 3239) && character.HasItems(l)(c.CharacterId, item.MachineParts, 10)) {
 		character.RemoveAll(l)(c.CharacterId, item.MachineParts)
 	}
 	return script.WarpById(_map.ToyFactorySector4, 0)(l, c)

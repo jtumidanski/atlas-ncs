@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func (r Muirhat) NPCId() uint32 {
 }
 
 func (r Muirhat) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 2175) {
+	if !quest.IsStarted(l)(c.CharacterId, 2175) {
 		return r.ChasingOneAnother(l, c)
 	}
 	return r.Validate(l, c)

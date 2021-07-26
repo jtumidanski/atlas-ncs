@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,10 +20,10 @@ func (r Kenta) NPCId() uint32 {
 }
 
 func (r Kenta) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestCompleted(l)(c.CharacterId, 6002) {
+	if quest.IsCompleted(l)(c.CharacterId, 6002) {
 		return r.ThanksForSaving(l, c)
 	}
-	if character.QuestStarted(l)(c.CharacterId, 6002) {
+	if quest.IsStarted(l)(c.CharacterId, 6002) {
 		if character.HasItems(l)(c.CharacterId, item.Pheromone, 5) && character.HasItems(l)(c.CharacterId, item.KentasReport, 5) {
 			return r.ThanksForSaving(l, c)
 		}

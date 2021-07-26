@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/party"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,15 +20,15 @@ func (r InsignificantBeing) NPCId() uint32 {
 }
 
 func (r InsignificantBeing) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 6107) && !character.QuestStarted(l)(c.CharacterId, 6108) {
+	if !quest.IsStarted(l)(c.CharacterId, 6107) && !quest.IsStarted(l)(c.CharacterId, 6108) {
 		return r.NotAllowedToEnter(l, c)
 	}
 
-	if !character.HasParty(l)(c.CharacterId) {
+	if !party.HasParty(l)(c.CharacterId) {
 		return r.FormParty(l, c)
 	}
 
-	p, err := party.GetParty(l)(c.CharacterId)
+	p, err := party.GetForCharacter(l)(c.CharacterId)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to retieve party information for character %d.", c.CharacterId)
 		return script.Exit()(l, c)

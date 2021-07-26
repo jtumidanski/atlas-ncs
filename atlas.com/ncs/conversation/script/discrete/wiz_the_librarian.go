@@ -1,10 +1,10 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -24,7 +24,7 @@ func (r WizTheLibrarian) Initial(l logrus.FieldLogger, c script.Context) script.
 	cl := message.NewBuilder()
 	counter := 0
 	for i, questId := range questIds {
-		if character.QuestCompleted(l)(c.CharacterId, questId) {
+		if quest.IsCompleted(l)(c.CharacterId, questId) {
 			counter++
 			cl = cl.NewLine().ShowItemImage2(questItems[i]).AddText(" ").BlueText().ShowItemName1(questItems[i])
 		}

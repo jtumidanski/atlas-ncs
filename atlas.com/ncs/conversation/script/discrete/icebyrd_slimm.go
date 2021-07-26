@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,10 +18,10 @@ func (r IcebyrdSlimm) NPCId() uint32 {
 }
 
 func (r IcebyrdSlimm) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestCompleted(l)(c.CharacterId, 4911) {
+	if quest.IsCompleted(l)(c.CharacterId, 4911) {
 		return r.GoodJob(l, c)
 	}
-	if character.QuestCompleted(l)(c.CharacterId, 4900) || character.QuestStarted(l)(c.CharacterId, 4900) {
+	if quest.IsCompleted(l)(c.CharacterId, 4900) || quest.IsStarted(l)(c.CharacterId, 4900) {
 		return r.PayAttention(l, c)
 	}
 	return r.WhatUp(l, c)
@@ -133,7 +134,7 @@ func (r IcebyrdSlimm) HardAtWork(l logrus.FieldLogger, c script.Context) script.
 
 func (r IcebyrdSlimm) Quiz(l logrus.FieldLogger, c script.Context) script.State {
 	if character.IsLevel(l)(c.CharacterId, 10) {
-		character.StartQuest(l)(c.CharacterId, 4900)
+		quest.Start(l)(c.CharacterId, 4900)
 		m := message.NewBuilder().AddText("No problem. I'll give you something nice if you answer them correctly!")
 		return script.SendNext(l, c, m.String(), script.Exit())
 	} else {

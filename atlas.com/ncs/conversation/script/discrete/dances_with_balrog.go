@@ -8,6 +8,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -142,8 +143,8 @@ func (r DancesWithBalrog) Astonishing(l logrus.FieldLogger, c script.Context) sc
 func (r DancesWithBalrog) GoodDecision(l logrus.FieldLogger, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Good decision. You look strong, but I need to see if you really are strong enough to pass the test, it's not a difficult test, so you'll do just fine. Here, take my letter first... make sure you don't lose it!")
-	if !character.QuestStarted(l)(c.CharacterId, 100003) {
-		character.StartQuest(l)(c.CharacterId, 100003)
+	if !quest.IsStarted(l)(c.CharacterId, 100003) {
+		quest.Start(l)(c.CharacterId, 100003)
 	}
 	return script.SendNext(l, c, m.String(), r.GiveLetter)
 }
@@ -283,7 +284,7 @@ func (r DancesWithBalrog) SecondJobAdvance(jobId uint16, jobName string) script.
 			character.GainItem(l)(c.CharacterId, item.ProofOfHero, -1)
 		}
 
-		character.CompleteQuest(l)(c.CharacterId, 100005)
+		quest.Complete(l)(c.CharacterId, 100005)
 
 		if !character.IsJob(l)(c.CharacterId, jobId) {
 			character.ChangeJob(l)(c.CharacterId, jobId)

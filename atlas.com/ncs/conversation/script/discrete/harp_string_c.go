@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -23,18 +24,18 @@ var HarpSong = "CCGGAAGFFEEDDC|GGFFEED|GGFFEED|CCGGAAGFFEEDDC|"
 func (r HarpStringC) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	_map.PlaySound(l)(c.WorldId, c.ChannelId, c.MapId, fmt.Sprintf("orbis/%s", HarpSounds[c.NPCId-2012027]))
 
-	if !character.QuestStarted(l)(c.CharacterId, 3114) {
+	if !quest.IsStarted(l)(c.CharacterId, 3114) {
 		return script.Exit()(l, c)
 	}
 
-	progress := -1 * character.QuestProgressInt(l)(c.CharacterId, 3114, 0)
+	progress := -1 * quest.ProgressInt(l)(c.CharacterId, 3114, 0)
 	if progress <= -1 {
 		return script.Exit()(l, c)
 	}
 
 	nextNote := HarpSong[progress]
 	if 'C' != nextNote {
-		character.SetQuestProgress(l)(c.CharacterId, 3114, 0, 0)
+		quest.SetProgress(l)(c.CharacterId, 3114, 0, 0)
 		character.ShowEffect(l)(c.CharacterId, "quest/party/wrong_kor")
 		character.PlaySound(l)(c.CharacterId, "Party1/Failed")
 		character.SendNotice(l)(c.CharacterId, "PINK_TEXT", "You've missed the note... Start over again.")
@@ -44,7 +45,7 @@ func (r HarpStringC) Initial(l logrus.FieldLogger, c script.Context) script.Stat
 			progress++
 			if progress == 45 {
 				character.SendNotice(l)(c.CharacterId, "PINK_TEXT", "Twinkle, twinkle, little star, how I wonder what you are.")
-				character.SetQuestProgress(l)(c.CharacterId, 3114, 0, 42)
+				quest.SetProgress(l)(c.CharacterId, 3114, 0, 42)
 				character.ShowEffect(l)(c.CharacterId, "quest/party/clear")
 				character.PlaySound(l)(c.CharacterId, "Party1/Clear")
 			} else {
@@ -57,7 +58,7 @@ func (r HarpStringC) Initial(l logrus.FieldLogger, c script.Context) script.Stat
 				}
 			}
 		}
-		character.SetQuestProgress(l)(c.CharacterId, 3114, 0, uint32(-1*(progress+1)))
+		quest.SetProgress(l)(c.CharacterId, 3114, 0, uint32(-1*(progress+1)))
 	}
 	return script.Exit()(l, c)
 }

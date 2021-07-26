@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,11 +20,11 @@ func (r ThiefJobInstructor) NPCId() uint32 {
 }
 
 func (r ThiefJobInstructor) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestCompleted(l)(c.CharacterId, 100010) {
+	if quest.IsCompleted(l)(c.CharacterId, 100010) {
 		return r.TrueHero(l, c)
-	} else if character.QuestCompleted(l)(c.CharacterId, 100009) {
+	} else if quest.IsCompleted(l)(c.CharacterId, 100009) {
 		return r.LetYouIn(l, c)
-	} else if character.QuestStarted(l)(c.CharacterId, 100009) {
+	} else if quest.IsStarted(l)(c.CharacterId, 100009) {
 		return r.IsntThisALetter(l, c)
 	}
 	return r.OnceYouAreReady(l, c)
@@ -68,8 +69,8 @@ func (r ThiefJobInstructor) IfYouAreReady(l logrus.FieldLogger, c script.Context
 }
 
 func (r ThiefJobInstructor) Begin(l logrus.FieldLogger, c script.Context) script.State {
-	character.CompleteQuest(l)(c.CharacterId, 100009)
-	character.StartQuest(l)(c.CharacterId, 100010)
+	quest.Complete(l)(c.CharacterId, 100009)
+	quest.Start(l)(c.CharacterId, 100010)
 	character.GainItem(l)(c.CharacterId, item.DarkLordsLetter, -1)
 	return r.GoodLuck(l, c)
 }

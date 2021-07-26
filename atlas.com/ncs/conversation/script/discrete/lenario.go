@@ -1,8 +1,10 @@
 package discrete
 
 import (
+	"atlas-ncs/alliance"
 	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
+	"atlas-ncs/guild"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/party"
@@ -19,7 +21,7 @@ func (r Lenario) NPCId() uint32 {
 }
 
 func (r Lenario) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.IsGuildLeader(l)(c.CharacterId) {
+	if !guild.IsLeader(l)(c.CharacterId) {
 		return r.NonGuildLeaderHello(l, c)
 	}
 	return r.Hello(l, c)
@@ -82,10 +84,10 @@ func (r Lenario) HowToCreate(l logrus.FieldLogger, c script.Context) script.Stat
 }
 
 func (r Lenario) Create(l logrus.FieldLogger, c script.Context) script.State {
-	if !party.IsPartyLeader(l)(c.CharacterId) {
+	if !party.IsLeader(l)(c.CharacterId) {
 		return r.PartyLeaderMustTalk(l, c)
 	}
-	if !character.GuildHasAlliance(l)(c.CharacterId) {
+	if !alliance.GuildHasAlliance(l)(c.CharacterId) {
 		return r.AlreadyHasAlliance(l, c)
 	}
 	return r.ConfirmCreationFee(l, c)
@@ -112,7 +114,7 @@ func (r Lenario) ConfirmCreationFee(l logrus.FieldLogger, c script.Context) scri
 }
 
 func (r Lenario) AddAnotherGuild(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.AllianceLeader(l)(c.CharacterId) {
+	if !alliance.IsLeader(l)(c.CharacterId) {
 		return r.MustBeLeaderToExpand(l, c)
 	}
 	return r.ConfirmExpandCost(l, c)
@@ -134,10 +136,10 @@ func (r Lenario) ConfirmExpandCost(l logrus.FieldLogger, c script.Context) scrip
 }
 
 func (r Lenario) Disband(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.AllianceLeader(l)(c.CharacterId) {
+	if !alliance.IsLeader(l)(c.CharacterId) {
 		return r.MustBeLeaderToDisband(l, c)
 	}
-	if !character.GuildHasAlliance(l)(c.CharacterId) {
+	if !alliance.GuildHasAlliance(l)(c.CharacterId) {
 		return r.MustHaveAllianceToDisband(l, c)
 	}
 	return r.PerformDisband(l, c)
@@ -164,7 +166,7 @@ func (r Lenario) ValidateExpansion(l logrus.FieldLogger, c script.Context) scrip
 	if !character.HasMeso(l)(c.CharacterId, 1000000) {
 		return r.NotEnoughMesos(l, c)
 	}
-	if !character.AllianceAtCapacity(l)(c.CharacterId) {
+	if !alliance.AtCapacity(l)(c.CharacterId) {
 		return r.AllianceAtCapacity(l, c)
 	}
 	return r.ProcessExpansion(l, c)
@@ -189,7 +191,7 @@ func (r Lenario) ConfirmUnionName(text string) script.StateProducer {
 
 func (r Lenario) ValidateUnionName(text string) script.StateProducer {
 	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.ValidAllianceName(l)(text) {
+		if !alliance.ValidName(l)(text) {
 			return r.InvalidName(l, c)
 		}
 		return r.PerformCreate(text)(l, c)
@@ -207,7 +209,7 @@ func (r Lenario) PerformCreate(text string) script.StateProducer {
 		if err != nil {
 			l.WithError(err).Errorf("Unable to process payment from character %d.", c.CharacterId)
 		}
-		err = character.CreateAlliance(l)(c.CharacterId, text)
+		err = alliance.Create(l)(c.CharacterId, text)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to create alliance.")
 			return r.CreateAllianceError(l, c)
@@ -232,7 +234,7 @@ func (r Lenario) ProcessExpansion(l logrus.FieldLogger, c script.Context) script
 	if err != nil {
 		l.WithError(err).Errorf("Unable to process payment from character %d.", c.CharacterId)
 	}
-	err = character.ExpandAlliance(l)(c.CharacterId)
+	err = alliance.Expand(l)(c.CharacterId)
 	if err != nil {
 		l.WithError(err).Errorf("Unable to expand alliance.")
 		return r.ExpansionFailure(l, c)

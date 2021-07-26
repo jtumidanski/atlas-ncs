@@ -1,10 +1,10 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +17,7 @@ func (r Taggrin) NPCId() uint32 {
 }
 
 func (r Taggrin) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestProgressInt(l)(c.CharacterId, 8224, 0) == 2 {
+	if quest.ProgressInt(l)(c.CharacterId, 8224, 0) == 2 {
 		m := message.NewBuilder().AddText("Well met, fellow clan member. If you need anything we can be of help, try talking to one of our members.")
 		return script.SendOk(l, c, m.String())
 	}

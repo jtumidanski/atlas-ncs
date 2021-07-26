@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r Luke) NPCId() uint32 {
 }
 
 func (r Luke) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 28177) && !character.HasItem(l)(c.CharacterId, item.TrainingInstructorsBadge) {
+	if quest.IsStarted(l)(c.CharacterId, 28177) && !character.HasItem(l)(c.CharacterId, item.TrainingInstructorsBadge) {
 		if character.CanHold(l)(c.CharacterId, item.TrainingInstructorsBadge) {
 			return r.GiveItem(l, c)
 		}

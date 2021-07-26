@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,14 +18,14 @@ func (r AriantPrivateHouse6) NPCId() uint32 {
 }
 
 func (r AriantPrivateHouse6) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3929) {
-		progress := character.QuestProgress(l)(c.CharacterId, 3929)
+	if quest.IsStarted(l)(c.CharacterId, 3929) {
+		progress := quest.Progress(l)(c.CharacterId, 3929)
 		slot := 3
 
 		if progress[slot] == '2' {
 			next := progress[0:slot] + string('3') + progress[slot+1:]
 			character.GainItem(l)(c.CharacterId, item.WrappedFood, -1)
-			character.SetQuestProgressString(l)(c.CharacterId, 3929, next)
+			quest.SetProgressString(l)(c.CharacterId, 3929, next)
 		}
 	}
 	return script.Exit()(l, c)

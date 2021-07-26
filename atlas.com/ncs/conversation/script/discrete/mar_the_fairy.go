@@ -41,11 +41,11 @@ func (r MarTheFairy) ValidateEvolve(l logrus.FieldLogger, c script.Context) scri
 		character.GainItem(l)(c.CharacterId, pet.DragonEgg, -1)
 		character.GainItem(l)(c.CharacterId, pet.BabyDragon, 1)
 		return r.Hatched(l, c)
-	} else if !character.HasPet(l)(c.CharacterId, 0) {
+	} else if !pet.HasPetInSlot(l)(c.CharacterId, 0) {
 		return r.PetInSlotOne(l, c)
-	} else if !character.HasItem(l)(c.CharacterId, item.TheRockOfEvolution) || !character.PetIs(l)(c.CharacterId, 0, pet.BabyDragon, pet.GreenDragon, pet.RedDragon, pet.BlueDragon, pet.BlackDragon) {
+	} else if !character.HasItem(l)(c.CharacterId, item.TheRockOfEvolution) || !pet.Is(l)(c.CharacterId, 0, pet.BabyDragon, pet.GreenDragon, pet.RedDragon, pet.BlueDragon, pet.BlackDragon) {
 		return r.DoesNotMeetRequirements(l, c)
-	} else if !character.PetIsLevel(l)(c.CharacterId, 0, 15) {
+	} else if !pet.IsLevel(l)(c.CharacterId, 0, 15) {
 		return r.NotLeveledEnough(l, c)
 	} else if character.HasItems(l)(c.CharacterId, pet.BabyDragon, 2) ||
 		character.HasItems(l)(c.CharacterId, pet.GreenDragon, 2) ||
@@ -148,7 +148,7 @@ func (r MarTheFairy) RemoveFirstCashSlot(l logrus.FieldLogger, c script.Context)
 func (r MarTheFairy) Evolve(l logrus.FieldLogger, c script.Context) script.State {
 	babyIndex := int16(-1)
 	for i := int16(0); i < 3; i++ {
-		if character.PetIs(l)(c.CharacterId, i, pet.BabyDragon) {
+		if pet.Is(l)(c.CharacterId, i, pet.BabyDragon) {
 			babyIndex = i
 			break
 		}
@@ -171,7 +171,7 @@ func (r MarTheFairy) Evolve(l logrus.FieldLogger, c script.Context) script.State
 	}
 
 	character.GainItem(l)(c.CharacterId, item.TheRockOfEvolution, -1)
-	character.EvolvePet(l)(c.CharacterId, babyIndex, dragonId)
+	pet.Evolve(l)(c.CharacterId, babyIndex, dragonId)
 
 	m := message.NewBuilder().
 		AddText("Your dragon has now evolved!! It used to be a ").

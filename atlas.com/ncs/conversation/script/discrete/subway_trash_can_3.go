@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +23,7 @@ func (r SubwayTrashCan3) Initial(l logrus.FieldLogger, c script.Context) script.
 }
 
 func (r SubwayTrashCan3) Hello(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 20710) {
+	if !quest.IsStarted(l)(c.CharacterId, 20710) {
 		return r.JustATrashCan(l, c)
 	}
 

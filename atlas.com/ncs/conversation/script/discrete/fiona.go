@@ -1,12 +1,12 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/conversation/script/generic/refine"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +19,7 @@ func (r Fiona) NPCId() uint32 {
 }
 
 func (r Fiona) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestCompleted(l)(c.CharacterId, 8225) {
+	if !quest.IsCompleted(l)(c.CharacterId, 8225) {
 		m := message.NewBuilder().AddText("Step aside, novice, we're doing business here.")
 		return script.SendOk(l, c, m.String())
 	}

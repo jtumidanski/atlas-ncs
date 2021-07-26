@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,11 +20,11 @@ func (r BowmanJobInstructor) NPCId() uint32 {
 }
 
 func (r BowmanJobInstructor) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestCompleted(l)(c.CharacterId, 100001) {
+	if quest.IsCompleted(l)(c.CharacterId, 100001) {
 		return r.TrueHero(l, c)
-	} else if character.QuestCompleted(l)(c.CharacterId, 100000) {
+	} else if quest.IsCompleted(l)(c.CharacterId, 100000) {
 		return r.LetYouIn(l, c)
-	} else if character.QuestStarted(l)(c.CharacterId, 100000) {
+	} else if quest.IsStarted(l)(c.CharacterId, 100000) {
 		return r.IsntThisALetter(l, c)
 	}
 	return r.OnceYouAreReady(l, c)
@@ -64,8 +65,8 @@ func (r BowmanJobInstructor) IfYouAreReady(l logrus.FieldLogger, c script.Contex
 }
 
 func (r BowmanJobInstructor) Begin(l logrus.FieldLogger, c script.Context) script.State {
-	character.CompleteQuest(l)(c.CharacterId, 100000)
-	character.StartQuest(l)(c.CharacterId, 100001)
+	quest.Complete(l)(c.CharacterId, 100000)
+	quest.Start(l)(c.CharacterId, 100001)
 	character.GainItem(l)(c.CharacterId, item.AthenaPiercesLetter, -1)
 	return r.GoodLuck(l, c)
 }

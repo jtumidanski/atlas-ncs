@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,8 +32,8 @@ func (r YuleteDefeated) Selection(selection int32) script.StateProducer {
 }
 
 func (r YuleteDefeated) Process(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestCompleted(l)(c.CharacterId, 7770) {
-		character.CompleteQuest(l)(c.CharacterId, 7770)
+	if !quest.IsCompleted(l)(c.CharacterId, 7770) {
+		quest.Complete(l)(c.CharacterId, 7770)
 	}
 	return script.WarpById(_map.RomeoAndJuliet, 0)(l, c)
 }

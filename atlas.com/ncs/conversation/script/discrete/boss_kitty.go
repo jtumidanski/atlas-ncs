@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"math/rand"
@@ -20,7 +21,7 @@ func (r BossKitty) NPCId() uint32 {
 }
 
 func (r BossKitty) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 8012) && !character.HasItem(l)(c.CharacterId, item.OrangeMarble) {
+	if quest.IsStarted(l)(c.CharacterId, 8012) && !character.HasItem(l)(c.CharacterId, item.OrangeMarble) {
 		m := message.NewBuilder().AddText("Did you get them all? Are you going to try to answer all of my questions?")
 		return script.SendYesNo(l, c, m.String(), r.ValidateChicken, script.Exit())
 	} else {

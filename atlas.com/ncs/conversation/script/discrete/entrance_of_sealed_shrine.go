@@ -6,6 +6,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,7 +34,7 @@ func (r EntranceOfSealedShrine) ProcessPassword(text string) script.StateProduce
 		if _map.CharacterCount(l)(c.WorldId, c.ChannelId, _map.SealedTemple) > 0 {
 			return r.AlreadyAttending(l, c)
 		}
-		if character.QuestStarted(l)(c.CharacterId, 21747) && character.QuestProgressInt(l)(c.CharacterId, 21747, 9300351) == 0 {
+		if quest.IsStarted(l)(c.CharacterId, 21747) && quest.ProgressInt(l)(c.CharacterId, 21747, 9300351) == 0 {
 			return script.WarpById(_map.SealedTemple, 0)(l, c)
 		} else {
 			return r.CorrectButMissingPrerequisites(l, c)

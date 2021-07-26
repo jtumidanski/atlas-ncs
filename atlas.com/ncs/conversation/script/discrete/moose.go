@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func (r Moose) NPCId() uint32 {
 }
 
 func (r Moose) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 6180) && character.QuestProgressInt(l)(c.CharacterId, 6180, 9300096) < 200 {
+	if quest.IsStarted(l)(c.CharacterId, 6180) && quest.ProgressInt(l)(c.CharacterId, 6180, 9300096) < 200 {
 		return r.ConfirmEntrance(l, c)
 	} else {
 		return r.OnlyAssignedPersonnel(l, c)

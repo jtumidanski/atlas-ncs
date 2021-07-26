@@ -1,10 +1,10 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,14 +17,14 @@ func (r ShinyStone) NPCId() uint32 {
 }
 
 func (r ShinyStone) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 2166) {
+	if quest.IsStarted(l)(c.CharacterId, 2166) {
 		return r.BeautifulRock(l, c)
 	}
 	return r.MysteriousPower(l, c)
 }
 
 func (r ShinyStone) BeautifulRock(l logrus.FieldLogger, c script.Context) script.State {
-	character.CompleteQuest(l)(c.CharacterId, 2166)
+	quest.Complete(l)(c.CharacterId, 2166)
 	m := message.NewBuilder().
 		AddText("It's a beautiful, shiny rock. I can feel the mysterious power surrounding it.")
 	return script.SendNext(l, c, m.String(), script.Exit())

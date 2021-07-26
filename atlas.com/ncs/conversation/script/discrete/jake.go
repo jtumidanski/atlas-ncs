@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -30,13 +31,13 @@ func (r Jake) Hello(l logrus.FieldLogger, c script.Context) script.State {
 
 func (r Jake) SelectTicket(l logrus.FieldLogger, c script.Context) script.State {
 	zones := 0
-	if character.QuestStarted(l)(c.CharacterId, 2055) || character.QuestCompleted(l)(c.CharacterId, 2055) {
+	if quest.IsStarted(l)(c.CharacterId, 2055) || quest.IsCompleted(l)(c.CharacterId, 2055) {
 		zones++
 	}
-	if character.QuestStarted(l)(c.CharacterId, 2056) || character.QuestCompleted(l)(c.CharacterId, 2056) {
+	if quest.IsStarted(l)(c.CharacterId, 2056) || quest.IsCompleted(l)(c.CharacterId, 2056) {
 		zones++
 	}
-	if character.QuestStarted(l)(c.CharacterId, 2057) || character.QuestCompleted(l)(c.CharacterId, 2057) {
+	if quest.IsStarted(l)(c.CharacterId, 2057) || quest.IsCompleted(l)(c.CharacterId, 2057) {
 		zones++
 	}
 	if zones == 0 {

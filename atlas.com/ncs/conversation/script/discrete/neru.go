@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/pet"
 	"github.com/sirupsen/logrus"
 )
 
@@ -31,7 +32,7 @@ func (r Neru) BrothersLeter(l logrus.FieldLogger, c script.Context) script.State
 }
 
 func (r Neru) Validate(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.HasPets(l)(c.CharacterId) {
+	if !pet.HasPets(l)(c.CharacterId) {
 		return r.GetOutOfHere(l, c)
 	}
 	return r.RaiseCloseness(l, c)
@@ -45,7 +46,7 @@ func (r Neru) GetOutOfHere(l logrus.FieldLogger, c script.Context) script.State 
 
 func (r Neru) RaiseCloseness(l logrus.FieldLogger, c script.Context) script.State {
 	character.GainItem(l)(c.CharacterId, item.WeaversLetter, -1)
-	character.GainCloseness(l)(c.CharacterId, 4)
+	pet.GainCloseness(l)(c.CharacterId, 4)
 	return r.TrainAgain(l, c)
 }
 

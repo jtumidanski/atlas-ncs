@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +18,7 @@ func (r Parwen) NPCId() uint32 {
 }
 
 func (r Parwen) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3320) || character.QuestCompleted(l)(c.CharacterId, 3320) {
+	if quest.IsStarted(l)(c.CharacterId, 3320) || quest.IsCompleted(l)(c.CharacterId, 3320) {
 		return script.WarpById(_map.DransLab, 1)(l, c)
 	}
 	m := message.NewBuilder().AddText("uuuuhuk...Why only Ghost are around here?...")

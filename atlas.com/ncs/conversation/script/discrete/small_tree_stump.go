@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r SmallTreeStump) NPCId() uint32 {
 }
 
 func (r SmallTreeStump) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 20716) {
+	if !quest.IsStarted(l)(c.CharacterId, 20716) {
 		return r.NeverEndingFlow(l, c)
 	}
 	if character.HasItem(l)(c.CharacterId, item.ClearTreeSap) {

@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 	"math"
 	"math/rand"
@@ -50,7 +51,7 @@ func (r APileOfHerbs) AwardPrize(l logrus.FieldLogger, c script.Context) script.
 			break
 		}
 	}
-	if character.QuestStarted(l)(c.CharacterId, 2051) {
+	if quest.IsStarted(l)(c.CharacterId, 2051) {
 		character.GainItem(l)(c.CharacterId, item.DoubleRootedRedGinseng, 1)
 	}
 	character.GainItem(l)(c.CharacterId, prizes.prizes[pick].itemId, 1)

@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r HiddenNote) NPCId() uint32 {
 }
 
 func (r HiddenNote) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 4646) {
+	if !quest.IsStarted(l)(c.CharacterId, 4646) {
 		return r.CouldNotFindAnything(l, c)
 	}
 

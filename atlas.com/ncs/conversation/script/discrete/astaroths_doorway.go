@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,7 +29,7 @@ func (r AstarothsDoorway) Initial(l logrus.FieldLogger, c script.Context) script
 	if c.MapId == _map.AstarothHidingPlace {
 		return r.Exit(l, c)
 	}
-	if !character.QuestStarted(l)(c.CharacterId, 28283) {
+	if !quest.IsStarted(l)(c.CharacterId, 28283) {
 		return r.EntranceBlocked(l, c)
 	}
 	if !character.HasEquipped(l)(c.CharacterId, item.WildEyesGasMask) {

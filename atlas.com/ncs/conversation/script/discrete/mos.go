@@ -1,12 +1,12 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/conversation/script/generic/refine"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -40,7 +40,7 @@ func (r Mos) Categories(l logrus.FieldLogger, c script.Context) []refine.ListIte
 		r.ThiefStimulator(),
 		r.PirateStimulator(),
 	}
-	if character.QuestStarted(l)(c.CharacterId, 7301) || character.QuestStarted(l)(c.CharacterId, 7303) {
+	if quest.IsStarted(l)(c.CharacterId, 7301) || quest.IsStarted(l)(c.CharacterId, 7303) {
 		return append(base, r.CorniansDagger())
 	}
 	return base

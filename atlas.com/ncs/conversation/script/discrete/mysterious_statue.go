@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -30,11 +30,11 @@ func (r MysteriousStatue) Hello(l logrus.FieldLogger, c script.Context) script.S
 
 func (r MysteriousStatue) ChooseDestination(l logrus.FieldLogger, c script.Context) script.State {
 	zones := 0
-	if character.QuestStarted(l)(c.CharacterId, 2052) || character.QuestCompleted(l)(c.CharacterId, 2052) {
+	if quest.IsStarted(l)(c.CharacterId, 2052) || quest.IsCompleted(l)(c.CharacterId, 2052) {
 		zones = 1
-	} else if character.QuestStarted(l)(c.CharacterId, 2053) || character.QuestCompleted(l)(c.CharacterId, 2053) {
+	} else if quest.IsStarted(l)(c.CharacterId, 2053) || quest.IsCompleted(l)(c.CharacterId, 2053) {
 		zones = 2
-	} else if character.QuestStarted(l)(c.CharacterId, 2054) || character.QuestCompleted(l)(c.CharacterId, 2054) {
+	} else if quest.IsStarted(l)(c.CharacterId, 2054) || quest.IsCompleted(l)(c.CharacterId, 2054) {
 		zones = 3
 	}
 	if zones == 0 {

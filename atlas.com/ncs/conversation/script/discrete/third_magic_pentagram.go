@@ -1,9 +1,9 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,13 +16,13 @@ func (r ThirdMagicPentagram) NPCId() uint32 {
 }
 
 func (r ThirdMagicPentagram) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3345) {
-		progress := character.QuestProgressInt(l)(c.CharacterId, 3345, 0)
+	if quest.IsStarted(l)(c.CharacterId, 3345) {
+		progress := quest.ProgressInt(l)(c.CharacterId, 3345, 0)
 
 		if progress == 2 {
-			character.SetQuestProgress(l)(c.CharacterId, 3345, 0, 3)
+			quest.SetProgress(l)(c.CharacterId, 3345, 0, 3)
 		} else if progress < 4 {
-			character.SetQuestProgress(l)(c.CharacterId, 3345, 0, 0)
+			quest.SetProgress(l)(c.CharacterId, 3345, 0, 0)
 		}
 	}
 	return script.Exit()(l, c)

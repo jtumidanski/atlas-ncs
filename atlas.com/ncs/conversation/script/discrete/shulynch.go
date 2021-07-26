@@ -1,11 +1,11 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +18,7 @@ func (r Shulynch) NPCId() uint32 {
 }
 
 func (r Shulynch) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestStarted(l)(c.CharacterId, 6410) {
+	if !quest.IsStarted(l)(c.CharacterId, 6410) {
 		return r.AnyBusiness(l, c)
 	}
 	return r.LetsGoSave(l, c)

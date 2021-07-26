@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -20,7 +21,7 @@ func (r APileOfBlueFlowers) NPCId() uint32 {
 }
 
 func (r APileOfBlueFlowers) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 2053) && !character.HasItems(l)(c.CharacterId, item.BlueViola, 20) {
+	if quest.IsStarted(l)(c.CharacterId, 2053) && !character.HasItems(l)(c.CharacterId, item.BlueViola, 20) {
 		return r.QuestReward(l, c)
 	}
 	return r.RandomReward(l, c)

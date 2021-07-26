@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,13 +26,13 @@ func IsTigunMorphed(l logrus.FieldLogger) func(characterId uint32) bool {
 }
 
 func (r PalaceOasis) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3900) && character.QuestProgressInt(l)(c.CharacterId, 3900, 0) != 5 {
+	if quest.IsStarted(l)(c.CharacterId, 3900) && quest.ProgressInt(l)(c.CharacterId, 3900, 0) != 5 {
 		r.Refreshed(l, c)
 	}
-	if character.QuestCompleted(l)(c.CharacterId, 3938) {
+	if quest.IsCompleted(l)(c.CharacterId, 3938) {
 		return r.LockOfHair(l, c)
 	}
-	if character.QuestStarted(l)(c.CharacterId, 3934) || (character.QuestCompleted(l)(c.CharacterId, 3934) && !character.QuestCompleted(l)(c.CharacterId, 3935)) {
+	if quest.IsStarted(l)(c.CharacterId, 3934) || (quest.IsCompleted(l)(c.CharacterId, 3934) && !quest.IsCompleted(l)(c.CharacterId, 3935)) {
 		return r.FloatingInRiver(l, c)
 	}
 	return script.Exit()(l, c)
@@ -65,7 +66,7 @@ func (r PalaceOasis) LockOfHair(l logrus.FieldLogger, c script.Context) script.S
 }
 
 func (r PalaceOasis) Refreshed(l logrus.FieldLogger, c script.Context) {
-	character.SetQuestProgress(l)(c.CharacterId, 3900, 0, 5)
+	quest.SetProgress(l)(c.CharacterId, 3900, 0, 5)
 	m := message.NewBuilder().BlueText().AddText("(You drink the water from the oasis and feel refreshed.)")
 	script.SendOk(l, c, m.String(), script.AddSendTalkConfigurator(npc.SetSpeaker(npc.SpeakerCharacterLeft)))
 }

@@ -6,6 +6,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -57,9 +58,9 @@ func (r Shane) ValidatePayment(l logrus.FieldLogger, c script.Context) script.St
 	}
 
 	var destination uint32
-	if character.QuestStarted(l)(c.CharacterId, 2050) {
+	if quest.IsStarted(l)(c.CharacterId, 2050) {
 		destination = _map.TheForestOfPatienceStep1
-	} else if character.QuestStarted(l)(c.CharacterId, 2051) {
+	} else if quest.IsStarted(l)(c.CharacterId, 2051) {
 		destination = _map.TheForestOfPatienceStep3
 	} else if character.MeetsCriteria(l)(c.CharacterId, character.LevelBetweenCriteria(24, 50)) {
 		destination = _map.TheForestOfPatienceStep1

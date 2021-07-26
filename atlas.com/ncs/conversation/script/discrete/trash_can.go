@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r TrashCan) NPCId() uint32 {
 }
 
 func (r TrashCan) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.QuestCompleted(l)(c.CharacterId, 2162) && !character.HasItem(l)(c.CharacterId, item.CrumpledLetter) {
+	if !quest.IsCompleted(l)(c.CharacterId, 2162) && !character.HasItem(l)(c.CharacterId, item.CrumpledLetter) {
 		return r.Validate(l, c)
 	}
 	return script.Exit()(l, c)

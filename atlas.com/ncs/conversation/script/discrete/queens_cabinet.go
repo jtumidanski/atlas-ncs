@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"atlas-ncs/quest"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ func (r QueensCabinet) NPCId() uint32 {
 }
 
 func (r QueensCabinet) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.QuestStarted(l)(c.CharacterId, 3923) && !character.HasItem(l)(c.CharacterId, item.QueensRing) {
+	if quest.IsStarted(l)(c.CharacterId, 3923) && !character.HasItem(l)(c.CharacterId, item.QueensRing) {
 		if !character.CanHold(l)(c.CharacterId, item.QueensRing) {
 			return r.MakeRoom(l, c)
 		}
