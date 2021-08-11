@@ -175,7 +175,7 @@ func (r RegularCabEllinia) PerformNeinheartTransaction(mapId uint32) script.Stat
 
 		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding item.", c.CharacterId)
+			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding item.", c.CharacterId, mapId)
 			character.GainItem(l)(c.CharacterId, item.NeinheartsTaxiCoupon, 1)
 		}
 		return nil

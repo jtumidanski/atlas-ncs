@@ -144,7 +144,7 @@ func (r RegularCabKerningCity) PerformTransaction(mapId uint32, cost uint32) scr
 
 		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding mesos.", c.CharacterId)
+			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding mesos.", c.CharacterId, mapId)
 			err = character.GainMeso(l)(c.CharacterId, int32(cost))
 			if err != nil {
 				l.WithError(err).Errorf("Error processing refund, %d has lost %d mesos.", c.CharacterId, cost)
