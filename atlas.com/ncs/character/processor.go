@@ -7,16 +7,18 @@ import (
 	"strconv"
 )
 
-func GetCharacterById(characterId uint32) (*Model, error) {
-	cs, err := requestCharacter(characterId)
-	if err != nil {
-		return nil, err
+func GetCharacterById(l logrus.FieldLogger) func(characterId uint32) (*Model, error) {
+	return func(characterId uint32) (*Model, error) {
+		cs, err := requestCharacter(l)(characterId)
+		if err != nil {
+			return nil, err
+		}
+		ca := makeCharacterAttributes(cs.Data())
+		if ca == nil {
+			return nil, errors.New("unable to make character attributes")
+		}
+		return ca, nil
 	}
-	ca := makeCharacterAttributes(cs.Data())
-	if ca == nil {
-		return nil, errors.New("unable to make character attributes")
-	}
-	return ca, nil
 }
 
 func makeCharacterAttributes(ca *dataBody) *Model {
@@ -45,7 +47,7 @@ type AttributeCriteria func(*Model) bool
 
 func MeetsCriteria(l logrus.FieldLogger) func(characterId uint32, criteria ...AttributeCriteria) bool {
 	return func(characterId uint32, criteria ...AttributeCriteria) bool {
-		c, err := GetCharacterById(characterId)
+		c, err := GetCharacterById(l)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d for criteria check.", characterId)
 			return false
@@ -67,7 +69,7 @@ func HasItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool 
 
 func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quantity uint32) bool {
 	return func(characterId uint32, itemId uint32, quantity uint32) bool {
-		items, err := requestItemsForCharacter(characterId, itemId)
+		items, err := requestItemsForCharacter(l)(characterId, itemId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
@@ -87,7 +89,7 @@ func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quan
 
 func HasAnyItem(l logrus.FieldLogger) func(characterId uint32, items ...uint32) bool {
 	return func(characterId uint32, items ...uint32) bool {
-		allItems, err := requestAllItemsForCharacter(characterId)
+		allItems, err := requestAllItemsForCharacter(l)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
@@ -286,7 +288,7 @@ func IncreaseBuddyCapacity(l logrus.FieldLogger) func(characterId uint32, amount
 
 func GetGender(l logrus.FieldLogger) func(characterId uint32) byte {
 	return func(characterId uint32) byte {
-		c, err := GetCharacterById(characterId)
+		c, err := GetCharacterById(l)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
 			return 0
@@ -297,7 +299,7 @@ func GetGender(l logrus.FieldLogger) func(characterId uint32) byte {
 
 func GetHair(l logrus.FieldLogger) func(characterId uint32) uint32 {
 	return func(characterId uint32) uint32 {
-		c, err := GetCharacterById(characterId)
+		c, err := GetCharacterById(l)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
 			return 0
@@ -308,7 +310,7 @@ func GetHair(l logrus.FieldLogger) func(characterId uint32) uint32 {
 
 func GetFace(l logrus.FieldLogger) func(characterId uint32) uint32 {
 	return func(characterId uint32) uint32 {
-		c, err := GetCharacterById(characterId)
+		c, err := GetCharacterById(l)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
 			return 0
