@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,14 +19,14 @@ func (r FountainOfLife) NPCId() uint32 {
 	return npc.FountainOfLife
 }
 
-func (r FountainOfLife) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r FountainOfLife) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if quest.IsStarted(l)(c.CharacterId, 6280) {
-		if character.HasItem(l)(c.CharacterId, item.HolyCup) {
-			character.GainItem(l)(c.CharacterId, item.HolyCup, -1)
-			character.GainItem(l)(c.CharacterId, item.HolyWaterOfLife, 1)
+		if character.HasItem(l, span)(c.CharacterId, item.HolyCup) {
+			character.GainItem(l, span)(c.CharacterId, item.HolyCup, -1)
+			character.GainItem(l, span)(c.CharacterId, item.HolyWaterOfLife, 1)
 			m := message.NewBuilder().AddText("(You poured some water from the fountain into the cup.)")
-			return script.SendOk(l, c, m.String())
+			return script.SendOk(l, span, c, m.String())
 		}
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }

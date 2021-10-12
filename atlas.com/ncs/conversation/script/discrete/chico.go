@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +18,8 @@ func (r Chico) NPCId() uint32 {
 	return npc.Chico
 }
 
-func (r Chico) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewSingleCategoryRefine(l, c, r.Hello(), r.Choices())
+func (r Chico) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewSingleCategoryRefine(l, span, c, r.Hello(), r.Choices())
 }
 
 func (r Chico) Hello() string {
@@ -79,24 +80,24 @@ func (r Chico) PandaTeddyAndTrixterOmokSetRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 4030009, Amount: 1}, {ItemId: 4030015, Amount: 99}, {ItemId: 4030016, Amount: 99}}, refine.SetCost(25000))
 }
 
-func (r Chico) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Chico) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("There is your game set. Have fun!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Chico) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Chico) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("See, I need to specify my wages to support my career, that cannot be bypassed. I will gladly help you once you've got the money.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Chico) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("You are lacking some items for the set you want to make. Please provide them so that we can assemble the game set.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Chico) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Chico) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I can't make a set for you if there's no room in your ETC inventory for it. Please free a space first and then talk to me.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

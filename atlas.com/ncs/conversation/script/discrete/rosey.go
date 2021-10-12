@@ -5,6 +5,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,22 +17,22 @@ func (r Rosey) NPCId() uint32 {
 	return npc.Rosey
 }
 
-func (r Rosey) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rosey) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Do you wish to leave the train?")
-	return script.SendYesNo(l, c, m.String(), r.SeeYouNextTime, script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.SeeYouNextTime, script.Exit())
 }
 
-func (r Rosey) SeeYouNextTime(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rosey) SeeYouNextTime(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Alright, see you next time. Take care.")
-	return script.SendNext(l, c, m.String(), r.Warp)
+	return script.SendNext(l, span, c, m.String(), r.Warp)
 }
 
-func (r Rosey) Warp(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rosey) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	var mapId uint32
 	if c.MapId == _map.BeforeTheDepartureLudibrium {
 		mapId = _map.StationLudibrium
 	} else {
 		mapId = _map.StationOrbis
 	}
-	return script.WarpById(mapId, 0)(l, c)
+	return script.WarpById(mapId, 0)(l, span, c)
 }

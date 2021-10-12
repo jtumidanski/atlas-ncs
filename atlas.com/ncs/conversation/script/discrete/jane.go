@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,41 +20,41 @@ func (r Jane) NPCId() uint32 {
 	return npc.Jane
 }
 
-func (r Jane) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if quest.IsCompleted(l)(c.CharacterId, 2013) {
-		return r.ItsYou(l, c)
+		return r.ItsYou(l, span, c)
 	} else if quest.IsCompleted(l)(c.CharacterId, 2010) {
-		return r.NotStrongEnough(l, c)
+		return r.NotStrongEnough(l, span, c)
 	} else {
-		return r.MyDream(l, c)
+		return r.MyDream(l, span, c)
 	}
 }
 
-func (r Jane) MyDream(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) MyDream(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("My dream is to travel everywhere, much like you. My father, however, does not allow me to do it, because he thinks it's very dangerous. He may say yes, though, if I show him some sort of a proof that I'm not the weak girl that he thinks I am ...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Jane) NotStrongEnough(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) NotStrongEnough(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You don't seem strong enough to be able to purchase my potion ...")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Jane) ItsYou(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) ItsYou(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("It's you ... thanks to you I was able to get a lot done. Nowadays I've been making a bunch of items. If you need anything let me know.")
-	return script.SendNextExit(l, c, m.String(), r.WhatToBuy, r.StillHaveAFew)
+	return script.SendNextExit(l, span, c, m.String(), r.WhatToBuy, r.StillHaveAFew)
 }
 
-func (r Jane) StillHaveAFew(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) StillHaveAFew(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("I still have quite a few of the materials you got me before. The items are all there so take your time choosing.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Jane) WhatToBuy(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) WhatToBuy(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Which item would you like to buy?").NewLine().
 		BlueText().
@@ -61,7 +62,7 @@ func (r Jane) WhatToBuy(l logrus.FieldLogger, c script.Context) script.State {
 		OpenItem(1).ShowItemImage2(item.Unagi).AddText(fmt.Sprintf(" (Price : %d mesos)", 1060)).CloseItem().NewLine().
 		OpenItem(2).ShowItemImage2(item.PureWater).AddText(fmt.Sprintf(" (Price : %d mesos)", 1600)).CloseItem().NewLine().
 		OpenItem(3).ShowItemImage2(item.Watermelon).AddText(fmt.Sprintf(" (Price : %d mesos)", 3120)).CloseItem().NewLine()
-	return script.SendListSelectionExit(l, c, m.String(), r.SelectItem, r.StillHaveAFew)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.SelectItem, r.StillHaveAFew)
 }
 
 func (r Jane) SelectItem(selection int32) script.StateProducer {
@@ -79,18 +80,18 @@ func (r Jane) SelectItem(selection int32) script.StateProducer {
 }
 
 func (r Jane) HowMany(itemId uint32, cost uint32, recover string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("You want ").
 			BlueText().ShowItemName1(itemId).
 			BlackText().AddText("? ").ShowItemName1(itemId).AddText(" allows you to recover ").AddText(recover).AddText(" How many would you like to buy?")
-		return script.SendGetNumberExit(l, c, m.String(), r.Confirmation(itemId, cost), r.StillHaveAFew, 1, 1, 100)
+		return script.SendGetNumberExit(l, span, c, m.String(), r.Confirmation(itemId, cost), r.StillHaveAFew, 1, 1, 100)
 	}
 }
 
 func (r Jane) Confirmation(itemId uint32, cost uint32) func(selection int32) script.StateProducer {
 	return func(selection int32) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			m := message.NewBuilder().
 				AddText("Will you purchase ").
 				RedText().AddText(fmt.Sprintf("%d", selection)).
@@ -99,53 +100,49 @@ func (r Jane) Confirmation(itemId uint32, cost uint32) func(selection int32) scr
 				BlackText().AddText("? ").ShowItemName1(itemId).AddText(fmt.Sprintf(" costs %d mesos for one, so the total comes out to be ", cost)).
 				RedText().AddText(fmt.Sprintf("%d", uint32(selection)*cost)).
 				BlackText().AddText(" mesos.")
-			return script.SendYesNoExit(l, c, m.String(), r.ValidateTransaction(itemId, uint32(selection)*cost, selection), r.StillHaveAFew, r.StillHaveAFew)
+			return script.SendYesNoExit(l, span, c, m.String(), r.ValidateTransaction(itemId, uint32(selection)*cost, selection), r.StillHaveAFew, r.StillHaveAFew)
 		}
 	}
 }
 
 func (r Jane) ValidateTransaction(itemId uint32, cost uint32, amount int32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, cost) {
-			return r.LackingMesos(cost)(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasMeso(l, span)(c.CharacterId, cost) {
+			return r.LackingMesos(cost)(l, span, c)
 		}
 		if !character.CanHold(l)(c.CharacterId, itemId) {
-			return r.LackingInventory(l, c)
+			return r.LackingInventory(l, span, c)
 		}
-		return r.PerformTransaction(itemId, cost, amount)(l, c)
+		return r.PerformTransaction(itemId, cost, amount)(l, span, c)
 	}
 }
 
 func (r Jane) LackingMesos(cost uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Are you lacking mesos by any chance? Please check and see if you have an empty slot available at your etc. inventory, and if you have at least ").
 			RedText().AddText(fmt.Sprintf("%d", cost)).
 			BlackText().AddText(" mesos with you.")
-		return script.SendNext(l, c, m.String(), script.Exit())
+		return script.SendNext(l, span, c, m.String(), script.Exit())
 	}
 }
 
-func (r Jane) LackingInventory(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) LackingInventory(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Please check and see if you have an empty slot available at your etc. inventory.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
 func (r Jane) PerformTransaction(itemId uint32, cost uint32, amount int32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -int32(cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to take payment for character %d purchase.", c.CharacterId)
-			return script.Exit()(l, c)
-		}
-		character.GainItem(l)(c.CharacterId, itemId, amount)
-		return r.Success(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		character.GainMeso(l, span)(c.CharacterId, -int32(cost))
+		character.GainItem(l, span)(c.CharacterId, itemId, amount)
+		return r.Success(l, span, c)
 	}
 }
 
-func (r Jane) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jane) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Thank you for coming. Stuff here can always be made so if you need something, please come again.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }

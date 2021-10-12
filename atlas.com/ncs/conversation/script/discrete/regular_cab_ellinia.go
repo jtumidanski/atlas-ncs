@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,25 +20,25 @@ func (r RegularCabEllinia) NPCId() uint32 {
 	return npc.RegularCabEllinia
 }
 
-func (r RegularCabEllinia) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+func (r RegularCabEllinia) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.Hello(l, span, c)
 }
 
-func (r RegularCabEllinia) Hello(l logrus.FieldLogger, c script.Context) script.State {
+func (r RegularCabEllinia) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hello, I drive the Regular Cab. If you want to go from town to town safely and fast, then ride our cab. We'll gladly take you to your destination with an affordable price.")
-	return script.SendNextExit(l, c, m.String(), r.WhereToGo, r.MoreToSee)
+	return script.SendNextExit(l, span, c, m.String(), r.WhereToGo, r.MoreToSee)
 }
 
-func (r RegularCabEllinia) MoreToSee(l logrus.FieldLogger, c script.Context) script.State {
+func (r RegularCabEllinia) MoreToSee(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("There's a lot to see in this town, too. Come back and find us when you need to go to a different town.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r RegularCabEllinia) WhereToGo(l logrus.FieldLogger, c script.Context) script.State {
+func (r RegularCabEllinia) WhereToGo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder()
-	beginner := character.IsBeginnerTree(l)(c.CharacterId)
+	beginner := character.IsBeginnerTree(l, span)(c.CharacterId)
 
 	if beginner {
 		m = m.AddText("We have a special 90% discount for beginners. ")
@@ -50,7 +51,7 @@ func (r RegularCabEllinia) WhereToGo(l logrus.FieldLogger, c script.Context) scr
 		OpenItem(2).BlueText().ShowMap(_map.Henesys).CloseItem().NewLine().
 		OpenItem(3).BlueText().ShowMap(_map.KerningCity).CloseItem().NewLine().
 		OpenItem(4).BlueText().ShowMap(_map.Nautalis).CloseItem()
-	return script.SendListSelectionExit(l, c, m.String(), r.SelectTownConfirm(beginner), r.MoreToSee)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.SelectTownConfirm(beginner), r.MoreToSee)
 }
 
 func (r RegularCabEllinia) SelectTownConfirm(beginner bool) script.ProcessSelection {
@@ -119,65 +120,49 @@ func (r RegularCabEllinia) ConfirmNautalis(cost uint32) script.StateProducer {
 }
 
 func (r RegularCabEllinia) ConfirmMap(mapId uint32, cost uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if mapId == _map.Henesys && character.HasItem(l)(c.CharacterId, item.NeinheartsTaxiCoupon) {
-			return r.ConfirmNeinheart(l, c, mapId)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if mapId == _map.Henesys && character.HasItem(l, span)(c.CharacterId, item.NeinheartsTaxiCoupon) {
+			return r.ConfirmNeinheart(l, span, c, mapId)
 		} else {
-			return r.StandardConfirmMap(l, c, mapId, cost)
+			return r.StandardConfirmMap(l, span, c, mapId, cost)
 		}
 	}
 }
 
-func (r RegularCabEllinia) ConfirmNeinheart(l logrus.FieldLogger, c script.Context, mapId uint32) script.State {
+func (r RegularCabEllinia) ConfirmNeinheart(l logrus.FieldLogger, span opentracing.Span, c script.Context, mapId uint32) script.State {
 	m := message.NewBuilder().
 		AddText("Hmm, I see you have been recommended by Neinheart to come to Victoria Island to improve your knightly skills. Well, just this time the ride will be free of charges. Will you take the ride?")
-	return script.SendYesNoExit(l, c, m.String(), r.PerformNeinheartTransaction(mapId), r.MoreToSee, r.MoreToSee)
+	return script.SendYesNoExit(l, span, c, m.String(), r.PerformNeinheartTransaction(mapId), r.MoreToSee, r.MoreToSee)
 }
 
-func (r RegularCabEllinia) StandardConfirmMap(l logrus.FieldLogger, c script.Context, mapId uint32, cost uint32) script.State {
+func (r RegularCabEllinia) StandardConfirmMap(l logrus.FieldLogger, span opentracing.Span, c script.Context, mapId uint32, cost uint32) script.State {
 	m := message.NewBuilder().
 		AddText("You don't have anything else to do here, huh? Do you really want to go to ").
 		BlueText().ShowMap(mapId).
 		BlackText().AddText("? It'll cost you ").
 		BlueText().AddText(fmt.Sprintf("%d mesos", cost))
-	return script.SendYesNoExit(l, c, m.String(), r.PerformTransaction(mapId, cost), r.MoreToSee, r.MoreToSee)
+	return script.SendYesNoExit(l, span, c, m.String(), r.PerformTransaction(mapId, cost), r.MoreToSee, r.MoreToSee)
 }
 
 func (r RegularCabEllinia) PerformTransaction(mapId uint32, cost uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, cost) {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasMeso(l, span)(c.CharacterId, cost) {
 			m := message.NewBuilder().
 				AddText("You don't have enough mesos. Sorry to say this, but without them, you won't be able to ride the cab.")
-			return script.SendNextExit(l, c, m.String(), script.Exit(), script.Exit())
+			return script.SendNextExit(l, span, c, m.String(), script.Exit(), script.Exit())
 		}
 
-		err := character.GainMeso(l)(c.CharacterId, -int32(cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to complete meso transaction with %d.", c.CharacterId)
-			return nil
-		}
-
-		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding mesos.", c.CharacterId, mapId)
-			err = character.GainMeso(l)(c.CharacterId, int32(cost))
-			if err != nil {
-				l.WithError(err).Errorf("Error processing refund, %d has lost %d mesos.", c.CharacterId, cost)
-			}
-		}
+		character.GainMeso(l, span)(c.CharacterId, -int32(cost))
+		npc.WarpById(l, span)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		return nil
 	}
 }
 
 func (r RegularCabEllinia) PerformNeinheartTransaction(mapId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		character.GainItem(l)(c.CharacterId, item.NeinheartsTaxiCoupon, -1)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		character.GainItem(l, span)(c.CharacterId, item.NeinheartsTaxiCoupon, -1)
 
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding item.", c.CharacterId, mapId)
-			character.GainItem(l)(c.CharacterId, item.NeinheartsTaxiCoupon, 1)
-		}
+		npc.WarpById(l, span)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		return nil
 	}
 }

@@ -5,6 +5,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,7 +17,7 @@ func (r IsaTheStationGuide) NPCId() uint32 {
 	return npc.IsaTheStationGuide
 }
 
-func (r IsaTheStationGuide) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r IsaTheStationGuide) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Orbis Station has lots of platforms available to choose from. You need to choose the one that'll take you to the destination of your choice. Which platform will you take?").NewLine().
 		OpenItem(0).BlueText().AddText("The platform to the ship that heads to Ellinia.").CloseItem().NewLine().
@@ -25,7 +26,7 @@ func (r IsaTheStationGuide) Initial(l logrus.FieldLogger, c script.Context) scri
 		OpenItem(3).BlueText().AddText("The platform to Hak that heads to Mu Lung.").CloseItem().NewLine().
 		OpenItem(4).BlueText().AddText("The platform to Genie that heads to Ariant.").CloseItem().NewLine().
 		OpenItem(5).BlueText().AddText("The platform to the ship that heads to Ereve.").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r IsaTheStationGuide) Selection(selection int32) script.StateProducer {
@@ -47,17 +48,17 @@ func (r IsaTheStationGuide) Selection(selection int32) script.StateProducer {
 }
 
 func (r IsaTheStationGuide) SendYouTo(mapId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("Ok ").
 			ShowCharacterName().AddText(", I will send you to the platform for ").
 			BlueText().ShowMap(mapId).
 			BlackText().AddText(".")
-		return script.SendNext(l, c, m.String(), r.Warp(mapId))
+		return script.SendNext(l, span, c, m.String(), r.Warp(mapId))
 	}
 }
 
 func (r IsaTheStationGuide) Warp(mapId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		return script.WarpByName(mapId, "west00")(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		return script.WarpByName(mapId, "west00")(l, span, c)
 	}
 }

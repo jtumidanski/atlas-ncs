@@ -61,7 +61,7 @@ func (r Agatha) Explanation(townName string, duration uint32, cost uint32, ticke
 
 func (r Agatha) ValidateChoice(ticket uint32, cost uint32) script.StateProducer {
 	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, cost) || !character.CanHold(l)(c.CharacterId, ticket) {
+		if !character.HasMeso(l, span)(c.CharacterId, cost) || !character.CanHold(l)(c.CharacterId, ticket) {
 			return r.AreYouSure(cost)(l, span, c)
 		}
 		return r.ProcessPurchase(ticket, cost)(l, span, c)
@@ -79,11 +79,8 @@ func (r Agatha) AreYouSure(cost uint32) script.StateProducer {
 
 func (r Agatha) ProcessPurchase(ticket uint32, cost uint32) script.StateProducer {
 	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -int32(cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process purchase for character %d.", c.CharacterId)
-		}
-		character.GainItem(l)(c.CharacterId, ticket, 1)
+		character.GainMeso(l, span)(c.CharacterId, -int32(cost))
+		character.GainItem(l, span)(c.CharacterId, ticket, 1)
 		return script.Exit()(l, span, c)
 	}
 }

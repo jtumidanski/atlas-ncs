@@ -25,7 +25,7 @@ func (r AriantPrivateHouse2Cupboard) Initial(l logrus.FieldLogger, span opentrac
 
 		if progress[slot] == '2' {
 			next := progress[0:slot] + string('3') + progress[slot+1:]
-			character.GainItem(l)(c.CharacterId, item.SmallSackOfJewelry, -1)
+			character.GainItem(l, span)(c.CharacterId, item.SmallSackOfJewelry, -1)
 			quest.SetProgressString(l)(c.CharacterId, 3926, next)
 		}
 	}

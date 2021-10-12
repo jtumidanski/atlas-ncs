@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/quest"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,16 +22,16 @@ func (r HarpStringC) NPCId() uint32 {
 var HarpSounds = []string{"do", "re", "mi", "pa", "sol", "la", "si"}
 var HarpSong = "CCGGAAGFFEEDDC|GGFFEED|GGFFEED|CCGGAAGFFEEDDC|"
 
-func (r HarpStringC) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r HarpStringC) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	_map.PlaySound(l)(c.WorldId, c.ChannelId, c.MapId, fmt.Sprintf("orbis/%s", HarpSounds[c.NPCId-2012027]))
 
 	if !quest.IsStarted(l)(c.CharacterId, 3114) {
-		return script.Exit()(l, c)
+		return script.Exit()(l, span, c)
 	}
 
 	progress := -1 * quest.ProgressInt(l)(c.CharacterId, 3114, 0)
 	if progress <= -1 {
-		return script.Exit()(l, c)
+		return script.Exit()(l, span, c)
 	}
 
 	nextNote := HarpSong[progress]
@@ -60,5 +61,5 @@ func (r HarpStringC) Initial(l logrus.FieldLogger, c script.Context) script.Stat
 		}
 		quest.SetProgress(l)(c.CharacterId, 3114, 0, uint32(-1*(progress+1)))
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }

@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,19 +19,19 @@ func (r WolfGuard) NPCId() uint32 {
 	return npc.WolfGuard
 }
 
-func (r WolfGuard) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.Werewolf) {
-		return r.Warp(l, c)
+func (r WolfGuard) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasItem(l, span)(c.CharacterId, item.Werewolf) {
+		return r.Warp(l, span, c)
 	}
-	return r.GetLost(l, c)
+	return r.GetLost(l, span, c)
 }
 
-func (r WolfGuard) Warp(l logrus.FieldLogger, c script.Context) script.State {
-	return script.WarpById(_map.FieldOfWolves, 0)(l, c)
+func (r WolfGuard) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return script.WarpById(_map.FieldOfWolves, 0)(l, span, c)
 }
 
-func (r WolfGuard) GetLost(l logrus.FieldLogger, c script.Context) script.State {
+func (r WolfGuard) GetLost(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("What is it? If you you're here to waste my time, get lost!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

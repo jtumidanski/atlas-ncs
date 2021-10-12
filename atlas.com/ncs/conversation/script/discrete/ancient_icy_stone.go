@@ -18,7 +18,7 @@ func (r AncientIcyStone) NPCId() uint32 {
 }
 
 func (r AncientIcyStone) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	if !character.HasItem(l)(c.CharacterId, item.OrihalconHammer) {
+	if !character.HasItem(l, span)(c.CharacterId, item.OrihalconHammer) {
 		return script.Exit()(l, span, c)
 	}
 
@@ -26,7 +26,7 @@ func (r AncientIcyStone) Initial(l logrus.FieldLogger, span opentracing.Span, c 
 		return script.Exit()(l, span, c)
 	}
 
-	character.GainItem(l)(c.CharacterId, item.AncientIcePowder, 1)
-	character.GainItem(l)(c.CharacterId, item.OrihalconHammer, -1)
+	character.GainItem(l, span)(c.CharacterId, item.AncientIcePowder, 1)
+	character.GainItem(l, span)(c.CharacterId, item.OrihalconHammer, -1)
 	return script.Exit()(l, span, c)
 }

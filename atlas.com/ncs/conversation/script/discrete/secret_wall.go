@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,11 +17,11 @@ func (r SecretWall) NPCId() uint32 {
 	return npc.SecretWall
 }
 
-func (r SecretWall) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r SecretWall) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if quest.IsStarted(l)(c.CharacterId, 3927) {
 		quest.SetProgress(l)(c.CharacterId, 3927, 0, 1)
 		m := message.NewBuilder().AddText("If I had an iron hammer and a dagger, a bow and an arrow...")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }

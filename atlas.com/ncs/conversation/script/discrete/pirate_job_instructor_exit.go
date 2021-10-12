@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,25 +19,25 @@ func (r PirateJobInstructorExit) NPCId() uint32 {
 	return npc.PirateJobInstructorExit
 }
 
-func (r PirateJobInstructorExit) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r PirateJobInstructorExit) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	//TODO should be a better implementation than this
 	if c.MapId != _map.PirateTestRoom1 && c.MapId != _map.PirateTestRoom2 {
-		return r.Error(l, c)
+		return r.Error(l, span, c)
 	}
-	return r.Warp(l, c)
+	return r.Warp(l, span, c)
 }
 
-func (r PirateJobInstructorExit) Error(l logrus.FieldLogger, c script.Context) script.State {
+func (r PirateJobInstructorExit) Error(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Error. Please report this.")
-	return script.SendNext(l, c, m.String(), r.ErrorWarp)
+	return script.SendNext(l, span, c, m.String(), r.ErrorWarp)
 }
 
-func (r PirateJobInstructorExit) ErrorWarp(l logrus.FieldLogger, c script.Context) script.State {
+func (r PirateJobInstructorExit) ErrorWarp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	character.RemoveAll(l)(c.CharacterId, item.PotentPowerCrystal)
 	character.RemoveAll(l)(c.CharacterId, item.PotentWindCrystal)
-	return r.Warp(l, c)
+	return r.Warp(l, span, c)
 }
 
-func (r PirateJobInstructorExit) Warp(l logrus.FieldLogger, c script.Context) script.State {
-	return script.WarpById(_map.NavigationRoom, 0)(l, c)
+func (r PirateJobInstructorExit) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return script.WarpById(_map.NavigationRoom, 0)(l, span, c)
 }

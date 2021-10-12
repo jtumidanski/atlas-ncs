@@ -2,7 +2,9 @@ package npc
 
 import (
 	"atlas-ncs/json"
+	"atlas-ncs/rest"
 	"github.com/gorilla/mux"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -25,25 +27,22 @@ type SpeechAttributes struct {
 
 func InitResource(router *mux.Router, l logrus.FieldLogger) {
 	r := router.PathPrefix("/speak").Subrouter()
-	r.HandleFunc("", SendSpeech(l)).Methods(http.MethodPost)
+	r.HandleFunc("", rest.RetrieveSpan("send_speech", SendSpeech(l))).Methods(http.MethodPost)
 }
 
-func SendSpeech(l logrus.FieldLogger) http.HandlerFunc {
-	return func(rw http.ResponseWriter, r *http.Request) {
-		li := &SpeechInputDataContainer{}
-		err := json.FromJSON(li, r.Body)
-		if err != nil {
-			l.WithError(err).Errorf("Deserializing input.")
-			rw.WriteHeader(http.StatusBadRequest)
-			return
+func SendSpeech(l logrus.FieldLogger) rest.SpanHandler {
+	return func(span opentracing.Span) http.HandlerFunc {
+		return func(rw http.ResponseWriter, r *http.Request) {
+			li := &SpeechInputDataContainer{}
+			err := json.FromJSON(li, r.Body)
+			if err != nil {
+				l.WithError(err).Errorf("Deserializing input.")
+				rw.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			attr := li.Data.Attributes
+			SendSimple(l, span)(attr.CharacterId, attr.NPCId)(attr.Message)
+			rw.WriteHeader(http.StatusNoContent)
 		}
-		attr := li.Data.Attributes
-		err = SendSimple(l, attr.CharacterId, attr.NPCId)(attr.Message)
-		if err != nil {
-			l.WithError(err).Errorf("Error sending simple message to %d on behalf of %d.", attr.CharacterId, attr.NPCId)
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		rw.WriteHeader(http.StatusNoContent)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,10 +18,10 @@ func (r Vicious) NPCId() uint32 {
 	return npc.Vicious
 }
 
-func (r Vicious) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Vicious) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	hello := "Hello. I am Vicious, retired Sniper. However, I used to be the top student of Athena Pierce. Though I no longer hunt, I can make some archer items that will be useful for you..."
 	categories := r.CreateCategories()
-	return refine.NewGenericRefine(l, c, hello, categories)
+	return refine.NewGenericRefine(l, span, c, hello, categories)
 }
 
 func (r Vicious) CreateCategories() []refine.ListItem {
@@ -316,28 +317,28 @@ func (r Vicious) SteelArrowForCrossbow() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: item.SteelPlate, Amount: 1}, {ItemId: item.ProcessedWood, Amount: 5}, {ItemId: item.SoftFeather, Amount: 15}}, refine.SetAwardAmount(800))
 }
 
-func (r Vicious) Sorry(l logrus.FieldLogger, c script.Context) script.State {
+func (r Vicious) Sorry(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Sorry, but this is how I make my living. No meso, no item.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Vicious) NeedMoreItems(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Surely you, of all people, would understand the value of having quality items? I can't do that without the items I require.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Vicious) NotEnoughInventorySpace(l logrus.FieldLogger, c script.Context) script.State {
+func (r Vicious) NotEnoughInventorySpace(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Please make sure you have room in your inventory, and talk to me again.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Vicious) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Vicious) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("A perfect item, as usual. Come and see me if you need anything else.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

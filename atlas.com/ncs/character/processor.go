@@ -3,13 +3,14 @@ package character
 import (
 	"atlas-ncs/job"
 	"errors"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"strconv"
 )
 
-func GetCharacterById(l logrus.FieldLogger) func(characterId uint32) (*Model, error) {
+func GetCharacterById(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (*Model, error) {
 	return func(characterId uint32) (*Model, error) {
-		cs, err := requestCharacter(l)(characterId)
+		cs, err := requestCharacter(l, span)(characterId)
 		if err != nil {
 			return nil, err
 		}
@@ -45,9 +46,9 @@ func makeCharacterAttributes(ca *dataBody) *Model {
 
 type AttributeCriteria func(*Model) bool
 
-func MeetsCriteria(l logrus.FieldLogger) func(characterId uint32, criteria ...AttributeCriteria) bool {
+func MeetsCriteria(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, criteria ...AttributeCriteria) bool {
 	return func(characterId uint32, criteria ...AttributeCriteria) bool {
-		c, err := GetCharacterById(l)(characterId)
+		c, err := GetCharacterById(l, span)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d for criteria check.", characterId)
 			return false
@@ -61,15 +62,15 @@ func MeetsCriteria(l logrus.FieldLogger) func(characterId uint32, criteria ...At
 	}
 }
 
-func HasItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32) bool {
+func HasItem(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32) bool {
 	return func(characterId uint32, itemId uint32) bool {
-		return HasItems(l)(characterId, itemId, 1)
+		return HasItems(l, span)(characterId, itemId, 1)
 	}
 }
 
-func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quantity uint32) bool {
+func HasItems(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32, quantity uint32) bool {
 	return func(characterId uint32, itemId uint32, quantity uint32) bool {
-		items, err := requestItemsForCharacter(l)(characterId, itemId)
+		items, err := requestItemsForCharacter(l, span)(characterId, itemId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
@@ -87,9 +88,9 @@ func HasItems(l logrus.FieldLogger) func(characterId uint32, itemId uint32, quan
 	}
 }
 
-func HasAnyItem(l logrus.FieldLogger) func(characterId uint32, items ...uint32) bool {
+func HasAnyItem(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, items ...uint32) bool {
 	return func(characterId uint32, items ...uint32) bool {
-		allItems, err := requestAllItemsForCharacter(l)(characterId)
+		allItems, err := requestAllItemsForCharacter(l, span)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
@@ -135,21 +136,21 @@ func CanHoldThese(l logrus.FieldLogger) func(characterId uint32, items ...Item) 
 	}
 }
 
-func ChangeJob(l logrus.FieldLogger) func(characterId uint32, jobId uint16) {
+func ChangeJob(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, jobId uint16) {
 	return func(characterId uint32, jobId uint16) {
-		adjustJob(l)(characterId, jobId)
+		adjustJob(l, span)(characterId, jobId)
 	}
 }
 
-func ResetAP(l logrus.FieldLogger) func(characterId uint32) {
+func ResetAP(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) {
 	return func(characterId uint32) {
-		resetAP(l)(characterId)
+		resetAP(l, span)(characterId)
 	}
 }
 
-func IsLevel(l logrus.FieldLogger) func(characterId uint32, level byte) bool {
+func IsLevel(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, level byte) bool {
 	return func(characterId uint32, level byte) bool {
-		return MeetsCriteria(l)(characterId, IsLevelCriteria(level))
+		return MeetsCriteria(l, span)(characterId, IsLevelCriteria(level))
 	}
 }
 
@@ -183,9 +184,9 @@ func HasIntelligenceCriteria(amount uint16) AttributeCriteria {
 	}
 }
 
-func AboveLevel(l logrus.FieldLogger) func(characterId uint32, level byte) bool {
+func AboveLevel(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, level byte) bool {
 	return func(characterId uint32, level byte) bool {
-		return MeetsCriteria(l)(characterId, AboveLevelCriteria(level))
+		return MeetsCriteria(l, span)(characterId, AboveLevelCriteria(level))
 	}
 }
 
@@ -195,9 +196,9 @@ func AboveLevelCriteria(level byte) AttributeCriteria {
 	}
 }
 
-func HasMeso(l logrus.FieldLogger) func(characterId uint32, amount uint32) bool {
+func HasMeso(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, amount uint32) bool {
 	return func(characterId uint32, amount uint32) bool {
-		return MeetsCriteria(l)(characterId, HasMesoCriteria(amount))
+		return MeetsCriteria(l, span)(characterId, HasMesoCriteria(amount))
 	}
 }
 
@@ -207,15 +208,15 @@ func HasMesoCriteria(amount uint32) AttributeCriteria {
 	}
 }
 
-func GainEquipment(l logrus.FieldLogger) func(characterId uint32, itemId uint32) {
+func GainEquipment(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32) {
 	return func(characterId uint32, itemId uint32) {
-		gainEquipment(l)(characterId, itemId)
+		gainEquipment(l, span)(characterId, itemId)
 	}
 }
 
-func GainItem(l logrus.FieldLogger) func(characterId uint32, itemId uint32, amount int32) {
+func GainItem(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32, amount int32) {
 	return func(characterId uint32, itemId uint32, amount int32) {
-		gainItem(l)(characterId, itemId, amount)
+		gainItem(l, span)(characterId, itemId, amount)
 	}
 }
 
@@ -225,20 +226,16 @@ func GainFame(l logrus.FieldLogger) func(characterId uint32, amount int32) {
 	}
 }
 
-func GainMeso(l logrus.FieldLogger) func(characterId uint32, amount int32) error {
-	adjuster, _ := AdjustMeso(l)
-	return func(characterId uint32, amount int32) error {
-		err := adjuster(characterId, amount)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to adjust %d meso by %d.", characterId, amount)
-		}
-		return err
+func GainMeso(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, amount int32) {
+	adjuster := AdjustMeso(l, span)
+	return func(characterId uint32, amount int32) {
+		adjuster(characterId, amount)
 	}
 }
 
-func IsBeginnerTree(l logrus.FieldLogger) func(characterId uint32) bool {
+func IsBeginnerTree(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
-		return MeetsCriteria(l)(characterId, IsBeginnerTreeCriteria())
+		return MeetsCriteria(l, span)(characterId, IsBeginnerTreeCriteria())
 	}
 }
 
@@ -248,9 +245,9 @@ func IsBeginnerTreeCriteria() AttributeCriteria {
 	}
 }
 
-func IsJob(l logrus.FieldLogger) func(characterId uint32, option uint16) bool {
+func IsJob(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, option uint16) bool {
 	return func(characterId uint32, option uint16) bool {
-		return MeetsCriteria(l)(characterId, IsJobCriteria(option))
+		return MeetsCriteria(l, span)(characterId, IsJobCriteria(option))
 	}
 }
 
@@ -286,9 +283,9 @@ func IncreaseBuddyCapacity(l logrus.FieldLogger) func(characterId uint32, amount
 	}
 }
 
-func GetGender(l logrus.FieldLogger) func(characterId uint32) byte {
+func GetGender(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) byte {
 	return func(characterId uint32) byte {
-		c, err := GetCharacterById(l)(characterId)
+		c, err := GetCharacterById(l, span)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
 			return 0
@@ -297,9 +294,9 @@ func GetGender(l logrus.FieldLogger) func(characterId uint32) byte {
 	}
 }
 
-func GetHair(l logrus.FieldLogger) func(characterId uint32) uint32 {
+func GetHair(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) uint32 {
 	return func(characterId uint32) uint32 {
-		c, err := GetCharacterById(l)(characterId)
+		c, err := GetCharacterById(l, span)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
 			return 0
@@ -308,9 +305,9 @@ func GetHair(l logrus.FieldLogger) func(characterId uint32) uint32 {
 	}
 }
 
-func GetFace(l logrus.FieldLogger) func(characterId uint32) uint32 {
+func GetFace(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) uint32 {
 	return func(characterId uint32) uint32 {
-		c, err := GetCharacterById(l)(characterId)
+		c, err := GetCharacterById(l, span)(characterId)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve character %d.", characterId)
 			return 0
@@ -375,9 +372,9 @@ func ClearSavedLocation(l logrus.FieldLogger) func(characterId uint32, location 
 	}
 }
 
-func IsCygnus(l logrus.FieldLogger) func(characterId uint32) bool {
+func IsCygnus(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) bool {
 	return func(characterId uint32) bool {
-		return MeetsCriteria(l)(characterId, IsCygnusCriteria())
+		return MeetsCriteria(l, span)(characterId, IsCygnusCriteria())
 	}
 }
 
@@ -388,9 +385,9 @@ func IsCygnusCriteria() AttributeCriteria {
 	}
 }
 
-func IsJobBranch(l logrus.FieldLogger) func(characterId uint32, branch uint32) bool {
+func IsJobBranch(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, branch uint32) bool {
 	return func(characterId uint32, branch uint32) bool {
-		return MeetsCriteria(l)(characterId, IsJobBranchCriteria(branch))
+		return MeetsCriteria(l, span)(characterId, IsJobBranchCriteria(branch))
 	}
 }
 

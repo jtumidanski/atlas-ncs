@@ -292,7 +292,7 @@ func doAcceptDecline(accept StateProducer, decline StateProducer) ProcessStateFu
 	}
 }
 
-func SendDimensionalMirror(l logrus.FieldLogger, c Context, message string, selection ProcessSelection) State {
+func SendDimensionalMirror(l logrus.FieldLogger, span opentracing.Span, c Context, message string, selection ProcessSelection) State {
 	err := npc.SendDimensionalMirror(l, c.CharacterId, c.NPCId)(message)
 	if err != nil {
 		l.WithError(err).Errorf("Sending next message for npc %d to character %d.", c.NPCId, c.CharacterId)

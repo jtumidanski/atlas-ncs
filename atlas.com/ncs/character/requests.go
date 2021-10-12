@@ -3,6 +3,7 @@ package character
 import (
 	"atlas-ncs/rest/requests"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,10 +16,10 @@ const (
 	characterItem                  = characterItems + "?itemId=%d"
 )
 
-func requestCharacter(l logrus.FieldLogger) func(characterId uint32) (*dataContainer, error) {
+func requestCharacter(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (*dataContainer, error) {
 	return func(characterId uint32) (*dataContainer, error) {
 		ar := &dataContainer{}
-		err := requests.Get(l)(fmt.Sprintf(charactersById, characterId), ar)
+		err := requests.Get(l, span)(fmt.Sprintf(charactersById, characterId), ar)
 		if err != nil {
 			return nil, err
 		}
@@ -26,10 +27,10 @@ func requestCharacter(l logrus.FieldLogger) func(characterId uint32) (*dataConta
 	}
 }
 
-func requestAllItemsForCharacter(l logrus.FieldLogger) func(characterId uint32) (*ItemListDataContainer, error) {
+func requestAllItemsForCharacter(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (*ItemListDataContainer, error) {
 	return func(characterId uint32) (*ItemListDataContainer, error) {
 		ar := &ItemListDataContainer{}
-		err := requests.Get(l)(fmt.Sprintf(characterItems, characterId), ar)
+		err := requests.Get(l, span)(fmt.Sprintf(characterItems, characterId), ar)
 		if err != nil {
 			return nil, err
 		}
@@ -37,10 +38,10 @@ func requestAllItemsForCharacter(l logrus.FieldLogger) func(characterId uint32) 
 	}
 }
 
-func requestItemsForCharacter(l logrus.FieldLogger) func(characterId uint32, itemId uint32) (*ItemListDataContainer, error) {
+func requestItemsForCharacter(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32) (*ItemListDataContainer, error) {
 	return func(characterId uint32, itemId uint32) (*ItemListDataContainer, error) {
 	ar := &ItemListDataContainer{}
-	err := requests.Get(l)(fmt.Sprintf(characterItem, characterId, itemId), ar)
+	err := requests.Get(l, span)(fmt.Sprintf(characterItem, characterId, itemId), ar)
 	if err != nil {
 		return nil, err
 	}

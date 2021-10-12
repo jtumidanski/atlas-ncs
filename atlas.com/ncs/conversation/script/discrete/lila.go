@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +18,7 @@ func (r Lila) NPCId() uint32 {
 	return npc.Lila
 }
 
-func (r Lila) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Lila) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	hello := message.NewBuilder().
 		AddText("Hohoh~ welcome welcome. Welcome to Ariant Skin Care. You have stepped into a renowned Skin Care shop that even the Queen herself frequents this place. If you have ").
 		BlueText().ShowItemName1(item.AriantSkinCareCoupon).
@@ -25,7 +26,7 @@ func (r Lila) Initial(l logrus.FieldLogger, c script.Context) script.State {
 		String()
 
 	coupon := item.AriantSkinCareCoupon
-	return care.NewGenericCare(hello, []care.ChoiceConfig{r.SkinCare(coupon)})(l, c)
+	return care.NewGenericCare(hello, []care.ChoiceConfig{r.SkinCare(coupon)})(l, span, c)
 }
 
 func (r Lila) SkinCare(coupon uint32) care.ChoiceConfig {

@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,12 +20,12 @@ func (r Carson) NPCId() uint32 {
 	return npc.Carson
 }
 
-func (r Carson) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if quest.IsStarted(l)(c.CharacterId, 3310) && !character.HasItem(l)(c.CharacterId, item.LightlessMagicDevice) {
-		return script.WarpByName( _map.ClosedLab, "out00")(l, c)
+func (r Carson) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if quest.IsStarted(l)(c.CharacterId, 3310) && !character.HasItem(l, span)(c.CharacterId, item.LightlessMagicDevice) {
+		return script.WarpByName( _map.ClosedLab, "out00")(l, span, c)
 	}
 
 	m := message.NewBuilder().
 		AddText("Alchemy....and Alchemist.....both of them are important. But more importantly, it is the Magatia that tolerate everything. The honor of Magatia should be protected by me.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

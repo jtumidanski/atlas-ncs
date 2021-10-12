@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +18,8 @@ func (r Sarah) NPCId() uint32 {
 	return npc.Sarah
 }
 
-func (r Sarah) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+func (r Sarah) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r Sarah) Hello() string {
@@ -46,9 +47,9 @@ func (r Sarah) WhatIsAStimulator() refine.ListItem {
 	}
 }
 
-func (r Sarah) StimulatorInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Sarah) StimulatorInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("A stimulator is a special potion that I can add into the process of creating certain items. It gives it stats as though it had dropped from a monster. However, it is possible to have no change, and it is also possible for the item to be below average. There's also a 10% chance of not getting any item when using a stimulator, so please choose wisely.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Sarah) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
@@ -382,29 +383,29 @@ func (r Sarah) BrownMoonGloveRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: item.GlovesProductionStimulator, Amount: 1}, {ItemId: 1082065, Amount: 1}, {ItemId: 4011006, Amount: 2}, {ItemId: 4021008, Amount: 1}}, refine.SetCost(54000))
 }
 
-func (r Sarah) StimulatorError(l logrus.FieldLogger, c script.Context) script.State {
+func (r Sarah) StimulatorError(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Eek! I think I accidentally added too much stimulator and, well, the whole thing is unusable now... Sorry, but I can't offer a refund.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Sarah) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Sarah) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("There, the gloves are ready. Be careful, they're still hot.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Sarah) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Sarah) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Sorry, we only accept meso.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Sarah) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("Sorry, but I have to have those items to get this exactly right. Perhaps next time.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Sarah) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Sarah) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Check your inventory for a free slot first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

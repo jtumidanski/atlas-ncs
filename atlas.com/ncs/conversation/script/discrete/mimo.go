@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,11 +16,11 @@ func (r Mimo) NPCId() uint32 {
 	return npc.Mimo
 }
 
-func (r Mimo) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+func (r Mimo) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.Hello(l, span, c)
 }
 
-func (r Mimo) Hello(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mimo) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Wait! You'll figure the stuff out by the time you reach Lv. 10 anyway, but if you absolutely want to prepare beforehand, you may view the following information.").NewLine().NewLine().
 		AddText("Tell me, what would you like to know?").NewLine().
@@ -38,7 +39,7 @@ func (r Mimo) Hello(l logrus.FieldLogger, c script.Context) script.State {
 		OpenItem(12).BlueText().AddText("Quest Notifications").CloseItem().NewLine().
 		OpenItem(13).BlueText().AddText("Enhancing Stats").CloseItem().NewLine().
 		OpenItem(14).BlueText().AddText("Who are the Cygnus Knights?").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r Mimo) Selection(selection int32) script.StateProducer {
@@ -77,24 +78,24 @@ func (r Mimo) Selection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r Mimo) UnderShinsoo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mimo) UnderShinsoo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I serve under Shinsoo, the guardian of Empress Cygnus. My master, Shinsoo, has ordered me to guide everyone who comes to Maple World to join Cygnus Knights. I will be assisting and following you around until you become a Knight or reach Lv. 11. Please let me know if you have any questions.")
-	return script.SendNext(l, c, m.String(), r.AskAnyTime)
+	return script.SendNext(l, span, c, m.String(), r.AskAnyTime)
 }
 
-func (r Mimo) AskAnyTime(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mimo) AskAnyTime(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("There is no need for you to check this info now. These are basics that you'll pick up as you play. You can always ask me questions that come up after you've reached Lv. 10, so just relax.")
-	return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.UnderShinsoo)
+	return script.SendNextPrevious(l, span, c, m.String(), script.Exit(), r.UnderShinsoo)
 }
 
 func (r Mimo) Hint(hint uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		character.GuideHint(l)(c.CharacterId, hint)
-		return script.Exit()(l, c)
+		return script.Exit()(l, span, c)
 	}
 }
 
-func (r Mimo) CygnusInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mimo) CygnusInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("The Black Magician is trying to revive and conquer our peaceful Maple World. As a response to this threat, Empress Cygnus has formed a knighthood, now known as Cygnus Knights. You can become a Knight when you reach Lv. 10.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

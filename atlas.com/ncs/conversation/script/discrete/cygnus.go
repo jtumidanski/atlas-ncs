@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,17 +19,17 @@ func (r Cygnus) NPCId() uint32 {
 	return npc.Cygnus
 }
 
-func (r Cygnus) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cygnus) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !(quest.IsCompleted(l)(c.CharacterId, 20407) || quest.IsStarted(l)(c.CharacterId, 20407) && quest.ProgressInt(l)(c.CharacterId, 20407, int(monster.BlackWitch)) != 0) &&
 		_map.MonsterCount(l)(c.WorldId, c.ChannelId, c.MapId, monster.BlackWitch) == 0 &&
 		!_map.HasNPC(l)(c.WorldId, c.ChannelId, c.MapId, npc.Eleanor) {
-		return r.ShesAlreadyHere(l, c)
+		return r.ShesAlreadyHere(l, span, c)
 	}
 	m := message.NewBuilder().AddText("...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Cygnus) ShesAlreadyHere(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cygnus) ShesAlreadyHere(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("... Hnngh... ").
 		BlueText().ShowCharacterName().
@@ -39,10 +40,10 @@ func (r Cygnus) ShesAlreadyHere(l logrus.FieldLogger, c script.Context) script.S
 		BlackText().AddText(", I'm truly sorry I can't help you right now in this state, just when a bigger threat appeared I could do nothing for my people.... Please I beg you, please defeat her, ").
 		BlueText().ShowCharacterName().
 		BlackText().AddText("!! ....")
-	return script.SendOkTrigger(l, c, m.String(), r.SpawnEleanor)
+	return script.SendOkTrigger(l, span, c, m.String(), r.SpawnEleanor)
 }
 
-func (r Cygnus) SpawnEleanor(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cygnus) SpawnEleanor(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	npc.Spawn(l)(c.WorldId, c.ChannelId, c.MapId, npc.Eleanor, 850, 0)
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }

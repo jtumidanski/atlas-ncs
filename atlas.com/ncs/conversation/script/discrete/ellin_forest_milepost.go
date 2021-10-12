@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,14 +19,14 @@ func (r EllinForestMilepost) NPCId() uint32 {
 	return npc.EllinForestMilepost
 }
 
-func (r EllinForestMilepost) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r EllinForestMilepost) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Would you like to exit this instance? Your party members may have to abandon it as well, so take that in mind.")
-	return script.SendYesNo(l, c, m.String(), r.Yes, script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.Yes, script.Exit())
 }
 
-func (r EllinForestMilepost) Yes(l logrus.FieldLogger, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.PurpleStoneOfMagic, -1)
-	character.GainItem(l)(c.CharacterId, item.MonsterMarble, -1)
-	character.GainItem(l)(c.CharacterId, item.PurificationMarble, -1)
-	return script.WarpById(_map.OuterForestExit, 0)(l, c)
+func (r EllinForestMilepost) Yes(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainItem(l, span)(c.CharacterId, item.PurpleStoneOfMagic, -1)
+	character.GainItem(l, span)(c.CharacterId, item.MonsterMarble, -1)
+	character.GainItem(l, span)(c.CharacterId, item.PurificationMarble, -1)
+	return script.WarpById(_map.OuterForestExit, 0)(l, span, c)
 }

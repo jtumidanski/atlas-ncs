@@ -4,6 +4,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +16,7 @@ func (r FirstMagicPentagram) NPCId() uint32 {
 	return npc.FirstMagicPentagram
 }
 
-func (r FirstMagicPentagram) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r FirstMagicPentagram) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if quest.IsStarted(l)(c.CharacterId, 3345) {
 		progress := quest.ProgressInt(l)(c.CharacterId, 3345, 0)
 
@@ -25,5 +26,5 @@ func (r FirstMagicPentagram) Initial(l logrus.FieldLogger, c script.Context) scr
 			quest.SetProgress(l)(c.CharacterId, 3345, 0, 0)
 		}
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }

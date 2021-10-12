@@ -22,7 +22,7 @@ func (r APileOfBlueFlowers) NPCId() uint32 {
 }
 
 func (r APileOfBlueFlowers) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	if quest.IsStarted(l)(c.CharacterId, 2053) && !character.HasItems(l)(c.CharacterId, item.BlueViola, 20) {
+	if quest.IsStarted(l)(c.CharacterId, 2053) && !character.HasItems(l, span)(c.CharacterId, item.BlueViola, 20) {
 		return r.QuestReward(l, span, c)
 	}
 	return r.RandomReward(l, span, c)
@@ -41,12 +41,12 @@ func (r APileOfBlueFlowers) NoSpace(l logrus.FieldLogger, span opentracing.Span,
 }
 
 func (r APileOfBlueFlowers) AwardViola(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.BlueViola, 20)
+	character.GainItem(l, span)(c.CharacterId, item.BlueViola, 20)
 	return script.WarpById(_map.Sleepywood, 0)(l, span, c)
 }
 
 func (r APileOfBlueFlowers) RandomReward(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	prizes := []uint32{item.GarnetOre, item.AquaMarineOre, item.TopazOre}
-	character.GainItem(l)(c.CharacterId, prizes[rand.Intn(len(prizes))], 4)
+	character.GainItem(l, span)(c.CharacterId, prizes[rand.Intn(len(prizes))], 4)
 	return script.Exit()(l, span, c)
 }

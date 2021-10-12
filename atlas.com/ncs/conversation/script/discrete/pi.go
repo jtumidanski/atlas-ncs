@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +18,8 @@ func (r Pi) NPCId() uint32 {
 	return npc.Pi
 }
 
-func (r Pi) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+func (r Pi) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r Pi) Hello() string {
@@ -243,24 +244,24 @@ func (r Pi) LUKCrystalRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 4004003, Amount: 10}}, refine.SetCost(5000))
 }
 
-func (r Pi) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Pi) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("All done. If you need anything else, you know where to find me.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Pi) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Pi) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid you cannot afford my services.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Pi) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("Hold it, I can't finish that without all of the proper materials. Bring them first, then we'll talk.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Pi) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Pi) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid you have no slots available for this transaction.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

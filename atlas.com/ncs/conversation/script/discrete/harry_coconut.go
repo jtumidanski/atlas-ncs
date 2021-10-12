@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,12 +19,12 @@ func (r HarryCoconut) NPCId() uint32 {
 	return npc.HarryCoconut
 }
 
-func (r HarryCoconut) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r HarryCoconut) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Man... It is hot!!!~ How can I help you?").NewLine().
 		OpenItem(0).BlueText().AddText("Leave the event game.").CloseItem().NewLine().
 		OpenItem(1).BlueText().AddText("Buy the weapon (Wooden Club 1 meso)").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r HarryCoconut) Selection(selection int32) script.StateProducer {
@@ -36,34 +37,31 @@ func (r HarryCoconut) Selection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r HarryCoconut) Confirm(l logrus.FieldLogger, c script.Context) script.State {
+func (r HarryCoconut) Confirm(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("If you leave now, you can't participate in this event for the next 24 hours. Are you sure you want to leave?")
-	return script.SendYesNo(l, c, m.String(), r.Leave, script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.Leave, script.Exit())
 }
 
-func (r HarryCoconut) Leave(l logrus.FieldLogger, c script.Context) script.State {
+func (r HarryCoconut) Leave(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	event.LeaveEvent(l)(c.WorldId, c.ChannelId, c.CharacterId)
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }
 
-func (r HarryCoconut) Buy(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.HasMeso(l)(c.CharacterId, 1) || !character.CanHold(l)(c.CharacterId, item.WoodenClub) {
-		return r.NoMesoOrSpace(l, c)
+func (r HarryCoconut) Buy(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if !character.HasMeso(l, span)(c.CharacterId, 1) || !character.CanHold(l)(c.CharacterId, item.WoodenClub) {
+		return r.NoMesoOrSpace(l, span, c)
 	}
-	return r.Process(l, c)
+	return r.Process(l, span, c)
 }
 
-func (r HarryCoconut) Process(l logrus.FieldLogger, c script.Context) script.State {
-	err := character.GainMeso(l)(c.CharacterId, -1)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to process payment from character %d.", c.CharacterId)
-	}
-	character.GainItem(l)(c.CharacterId, item.WoodenClub, 1)
-	return script.Exit()(l, c)
+func (r HarryCoconut) Process(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainMeso(l, span)(c.CharacterId, -1)
+	character.GainItem(l, span)(c.CharacterId, item.WoodenClub, 1)
+	return script.Exit()(l, span, c)
 }
 
-func (r HarryCoconut) NoMesoOrSpace(l logrus.FieldLogger, c script.Context) script.State {
+func (r HarryCoconut) NoMesoOrSpace(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("You don't have enough mesos or you don't have any space in your inventory.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

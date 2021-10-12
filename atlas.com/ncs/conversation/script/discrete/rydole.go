@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +18,8 @@ func (r Rydole) NPCId() uint32 {
 	return npc.Rydole
 }
 
-func (r Rydole) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+func (r Rydole) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r Rydole) Hello() string {
@@ -46,9 +47,9 @@ func (r Rydole) WhatIsAStimulator() refine.ListItem {
 	}
 }
 
-func (r Rydole) StimulatorInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rydole) StimulatorInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("A stimulator is a special potion that I can add into the process of creating certain items. It gives it stats as though it had dropped from a monster. However, it is possible to have no change, and it is also possible for the item to be below average. There's also a 10% chance of not getting any item when using a stimulator, so please choose wisely.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Rydole) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
@@ -530,29 +531,29 @@ func (r Rydole) DarkSlainRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 4131013, Amount: 1}, {ItemId: 1472018, Amount: 1}, {ItemId: 4005003, Amount: 1}, {ItemId: 4021008, Amount: 3}}, refine.SetCost(50000))
 }
 
-func (r Rydole) StimulatorError(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rydole) StimulatorError(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("...ACK! My attention wandered, and before I knew it... Uh, sorry, but there's nothing I can do for you now.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Rydole) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rydole) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Heeere you go! What do you think? Marvellous, isn't it?")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Rydole) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rydole) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid my fees are non-negotiable.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Rydole) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("Sorry, but you're missing a required item. Possibly a manual? Or one of the ores?")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Rydole) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rydole) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Verify for a slot in your inventory first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

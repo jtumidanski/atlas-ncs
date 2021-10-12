@@ -4,6 +4,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,8 +16,8 @@ func (r WitchMalady) NPCId() uint32 {
 	return npc.WitchMalady
 }
 
-func (r WitchMalady) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r WitchMalady) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Young one, you seem very proud of yourself, don't you? Can you face the real nightmare that is this place? If you think you can do it, then go ahead, ehehehehehe.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

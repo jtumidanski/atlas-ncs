@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,17 +19,17 @@ func (r MysteriousStatue) NPCId() uint32 {
 	return npc.MysteriousStatue
 }
 
-func (r MysteriousStatue) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+func (r MysteriousStatue) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.Hello(l, span, c)
 }
 
-func (r MysteriousStatue) Hello(l logrus.FieldLogger, c script.Context) script.State {
+func (r MysteriousStatue) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You feel a mysterious force surrounding this statue.")
-	return script.SendNext(l, c, m.String(), r.ChooseDestination)
+	return script.SendNext(l, span, c, m.String(), r.ChooseDestination)
 }
 
-func (r MysteriousStatue) ChooseDestination(l logrus.FieldLogger, c script.Context) script.State {
+func (r MysteriousStatue) ChooseDestination(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	zones := 0
 	if quest.IsStarted(l)(c.CharacterId, 2052) || quest.IsCompleted(l)(c.CharacterId, 2052) {
 		zones = 1
@@ -38,7 +39,7 @@ func (r MysteriousStatue) ChooseDestination(l logrus.FieldLogger, c script.Conte
 		zones = 3
 	}
 	if zones == 0 {
-		return script.Exit()(l, c)
+		return script.Exit()(l, span, c)
 	}
 
 	m := message.NewBuilder().
@@ -46,7 +47,7 @@ func (r MysteriousStatue) ChooseDestination(l logrus.FieldLogger, c script.Conte
 	for i := 0; i < zones; i++ {
 		m = m.OpenItem(i).BlueText().AddText(fmt.Sprintf("Deep Forest of Patience %d", i+1)).CloseItem().NewLine()
 	}
-	return script.SendListSelectionExit(l, c, m.String(), r.DestinationSelection, r.SeeYouNextTime)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.DestinationSelection, r.SeeYouNextTime)
 }
 
 func (r MysteriousStatue) DestinationSelection(selection int32) script.StateProducer {
@@ -61,7 +62,7 @@ func (r MysteriousStatue) DestinationSelection(selection int32) script.StateProd
 	return nil
 }
 
-func (r MysteriousStatue) SeeYouNextTime(l logrus.FieldLogger, c script.Context) script.State {
+func (r MysteriousStatue) SeeYouNextTime(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Alright, see you next time.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

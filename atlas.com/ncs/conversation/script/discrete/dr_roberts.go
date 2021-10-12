@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +18,7 @@ func (r DrRoberts) NPCId() uint32 {
 	return npc.DrRoberts
 }
 
-func (r DrRoberts) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r DrRoberts) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	hello := message.NewBuilder().
 		AddText("Hi, there~! I'm Dr.Roberts, in charge of the cosmetic lenses here at the Amoria Plastic Surgery Shop! With ").
 		BlueText().ShowItemName1(item.AmoriaCosmeticLensCouponRegular).
@@ -25,7 +26,7 @@ func (r DrRoberts) Initial(l logrus.FieldLogger, c script.Context) script.State 
 		BlueText().ShowItemName1(item.AmoriaCosmeticLensCouponVIP).
 		BlackText().AddText(", you can let us take care of the rest and have the kind of beautiful look you've always craved~! Remember, the first thing everyone notices about you is the eyes, and we can help you find the cosmetic lens that most fits you! Now, what would you like to use?").
 		String()
-	return care.NewGenericCare(hello, r.ProvidedCare())(l, c)
+	return care.NewGenericCare(hello, r.ProvidedCare())(l, span, c)
 }
 
 func (r DrRoberts) ProvidedCare() []care.ChoiceConfig {

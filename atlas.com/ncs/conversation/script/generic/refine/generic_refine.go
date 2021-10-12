@@ -163,11 +163,11 @@ func validate(itemId uint32, amount uint32, requirements Requirements, config Te
 		if !character.CanHoldAll(l)(c.CharacterId, itemId, productionAmount) {
 			return config.InventoryError(l, span, c)
 		}
-		if !character.HasMeso(l)(c.CharacterId, requirements.cost*amount) {
+		if !character.HasMeso(l, span)(c.CharacterId, requirements.cost*amount) {
 			return config.MesoError(l, span, c)
 		}
 		for _, req := range requirements.requirements {
-			if !character.HasItems(l)(c.CharacterId, req.ItemId, uint32(req.Amount)*amount) {
+			if !character.HasItems(l, span)(c.CharacterId, req.ItemId, uint32(req.Amount)*amount) {
 				return config.RequirementError(req.ItemId)(l, span, c)
 			}
 		}
@@ -177,16 +177,13 @@ func validate(itemId uint32, amount uint32, requirements Requirements, config Te
 
 func performRefine(itemId uint32, amount uint32, requirements Requirements, config TerminalConfig) script.StateProducer {
 	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -int32(amount*requirements.cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process payment for refine.")
-		}
+		character.GainMeso(l, span)(c.CharacterId, -int32(amount*requirements.cost))
 		includesStimulator := false
 		for _, req := range requirements.requirements {
 			if isStimulator(req.ItemId) {
 				includesStimulator = true
 			}
-			character.GainItem(l)(c.CharacterId, req.ItemId, -int32(req.Amount)*int32(amount))
+			character.GainItem(l, span)(c.CharacterId, req.ItemId, -int32(req.Amount)*int32(amount))
 		}
 
 		awardItem := true
@@ -197,7 +194,7 @@ func performRefine(itemId uint32, amount uint32, requirements Requirements, conf
 		if awardItem {
 			// TODO if a stimulator was used, refinement will produce an average or above item.
 			productionAmount := amount * requirements.awardAmount
-			character.GainItem(l)(c.CharacterId, itemId, int32(productionAmount))
+			character.GainItem(l, span)(c.CharacterId, itemId, int32(productionAmount))
 			return config.Success(l, span, c)
 		} else {
 			return config.StimulatorError(l, span, c)

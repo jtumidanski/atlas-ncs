@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,10 +18,10 @@ func (r MrThunder) NPCId() uint32 {
 	return npc.MrThunder
 }
 
-func (r MrThunder) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrThunder) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	hello := "Hm? Who might you be? Oh, you've heard about my forging skills? In that case, I'd be glad to process some of your ores... for a fee."
 	categories := r.CreateCategories()
-	return refine.NewGenericRefine(l, c, hello, categories)
+	return refine.NewGenericRefine(l, span, c, hello, categories)
 }
 
 func (r MrThunder) CreateCategories() []refine.ListItem {
@@ -267,30 +268,30 @@ func (r MrThunder) AdamantiumLegendShieldRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: item.WoodenLegendShield, Amount: 1}, {ItemId: item.MoonRock, Amount: 1}, {ItemId: item.AdamantiumPlate, Amount: 15}}, refine.SetCost(120000))
 }
 
-func (r MrThunder) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrThunder) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Check your inventory for a free slot first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r MrThunder) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrThunder) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("I'm afraid you cannot afford my services.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r MrThunder) MissingSomething(itemId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("I'm afraid you're missing some ").
 			ShowItemName1(itemId).
 			AddText(". See you another time, yes?")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r MrThunder) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrThunder) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("There, finished. What do you think, a piece of art, isn't it? Well, if you need anything else, you know where to find me.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

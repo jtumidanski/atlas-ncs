@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +18,8 @@ func (r Gordon) NPCId() uint32 {
 	return npc.Gordon
 }
 
-func (r Gordon) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+func (r Gordon) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r Gordon) Hello() string {
@@ -272,24 +273,24 @@ func (r Gordon) DarkPirateBootsRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 4005003, Amount: 3}, {ItemId: 4005002, Amount: 2}, {ItemId: 4021008, Amount: 7}, {ItemId: 4000030, Amount: 90}, {ItemId: 4003000, Amount: 60}}, refine.SetCost(80000))
 }
 
-func (r Gordon) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Gordon) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("All done. Stay warm!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Gordon) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Gordon) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid you cannot afford my services.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Gordon) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("I only make quality goods, which I cannot do without the proper materials.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Gordon) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Gordon) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Check your inventory for a free slot first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

@@ -100,7 +100,7 @@ func (r Alcaster) ICannotSell(l logrus.FieldLogger, span opentracing.Span, c scr
 
 func (r Alcaster) Validate(itemId uint32, cost uint32, quantity uint32) script.StateProducer {
 	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, cost*quantity) || !character.CanHoldAll(l)(c.CharacterId, itemId, quantity) {
+		if !character.HasMeso(l, span)(c.CharacterId, cost*quantity) || !character.CanHoldAll(l)(c.CharacterId, itemId, quantity) {
 			m := message.NewBuilder().
 				AddText("Are you sure you have enough mesos? Please check and see if your etc. or use inventory is full, or if you have at least ").
 				RedText().AddText(fmt.Sprintf("%d", quantity*cost)).
@@ -108,11 +108,8 @@ func (r Alcaster) Validate(itemId uint32, cost uint32, quantity uint32) script.S
 			return script.SendOk(l, span, c, m.String())
 		}
 
-		err := character.GainMeso(l)(c.CharacterId, -int32(quantity*cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process payment from character %d.", c.CharacterId)
-		}
-		character.GainItem(l)(c.CharacterId, itemId, int32(quantity))
+		character.GainMeso(l, span)(c.CharacterId, -int32(quantity*cost))
+		character.GainItem(l, span)(c.CharacterId, itemId, int32(quantity))
 		return r.Success(l, span, c)
 	}
 }

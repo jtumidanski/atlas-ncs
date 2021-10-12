@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +18,8 @@ func (r Vogen) NPCId() uint32 {
 	return npc.Vogen
 }
 
-func (r Vogen) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+func (r Vogen) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r Vogen) Hello() string {
@@ -248,24 +249,24 @@ func (r Vogen) DarkCrystalRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 4004004, Amount: 10}}, refine.SetCost(1000000))
 }
 
-func (r Vogen) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Vogen) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("All done. If you need anything else, just ask.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Vogen) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Vogen) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid you cannot afford my services.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Vogen) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("I can't refine anything for you without the proper items.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Vogen) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Vogen) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid you don't have a slot available for the item in your inventory.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

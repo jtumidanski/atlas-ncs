@@ -5,6 +5,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,9 +17,9 @@ func (r MetalBucketSnowman) NPCId() uint32 {
 	return npc.MetalBucketSnowman
 }
 
-func (r MetalBucketSnowman) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r MetalBucketSnowman) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("We have a beautiful christmas tree.").NewLine().
 		AddText("Do you want to see/decorate it?")
-	return script.SendYesNo(l, c, m.String(), script.WarpById(_map.TheHillOfChristmas2, 0), script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), script.WarpById(_map.TheHillOfChristmas2, 0), script.Exit())
 }

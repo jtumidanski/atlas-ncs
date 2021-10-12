@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,13 +17,13 @@ func (r Rupi) NPCId() uint32 {
 	return npc.Rupi
 }
 
-func (r Rupi) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rupi) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Do you want to get out of Happyville?")
-	return script.SendYesNo(l, c, m.String(), r.Warp, script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.Warp, script.Exit())
 }
 
-func (r Rupi) Warp(l logrus.FieldLogger, c script.Context) script.State {
+func (r Rupi) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	mapId := character.SavedLocation(l)(c.CharacterId, "HAPPYVILLE")
-	return script.WarpById(mapId, 0)(l, c)
+	return script.WarpById(mapId, 0)(l, span, c)
 }

@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,17 +20,17 @@ func (r Jake) NPCId() uint32 {
 	return npc.Jake
 }
 
-func (r Jake) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+func (r Jake) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.Hello(l, span, c)
 }
 
-func (r Jake) Hello(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jake) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hi, I'm the ticket salesman.")
-	return script.SendNext(l, c, m.String(), r.SelectTicket)
+	return script.SendNext(l, span, c, m.String(), r.SelectTicket)
 }
 
-func (r Jake) SelectTicket(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jake) SelectTicket(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	zones := 0
 	if quest.IsStarted(l)(c.CharacterId, 2055) || quest.IsCompleted(l)(c.CharacterId, 2055) {
 		zones++
@@ -41,7 +42,7 @@ func (r Jake) SelectTicket(l logrus.FieldLogger, c script.Context) script.State 
 		zones++
 	}
 	if zones == 0 {
-		return script.Exit()(l, c)
+		return script.Exit()(l, span, c)
 	}
 
 	m := message.NewBuilder().
@@ -49,7 +50,7 @@ func (r Jake) SelectTicket(l logrus.FieldLogger, c script.Context) script.State 
 	for i := 0; i < zones; i++ {
 		m = m.OpenItem(i).BlueText().AddText(fmt.Sprintf("Construction Site B %d (%d mesos)", i, 1000)).CloseItem()
 	}
-	return script.SendListSelection(l, c, m.String(), r.SiteSelection)
+	return script.SendListSelection(l, span, c, m.String(), r.SiteSelection)
 }
 
 func (r Jake) SiteSelection(selection int32) script.StateProducer {
@@ -65,27 +66,24 @@ func (r Jake) SiteSelection(selection int32) script.StateProducer {
 }
 
 func (r Jake) Validate(itemId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, 1000) {
-			return r.NotEnoughMeso(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasMeso(l, span)(c.CharacterId, 1000) {
+			return r.NotEnoughMeso(l, span, c)
 		}
-		return r.Process(itemId)(l, c)
+		return r.Process(itemId)(l, span, c)
 	}
 }
 
-func (r Jake) NotEnoughMeso(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jake) NotEnoughMeso(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You do not have enough mesos.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Jake) Process(itemId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -1000)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process payment for character %d.", c.CharacterId)
-		}
-		character.GainItem(l)(c.CharacterId, itemId, 1)
-		return script.Exit()(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		character.GainMeso(l, span)(c.CharacterId, -1000)
+		character.GainItem(l, span)(c.CharacterId, itemId, 1)
+		return script.Exit()(l, span, c)
 	}
 }

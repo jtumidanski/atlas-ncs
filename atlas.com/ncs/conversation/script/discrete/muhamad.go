@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,20 +18,20 @@ func (r Muhamad) NPCId() uint32 {
 	return npc.Muhamad
 }
 
-func (r Muhamad) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Muhamad) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Are you here to refine the ores of a mineral or a jewel? It doesn't matter how many ores you have, if you don't have them refined by a master like me, then they won't see the light of day. What do you think, do you want to refine them right now?")
-	return script.SendYesNo(l, c, m.String(), r.What, r.ComeBack)
+	return script.SendYesNo(l, span, c, m.String(), r.What, r.ComeBack)
 }
 
-func (r Muhamad) ComeBack(l logrus.FieldLogger, c script.Context) script.State {
+func (r Muhamad) ComeBack(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("If you aren't in a hurry, then please come back in a bit. As you can see, there's so much work going on right now that I can't possibly give them to you on time.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Muhamad) What(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+func (r Muhamad) What(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r Muhamad) Hello() string {
@@ -181,24 +182,24 @@ func (r Muhamad) LUKCrystalRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 4004003, Amount: 10}}, refine.SetCost(4500))
 }
 
-func (r Muhamad) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Muhamad) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("There, finished. What do you think, a piece of art, isn't it? Well, if you need anything else, you know where to find me.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Muhamad) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Muhamad) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid you cannot afford my services.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Muhamad) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("Please check and see if you have all the necessary items with you.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Muhamad) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Muhamad) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I'm afraid you are short in inventory slots for this.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

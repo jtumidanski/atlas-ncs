@@ -104,11 +104,11 @@ func Selection(config *Config) script.ProcessSelection {
 }
 
 // ChoicesSupplier supplies the choices to be considered when providing care.
-type ChoicesSupplier func(l logrus.FieldLogger, c script.Context) []uint32
+type ChoicesSupplier func(l logrus.FieldLogger, span opentracing.Span, c script.Context) []uint32
 
 // FixedChoices supplies the choices as a fixed slice.
 func FixedChoices(values []uint32) ChoicesSupplier {
-	return func(l logrus.FieldLogger, c script.Context) []uint32 {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) []uint32 {
 		return values
 	}
 }
@@ -132,7 +132,7 @@ type ChoiceHandlerProducer func(s ChoiceSupplier) ChoiceStateProducer
 func ShowChoices(prompt string, s ChoicesSupplier, next ChoiceHandlerProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-			choices := s(l, c)
+			choices := s(l, span, c)
 			if len(choices) == 0 {
 				l.Errorf("Zero choices available for care.")
 				return script.SendOk(l, span, c, message.NewBuilder().AddText("No styles available.").String())
@@ -145,7 +145,7 @@ func ShowChoices(prompt string, s ChoicesSupplier, next ChoiceHandlerProducer) C
 func ShowChoicesWithNone(prompt string, s ChoicesSupplier, next ChoiceHandlerProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-			choices := s(l, c)
+			choices := s(l, span, c)
 			if len(choices) == 0 {
 				m := message.NewBuilder().AddText(config.MissingCoupon)
 				return script.SendOk(l, span, c, m.String())
@@ -201,9 +201,9 @@ func ProcessCoupon(coupon uint32, consume ChoiceConsumer, configurators ...Coupo
 	return func(s ChoiceSupplier) ChoiceStateProducer {
 		return func(careConfig ChoiceConfig) script.StateProducer {
 			return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-				if character.HasItem(l)(c.CharacterId, coupon) {
+				if character.HasItem(l, span)(c.CharacterId, coupon) {
 					if config.singleUse {
-						character.GainItem(l)(c.CharacterId, coupon, -1)
+						character.GainItem(l, span)(c.CharacterId, coupon, -1)
 					}
 					consume(l, c, s())
 					return Enjoy(careConfig)(l, span, c)

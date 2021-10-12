@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,15 +19,15 @@ func (r Mos) NPCId() uint32 {
 	return npc.Mos
 }
 
-func (r Mos) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories(l, c))
+func (r Mos) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories(l, span, c))
 }
 
 func (r Mos) Hello() string {
 	return "A dragon's power is not to be underestimated. If you like, I can add its power to one of your weapons. However, the weapon must be powerful enough to hold its potential..."
 }
 
-func (r Mos) Categories(l logrus.FieldLogger, c script.Context) []refine.ListItem {
+func (r Mos) Categories(l logrus.FieldLogger, span opentracing.Span, c script.Context) []refine.ListItem {
 	base := []refine.ListItem{
 		r.WhatIsAStimulator(),
 		r.Warrior(),
@@ -53,9 +54,9 @@ func (r Mos) WhatIsAStimulator() refine.ListItem {
 	}
 }
 
-func (r Mos) StimulatorInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mos) StimulatorInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("A stimulator is a special potion that I can add into the process of creating certain items. It gives it stats as though it had dropped from a monster. However, it is possible to have no change, and it is also possible for the item to be below average. There's also a 10% chance of not getting any item when using a stimulator, so please choose wisely.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Mos) CreateChoice(listTextProvider refine.RefinementListTextProvider, selectionPrompt refine.TerminalState) refine.RefinementChoice {
@@ -282,37 +283,37 @@ func (r Mos) DragonfireRevolverRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 1492012, Amount: 1}, {ItemId: 4000244, Amount: 20}, {ItemId: 4000245, Amount: 25}, {ItemId: 4005000, Amount: 3}, {ItemId: 4005002, Amount: 5}}, refine.SetCost(120000))
 }
 
-func (r Mos) StimulatorError(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mos) StimulatorError(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Unfortunately, the dragon's essence has... conflicted with your weapon. My apologies for your loss.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Mos) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mos) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("The process is complete. Treat your weapon well, lest you bring the wrath of the dragons upon you.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Mos) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mos) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("My fee is for the good of all of Leafre. If you cannot pay it, then begone.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Mos) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("I'm afraid that without the correct items, the dragon's essence would... not make for a very reliable weapon. Please bring the correct items next time.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Mos) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mos) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Check your inventory for a free slot first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Mos) Sneak(l logrus.FieldLogger, c script.Context) script.State {
+func (r Mos) Sneak(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("\"Oh, are you trying to sneak into these lizards to save Moira? I will support your cause wherever I can. Bring me a couple of resources and I will make you an almost identical piece of ").
 		ShowItemName1(item.CorniansDagger).AddText(".")
-	return script.SendNext(l, c, m.String(), refine.Confirm(item.CorniansDagger, r.CorniansDaggerRequirements())(r.GenericRefinementConfig()))
+	return script.SendNext(l, span, c, m.String(), refine.Confirm(item.CorniansDagger, r.CorniansDaggerRequirements())(r.GenericRefinementConfig()))
 }
 
 func (r Mos) CorniansDaggerRequirements() refine.Requirements {

@@ -45,7 +45,7 @@ func LensCouponMissing() ChoiceConfigurator {
 func WarnRandomFace(prompt string, coupon uint32, male []uint32, female []uint32, choice ChoiceConsumer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-			randomSupplier := GetRandomFace(l, c, male, female)
+			randomSupplier := GetRandomFace(l, span, c, male, female)
 			couponProcessor := ProcessCoupon(coupon, choice, SetSingleUse(true))
 			choiceProcessor := couponProcessor(randomSupplier)
 			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
@@ -53,24 +53,24 @@ func WarnRandomFace(prompt string, coupon uint32, male []uint32, female []uint32
 	}
 }
 
-func GetRandomFace(l logrus.FieldLogger, c script.Context, male []uint32, female []uint32) ChoiceSupplier {
+func GetRandomFace(l logrus.FieldLogger, span opentracing.Span, c script.Context, male []uint32, female []uint32) ChoiceSupplier {
 	return func() uint32 {
 		choices := make([]uint32, 0)
-		gender := character.GetGender(l)(c.CharacterId)
+		gender := character.GetGender(l, span)(c.CharacterId)
 		if gender == character.GenderMale {
 			choices = male
 		} else if gender == character.GenderFemale {
 			choices = female
 		}
-		choices = ApplyEyeColor(l)(c.CharacterId, choices)
+		choices = ApplyEyeColor(l, span)(c.CharacterId, choices)
 		return choices[rand.Intn(len(choices))]
 	}
 }
 
-func ApplyEyeColor(l logrus.FieldLogger) func(characterId uint32, choices []uint32) []uint32 {
+func ApplyEyeColor(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, choices []uint32) []uint32 {
 	return func(characterId uint32, choices []uint32) []uint32 {
 		//TODO need to verify color combination exists
-		current := character.GetFace(l)(characterId)
+		current := character.GetFace(l, span)(characterId)
 		color := (current % 1000) - (current % 100)
 		results := make([]uint32, 0)
 		for _, h := range choices {
@@ -83,7 +83,7 @@ func ApplyEyeColor(l logrus.FieldLogger) func(characterId uint32, choices []uint
 func WarnRandomLensColor(prompt string, coupon uint32, choice ChoiceConsumer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-			randomSupplier := GetRandomLensColor(l, c)
+			randomSupplier := GetRandomLensColor(l, span, c)
 			couponProcessor := ProcessCoupon(coupon, choice, SetSingleUse(true))
 			choiceProcessor := couponProcessor(randomSupplier)
 			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
@@ -91,38 +91,38 @@ func WarnRandomLensColor(prompt string, coupon uint32, choice ChoiceConsumer, no
 	}
 }
 
-func GetRandomLensColor(l logrus.FieldLogger, c script.Context) ChoiceSupplier {
+func GetRandomLensColor(l logrus.FieldLogger, span opentracing.Span, c script.Context) ChoiceSupplier {
 	return func() uint32 {
-		hair := LensColorChoices(l, c)
+		hair := LensColorChoices(l, span, c)
 		return hair[rand.Intn(len(hair))]
 	}
 }
 
-func LensColorChoices(l logrus.FieldLogger, c script.Context) []uint32 {
+func LensColorChoices(l logrus.FieldLogger, span opentracing.Span, c script.Context) []uint32 {
 	var current uint32
-	gender := character.GetGender(l)(c.CharacterId)
+	gender := character.GetGender(l, span)(c.CharacterId)
 
 	if gender == character.GenderMale {
-		current = character.GetFace(l)(c.CharacterId)%100 + 20000
+		current = character.GetFace(l, span)(c.CharacterId)%100 + 20000
 	} else if gender == character.GenderFemale {
-		current = character.GetFace(l)(c.CharacterId)%100 + 21000
+		current = character.GetFace(l, span)(c.CharacterId)%100 + 21000
 	}
 	return []uint32{current, current + 100, current + 200, current + 400, current + 600, current + 700}
 }
 
-func LensColorOneTimeChoices(l logrus.FieldLogger, c script.Context) []uint32 {
+func LensColorOneTimeChoices(l logrus.FieldLogger, span opentracing.Span, c script.Context) []uint32 {
 	var current uint32
-	gender := character.GetGender(l)(c.CharacterId)
+	gender := character.GetGender(l, span)(c.CharacterId)
 
 	if gender == character.GenderMale {
-		current = character.GetFace(l)(c.CharacterId)%100 + 20000
+		current = character.GetFace(l, span)(c.CharacterId)%100 + 20000
 	} else if gender == character.GenderFemale {
-		current = character.GetFace(l)(c.CharacterId)%100 + 21000
+		current = character.GetFace(l, span)(c.CharacterId)%100 + 21000
 	}
 
 	colors := make([]uint32, 0)
 	for i := uint32(0); i < 8; i++ {
-		if character.HasItem(l)(c.CharacterId, item.OneTimeCosmeticLensBlack+i) {
+		if character.HasItem(l, span)(c.CharacterId, item.OneTimeCosmeticLensBlack+i) {
 			colors = append(colors, current+100*i)
 		}
 	}
@@ -130,23 +130,23 @@ func LensColorOneTimeChoices(l logrus.FieldLogger, c script.Context) []uint32 {
 }
 
 func FaceChoices(male []uint32, female []uint32) ChoicesSupplier {
-	return func(l logrus.FieldLogger, c script.Context) []uint32 {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) []uint32 {
 		choices := make([]uint32, 0)
-		gender := character.GetGender(l)(c.CharacterId)
+		gender := character.GetGender(l, span)(c.CharacterId)
 		if gender == character.GenderMale {
 			choices = male
 		} else if gender == character.GenderFemale {
 			choices = female
 		}
-		choices = ApplyEyeColor(l)(c.CharacterId, choices)
-		choices = FilterCurrentFace(l)(c.CharacterId, choices)
+		choices = ApplyEyeColor(l, span)(c.CharacterId, choices)
+		choices = FilterCurrentFace(l, span)(c.CharacterId, choices)
 		return choices
 	}
 }
 
-func FilterCurrentFace(l logrus.FieldLogger) func(characterId uint32, faces []uint32) []uint32 {
+func FilterCurrentFace(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, faces []uint32) []uint32 {
 	return func(characterId uint32, faces []uint32) []uint32 {
-		current := character.GetFace(l)(characterId)
+		current := character.GetFace(l, span)(characterId)
 		results := make([]uint32, 0)
 		for _, h := range faces {
 			if h != current {

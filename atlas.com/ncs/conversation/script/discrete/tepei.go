@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,9 +18,9 @@ func (r Tepei) NPCId() uint32 {
 	return npc.Tepei
 }
 
-func (r Tepei) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Tepei) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	return care.NewGenericCare(r.Hello(), []care.ChoiceConfig{r.StyleHair(item.ShowaHairColorCouponVIP),
-		care.ColorCareChoice(item.OrbisHairColorCouponVIP)})(l, c)
+		care.ColorCareChoice(item.OrbisHairColorCouponVIP)})(l, span, c)
 }
 
 func (r Tepei) Hello() string {

@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,40 +19,40 @@ func (r SmallTreeStump) NPCId() uint32 {
 	return npc.SmallTreeStump
 }
 
-func (r SmallTreeStump) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r SmallTreeStump) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !quest.IsStarted(l)(c.CharacterId, 20716) {
-		return r.NeverEndingFlow(l, c)
+		return r.NeverEndingFlow(l, span, c)
 	}
-	if character.HasItem(l)(c.CharacterId, item.ClearTreeSap) {
-		return r.NeverEndingFlow(l, c)
+	if character.HasItem(l, span)(c.CharacterId, item.ClearTreeSap) {
+		return r.NeverEndingFlow(l, span, c)
 	}
 	if !character.CanHold(l)(c.CharacterId, item.ClearTreeSap) {
-		return r.MakeRoom(l, c)
+		return r.MakeRoom(l, span, c)
 	}
 
-	return r.GainTreeSap(l, c)
+	return r.GainTreeSap(l, span, c)
 }
 
-func (r SmallTreeStump) GainTreeSap(l logrus.FieldLogger, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.ClearTreeSap, 1)
-	return r.ShowSuccess(l, c)
+func (r SmallTreeStump) GainTreeSap(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainItem(l, span)(c.CharacterId, item.ClearTreeSap, 1)
+	return r.ShowSuccess(l, span, c)
 }
 
-func (r SmallTreeStump) ShowSuccess(l logrus.FieldLogger, c script.Context) script.State {
+func (r SmallTreeStump) ShowSuccess(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You bottled up some of the clear tree sap.  ").
 		ShowItemImage2(item.ClearTreeSap)
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r SmallTreeStump) NeverEndingFlow(l logrus.FieldLogger, c script.Context) script.State {
+func (r SmallTreeStump) NeverEndingFlow(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("A never ending flow of sap is coming from this small tree stump.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r SmallTreeStump) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r SmallTreeStump) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Make sure you have a free spot in your ETC inventory.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

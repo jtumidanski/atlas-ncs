@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,12 +17,12 @@ func (r MapleLeafMarble) NPCId() uint32 {
 	return npc.MapleLeafMarble
 }
 
-func (r MapleLeafMarble) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.GlassMarble) {
-		character.GainItem(l)(c.CharacterId, item.GlassMarble, -1)
+func (r MapleLeafMarble) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasItem(l, span)(c.CharacterId, item.GlassMarble) {
+		character.GainItem(l, span)(c.CharacterId, item.GlassMarble, -1)
 		if character.CanHold(l)(c.CharacterId, item.MapleMarble) {
-			character.GainItem(l)(c.CharacterId, item.MapleMarble, 1)
+			character.GainItem(l, span)(c.CharacterId, item.MapleMarble, 1)
 		}
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }

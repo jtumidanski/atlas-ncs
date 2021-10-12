@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,12 +19,12 @@ func (r Fiona) NPCId() uint32 {
 	return npc.Fiona
 }
 
-func (r Fiona) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Fiona) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !quest.IsCompleted(l)(c.CharacterId, 8225) {
 		m := message.NewBuilder().AddText("Step aside, novice, we're doing business here.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r Fiona) Hello() string {
@@ -141,24 +142,24 @@ func (r Fiona) DuskRavensWingRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: 4032016, Amount: 1}, {ItemId: 4005000, Amount: 5}, {ItemId: 4021008, Amount: 20}}, refine.SetCost(50000))
 }
 
-func (r Fiona) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Fiona) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("All done. If you need anything else... Well, I'm not going anywhere.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Fiona) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r Fiona) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I am afraid you don't have enough to pay me, partner. Please check this out first, ok?")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Fiona) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("Hey, I need those items to craft properly, you know?")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r Fiona) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Fiona) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Check your inventory for a free slot first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

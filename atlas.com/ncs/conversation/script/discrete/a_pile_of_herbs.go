@@ -36,7 +36,7 @@ type HerbPrize struct {
 
 func (r APileOfHerbs) AwardPrize(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	prizes := r.GetPrizes()
-	gender := character.GetGender(l)(c.CharacterId)
+	gender := character.GetGender(l, span)(c.CharacterId)
 	prizes = r.FilterOutGenderedItems(gender, prizes)
 
 	odds := uint32(0)
@@ -53,9 +53,9 @@ func (r APileOfHerbs) AwardPrize(l logrus.FieldLogger, span opentracing.Span, c 
 		}
 	}
 	if quest.IsStarted(l)(c.CharacterId, 2051) {
-		character.GainItem(l)(c.CharacterId, item.DoubleRootedRedGinseng, 1)
+		character.GainItem(l, span)(c.CharacterId, item.DoubleRootedRedGinseng, 1)
 	}
-	character.GainItem(l)(c.CharacterId, prizes.prizes[pick].itemId, 1)
+	character.GainItem(l, span)(c.CharacterId, prizes.prizes[pick].itemId, 1)
 	return script.WarpById(_map.Ellinia, 0)(l, span, c)
 }
 

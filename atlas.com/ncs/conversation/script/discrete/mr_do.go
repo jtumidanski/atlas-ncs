@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -20,24 +21,24 @@ func (r MrDo) NPCId() uint32 {
 	return npc.MrDo
 }
 
-func (r MrDo) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if quest.IsActive(l)(c.CharacterId, 3821) && !character.HasItem(l)(c.CharacterId, item.PeachTreeErbPouch) && !character.HasItem(l)(c.CharacterId, item.BookOnHerbalMedicine) && quest.IsCompleted(l)(c.CharacterId, 3830) {
+func (r MrDo) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if quest.IsActive(l)(c.CharacterId, 3821) && !character.HasItem(l, span)(c.CharacterId, item.PeachTreeErbPouch) && !character.HasItem(l, span)(c.CharacterId, item.BookOnHerbalMedicine) && quest.IsCompleted(l)(c.CharacterId, 3830) {
 		if character.CanHold(l)(c.CharacterId, item.PeachTreeErbPouch) {
-			character.GainItem(l)(c.CharacterId, item.PeachTreeErbPouch, 1)
+			character.GainItem(l, span)(c.CharacterId, item.PeachTreeErbPouch, 1)
 			m := message.NewBuilder().
 				AddText("Oh, the boy wanted you to bring him a ").
 				ShowItemName1(item.PeachTreeErbPouch).
 				AddText("? No problem, I was on his debt anyway. Now, tell him I am repaying the debt, OK?")
-			return script.SendOk(l, c, m.String())
+			return script.SendOk(l, span, c, m.String())
 		} else {
 			m := message.NewBuilder().
 				AddText("Oh, the boy wanted you to bring him a ").
 				ShowItemName1(item.PeachTreeErbPouch).
 				AddText("? Make room at your ETC inventory first.")
-			return script.SendOk(l, c, m.String())
+			return script.SendOk(l, span, c, m.String())
 		}
 	}
-	return refine.NewGenericRefine(l, c, r.Hello(), r.Categories())
+	return refine.NewGenericRefine(l, span, c, r.Hello(), r.Categories())
 }
 
 func (r MrDo) Hello() string {
@@ -140,12 +141,12 @@ func (r MrDo) Donate() refine.ListItem {
 }
 
 func (r MrDo) ValidateBook(prompt script.StateProducer) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasItem(l)(c.CharacterId, item.BookOnHerbalMedicine) {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasItem(l, span)(c.CharacterId, item.BookOnHerbalMedicine) {
 			m := message.NewBuilder().AddText("If you want to make a medicine, you must study the Book on Herbal Medicine first. Nothing is more dangerous than practicing a medicine without proper knowledge.")
-			return script.SendOk(l, c, m.String())
+			return script.SendOk(l, span, c, m.String())
 		}
-		return prompt(l, c)
+		return prompt(l, span, c)
 	}
 }
 
@@ -246,7 +247,7 @@ func (r MrDo) ScrollForGunForAttack100Requirements() refine.Requirements {
 }
 
 func (r MrDo) PromptDonation(choices []donationChoice) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("So you wish to donate some medicine ingredients? This is great news! Donations will be accepted in the unit of ").
 			BlueText().AddText("100").
@@ -254,7 +255,7 @@ func (r MrDo) PromptDonation(choices []donationChoice) script.StateProducer {
 		for i, choice := range choices {
 			m = m.OpenItem(i).ShowItemImage2(choice.itemId).AddText(" ").ShowItemName1(choice.itemId).CloseItem().NewLine()
 		}
-		return script.SendListSelection(l, c, m.String(), r.ConfirmDonation(choices))
+		return script.SendListSelection(l, span, c, m.String(), r.ConfirmDonation(choices))
 	}
 }
 
@@ -263,63 +264,63 @@ func (r MrDo) ConfirmDonation(choices []donationChoice) script.ProcessSelection 
 		if selection < 0 || int(selection) >= len(choices) {
 			return script.Exit()
 		}
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			choice := choices[selection]
 			m := message.NewBuilder().
 				AddText("Are you sure you want to donate ").
 				BlueText().AddText("100").
 				ShowItemName1(choice.itemId).
 				BlackText().AddText("?")
-			return script.SendYesNo(l, c, m.String(), r.ProcessDonation(choice), r.VeryBusy)
+			return script.SendYesNo(l, span, c, m.String(), r.ProcessDonation(choice), r.VeryBusy)
 		}
 	}
 }
 
-func (r MrDo) VeryBusy(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrDo) VeryBusy(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Oh, talk to me when you have decided what you want from me. I am very busy right now.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r MrDo) ProcessDonation(choice donationChoice) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasItems(l)(c.CharacterId, choice.itemId, 100) {
-			return r.MissingSomething(choice.itemId)(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasItems(l, span)(c.CharacterId, choice.itemId, 100) {
+			return r.MissingSomething(choice.itemId)(l, span, c)
 		}
 
 		amount := choice.lower + uint32(rand.Intn(int(choice.upper-choice.lower)))
 		if !character.CanHoldAll(l)(c.CharacterId, item.DrDosMarble, amount) {
-			return r.MakeRoom(l, c)
+			return r.MakeRoom(l, span, c)
 		}
 
-		character.GainItem(l)(c.CharacterId, choice.itemId, -100)
-		character.GainItem(l)(c.CharacterId, item.DrDosMarble, int32(amount))
-		return r.DonationSuccess(l, c)
+		character.GainItem(l, span)(c.CharacterId, choice.itemId, -100)
+		character.GainItem(l, span)(c.CharacterId, item.DrDosMarble, int32(amount))
+		return r.DonationSuccess(l, span, c)
 	}
 }
 
-func (r MrDo) DonationSuccess(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrDo) DonationSuccess(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Thank you for your donation.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r MrDo) MissingSomething(_ uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("You are lacking ingredients.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r MrDo) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrDo) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("You are lacking space in your USE inventory.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r MrDo) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrDo) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("There you go!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r MrDo) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrDo) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("You cannot afford to create this medicine.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

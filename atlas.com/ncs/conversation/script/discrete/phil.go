@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,29 +19,29 @@ func (r Phil) NPCId() uint32 {
 	return npc.Phil
 }
 
-func (r Phil) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.WouldYouLikeTo(l, c)
+func (r Phil) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.WouldYouLikeTo(l, span, c)
 }
 
-func (r Phil) WouldYouLikeTo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) WouldYouLikeTo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Do you wanna head over to some other town? With a little money involved, I can make it happen. It's a tad expensive, but I run a special 90% discount for beginners.")
-	return script.SendNextExit(l, c, m.String(), r.Confused, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.Confused, r.MoreToDo)
 }
 
-func (r Phil) Confused(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) Confused(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("It's understandable that you may be confused about this place if this is your first time around. If you got any questions about this place, fire away.").
 		NewLine().
 		OpenItem(0).BlueText().AddText("What kind of towns are here in Victoria Island?").CloseItem().NewLine().
 		OpenItem(1).NormalText().AddText("Please take me somewhere else.").BlackText().CloseItem()
-	return script.SendListSelectionExit(l, c, m.String(), r.ConfusedResult, r.MoreToDo)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.ConfusedResult, r.MoreToDo)
 }
 
-func (r Phil) MoreToDo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) MoreToDo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("There's a lot to see in this town, too. Let me know if you want to go somewhere else.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
 func (r Phil) ConfusedResult(selection int32) script.StateProducer {
@@ -53,7 +54,7 @@ func (r Phil) ConfusedResult(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r Phil) KindOfTowns(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) KindOfTowns(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("There are 7 big towns here in Victoria Island. Which of those do you want to know more of?").NewLine().
 		OpenItem(0).BlueText().ShowMap(_map.LithHarbor).CloseItem().NewLine().
@@ -63,7 +64,7 @@ func (r Phil) KindOfTowns(l logrus.FieldLogger, c script.Context) script.State {
 		OpenItem(4).BlueText().ShowMap(_map.KerningCity).CloseItem().NewLine().
 		OpenItem(5).BlueText().ShowMap(_map.Nautalis).CloseItem().NewLine().
 		OpenItem(6).BlueText().ShowMap(_map.Sleepywood).CloseItem()
-	return script.SendListSelectionExit(l, c, m.String(), r.SelectTownInfo, r.MoreToDo)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.SelectTownInfo, r.MoreToDo)
 }
 
 func (r Phil) Cost(index int32, beginner bool) uint32 {
@@ -93,9 +94,9 @@ func (r Phil) Cost(index int32, beginner bool) uint32 {
 	return cost / uint32(costDivisor)
 }
 
-func (r Phil) TakeMeSomewhere(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) TakeMeSomewhere(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	mb := message.NewBuilder()
-	beginner := character.IsBeginnerTree(l)(c.CharacterId)
+	beginner := character.IsBeginnerTree(l, span)(c.CharacterId)
 
 	if beginner {
 		mb = mb.AddText("There's a special 90% discount for all beginners. Alright, where would you want to go?").BlueText().NewLine()
@@ -108,7 +109,7 @@ func (r Phil) TakeMeSomewhere(l logrus.FieldLogger, c script.Context) script.Sta
 		OpenItem(2).ShowMap(_map.Henesys).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(2, beginner))).CloseItem().NewLine().
 		OpenItem(3).ShowMap(_map.KerningCity).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(3, beginner))).CloseItem().NewLine().
 		OpenItem(4).ShowMap(_map.Nautalis).AddText(fmt.Sprintf(" (%d mesos)", r.Cost(4, beginner))).CloseItem()
-	return script.SendListSelectionExit(l, c, mb.String(), r.SelectTownConfirm(beginner), r.MoreToDo)
+	return script.SendListSelectionExit(l, span, c, mb.String(), r.SelectTownConfirm(beginner), r.MoreToDo)
 }
 
 func (r Phil) SelectTownInfo(selection int32) script.StateProducer {
@@ -131,138 +132,138 @@ func (r Phil) SelectTownInfo(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r Phil) LithFirst(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) LithFirst(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("The town you are at is Lith Harbor! Alright I'll explain to you more about ").
 		BlueText().AddText("Lith Harbor").
 		BlackText().AddText(". It's the place you landed on Victoria Island by riding The Victoria. That's Lith Harbor. A lot of beginners who just got here from Maple Island start their journey here.")
-	return script.SendNextExit(l, c, m.String(), r.LithSecond, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.LithSecond, r.MoreToDo)
 }
 
-func (r Phil) LithSecond(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) LithSecond(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("It's a quiet town with the wide body of water on the back of it, thanks to the fact that the harbor is located at the west end of the island. Most of the people here are, or used to be fisherman, so they may look intimidating, but if you strike up a conversation with them, they'll be friendly to you.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.LithThird, r.LithFirst, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.LithThird, r.LithFirst, r.MoreToDo)
 }
 
-func (r Phil) LithThird(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) LithThird(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Around town lies a beautiful prairie. Most of the monsters there are small and gentle, perfect for beginners. If you haven't chosen your job yet, this is a good place to boost up your level.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.Confused, r.LithSecond, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.Confused, r.LithSecond, r.MoreToDo)
 }
 
-func (r Phil) PerionFirst(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) PerionFirst(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Alright I'll explain to you more about ").
 		BlueText().AddText("Perion").
 		BlackText().AddText(". It's a warrior-town located at the northern-most part of Victoria Island, surrounded by rocky mountains. With an unfriendly atmosphere, only the strong survives there.")
-	return script.SendNextExit(l, c, m.String(), r.PerionSecond, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.PerionSecond, r.MoreToDo)
 }
 
-func (r Phil) PerionSecond(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) PerionSecond(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Around the highland you'll find a really skinny tree, a wild hog running around the place, and monkeys that live all over the island. There's also a deep valley, and when you go deep into it, you'll find a humongous dragon with the power to match his size. Better go in there very carefully, or don't go at all.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.PerionThird, r.PerionFirst, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.PerionThird, r.PerionFirst, r.MoreToDo)
 }
 
-func (r Phil) PerionThird(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) PerionThird(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("If you want to be a ").
 		BlueText().AddText("Warrior").
 		BlackText().AddText(" then find ").
 		RedText().AddText("Dances with Balrog").
 		BlackText().AddText(", the chief of Perion. If you're level 10 or higher, along with a good STR level, he may make you a warrior after all. If not, better keep training yourself until you reach that level.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.Confused, r.PerionSecond, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.Confused, r.PerionSecond, r.MoreToDo)
 }
 
-func (r Phil) ElliniaFirst(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) ElliniaFirst(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Alright I'll explain to you more about ").
 		BlueText().AddText("Ellinia").
 		BlackText().AddText(". It's a magician-town located at the far east of Victoria Island, and covered in tall, mystic trees. You'll find some fairies there, too. They don't like humans in general so it'll be best for you to be on their good side and stay quiet.")
-	return script.SendNextExit(l, c, m.String(), r.ElliniaSecond, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.ElliniaSecond, r.MoreToDo)
 }
 
-func (r Phil) ElliniaSecond(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) ElliniaSecond(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Near the forest you'll find green slimes, walking mushrooms, monkeys and zombie monkeys all residing there. Walk deeper into the forest and you'll find witches with the flying broomstick navigating the skies. A word of warning: Unless you are really strong, I recommend you don't go near them.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.ElliniaThird, r.ElliniaFirst, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.ElliniaThird, r.ElliniaFirst, r.MoreToDo)
 }
 
-func (r Phil) ElliniaThird(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) ElliniaThird(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("If you want to be a ").
 		BlueText().AddText("Magician").
 		BlackText().AddText(", search for ").
 		RedText().AddText("Grendel the Really Old").
 		BlackText().AddText(", the head wizard of Ellinia. He may make you a wizard if you're at or above level 8 with a decent amount of INT. If that's not the case, you may have to hunt more and train yourself to get there.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.Confused, r.ElliniaSecond, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.Confused, r.ElliniaSecond, r.MoreToDo)
 }
 
-func (r Phil) HenesysFirst(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) HenesysFirst(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Alright I'll explain to you more about ").
 		BlueText().AddText("Henesys").
 		BlackText().AddText(". It's a bowman-town located at the southernmost part of the island, made on a flatland in the midst of a deep forest and prairies. The weather's just right, and everything is plentiful around that town, perfect for living. Go check it out.")
-	return script.SendNextExit(l, c, m.String(), r.HenesysSecond, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.HenesysSecond, r.MoreToDo)
 }
 
-func (r Phil) HenesysSecond(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) HenesysSecond(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Around the prairie you'll find weak monsters such as snails, mushrooms, and pigs. According to what I hear, though, in the deepest part of the Pig Park, which is connected to the town somewhere, you'll find a humongous, powerful mushroom called Mushmom every now and then.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.HenesysThird, r.HenesysFirst, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.HenesysThird, r.HenesysFirst, r.MoreToDo)
 }
 
-func (r Phil) HenesysThird(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) HenesysThird(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("If you want to be a ").
 		BlueText().AddText("Bowman").
 		BlackText().AddText(", you need to go see ").
 		RedText().AddText("Athena Pierce").
 		BlackText().AddText(" at Henesys. With a level at or above 10 and a decent amount of DEX, she may make you be one after all. If not, go train yourself, make yourself stronger, then try again.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.Confused, r.HenesysSecond, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.Confused, r.HenesysSecond, r.MoreToDo)
 }
 
-func (r Phil) KerningCityFirst(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) KerningCityFirst(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Alright I'll explain to you more about ").
 		BlueText().AddText("Kerning City").
 		BlackText().AddText(". It's a thief-town located at the northwest part of Victoria Island, and there are buildings up there that have just this strange feeling around them. It's mostly covered in black clouds, but if you can go up to a really high place, you'll be able to see a very beautiful sunset there.")
-	return script.SendNextExit(l, c, m.String(), r.KerningCitySecond, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.KerningCitySecond, r.MoreToDo)
 }
 
-func (r Phil) KerningCitySecond(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) KerningCitySecond(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("From Kerning City, you can go into several dungeons. You can go to a swamp where alligators and snakes are abound, or hit the subway full of ghosts and bats. At the deepest part of the underground, you'll find Lace, who is just as big and dangerous as a dragon.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.KerningCityThird, r.KerningCityFirst, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.KerningCityThird, r.KerningCityFirst, r.MoreToDo)
 }
 
-func (r Phil) KerningCityThird(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) KerningCityThird(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("If you want to be a ").
 		BlueText().AddText("Thief").
 		BlackText().AddText(", seek ").
 		RedText().AddText("Dark Lord").
 		BlackText().AddText(", the heart of darkness of Kerning City. He may well make you a thief if you're at or above level 10 with a good amount of DEX. If not, go hunt and train yourself to reach there.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.Confused, r.KerningCitySecond, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.Confused, r.KerningCitySecond, r.MoreToDo)
 }
 
-func (r Phil) NautalisFirst(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) NautalisFirst(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Here's a little information on ").
 		BlueText().ShowMap(120000000).
 		BlackText().AddText(". It's a submarine that's currently parked in between Ellinia and Henesys in Victoria Island. That submarine serves as home to numerous pirates. You can have just as beautiful a view of the ocean there as you do here in Lith Harbor.")
-	return script.SendNextExit(l, c, m.String(), r.NautalisSecond, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.NautalisSecond, r.MoreToDo)
 }
 
-func (r Phil) NautalisSecond(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) NautalisSecond(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		ShowMap(120000000).
 		AddText(" is parked in between Henesys and Ellinia, so if you step out just a bit, you'll be able to enjoy the view of both towns. All the pirates you'll meet in town are very gregarious and friendly as well.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.NautalisThird, r.NautalisFirst, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.NautalisThird, r.NautalisFirst, r.MoreToDo)
 }
 
-func (r Phil) NautalisThird(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) NautalisThird(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("If you are serious about becoming a ").
 		BlueText().AddText("Pirate").
@@ -270,35 +271,35 @@ func (r Phil) NautalisThird(l logrus.FieldLogger, c script.Context) script.State
 		ShowMap(120000000).AddText(", ").
 		RedText().ShowNPC(1090000).
 		BlackText().AddText(". If you are over Level 10 with 20 DEX, then she may let you become one. If you aren't up to that level, then you'll need to train harder to get there!")
-	return script.SendNextPreviousExit(l, c, m.String(), r.Confused, r.NautalisSecond, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.Confused, r.NautalisSecond, r.MoreToDo)
 }
 
-func (r Phil) SleepywoodFirst(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) SleepywoodFirst(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Alright I'll explain to you more about ").
 		BlueText().AddText("Sleepywood").
 		BlackText().AddText(". It's a forest town located at the southeast side of Victoria Island. It's pretty much in between Henesys and the ant-tunnel dungeon. There's a hotel there, so you can rest up after a long day at the dungeon ... it's a quiet town in general.")
-	return script.SendNextExit(l, c, m.String(), r.SleepywoodSecond, r.MoreToDo)
+	return script.SendNextExit(l, span, c, m.String(), r.SleepywoodSecond, r.MoreToDo)
 }
 
-func (r Phil) SleepywoodSecond(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) SleepywoodSecond(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("In front of the hotel there's an old buddhist monk by the name of ").
 		RedText().AddText("Chrishrama").
 		BlackText().AddText(". Nobody knows a thing about that monk. Apparently he collects materials from the travelers and create something, but I am not too sure about the details. If you have any business going around that area, please check that out for me.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.SleepywoodThird, r.SleepywoodFirst, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.SleepywoodThird, r.SleepywoodFirst, r.MoreToDo)
 }
 
-func (r Phil) SleepywoodThird(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) SleepywoodThird(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("From Sleepywood, head east and you'll find the ant tunnel connected to the deepest part of the Victoria Island. Lots of nasty, powerful monsters abound so if you walk in thinking it's a walk in the park, you'll be coming out as a corpse. You need to fully prepare yourself for a rough ride before going in.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.SleepywoodFourth, r.SleepywoodSecond, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.SleepywoodFourth, r.SleepywoodSecond, r.MoreToDo)
 }
 
-func (r Phil) SleepywoodFourth(l logrus.FieldLogger, c script.Context) script.State {
+func (r Phil) SleepywoodFourth(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("And this is what I hear ... apparently, at Sleepywood there's a secret entrance leading you to an unknown place. Apparently, once you move in deep, you'll find a stack of black rocks that actually move around. I want to see that for myself in the near future ...")
-	return script.SendNextPreviousExit(l, c, m.String(), r.Confused, r.SleepywoodThird, r.MoreToDo)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.Confused, r.SleepywoodThird, r.MoreToDo)
 }
 
 func (r Phil) SelectTownConfirm(beginner bool) func(selection int32) script.StateProducer {
@@ -326,8 +327,8 @@ func (r Phil) ConfirmMap(mapId uint32, cost uint32) script.StateProducer {
 		BlackText().AddText("? Well it'll cost you ").
 		BlueText().AddText(fmt.Sprintf("%d mesos", cost)).
 		BlackText().AddText(". What do you think?")
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		return script.SendYesNoExit(l, c, m.String(), r.PerformTransaction(mapId, cost), r.MoreToDo, r.MoreToDo)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		return script.SendYesNoExit(l, span, c, m.String(), r.PerformTransaction(mapId, cost), r.MoreToDo, r.MoreToDo)
 	}
 }
 
@@ -352,27 +353,15 @@ func (r Phil) ConfirmNautalis(cost uint32) script.StateProducer {
 }
 
 func (r Phil) PerformTransaction(mapId uint32, cost uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, cost) {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasMeso(l, span)(c.CharacterId, cost) {
 			m := message.NewBuilder().
 				AddText("You don't have enough mesos. With your abilities, you should have more than that!")
-			return script.SendNextExit(l, c, m.String(), script.Exit(), script.Exit())
+			return script.SendNextExit(l, span, c, m.String(), script.Exit(), script.Exit())
 		}
 
-		err := character.GainMeso(l)(c.CharacterId, -int32(cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to complete meso transaction with %d.", c.CharacterId)
-			return nil
-		}
-
-		err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding mesos.", c.CharacterId, mapId)
-			err = character.GainMeso(l)(c.CharacterId, int32(cost))
-			if err != nil {
-				l.WithError(err).Errorf("Error processing refund, %d has lost %d mesos.", c.CharacterId, cost)
-			}
-		}
+		character.GainMeso(l, span)(c.CharacterId, -int32(cost))
+		npc.WarpById(l, span)(c.WorldId, c.ChannelId, c.CharacterId, mapId, 0)
 		return nil
 	}
 }

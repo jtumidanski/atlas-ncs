@@ -38,7 +38,7 @@ func (r AmosTheStrong) Selection(selection int32) script.StateProducer {
 }
 
 func (r AmosTheStrong) Enter(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	if !character.HasItem(l)(c.CharacterId, item.EntranceTicket) {
+	if !character.HasItem(l, span)(c.CharacterId, item.EntranceTicket) {
 		return r.MustHaveTicket(l, span, c)
 	}
 	m := message.NewBuilder().AddText("So you would like to enter the ").BlueText().AddText("Entrance").BlackText().AddText("?")
@@ -51,11 +51,11 @@ func (r AmosTheStrong) MustHaveTicket(l logrus.FieldLogger, span opentracing.Spa
 }
 
 func (r AmosTheStrong) Trade(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.EntranceTicket) {
+	if character.HasItem(l, span)(c.CharacterId, item.EntranceTicket) {
 		return r.AlreadyHave(l, span, c)
 	}
 
-	if !character.HasItems(l)(c.CharacterId, item.LipLockKey, 10) {
+	if !character.HasItems(l, span)(c.CharacterId, item.LipLockKey, 10) {
 		return r.GetMeKeys(l, span, c)
 	}
 
@@ -83,12 +83,12 @@ func (r AmosTheStrong) ComeBack(l logrus.FieldLogger, span opentracing.Span, c s
 }
 
 func (r AmosTheStrong) Exchange(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.LipLockKey, -10)
-	character.GainItem(l)(c.CharacterId, item.EntranceTicket, 1)
+	character.GainItem(l, span)(c.CharacterId, item.LipLockKey, -10)
+	character.GainItem(l, span)(c.CharacterId, item.EntranceTicket, 1)
 	return script.Exit()(l, span, c)
 }
 
 func (r AmosTheStrong) Process(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.EntranceTicket, -1)
+	character.GainItem(l, span)(c.CharacterId, item.EntranceTicket, -1)
 	return script.WarpById(_map.EntranceOfAmorianChallenge, 0)(l, span, c)
 }

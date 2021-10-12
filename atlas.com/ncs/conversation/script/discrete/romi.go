@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,11 +18,11 @@ func (r Romi) NPCId() uint32 {
 	return npc.Romi
 }
 
-func (r Romi) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Romi) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	hello := message.NewBuilder().
 		AddText("Well, hello! Welcome to the Orbis Skin-Care~! Would you like to have a firm, tight, healthy looking skin like mine?  With ").
 		BlueText().ShowItemName1(item.OrbisSkinCoupon).
 		BlackText().AddText(", you can let us take care of the rest and have the kind of skin you've always wanted~!").
 		String()
-	return care.NewGenericSkinCare(item.OrbisSkinCoupon, hello)(l, c)
+	return care.NewGenericSkinCare(item.OrbisSkinCoupon, hello)(l, span, c)
 }

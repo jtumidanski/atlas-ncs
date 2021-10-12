@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,41 +19,41 @@ func (r SubwayTrashCan3) NPCId() uint32 {
 	return npc.SubwayTrashCan3
 }
 
-func (r SubwayTrashCan3) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+func (r SubwayTrashCan3) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.Hello(l, span, c)
 }
 
-func (r SubwayTrashCan3) Hello(l logrus.FieldLogger, c script.Context) script.State {
+func (r SubwayTrashCan3) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !quest.IsStarted(l)(c.CharacterId, 20710) {
-		return r.JustATrashCan(l, c)
+		return r.JustATrashCan(l, span, c)
 	}
 
-	if character.HasItem(l)(c.CharacterId, item.BubblingDoll) {
-		return r.JustATrashCan(l, c)
+	if character.HasItem(l, span)(c.CharacterId, item.BubblingDoll) {
+		return r.JustATrashCan(l, span, c)
 	}
 
 	if !character.CanHold(l)(c.CharacterId, item.BubblingDoll) {
-		return r.NotEnoughSpace(l, c)
+		return r.NotEnoughSpace(l, span, c)
 	}
 
-	return r.GiveItem(l, c)
+	return r.GiveItem(l, span, c)
 }
 
-func (r SubwayTrashCan3) JustATrashCan(l logrus.FieldLogger, c script.Context) script.State {
+func (r SubwayTrashCan3) JustATrashCan(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Just a trash can sitting there.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r SubwayTrashCan3) NotEnoughSpace(l logrus.FieldLogger, c script.Context) script.State {
+func (r SubwayTrashCan3) NotEnoughSpace(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Not enough space in your ETC inventory.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r SubwayTrashCan3) GiveItem(l logrus.FieldLogger, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.BubblingDoll, 1)
+func (r SubwayTrashCan3) GiveItem(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainItem(l, span)(c.CharacterId, item.BubblingDoll, 1)
 	m := message.NewBuilder().
 		AddText("You have found a ").
 		BlueText().ShowItemName1(item.BubblingDoll).
 		BlackText().AddText(" in the trash can!")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }

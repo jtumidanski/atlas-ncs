@@ -15,23 +15,23 @@ func SetHair(l logrus.FieldLogger, c script.Context, choice uint32) {
 }
 
 func HairStyleChoices(maleHair []uint32, femaleHair []uint32) ChoicesSupplier {
-	return func(l logrus.FieldLogger, c script.Context) []uint32 {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) []uint32 {
 		hair := make([]uint32, 0)
-		gender := character.GetGender(l)(c.CharacterId)
+		gender := character.GetGender(l, span)(c.CharacterId)
 		if gender == character.GenderMale {
 			hair = maleHair
 		} else if gender == character.GenderFemale {
 			hair = femaleHair
 		}
-		hair = ApplyCurrentHairColor(l)(c.CharacterId, hair)
-		hair = FilterCurrentHair(l)(c.CharacterId, hair)
+		hair = ApplyCurrentHairColor(l, span)(c.CharacterId, hair)
+		hair = FilterCurrentHair(l, span)(c.CharacterId, hair)
 		return hair
 	}
 }
 
-func HairColorChoices(l logrus.FieldLogger, c script.Context) []uint32 {
+func HairColorChoices(l logrus.FieldLogger, span opentracing.Span, c script.Context) []uint32 {
 	hair := make([]uint32, 0)
-	currentHair := character.GetHair(l)(c.CharacterId)
+	currentHair := character.GetHair(l, span)(c.CharacterId)
 	baseStyle := uint32(math.Floor(float64(currentHair/10)) * 10)
 	for i := uint32(0); i < 8; i++ {
 		newColor := baseStyle + i
@@ -42,16 +42,16 @@ func HairColorChoices(l logrus.FieldLogger, c script.Context) []uint32 {
 	return hair
 }
 
-func GetRandomHair(l logrus.FieldLogger, c script.Context, maleHair []uint32, femaleHair []uint32) ChoiceSupplier {
+func GetRandomHair(l logrus.FieldLogger, span opentracing.Span, c script.Context, maleHair []uint32, femaleHair []uint32) ChoiceSupplier {
 	return func() uint32 {
 		hair := make([]uint32, 0)
-		gender := character.GetGender(l)(c.CharacterId)
+		gender := character.GetGender(l, span)(c.CharacterId)
 		if gender == character.GenderMale {
 			hair = maleHair
 		} else if gender == character.GenderFemale {
 			hair = femaleHair
 		}
-		hair = ApplyCurrentHairColor(l)(c.CharacterId, hair)
+		hair = ApplyCurrentHairColor(l, span)(c.CharacterId, hair)
 		return hair[rand.Intn(len(hair))]
 	}
 }
@@ -59,7 +59,7 @@ func GetRandomHair(l logrus.FieldLogger, c script.Context, maleHair []uint32, fe
 func WarnRandomStyle(prompt string, coupon uint32, maleHair []uint32, femaleHair []uint32, choice ChoiceConsumer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-			randomSupplier := GetRandomHair(l, c, maleHair, femaleHair)
+			randomSupplier := GetRandomHair(l, span, c, maleHair, femaleHair)
 			couponProcessor := ProcessCoupon(coupon, choice, SetSingleUse(true))
 			choiceProcessor := couponProcessor(randomSupplier)
 			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
@@ -70,24 +70,24 @@ func WarnRandomStyle(prompt string, coupon uint32, maleHair []uint32, femaleHair
 func WarnRandomColor(prompt string, choice ChoiceHandlerProducer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
 		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-			randomSupplier := GetRandomHairColor(l, c)
+			randomSupplier := GetRandomHairColor(l, span, c)
 			choiceProcessor := choice(randomSupplier)
 			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
 		}
 	}
 }
 
-func GetRandomHairColor(l logrus.FieldLogger, c script.Context) ChoiceSupplier {
+func GetRandomHairColor(l logrus.FieldLogger, span opentracing.Span, c script.Context) ChoiceSupplier {
 	return func() uint32 {
-		hair := HairColorChoices(l, c)
+		hair := HairColorChoices(l, span, c)
 		return hair[rand.Intn(len(hair))]
 	}
 }
 
-func ApplyCurrentHairColor(l logrus.FieldLogger) func(characterId uint32, hair []uint32) []uint32 {
+func ApplyCurrentHairColor(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, hair []uint32) []uint32 {
 	return func(characterId uint32, hair []uint32) []uint32 {
 		//TODO need to verify color combination exists
-		color := character.GetHair(l)(characterId) % 10
+		color := character.GetHair(l, span)(characterId) % 10
 		results := make([]uint32, 0)
 		for _, h := range hair {
 			results = append(results, h+color)
@@ -96,9 +96,9 @@ func ApplyCurrentHairColor(l logrus.FieldLogger) func(characterId uint32, hair [
 	}
 }
 
-func FilterCurrentHair(l logrus.FieldLogger) func(characterId uint32, hair []uint32) []uint32 {
+func FilterCurrentHair(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, hair []uint32) []uint32 {
 	return func(characterId uint32, hair []uint32) []uint32 {
-		current := character.GetHair(l)(characterId)
+		current := character.GetHair(l, span)(characterId)
 		results := make([]uint32, 0)
 		for _, h := range hair {
 			if h != current {

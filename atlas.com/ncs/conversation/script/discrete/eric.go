@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +18,8 @@ func (r Eric) NPCId() uint32 {
 	return npc.Eric
 }
 
-func (r Eric) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return care.NewGenericCare(r.Hello(), []care.ChoiceConfig{r.StyleHair(item.CBDHairStyleCouponVIP), care.ColorCareChoice(item.CBDHairColorCouponVIP)})(l, c)
+func (r Eric) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return care.NewGenericCare(r.Hello(), []care.ChoiceConfig{r.StyleHair(item.CBDHairStyleCouponVIP), care.ColorCareChoice(item.CBDHairColorCouponVIP)})(l, span, c)
 }
 
 func (r Eric) Hello() string {

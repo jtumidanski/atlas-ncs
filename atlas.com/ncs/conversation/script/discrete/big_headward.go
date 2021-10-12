@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,8 +19,8 @@ func (r BigHeadward) NPCId() uint32 {
 	return npc.BigHeadward
 }
 
-func (r BigHeadward) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return care.NewGenericCare(r.Hello(), r.ProvidedCare())(l, c)
+func (r BigHeadward) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return care.NewGenericCare(r.Hello(), r.ProvidedCare())(l, span, c)
 }
 
 func (r BigHeadward) Hello() string {

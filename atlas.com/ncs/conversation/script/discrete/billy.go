@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,13 +17,13 @@ func (r Billy) NPCId() uint32 {
 	return npc.Billy
 }
 
-func (r Billy) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Billy) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	tiers := r.GetTiers()
-	return r.Hello(tiers)(l, c)
+	return r.Hello(tiers)(l, span, c)
 }
 
 func (r Billy) Hello(tiers []Tier) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("The ").
 			BlueText().AddText("Internet Cafe Party Quest").
@@ -35,7 +36,7 @@ func (r Billy) Hello(tiers []Tier) script.StateProducer {
 		for i, tier := range tiers {
 			m = m.OpenItem(i).BlueText().AddText(tier.Name).CloseItem()
 		}
-		return script.SendListSelection(l, c, m.String(), r.Selection(tiers))
+		return script.SendListSelection(l, span, c, m.String(), r.Selection(tiers))
 	}
 }
 
@@ -66,8 +67,8 @@ func (r Billy) Selection(tiers []Tier) script.ProcessSelection {
 			}
 			m = m.OpenItem(i).ShowItemImage2(prize.ItemId).AddText(" ").ShowItemName1(prize.ItemId).AddText(qty).CloseItem()
 		}
-		return func(l logrus.FieldLogger, c script.Context) script.State {
-			return script.SendPrevious(l, c, m.String(), r.Hello(tiers))
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+			return script.SendPrevious(l, span, c, m.String(), r.Hello(tiers))
 		}
 	}
 }

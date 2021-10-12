@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,7 +17,7 @@ func (r Victoria) NPCId() uint32 {
 	return npc.Victoria
 }
 
-func (r Victoria) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Victoria) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Welcome to the Cathedral.").NewLine().NewLine().
 		BlueText().AddText("Couples").
@@ -38,5 +39,5 @@ func (r Victoria) Initial(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" to ").
 		RedText().ShowNPC(npc.AssistantNicole).
 		BlackText().AddText(" to access the inner rooms. No one without a ticket is allowed to enter the stage!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

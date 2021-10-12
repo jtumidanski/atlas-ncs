@@ -6,6 +6,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,33 +18,33 @@ func (r DimensionalMirror) NPCId() uint32 {
 	return npc.DimensionalMirror
 }
 
-func (r DimensionalMirror) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.IsLevel(l)(c.CharacterId, 20) {
+func (r DimensionalMirror) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if !character.IsLevel(l, span)(c.CharacterId, 20) {
 		m := message.NewBuilder().AddText("There is no place for you to transport to from here.")
-		return script.SendDimensionalMirror(l, c, m.String(), r.Selection)
+		return script.SendDimensionalMirror(l, span, c, m.String(), r.Selection)
 	}
 
 	m := message.NewBuilder()
-	if character.MeetsCriteria(l)(c.CharacterId, character.IsLevelBetweenCriteria(20, 30)) {
+	if character.MeetsCriteria(l, span)(c.CharacterId, character.IsLevelBetweenCriteria(20, 30)) {
 		m = m.DimensionalMirrorOption(0, "Ariant Coliseum")
 	}
-	if character.IsLevel(l)(c.CharacterId, 25) {
+	if character.IsLevel(l, span)(c.CharacterId, 25) {
 		m = m.DimensionalMirrorOption(1, "Mu Lung Dojo")
 	}
-	if character.MeetsCriteria(l)(c.CharacterId, character.IsLevelBetweenCriteria(30, 50)) {
+	if character.MeetsCriteria(l, span)(c.CharacterId, character.IsLevelBetweenCriteria(30, 50)) {
 		m = m.DimensionalMirrorOption(2, "Monster Carnival 1")
 	}
-	if character.MeetsCriteria(l)(c.CharacterId, character.IsLevelBetweenCriteria(51, 70)) {
+	if character.MeetsCriteria(l, span)(c.CharacterId, character.IsLevelBetweenCriteria(51, 70)) {
 		m = m.DimensionalMirrorOption(3, "Monster Carnival 2")
 	}
 	//TODO what is 4?
-	if character.IsLevel(l)(c.CharacterId, 40) {
+	if character.IsLevel(l, span)(c.CharacterId, 40) {
 		m = m.DimensionalMirrorOption(5, "Nett's Pyramid")
 	}
-	if character.MeetsCriteria(l)(c.CharacterId, character.IsLevelBetweenCriteria(25, 30)) {
+	if character.MeetsCriteria(l, span)(c.CharacterId, character.IsLevelBetweenCriteria(25, 30)) {
 		m = m.DimensionalMirrorOption(6, "Construction Site")
 	}
-	return script.SendDimensionalMirror(l, c, m.String(), r.Selection)
+	return script.SendDimensionalMirror(l, span, c, m.String(), r.Selection)
 }
 
 func (r DimensionalMirror) Selection(selection int32) script.StateProducer {
@@ -66,8 +67,8 @@ func (r DimensionalMirror) Selection(selection int32) script.StateProducer {
 }
 
 func (r DimensionalMirror) SaveAndWarpById(location string, mapId uint32, portalId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		character.SaveLocation(l)(c.CharacterId, location)
-		return script.WarpById(mapId, portalId)(l, c)
+		return script.WarpById(mapId, portalId)(l, span, c)
 	}
 }

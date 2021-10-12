@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -20,35 +21,35 @@ func (r BossKitty) NPCId() uint32 {
 	return npc.BossKitty
 }
 
-func (r BossKitty) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if quest.IsStarted(l)(c.CharacterId, 8012) && !character.HasItem(l)(c.CharacterId, item.OrangeMarble) {
+func (r BossKitty) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if quest.IsStarted(l)(c.CharacterId, 8012) && !character.HasItem(l, span)(c.CharacterId, item.OrangeMarble) {
 		m := message.NewBuilder().AddText("Did you get them all? Are you going to try to answer all of my questions?")
-		return script.SendYesNo(l, c, m.String(), r.ValidateChicken, script.Exit())
+		return script.SendYesNo(l, span, c, m.String(), r.ValidateChicken, script.Exit())
 	} else {
 		m := message.NewBuilder().AddText("Meeeoooowww!")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r BossKitty) ValidateChicken(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.HasItems(l)(c.CharacterId, item.FriedChicken, 300) {
-		return r.MissingChicken(l, c)
+func (r BossKitty) ValidateChicken(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if !character.HasItems(l, span)(c.CharacterId, item.FriedChicken, 300) {
+		return r.MissingChicken(l, span, c)
 	}
-	character.GainItem(l)(c.CharacterId, item.FriedChicken, -300)
+	character.GainItem(l, span)(c.CharacterId, item.FriedChicken, -300)
 	m := message.NewBuilder().
 		AddText("Good job! Now hold on a sec... Hey look! I got some food here! Help yourselves. Okay, now it's time for me to ask you some questions. I'm sure you're aware of this, but remember, if you're wrong, it's over. It's all or nothing!")
-	return script.SendNext(l, c, m.String(), r.FirstQuestion)
+	return script.SendNext(l, span, c, m.String(), r.FirstQuestion)
 }
 
-func (r BossKitty) MissingChicken(l logrus.FieldLogger, c script.Context) script.State {
+func (r BossKitty) MissingChicken(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("What? No! 300! THREE. HUNDRED. No less. Hand over more if you want, but I need at least 300. Not all of us can be as big and as fed as you...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r BossKitty) FirstQuestion(l logrus.FieldLogger, c script.Context) script.State {
+func (r BossKitty) FirstQuestion(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	questions := r.QuestionSet()
-	return r.AskQuestion(1, questions)(l, c)
+	return r.AskQuestion(1, questions)(l, span, c)
 }
 
 func (r BossKitty) QuestionSet() []Question {
@@ -68,7 +69,7 @@ func (r BossKitty) QuestionSet() []Question {
 }
 
 func (r BossKitty) AskQuestion(num int, questions []Question) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		selected := rand.Intn(len(questions))
 		question := questions[selected]
 
@@ -78,43 +79,43 @@ func (r BossKitty) AskQuestion(num int, questions []Question) script.StateProduc
 		for i, answer := range question.answers {
 			m = m.OpenItem(i).BlueText().AddText(answer).CloseItem().NewLine()
 		}
-		return script.SendListSelection(l, c, m.String(), r.Validate(num, question, append(questions[:selected], questions[selected+1:]...)))
+		return script.SendListSelection(l, span, c, m.String(), r.Validate(num, question, append(questions[:selected], questions[selected+1:]...)))
 	}
 }
 
 func (r BossKitty) Validate(num int, question Question, remaining []Question) script.ProcessSelection {
 	return func(selection int32) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			if question.correctIndex != uint32(selection) {
-				return r.Incorrect(l, c)
+				return r.Incorrect(l, span, c)
 			}
 			if len(remaining) == 0 {
-				return r.AllCorrect(l, c)
+				return r.AllCorrect(l, span, c)
 			} else {
-				return r.AskQuestion(num+1, remaining)(l, c)
+				return r.AskQuestion(num+1, remaining)(l, span, c)
 			}
 		}
 	}
 }
 
-func (r BossKitty) AllCorrect(l logrus.FieldLogger, c script.Context) script.State {
+func (r BossKitty) AllCorrect(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Dang, you answered all the questions right. I may not like humans in general, but I HATE breaking a promise, so, as promised, here's the Orange Marble.")
-	return script.SendNext(l, c, m.String(), r.Reward)
+	return script.SendNext(l, span, c, m.String(), r.Reward)
 }
 
-func (r BossKitty) Incorrect(l logrus.FieldLogger, c script.Context) script.State {
+func (r BossKitty) Incorrect(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hmmm...all humans make mistakes anyway! If you want to take another crack at it, then bring me 300 Fried Chicken.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r BossKitty) Reward(l logrus.FieldLogger, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.OrangeMarble, 1)
-	return r.YouCanLeave(l, c)
+func (r BossKitty) Reward(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainItem(l, span)(c.CharacterId, item.OrangeMarble, 1)
+	return r.YouCanLeave(l, span, c)
 }
 
-func (r BossKitty) YouCanLeave(l logrus.FieldLogger, c script.Context) script.State {
+func (r BossKitty) YouCanLeave(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Our business is concluded, thank you very much! You can leave now!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

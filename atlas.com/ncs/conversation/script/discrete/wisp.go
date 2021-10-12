@@ -4,6 +4,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +16,7 @@ func (r Wisp) NPCId() uint32 {
 	return npc.Wisp
 }
 
-func (r Wisp) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hello there, I'm ").
 		BlueText().AddText("Mar the Fairy").
@@ -51,7 +52,7 @@ func (r Wisp) Initial(l logrus.FieldLogger, c script.Context) script.State {
 		OpenItem(28).BlueText().AddText("What are the commands for White Duck?").CloseItem().NewLine().
 		OpenItem(29).BlueText().AddText("What are the commands for Pink Bean?").CloseItem().NewLine().
 		OpenItem(30).BlueText().AddText("What are the commands for Porcupine?").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r Wisp) Selection(selection int32) script.StateProducer {
@@ -122,33 +123,33 @@ func (r Wisp) Selection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r Wisp) WhoAreYou(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) WhoAreYou(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("I'm Wisp, continuing on with the studies that my Master Mar the Fairy assigned me. There seems to be a lot of pets even here in Ludibrium. I need to get back to my studies, so if you'll excuse me...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) MoreAboutPets(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) MoreAboutPets(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hmmmm,you must have a lot of questions regarding the pets. Long ago, a person by the name ").
 		BlueText().AddText("Cloy").
 		BlackText().AddText(", sprayed Water of Life on it, and cast spell on it to create a magical animal. I know it sounds unbelievable, but it's a doll that became an actual living thing. They understand and follow people very well.")
-	return script.SendNext(l, c, m.String(), r.But)
+	return script.SendNext(l, span, c, m.String(), r.But)
 }
 
-func (r Wisp) HowToRaise(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) HowToRaise(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Depending on the command you give, pets can love it, hate, and display other kinds of reactions to it. If you give the pet a command and it follows you well, your closeness goes up. Double click on the pet and you can check the closeness, level, fullness and etc...")
-	return script.SendNext(l, c, m.String(), r.Talk)
+	return script.SendNext(l, span, c, m.String(), r.Talk)
 }
 
-func (r Wisp) DoPetsDie(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) DoPetsDie(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Dying... well, they aren't technically ALIVE per se, so I don't know if dying is the right term to use. They are dolls with my magical power and the power of Water of Life to become a live object. Of course while it's alive, it's just like a live animal...")
-	return script.SendNext(l, c, m.String(), r.AfterSomeTime)
+	return script.SendNext(l, span, c, m.String(), r.AfterSomeTime)
 }
 
-func (r Wisp) Kitty(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Kitty(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rBrown Kitty and Black Kitty#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
@@ -158,10 +159,10 @@ func (r Wisp) Kitty(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#btalk, say, chat#k (level 10 ~ 30)").NewLine().
 		AddText("#bcutie#k (level 10 ~ 30)").NewLine().
 		AddText("#bup, stand, rise#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Puppy(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Puppy(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rBrown Puppy#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
@@ -171,10 +172,10 @@ func (r Wisp) Puppy(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#btalk, say, chat, bark#k (level 10 ~ 30)").NewLine().
 		AddText("#bdown#k (level 10 ~ 30)").NewLine().
 		AddText("#bup, stand, rise#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Bunny(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Bunny(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rPink Bunny and White Bunny#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
@@ -184,10 +185,10 @@ func (r Wisp) Bunny(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#btalk, say, chat#k (level 10 ~ 30)").NewLine().
 		AddText("#bhug#k (level 10 ~ 30)").NewLine().
 		AddText("#bsleep, sleepy, gotobed#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) MiniCargo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) MiniCargo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rMini Cargo#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
@@ -197,10 +198,10 @@ func (r Wisp) MiniCargo(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#btalk, say, chat#k (level 10 ~ 30)").NewLine().
 		AddText("#bthelook, charisma#k (level 10 ~ 30)").NewLine().
 		AddText("#bgoodboy, good#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Husky(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Husky(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rHusky#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
@@ -210,10 +211,10 @@ func (r Wisp) Husky(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#btalk, say, chat, bark#k (level 10 ~ 30)").NewLine().
 		AddText("#bdown#k (level 10 ~ 30)").NewLine().
 		AddText("#bup, stand, rise#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) BlackPig(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) BlackPig(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rBlack Pig#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
@@ -225,10 +226,10 @@ func (r Wisp) BlackPig(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bsmile#k (level 10 ~ 30)").NewLine().
 		AddText("#blaugh, smile#k (level 10 ~ 30)").NewLine().
 		AddText("#bcharisma, sleep, sleepy, gotobed#k(level 20~30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Panda(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Panda(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rPanda#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
@@ -239,10 +240,10 @@ func (r Wisp) Panda(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bplay#k (level 20 ~ 30)").NewLine().
 		AddText("#bmeh, bleh#k (level 10 ~ 30)").NewLine().
 		AddText("#bsleep, sleepy, gotobed#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Dino(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Dino(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rDino Boy and Dino Girl#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no,, stupid, ihateyou, badboy, badgirl#k (evel 1 ~ 30)").NewLine().
@@ -252,10 +253,10 @@ func (r Wisp) Dino(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bsmile, laugh#k (level 1 ~ 30)").NewLine().
 		AddText("#bcutie#k (level 10 ~ 30)").NewLine().
 		AddText("#bsleep, nap, sleepy#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Rudolph(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Rudolph(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rRudolph#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k(level 1 ~30) ").NewLine().
 		AddText("#bbad, no, badgirl, badboy#k(level 1~30)").NewLine().
@@ -268,10 +269,10 @@ func (r Wisp) Rudolph(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#blonely, alone, down, rednose#k(level 11~30),").NewLine().
 		AddText("#bcutie#k(level 11 ~ 30)").NewLine().
 		AddText("#bmush, go#k(level 21 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Monkey(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Monkey(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rMonkey#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit, rest#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badboy, badgirl#k (level 1 ~ 30)").NewLine().
@@ -280,20 +281,20 @@ func (r Wisp) Monkey(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#btalk, say, chat#k (level 11 ~ 30)").NewLine().
 		AddText("#bplay, melong#k (level 11 ~ 30)").NewLine().
 		AddText("#bsleep, sleepy, gotobed#k (level 21 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Robot(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Robot(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rRobot#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit, stand, rise#k (level 1 ~ 30)").NewLine().
 		AddText("#battack, bad, no, badboy#k (level 1 ~ 30)").NewLine().
 		AddText("#bstupid, ihateyou, dummy#k (level 1 ~ 30)").NewLine().
 		AddText("#biloveyou, good#k (level 1 ~ 30)").NewLine().
 		AddText("#bspeak, disguise#k (level 11 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Elephant(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Elephant(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rElephant#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit, rest#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badboy, badgirl#k (level 1 ~ 30)").NewLine().
@@ -301,10 +302,10 @@ func (r Wisp) Elephant(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#biloveyou, pee#k (level 1 ~ 30)").NewLine().
 		AddText("#btalk, say, chat, play#k (level 11 ~ 30)").NewLine().
 		AddText("#bsleep, sleepy, gotobed#k (level 21 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) GoldenPig(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) GoldenPig(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rGolden Pig#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badboy, badgirl#k (level 1 ~ 30)").NewLine().
@@ -314,10 +315,10 @@ func (r Wisp) GoldenPig(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bsleep, sleepy, gotobed#k (level 21 ~ 30)").NewLine().
 		AddText("#bimpressed, outofhere#k (level 21 ~ 30)").NewLine().
 		AddText("#broll, showmethemoney#k (level 21 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Penguin(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Penguin(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rPenguin#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badboy, badgirl#k (level 1 ~ 30)").NewLine().
@@ -331,10 +332,10 @@ func (r Wisp) Penguin(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bkiss, smooch, muah#k (level 20 ~ 30)").NewLine().
 		AddText("#bfly#k (level 20 ~ 30)").NewLine().
 		AddText("#bcute, adorable#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) MiniYeti(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) MiniYeti(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rMini Yeti#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad, no, badboy, badgirl#k (level 1 ~ 30)").NewLine().
@@ -344,10 +345,10 @@ func (r Wisp) MiniYeti(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#biloveyou, likeyou, mylove#k (level 1 ~ 30)").NewLine().
 		AddText("#btalk, chat, say#k (level 10 ~ 30)").NewLine().
 		AddText("#bsleep, nap#k (level 10 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) JrBalrog(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) JrBalrog(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rJr. Balrog#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bliedown#k (level 1 ~ 30)").NewLine().
 		AddText("#bno|bad|badgirl|badboy#k (level 1 ~ 30)").NewLine().
@@ -360,10 +361,10 @@ func (r Wisp) JrBalrog(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bspeak|talk|chat|say#k (level 11 ~ 30)").NewLine().
 		AddText("#bsleep|nap|sleepy#k (level 11 ~ 30)").NewLine().
 		AddText("#bgas#k (level 21 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) BabyDragon(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) BabyDragon(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rBaby Dragon#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bno|bad|badgirl|badboy#k (level 1 ~ 30)").NewLine().
@@ -373,10 +374,10 @@ func (r Wisp) BabyDragon(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bcutie#k (level 11 ~ 30)").NewLine().
 		AddText("#btalk|chat|say#k (level 11 ~ 30)").NewLine().
 		AddText("#bsleep|sleepy|gotobed#k (level 11 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) GreenRedBlueDragon(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) GreenRedBlueDragon(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rGreen/Red/Blue Dragon#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 15 ~ 30)").NewLine().
 		AddText("#bno|bad|badgirl|badboy#k (level 15 ~ 30)").NewLine().
@@ -386,10 +387,10 @@ func (r Wisp) GreenRedBlueDragon(l logrus.FieldLogger, c script.Context) script.
 		AddText("#btalk|chat|say#k (level 15 ~ 30)").NewLine().
 		AddText("#bsleep|sleepy|gotobed#k (level 15 ~ 30)").NewLine().
 		AddText("#bchange#k (level 21 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) BlackDragon(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) BlackDragon(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rBlack Dragon#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 15 ~ 30)").NewLine().
 		AddText("#bno|bad|badgirl|badboy#k (level 15 ~ 30)").NewLine().
@@ -399,10 +400,10 @@ func (r Wisp) BlackDragon(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#btalk|chat|say#k (level 15 ~ 30)").NewLine().
 		AddText("#bsleep|sleepy|gotobed#k (level 15 ~ 30)").NewLine().
 		AddText("#bcutie, change#k (level 21 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Snowman(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Snowman(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rSnowman#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bstupid, ihateyou, dummy#k (level 1 ~ 30)").NewLine().
 		AddText("#bloveyou, mylove, ilikeyou#k (level 1 ~ 30)").NewLine().
@@ -411,10 +412,10 @@ func (r Wisp) Snowman(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bbad, no, badgirl, badboy#k (level 1 ~ 30)").NewLine().
 		AddText("#btalk, chat, say/sleep, sleepy, gotobed#k (level 10 ~ 30)").NewLine().
 		AddText("#bchang#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) SunWuKong(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) SunWuKong(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rSun Wu Kong#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k(level 1 ~ 30)").NewLine().
 		AddText("#bno,bad,badgirl,badboy#k(level 1 ~ 30) ").NewLine().
@@ -423,10 +424,10 @@ func (r Wisp) SunWuKong(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#biloveyou,loveyou,luvyou,ilikeyou,mylove#k(level 1 ~ 30) ").NewLine().
 		AddText("#btalk,chat,say/sleep,sleepy,gotobed#k(level 10 ~ 30) ").NewLine().
 		AddText("#btransform#k(level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) JrReaper(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) JrReaper(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rJr. Reaper#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bno|bad|badgirl|badboy#k (level 1 ~ 30)").NewLine().
@@ -436,10 +437,10 @@ func (r Wisp) JrReaper(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bsmellmyfeet, rockout, boo#k (level 1 ~ 30)").NewLine().
 		AddText("#btrickortreat#k (level 1 ~ 30)").NewLine().
 		AddText("#bmonstermash#k (level 1 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) CrystalRudolph(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) CrystalRudolph(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rCrystal Rudolph#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bno|badgirl|badboy#k (level 1 ~ 30)").NewLine().
@@ -449,10 +450,10 @@ func (r Wisp) CrystalRudolph(l logrus.FieldLogger, c script.Context) script.Stat
 		AddText("#bloveyou|heybabe#k(level 1 ~ 30) ").NewLine().
 		AddText("#btalk|say|chat#k(level 10 ~ 30) ").NewLine().
 		AddText("#bsleep|sleepy|nap|gotobed#k(level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Kino(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Kino(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rKino#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bbad|no|badgirl|badboy#k (level 1 ~ 30)").NewLine().
@@ -462,10 +463,10 @@ func (r Wisp) Kino(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#biloveyou|mylove|likeyou#k(level 10 ~ 30) ").NewLine().
 		AddText("#bmeh|bleh#k(level 10 ~ 30) ").NewLine().
 		AddText("#bdisguise|change|transform#k(level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) WhiteDuck(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) WhiteDuck(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rWhite Duck#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k(level 1 ~ 30) ").NewLine().
 		AddText("#bbad|no|badgirl|badboy#k(level 1 ~ 30) ").NewLine().
@@ -479,10 +480,10 @@ func (r Wisp) WhiteDuck(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bsmarty(level 10 ~ 30) ").NewLine().
 		AddText("#bdance#k (level 20 ~ 30) ").NewLine().
 		AddText("#bswan#k(level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) PinkBean(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) PinkBean(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rPink Bean#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k(level 1 ~ 30) ").NewLine().
 		AddText("#bbad|no|badgirl|badboy|poop#k(level 1 ~ 30) ").NewLine().
@@ -490,44 +491,44 @@ func (r Wisp) PinkBean(l logrus.FieldLogger, c script.Context) script.State {
 		AddText("#bshake|music|charmbleh|joke|boo#k(level 20 ~ 30) ").NewLine().
 		AddText("#bgotobed|sleep|sleepypoke|stinky|dummy|ihateyou#k(level 20 ~ 30)").NewLine().
 		AddText("#bkongkong#k(level 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) Porcupine(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Porcupine(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("These are the commands for #rPorcupine#k. The level mentioned next to the command shows the pet level required for it to respond.").NewLine().
 		AddText("#bsit#k (level 1 ~ 30)").NewLine().
 		AddText("#bno|bad|badgirl|badboy#k (level 1 ~ 30)").NewLine().
 		AddText("#bhugcushion|sleep|knit|poop#k (level 1 ~ 30)").NewLine().
 		AddText("#bcomb|beach#k (level 10 ~ 30)").NewLine().
 		AddText("#btreeninja|dart#k (level 20 ~ 30)")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Wisp) But(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) But(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("But Water of Life only comes out little at the very bottom of the World Tree, so those babies can't be alive forever... I know, it's very unfortunate... but even if it becomes a doll again they can be brought back to life so be good to it while you're with it.")
-	return script.SendNextPrevious(l, c, m.String(), r.SpecialCommands, r.MoreAboutPets)
+	return script.SendNextPrevious(l, span, c, m.String(), r.SpecialCommands, r.MoreAboutPets)
 }
 
-func (r Wisp) SpecialCommands(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) SpecialCommands(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Oh yeah, they'll react when you give them special commands. You can scold them, love them.. it all depends on how you take care of them. They are afraid to leave their masters so be nice to them, show them love. They can get sad and lonely fast..")
-	return script.SendPrevious(l, c, m.String(), r.But)
+	return script.SendPrevious(l, span, c, m.String(), r.But)
 }
 
-func (r Wisp) Talk(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Talk(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Talk to the pet, pay attention to it and its closeness level will go up and eventually his overall level will go up too. As the closeness rises, the pet's overall level will rise soon after. As the overall level rises, one day the pet may even talk like a person a little bit, so try hard raising it. Of course it won't be easy doing so...")
-	return script.SendNextPrevious(l, c, m.String(), r.HowToRaise, r.Hungry)
+	return script.SendNextPrevious(l, span, c, m.String(), r.HowToRaise, r.Hungry)
 }
 
-func (r Wisp) Hungry(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Hungry(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("It may be a live doll but they also have life so they can feel the hunger too. ").
 		BlueText().AddText("Fullness").
 		BlackText().AddText(" shows the level of hunger the pet's in. 100 is the max, and the lower it gets, it means that the pet is getting hungrier. After a while, it won't even follow your command and be on the offensive, so watch out over that.")
-	return script.SendNextPrevious(l, c, m.String(), r.NotNormalFood, r.Talk)
+	return script.SendNextPrevious(l, span, c, m.String(), r.NotNormalFood, r.Talk)
 }
 
-func (r Wisp) NotNormalFood(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) NotNormalFood(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("That's right! Pets can't eat the normal human food. Instead a teddy bear in Ludibrium called ").
 		BlueText().AddText("Patricia").
@@ -536,23 +537,23 @@ func (r Wisp) NotNormalFood(l logrus.FieldLogger, c script.Context) script.State
 		BlackText().AddText(" so if you need food for your pet, find ").
 		BlueText().AddText("Patricia").
 		BlackText().AddText(" It'll be a good idea to buy the food in advance and feed the pet before it gets really hungry.")
-	return script.SendNextPrevious(l, c, m.String(), r.GoesHome, r.Hungry)
+	return script.SendNextPrevious(l, span, c, m.String(), r.GoesHome, r.Hungry)
 }
 
-func (r Wisp) GoesHome(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) GoesHome(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Oh, and if you don't feed the pet for a long period of time, it goes back home by itself. You can take it out of its home and feed it but it's not really good for the pet's health, so try feeding him on a regular basis so it doesn't go down to that level, alright? I think this will do.")
-	return script.SendPrevious(l, c, m.String(), r.NotNormalFood)
+	return script.SendPrevious(l, span, c, m.String(), r.NotNormalFood)
 }
 
-func (r Wisp) AfterSomeTime(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) AfterSomeTime(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("After some time... that's correct, they stop moving. They just turn back to being a doll, after the effect of magic dies down and Water of Life dries out. But that doesn't mean it's stopped forever, because once you pour Water of Life over, it's going to be back alive.")
-	return script.SendNextPrevious(l, c, m.String(), r.Sad, r.GoesHome)
+	return script.SendNextPrevious(l, span, c, m.String(), r.Sad, r.GoesHome)
 }
 
-func (r Wisp) Sad(l logrus.FieldLogger, c script.Context) script.State {
+func (r Wisp) Sad(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Even if it someday moves again, it's sad to see them stop altogether. Please be nice to them while they are alive and moving. Feed them well, too. Isn't it nice to know that there's something alive that follows and listens to only you?")
-	return script.SendPrevious(l, c, m.String(), r.AfterSomeTime)
+	return script.SendPrevious(l, span, c, m.String(), r.AfterSomeTime)
 }

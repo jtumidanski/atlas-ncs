@@ -9,6 +9,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,142 +21,142 @@ func (r DancesWithBalrog) NPCId() uint32 {
 	return npc.DancesWithBalrog
 }
 
-func (r DancesWithBalrog) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.IsJob(l)(c.CharacterId, job.Beginner) {
-		return r.FirstJob(l, c)
+func (r DancesWithBalrog) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.IsJob(l, span)(c.CharacterId, job.Beginner) {
+		return r.FirstJob(l, span, c)
 	}
 
-	if character.MeetsCriteria(l)(c.CharacterId, character.IsJobCriteria(job.Warrior), character.IsLevelCriteria(30)) {
-		return r.SecondJob(l, c)
+	if character.MeetsCriteria(l, span)(c.CharacterId, character.IsJobCriteria(job.Warrior), character.IsLevelCriteria(30)) {
+		return r.SecondJob(l, span, c)
 	}
 	//TODO third job
-	return r.ChosenWisely(l, c)
+	return r.ChosenWisely(l, span, c)
 }
 
-func (r DancesWithBalrog) ChosenWisely(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) ChosenWisely(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You have chosen wisely.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r DancesWithBalrog) FirstJob(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) FirstJob(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Do you want to become a ").
 		RedText().AddText("warrior").
 		BlackText().AddText("? You need to meet some criteria in order to do so.").
 		BlueText().AddText(" You should be at least in level 10, and at least STR 35").
 		BlackText().AddText(". Let's see...")
-	return script.SendNext(l, c, m.String(), r.ValidateFirstJobCriteria)
+	return script.SendNext(l, span, c, m.String(), r.ValidateFirstJobCriteria)
 }
 
-func (r DancesWithBalrog) ValidateFirstJobCriteria(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.MeetsCriteria(l)(c.CharacterId, character.IsJobCriteria(job.Beginner), character.IsLevelCriteria(10), character.HasStrengthCriteria(35)) {
-		return r.TrainMore(l, c)
+func (r DancesWithBalrog) ValidateFirstJobCriteria(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if !character.MeetsCriteria(l, span)(c.CharacterId, character.IsJobCriteria(job.Beginner), character.IsLevelCriteria(10), character.HasStrengthCriteria(35)) {
+		return r.TrainMore(l, span, c)
 	}
-	return r.ImportantChoice(l, c)
+	return r.ImportantChoice(l, span, c)
 }
 
-func (r DancesWithBalrog) TrainMore(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) TrainMore(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Train a bit more until you reach the base requirements and I can show you the way of the ").
 		RedText().AddText("Warrior").
 		BlackText().AddText(".")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r DancesWithBalrog) ImportantChoice(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) ImportantChoice(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("It is an important and final choice. You will not be able to turn back.")
-	return script.SendNextPreviousExit(l, c, m.String(), r.ProcessFirstJob, r.FirstJob, r.MakeUpYourMind)
+	return script.SendNextPreviousExit(l, span, c, m.String(), r.ProcessFirstJob, r.FirstJob, r.MakeUpYourMind)
 }
 
-func (r DancesWithBalrog) MakeUpYourMind(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) MakeUpYourMind(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Make up your mind and visit me again.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r DancesWithBalrog) ProcessFirstJob(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) ProcessFirstJob(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !character.CanHold(l)(c.CharacterId, item.BeginnerWarriorsSword) {
-		return r.MakeInventoryRoom(l, c)
+		return r.MakeInventoryRoom(l, span, c)
 	}
-	if character.IsJob(l)(c.CharacterId, job.Beginner) {
-		character.ChangeJob(l)(c.CharacterId, job.Warrior)
-		character.GainItem(l)(c.CharacterId, item.BeginnerWarriorsSword, 1)
-		character.ResetAP(l)(c.CharacterId)
+	if character.IsJob(l, span)(c.CharacterId, job.Beginner) {
+		character.ChangeJob(l, span)(c.CharacterId, job.Warrior)
+		character.GainItem(l, span)(c.CharacterId, item.BeginnerWarriorsSword, 1)
+		character.ResetAP(l, span)(c.CharacterId)
 	}
-	return r.FirstJobAdvance(l, c)
+	return r.FirstJobAdvance(l, span, c)
 }
 
-func (r DancesWithBalrog) MakeInventoryRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) MakeInventoryRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Make some room in your inventory and talk back to me.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r DancesWithBalrog) FirstJobAdvance(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) FirstJobAdvance(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("From here on out, you are going to the Warrior path. This is not an easy job, but if you have discipline and confidence in your own body and skills, you will overcome any difficulties in your path. Go, young Warrior!")
-	return script.SendNext(l, c, m.String(), r.GottenStronger)
+	return script.SendNext(l, span, c, m.String(), r.GottenStronger)
 }
 
-func (r DancesWithBalrog) GottenStronger(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) GottenStronger(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You've gotten much stronger now. Plus every single one of your inventories have added slots. A whole row, to be exact. Go see for it yourself. I just gave you a little bit of #bSP#k. When you open up the #bSkill#k menu on the lower left corner of the screen, there are skills you can learn by using SP's. One warning, though: You can't raise it all together all at once. There are also skills you can acquire only after having learned a couple of skills first.")
-	return script.SendNextPrevious(l, c, m.String(), r.Reminder, r.FirstJobAdvance)
+	return script.SendNextPrevious(l, span, c, m.String(), r.Reminder, r.FirstJobAdvance)
 }
 
-func (r DancesWithBalrog) Reminder(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) Reminder(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Now a reminder. Once you have chosen, you cannot change up your mind and try to pick another path. Go now, and live as a proud Warrior.")
-	return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.GottenStronger)
+	return script.SendNextPrevious(l, span, c, m.String(), script.Exit(), r.GottenStronger)
 }
 
-func (r DancesWithBalrog) SecondJob(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.ProofOfHero) {
-		return r.ChooseAPath(l, c)
-	} else if character.HasItem(l)(c.CharacterId, item.DancesWithBalrogsLetter) {
-		return r.GoAndSee(l, c)
+func (r DancesWithBalrog) SecondJob(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasItem(l, span)(c.CharacterId, item.ProofOfHero) {
+		return r.ChooseAPath(l, span, c)
+	} else if character.HasItem(l, span)(c.CharacterId, item.DancesWithBalrogsLetter) {
+		return r.GoAndSee(l, span, c)
 	}
-	return r.Astonishing(l, c)
+	return r.Astonishing(l, span, c)
 }
 
-func (r DancesWithBalrog) ChooseAPath(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) ChooseAPath(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Oh... you came back safe! I knew you'd breeze through. I'll admit, you are a strong, formidable Warrior! Alright, I'll make you an even stronger Warrior than you already are. But before that, you need to choose one of the three paths that you'll be given. It isn't going to be easy, so if you have and questions, feel free to ask.")
-	return script.SendNext(l, c, m.String(), r.PathInfo)
+	return script.SendNext(l, span, c, m.String(), r.PathInfo)
 }
 
-func (r DancesWithBalrog) GoAndSee(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) GoAndSee(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Go and see the ").
 		BlueText().ShowNPC(npc.WarriorJobInstructor).
 		BlackText().AddText(".")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r DancesWithBalrog) Astonishing(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) Astonishing(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("The progress you have made is astonishing.")
-	return script.SendNext(l, c, m.String(), r.GoodDecision)
+	return script.SendNext(l, span, c, m.String(), r.GoodDecision)
 }
 
-func (r DancesWithBalrog) GoodDecision(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) GoodDecision(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Good decision. You look strong, but I need to see if you really are strong enough to pass the test, it's not a difficult test, so you'll do just fine. Here, take my letter first... make sure you don't lose it!")
 	if !quest.IsStarted(l)(c.CharacterId, 100003) {
 		quest.Start(l)(c.CharacterId, 100003)
 	}
-	return script.SendNext(l, c, m.String(), r.GiveLetter)
+	return script.SendNext(l, span, c, m.String(), r.GiveLetter)
 }
 
-func (r DancesWithBalrog) GiveLetter(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) GiveLetter(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !character.CanHold(l)(c.CharacterId, item.DancesWithBalrogsLetter) {
-		return r.MakeSpace(l, c)
+		return r.MakeSpace(l, span, c)
 	}
 
-	if !character.HasItem(l)(c.CharacterId, item.DancesWithBalrogsLetter) {
-		character.GainItem(l)(c.CharacterId, item.DancesWithBalrogsLetter, 1)
+	if !character.HasItem(l, span)(c.CharacterId, item.DancesWithBalrogsLetter) {
+		character.GainItem(l, span)(c.CharacterId, item.DancesWithBalrogsLetter, 1)
 	}
 
 	m := message.NewBuilder().
@@ -164,23 +165,23 @@ func (r DancesWithBalrog) GiveLetter(l logrus.FieldLogger, c script.Context) scr
 		BlackText().AddText(" who's around ").
 		BlueText().ShowMap(_map.WestRockyMountainIV).
 		BlackText().AddText(" near Perion. He is taking care of the job of an instructor in place of me. Give him the letter and he'll test you in place of me. Best of luck to you.")
-	return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.GoodDecision)
+	return script.SendNextPrevious(l, span, c, m.String(), script.Exit(), r.GoodDecision)
 }
 
-func (r DancesWithBalrog) MakeSpace(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) MakeSpace(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Please, make some space in your inventory.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r DancesWithBalrog) PathInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) PathInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Alright, when you have made your decision, click on [I'll choose my occupation] at the bottom.").NewLine().
 		OpenItem(0).BlueText().AddText("Please explain to me what being the Fighter is all about.").CloseItem().NewLine().
 		OpenItem(1).BlueText().AddText("Please explain to me what being the Page is all about.").CloseItem().NewLine().
 		OpenItem(2).BlueText().AddText("Please explain to me what being the Spearman is all about.").CloseItem().NewLine().
 		OpenItem(3).BlueText().AddText("I'll choose my occupation!").CloseItem()
-	return script.SendListSelectionExit(l, c, m.String(), r.PathInfoSelected, r.MakeUpYourMind)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.PathInfoSelected, r.MakeUpYourMind)
 }
 
 func (r DancesWithBalrog) PathInfoSelected(selection int32) script.StateProducer {
@@ -197,7 +198,7 @@ func (r DancesWithBalrog) PathInfoSelected(selection int32) script.StateProducer
 	return nil
 }
 
-func (r DancesWithBalrog) FighterInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) FighterInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Warriors that master ").
 		RedText().AddText("Swords or Axes").
@@ -212,10 +213,10 @@ func (r DancesWithBalrog) FighterInfo(l logrus.FieldLogger, c script.Context) sc
 		BlackText().AddText(", reducing touch damage by 40% and deals it back to the monster. This is the main reason why ").
 		RedText().AddText("Fighters").
 		BlackText().AddText(" are considered soloers is because this reduces pot costs immensely.")
-	return script.SendNextExit(l, c, m.String(), r.PathInfo, r.MakeUpYourMind)
+	return script.SendNextExit(l, span, c, m.String(), r.PathInfo, r.MakeUpYourMind)
 }
 
-func (r DancesWithBalrog) PageInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) PageInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Warriors that master ").
 		RedText().AddText("Swords or Maces/Blunt weapons").
@@ -230,10 +231,10 @@ func (r DancesWithBalrog) PageInfo(l logrus.FieldLogger, c script.Context) scrip
 		BlackText().AddText(" are considered solo players, that's because this reduces pot costs immensely. Of course, constant KB and ").
 		BlueText().AddText("Ice Charge").
 		BlackText().AddText(" helps also to the soloing factor.")
-	return script.SendNextExit(l, c, m.String(), r.PathInfo, r.MakeUpYourMind)
+	return script.SendNextExit(l, span, c, m.String(), r.PathInfo, r.MakeUpYourMind)
 }
 
-func (r DancesWithBalrog) SpearmanInfo(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) SpearmanInfo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Warriors that master ").
 		RedText().AddText("Spears or Polearms").
@@ -244,16 +245,16 @@ func (r DancesWithBalrog) SpearmanInfo(l logrus.FieldLogger, c script.Context) s
 		BlackText().AddText(", which boosts your max HP/MP and that of your party by 60% when maxed. This skill is particularly useful for helping partied Thieves, Archers, and Magicians to survive more hits from enemies and/or PQ bosses. They also get ").
 		BlueText().AddText("Iron Will").
 		BlackText().AddText(" which gives +20 wep def and +20 mag def for 300 sec. It is basically a nerfed Bless with 100 seconds more duration but gives no accuracy or avoidability bonus. Even with this skill maxed, it isn't even close to being in the same league as Power Guard and is why Spearmen/Dark Knights are not considered a soloing class.")
-	return script.SendNextExit(l, c, m.String(), r.PathInfo, r.MakeUpYourMind)
+	return script.SendNextExit(l, span, c, m.String(), r.PathInfo, r.MakeUpYourMind)
 }
 
-func (r DancesWithBalrog) PathSelection(l logrus.FieldLogger, c script.Context) script.State {
+func (r DancesWithBalrog) PathSelection(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Now... have you made up your mind? Please choose the job you'd like to select for your 2nd job advancement. ").NewLine().
 		OpenItem(0).BlueText().AddText("Fighter").CloseItem().NewLine().
 		OpenItem(1).BlueText().AddText("Page").CloseItem().NewLine().
 		OpenItem(2).BlueText().AddText("Spearman").CloseItem()
-	return script.SendListSelectionExit(l, c, m.String(), r.PathSelected, r.MakeUpYourMind)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.PathSelected, r.MakeUpYourMind)
 }
 
 func (r DancesWithBalrog) PathSelected(selection int32) script.StateProducer {
@@ -269,28 +270,28 @@ func (r DancesWithBalrog) PathSelected(selection int32) script.StateProducer {
 }
 
 func (r DancesWithBalrog) SecondJobConfirmation(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("So you want to make the second job advancement as the ").
 			AddText(jobName).
 			AddText("? You know you won't be able to choose a different job for the 2nd job advancement once you make your decision here, right? Are you sure about this?")
-		return script.SendYesNoExit(l, c, m.String(), r.SecondJobAdvance(jobId, jobName), r.PathSelection, r.MakeUpYourMind)
+		return script.SendYesNoExit(l, span, c, m.String(), r.SecondJobAdvance(jobId, jobName), r.PathSelection, r.MakeUpYourMind)
 	}
 }
 
 func (r DancesWithBalrog) SecondJobAdvance(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if character.HasItem(l)(c.CharacterId, item.ProofOfHero) {
-			character.GainItem(l)(c.CharacterId, item.ProofOfHero, -1)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if character.HasItem(l, span)(c.CharacterId, item.ProofOfHero) {
+			character.GainItem(l, span)(c.CharacterId, item.ProofOfHero, -1)
 		}
 
 		quest.Complete(l)(c.CharacterId, 100005)
 
-		if !character.IsJob(l)(c.CharacterId, jobId) {
-			character.ChangeJob(l)(c.CharacterId, jobId)
+		if !character.IsJob(l, span)(c.CharacterId, jobId) {
+			character.ChangeJob(l, span)(c.CharacterId, jobId)
 		}
 
-		return r.SecondJobSuccess(jobId, jobName)(l, c)
+		return r.SecondJobSuccess(jobId, jobName)(l, span, c)
 	}
 }
 
@@ -307,62 +308,62 @@ func (r DancesWithBalrog) SecondJobSuccess(jobId uint16, jobName string) script.
 }
 
 func (r DancesWithBalrog) FighterSuccess(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Alright, you have now become the ").
 			BlueText().AddText("Fighter").
 			BlackText().AddText(". A fighter strives to become the strongest of the strong, and never stops fighting. Don't ever lose that will to fight, and push forward 24/7. I'll help you become even stronger than you already are.")
-		return script.SendNext(l, c, m.String(), r.BookGiven(jobId, jobName))
+		return script.SendNext(l, span, c, m.String(), r.BookGiven(jobId, jobName))
 	}
 }
 
 func (r DancesWithBalrog) PageSuccess(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Alright, you have now become a ").
 			BlueText().AddText("Page").
 			BlackText().AddText("! Pages have high intelligence and bravery, which I hope you'll employ throughout your journey to the right path. I'll help you become much stronger than you already are.")
-		return script.SendNext(l, c, m.String(), r.BookGiven(jobId, jobName))
+		return script.SendNext(l, span, c, m.String(), r.BookGiven(jobId, jobName))
 	}
 }
 
 func (r DancesWithBalrog) SpearmanSuccess(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Alright, you have now become the ").
 			BlueText().AddText("Spearman").
 			BlackText().AddText(". The Spearman use the power of darkness to take out the enemies, always in shadows... Please believe in yourself and your awesome power as you go in your journey. I'll help you become much stronger than you are right now.")
-		return script.SendNext(l, c, m.String(), r.BookGiven(jobId, jobName))
+		return script.SendNext(l, span, c, m.String(), r.BookGiven(jobId, jobName))
 	}
 }
 
 func (r DancesWithBalrog) BookGiven(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("I have just given you a book that gives you the list of skills you can acquire as a ").
 			AddText(jobName).
 			AddText(". Also your etc inventory has expanded by adding another row to it. Your max HP and MP have increased, too. Go check and see for it yourself.")
-		return script.SendNextPrevious(l, c, m.String(), r.SPGiven(jobId, jobName), r.SecondJobSuccess(jobId, jobName))
+		return script.SendNextPrevious(l, span, c, m.String(), r.SPGiven(jobId, jobName), r.SecondJobSuccess(jobId, jobName))
 	}
 }
 
 func (r DancesWithBalrog) SPGiven(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("I have also given you a little bit of ").
 			BlueText().AddText("SP").
 			BlackText().AddText(". Open the ").
 			BlueText().AddText("Skill Menu").
 			BlackText().AddText(" located at the bottom left corner. you'll be able to boost up the newer acquired 2nd level skills. A word of warning, though. You can't boost them up all at once. Some of the skills are only available after you have learned other skills. Make sure yo remember that.")
-		return script.SendNextPrevious(l, c, m.String(), r.BecomeStrong(jobId, jobName), r.BookGiven(jobId, jobName))
+		return script.SendNextPrevious(l, span, c, m.String(), r.BecomeStrong(jobId, jobName), r.BookGiven(jobId, jobName))
 	}
 }
 
 func (r DancesWithBalrog) BecomeStrong(jobId uint16, jobName string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText(jobName).
 			AddText(" need to be strong. But remember that you can't abuse that power and use it on a weakling. Please use your enormous power the right way, because... for you to use that the right way, that is much harden than just getting stronger. Please find me after you have advanced much further. I'll be waiting for you.")
-		return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.SPGiven(jobId, jobName))
+		return script.SendNextPrevious(l, span, c, m.String(), script.Exit(), r.SPGiven(jobId, jobName))
 	}
 }

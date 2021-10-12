@@ -4,6 +4,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +16,7 @@ func (r BulletinBoard) NPCId() uint32 {
 	return npc.BulletinBoard
 }
 
-func (r BulletinBoard) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r BulletinBoard) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("<Notice> ").NewLine().
 		AddText("Are you part of a Guild that possesses an ample amount of courage and trust? Then take on the Guild Quest and challenge yourselves!").NewLine().NewLine().
@@ -23,5 +24,5 @@ func (r BulletinBoard) Initial(l logrus.FieldLogger, c script.Context) script.St
 		BlackText().AddText("1. The Guild must consist of at least 6 people!").NewLine().
 		AddText("2. The leader of the Guild Quest must be a Master or a Jr. Master of the Guild!").NewLine().
 		AddText("3. The Guild Quest may end early if the number of guild members participating falls below 6, or if the leader decides to end it early!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

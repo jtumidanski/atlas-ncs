@@ -19,7 +19,7 @@ func (r ArwenTheFairy) NPCId() uint32 {
 }
 
 func (r ArwenTheFairy) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	if character.IsLevel(l)(c.CharacterId, 40) {
+	if character.IsLevel(l, span)(c.CharacterId, 40) {
 		return r.HelloMaker(l, span, c)
 	}
 	return r.HelloStranger(l, span, c)
@@ -158,24 +158,21 @@ func (r ArwenTheFairy) BlackFeatherRequirements() ArwenRequirements {
 
 func (r ArwenTheFairy) Validate(itemId uint32, requirements ArwenRequirements) script.StateProducer {
 	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, requirements.cost) {
+		if !character.HasMeso(l, span)(c.CharacterId, requirements.cost) {
 			return r.MoreMeso(l, span, c)
 		}
 
 		for _, i := range requirements.items {
-			if !character.HasItem(l)(c.CharacterId, i.itemId) {
+			if !character.HasItem(l, span)(c.CharacterId, i.itemId) {
 				return r.NeedMoreOfItem(i.itemId)(l, span, c)
 			}
 		}
 
-		err := character.GainMeso(l)(c.CharacterId, -int32(requirements.cost))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process purchase for character %d.", c.CharacterId)
-		}
+		character.GainMeso(l, span)(c.CharacterId, -int32(requirements.cost))
 		for _, i := range requirements.items {
-			character.GainItem(l)(c.CharacterId, i.itemId, -1)
+			character.GainItem(l, span)(c.CharacterId, i.itemId, -1)
 		}
-		character.GainItem(l)(c.CharacterId, itemId, 1)
+		character.GainItem(l, span)(c.CharacterId, itemId, 1)
 		return r.Success(itemId)(l, span, c)
 	}
 }

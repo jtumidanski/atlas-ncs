@@ -20,9 +20,9 @@ func (r AlcandosCabinet) NPCId() uint32 {
 }
 
 func (r AlcandosCabinet) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	if quest.IsStarted(l)(c.CharacterId, 3309) && !character.HasItem(l)(c.CharacterId, item.SecretDocument) {
+	if quest.IsStarted(l)(c.CharacterId, 3309) && !character.HasItem(l, span)(c.CharacterId, item.SecretDocument) {
 		if character.CanHold(l)(c.CharacterId, item.SecretDocument) {
-			character.GainItem(l)(c.CharacterId, item.SecretDocument, 1)
+			character.GainItem(l, span)(c.CharacterId, item.SecretDocument, 1)
 		} else {
 			m := message.NewBuilder().AddText("Have a ETC slot available to get the Alcadno's secret document.")
 			return script.SendOk(l, span, c, m.String())

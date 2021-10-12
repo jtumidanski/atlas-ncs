@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,19 +18,19 @@ func (r Cloy) NPCId() uint32 {
 	return npc.Cloy
 }
 
-func (r Cloy) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.AskQuestions(l, c)
+func (r Cloy) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.AskQuestions(l, span, c)
 }
 
-func (r Cloy) AskQuestions(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) AskQuestions(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hmm... are you raising one of my kids by any chance? I perfected a spell that uses Water of Life to blow life into a doll. People call it the ").
 		BlueText().AddText("Pet").
 		BlackText().AddText(". If you have one with you, feel free to ask me questions.")
-	return script.SendNext(l, c, m.String(), r.WhatDoYouWantToKnow)
+	return script.SendNext(l, span, c, m.String(), r.WhatDoYouWantToKnow)
 }
 
-func (r Cloy) WhatDoYouWantToKnow(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) WhatDoYouWantToKnow(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("What do you want to know more of?").NewLine().BlueText().
 		OpenItem(0).AddText("Tell me more about Pets.").CloseItem().NewLine().
@@ -60,7 +61,7 @@ func (r Cloy) WhatDoYouWantToKnow(l logrus.FieldLogger, c script.Context) script
 		OpenItem(25).AddText("What are the commands for Snowman?").CloseItem().NewLine().
 		OpenItem(26).AddText("What are the commands for Skunk?").CloseItem().NewLine().
 		OpenItem(27).AddText("Please teach me about transferring pet ability points.").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.InfoSelection)
+	return script.SendListSelection(l, span, c, m.String(), r.InfoSelection)
 }
 
 func (r Cloy) InfoSelection(selection int32) script.StateProducer {
@@ -125,32 +126,32 @@ func (r Cloy) InfoSelection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r Cloy) MoreAboutPets(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) MoreAboutPets(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("So you want to know more about Pets. Long ago I made a doll, sprayed Water of Life on it, and cast spell on it to create a magical animal. I know it sounds unbelievable, but it's a doll that became an actual living thing. They understand and follow people very well.")
-	return script.SendNext(l, c, m.String(), r.CantGiveTooMuchLife)
+	return script.SendNext(l, span, c, m.String(), r.CantGiveTooMuchLife)
 }
 
-func (r Cloy) OhYeah(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) OhYeah(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Oh yeah, they'll react when you give them special commands. You can scold them, love them... it all").NewLine().
 		AddText("depends on how you take care of them. They are afraid to leave their masters so be nice to them, show them love. They can get sad and lonely fast...")
-	return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.CantGiveTooMuchLife)
+	return script.SendNextPrevious(l, span, c, m.String(), script.Exit(), r.CantGiveTooMuchLife)
 }
 
-func (r Cloy) Commands(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Commands(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Depending on the command you give, pets can love it, hate, and display other kinds of reactions to it. If you give the pet a command and it follows you well, your intimacy goes up. Double click on the pet and you can check the intimacy, level, fullness and etc...")
-	return script.SendNext(l, c, m.String(), r.TryHardRaisingIt)
+	return script.SendNext(l, span, c, m.String(), r.TryHardRaisingIt)
 }
 
-func (r Cloy) Dying(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Dying(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Dying... well, they aren't technically ALIVE per se, so I don't know if dying is the right term to use. They are dolls with my magical power and the power of Water of Life to become a live object. Of course while it's alive, it's just like a live animal...")
-	return script.SendNext(l, c, m.String(), r.AfterSomeTime)
+	return script.SendNext(l, span, c, m.String(), r.AfterSomeTime)
 }
 
-func (r Cloy) Kitty(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Kitty(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Brown Kitty and Black Kitty").
@@ -171,10 +172,10 @@ func (r Cloy) Kitty(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("up, stand, rise").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Puppy(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Puppy(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Brown Puppy").
@@ -195,10 +196,10 @@ func (r Cloy) Puppy(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("up, stand, rise").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Bunny(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Bunny(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Pink Bunny and White Bunny").
@@ -219,10 +220,10 @@ func (r Cloy) Bunny(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("sleep, sleepy, gotobed").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Kargo(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Kargo(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Mini Kargo").
@@ -245,10 +246,10 @@ func (r Cloy) Kargo(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("goodboy, goodgirl").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Rudolph(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Rudolph(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Rudolph and Dasher").
@@ -275,10 +276,10 @@ func (r Cloy) Rudolph(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 11 ~ 30)").NewLine().
 		BlueText().AddText("mush, go").
 		BlackText().AddText(" (Level 21 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) BlackPig(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) BlackPig(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Black Pig").
@@ -301,10 +302,10 @@ func (r Cloy) BlackPig(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("thelook, charisma").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Panda(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Panda(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Panda").
@@ -329,10 +330,10 @@ func (r Cloy) Panda(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("sleep").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Husky(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Husky(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Husky").
@@ -355,10 +356,10 @@ func (r Cloy) Husky(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("up, stand, rise").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Dino(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Dino(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Dino Boy and Dino Girl").
@@ -381,10 +382,10 @@ func (r Cloy) Dino(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("sleep, nap, sleepy").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Monkey(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Monkey(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Monkey").
@@ -409,10 +410,10 @@ func (r Cloy) Monkey(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("sleep, gotobed, sleepy").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Turkey(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Turkey(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Turkey").
@@ -435,10 +436,10 @@ func (r Cloy) Turkey(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 20 ~ 30)").NewLine().
 		BlueText().AddText("birdeye, thanksgiving, fly, friedbird, imhungry").
 		BlackText().AddText(" (Level 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) WhiteTiger(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) WhiteTiger(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("White Tiger").
@@ -461,10 +462,10 @@ func (r Cloy) WhiteTiger(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("wait").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Penguin(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Penguin(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Penguin").
@@ -493,10 +494,10 @@ func (r Cloy) Penguin(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 20 ~ 30)").NewLine().
 		BlueText().AddText("cute, adorable").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) GoldenPig(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) GoldenPig(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Golden Pig").
@@ -519,10 +520,10 @@ func (r Cloy) GoldenPig(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 21 ~ 30)").NewLine().
 		BlueText().AddText("roll, showmethemoney").
 		BlackText().AddText(" (Level 21 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Robot(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Robot(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Robot").
@@ -545,10 +546,10 @@ func (r Cloy) Robot(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 11 ~ 30)").NewLine().
 		BlueText().AddText("disguise, change, transform").
 		BlackText().AddText(" (Level 11 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) MiniYeti(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) MiniYeti(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("1012005_MINI_YETI=These are the commands for ").
 		RedText().AddText("Mini Yeti").
@@ -569,10 +570,10 @@ func (r Cloy) MiniYeti(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 11 ~ 30)").NewLine().
 		BlueText().AddText("sleep, nap, sleepy, gotobed").
 		BlackText().AddText(" (Level 11 ~ 30)\n")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) JrBalrog(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) JrBalrog(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Jr. Balrog").
@@ -599,10 +600,10 @@ func (r Cloy) JrBalrog(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 11 ~ 30)").NewLine().
 		BlueText().AddText("gas").
 		BlackText().AddText(" (Level 21 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) BabyDragon(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) BabyDragon(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Baby Dragon").
@@ -623,10 +624,10 @@ func (r Cloy) BabyDragon(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 11 ~ 30)").NewLine().
 		BlueText().AddText("sleep|sleepy|gotobed").
 		BlackText().AddText(" (Level 11 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) ColoredDragon(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) ColoredDragon(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Green/Red/Blue Dragon").
@@ -647,10 +648,10 @@ func (r Cloy) ColoredDragon(l logrus.FieldLogger, c script.Context) script.State
 		BlackText().AddText(" (Level 15 ~ 30)").NewLine().
 		BlueText().AddText("change").
 		BlackText().AddText(" (Level 21 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) BlackDragon(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) BlackDragon(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Black Dragon").
@@ -671,10 +672,10 @@ func (r Cloy) BlackDragon(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 15 ~ 30)").NewLine().
 		BlueText().AddText("cutie, change").
 		BlackText().AddText(" (Level 21 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) JrReaper(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) JrReaper(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Jr. Reaper").
@@ -695,10 +696,10 @@ func (r Cloy) JrReaper(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 1 ~ 30)").NewLine().
 		BlueText().AddText("monstermash").
 		BlackText().AddText(" (Level 1 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Porcupine(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Porcupine(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Porcupine").
@@ -719,10 +720,10 @@ func (r Cloy) Porcupine(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 20 ~ 30)").NewLine().
 		BlueText().AddText("dart").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Snowman(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Snowman(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Snowman").
@@ -743,10 +744,10 @@ func (r Cloy) Snowman(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("chang").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Skunk(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Skunk(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("These are the commands for ").
 		RedText().AddText("Skunk").
@@ -765,85 +766,82 @@ func (r Cloy) Skunk(l logrus.FieldLogger, c script.Context) script.State {
 		BlackText().AddText(" (Level 10 ~ 30)").NewLine().
 		BlueText().AddText("suitup, bringthefunk").
 		BlackText().AddText(" (Level 20 ~ 30)")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r Cloy) Transfer(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) Transfer(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("In order to transfer the pet ability points, closeness and level, Pet AP Reset Scroll is required. If you take this").NewLine().
 		AddText("scroll to Mar the Fairy in Ellinia, she will transfer the level and closeness of the pet to another one. I am especially giving it to you because I can feel your heart for your pet. However, I can't give this out for free. I can give you this book for 250,000 mesos. Oh, I almost forgot! Even if you have this book, it is no use if you do not have a new pet to transfer the Ability points.")
-	return script.SendNext(l, c, m.String(), r.PurchaseConfirmation)
+	return script.SendNext(l, span, c, m.String(), r.PurchaseConfirmation)
 }
 
-func (r Cloy) PurchaseConfirmation(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) PurchaseConfirmation(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("250,000 mesos will be deducted. Do you really want to buy?")
-	return script.SendYesNo(l, c, m.String(), r.ValidatePurchase, script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.ValidatePurchase, script.Exit())
 }
 
-func (r Cloy) ValidatePurchase(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.HasMeso(l)(c.CharacterId, 250000) || !character.CanHold(l)(c.CharacterId, item.PetAPResetScroll) {
-		return r.TransactionFailure(l, c)
+func (r Cloy) ValidatePurchase(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if !character.HasMeso(l, span)(c.CharacterId, 250000) || !character.CanHold(l)(c.CharacterId, item.PetAPResetScroll) {
+		return r.TransactionFailure(l, span, c)
 	}
 
-	err := character.GainMeso(l)(c.CharacterId, -250000)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to retrieve mesos for purchase by character %d.", c.CharacterId)
-	}
-	character.GainItem(l)(c.CharacterId, item.PetAPResetScroll, 1)
-	return script.Exit()(l, c)
+	character.GainMeso(l, span)(c.CharacterId, -250000)
+	character.GainItem(l, span)(c.CharacterId, item.PetAPResetScroll, 1)
+	return script.Exit()(l, span, c)
 }
 
-func (r Cloy) TransactionFailure(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) TransactionFailure(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Please check if your inventory has empty slot or you don't have enough mesos.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Cloy) NeedPetFood(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) NeedPetFood(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Oh yes! Pets can't eat the normal human food. Instead my disciple ").
 		BlueText().AddText("Doofus").
 		BlackText().AddText(" sells ").
 		BlueText().AddText("Pet Food").
 		BlackText().AddText(" at the Henesys Market so if you need food for your pet, find Henesys. It'll be a good idea to buy the food in advance and feed the pet before it gets really hungry.")
-	return script.SendNextPrevious(l, c, m.String(), r.RegularBasis, r.HaveHunger)
+	return script.SendNextPrevious(l, span, c, m.String(), r.RegularBasis, r.HaveHunger)
 }
 
-func (r Cloy) RegularBasis(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) RegularBasis(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Oh, and if you don't feed the pet for a long period of time, it goes back home by itself. You can take it out of its home and feed it but it's not really good for the pet's health, so try feeding him on a regular basis so it doesn't go down to that level, alright? I think this will do.")
-	return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.NeedPetFood)
+	return script.SendNextPrevious(l, span, c, m.String(), script.Exit(), r.NeedPetFood)
 }
 
-func (r Cloy) CantGiveTooMuchLife(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) CantGiveTooMuchLife(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("But Water of Life only comes out little at the very bottom of the World Tree, so I can't give him too much time in life... I know, it's very unfortunate... but even if it becomes a doll again I can always bring life back into it so be good to it while you're with it.")
-	return script.SendNextPrevious(l, c, m.String(), r.OhYeah, r.MoreAboutPets)
+	return script.SendNextPrevious(l, span, c, m.String(), r.OhYeah, r.MoreAboutPets)
 }
 
-func (r Cloy) TryHardRaisingIt(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) TryHardRaisingIt(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Talk to the pet, pay attention to it and its intimacy level will go up and eventually his overall level will go up too. As the intimacy level rises, the pet's overall level will rise soon after. As the overall level rises, one day the pet may even talk like a person a little bit, so try hard raising it. Of course it won't be easy doing so...")
-	return script.SendNextPrevious(l, c, m.String(), r.Commands, r.HaveHunger)
+	return script.SendNextPrevious(l, span, c, m.String(), r.Commands, r.HaveHunger)
 }
 
-func (r Cloy) HaveHunger(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) HaveHunger(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("It may be a live doll but they also have life so they can feel the hunger too. ").
 		BlueText().AddText("Fullness").
 		BlackText().AddText(" shows the level of hunger the pet's in. 100 is the max, and the lower it gets, it means that the pet is getting hungrier. After a while, it won't even follow your command and be on the offensive, so watch out over that.")
-	return script.SendNextPrevious(l, c, m.String(), r.NeedPetFood, r.TryHardRaisingIt)
+	return script.SendNextPrevious(l, span, c, m.String(), r.NeedPetFood, r.TryHardRaisingIt)
 }
 
-func (r Cloy) AfterSomeTime(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) AfterSomeTime(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("After some time... that's correct, they stop moving. They just turn back to being a doll, after the effect of magic dies down and Water of Life dries out. But that doesn't mean it's stopped forever, because once you pour Water of Life over, it's going to be back alive.")
-	return script.SendNextPrevious(l, c, m.String(), r.SadToSee, r.Dying)
+	return script.SendNextPrevious(l, span, c, m.String(), r.SadToSee, r.Dying)
 }
 
-func (r Cloy) SadToSee(l logrus.FieldLogger, c script.Context) script.State {
+func (r Cloy) SadToSee(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Even if it someday moves again, it's sad to see them stop altogether. Please be nice to them while they are alive and moving. Feed them well, too. Isn't it nice to know that there's something alive that follows and listens to only you?")
-	return script.SendNextPrevious(l, c, m.String(), script.Exit(), r.AfterSomeTime)
+	return script.SendNextPrevious(l, span, c, m.String(), script.Exit(), r.AfterSomeTime)
 }

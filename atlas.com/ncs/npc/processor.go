@@ -47,7 +47,7 @@ func WarpToPortal(l logrus.FieldLogger, span opentracing.Span) func(worldId byte
 
 func WarpRandom(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32) {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32) {
-		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.RandomPortalIdProvider(l)(mapId))
+		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.RandomPortalIdProvider(l, span)(mapId))
 	}
 }
 
@@ -59,7 +59,7 @@ func WarpById(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, ch
 
 func WarpByName(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) {
-		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.ByNamePortalIdProvider(l)(mapId, portalName))
+		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.ByNamePortalIdProvider(l, span)(mapId, portalName))
 	}
 }
 

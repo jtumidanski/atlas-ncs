@@ -6,6 +6,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,11 +18,11 @@ func (r PuroLithHarbor) NPCId() uint32 {
 	return npc.PuroLithHarbor
 }
 
-func (r PuroLithHarbor) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+func (r PuroLithHarbor) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.Hello(l, span, c)
 }
 
-func (r PuroLithHarbor) Hello(l logrus.FieldLogger, c script.Context) script.State {
+func (r PuroLithHarbor) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Are you thinking about leaving Victoria Island and heading to our town? If you board this ship, I can take you from ").
 		BlueText().AddText("Lith Harbor").
@@ -31,7 +32,7 @@ func (r PuroLithHarbor) Hello(l logrus.FieldLogger, c script.Context) script.Sta
 		BlueText().AddText("fee of 800").
 		BlackText().AddText(" Mesos. Would you like to go to Rien? It'll take about a minute to get there.").NewLine().
 		OpenItem(0).BlueText().AddText(" Rien (800 mesos)").CloseItem()
-	return script.SendListSelectionExit(l, c, m.String(), r.Selection, r.LetMeKnow)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.Selection, r.LetMeKnow)
 }
 
 func (r PuroLithHarbor) Selection(selection int32) script.StateProducer {
@@ -42,41 +43,29 @@ func (r PuroLithHarbor) Selection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r PuroLithHarbor) LetMeKnow(l logrus.FieldLogger, c script.Context) script.State {
+func (r PuroLithHarbor) LetMeKnow(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("OK. If you ever change your mind, please let me know.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r PuroLithHarbor) Validate(l logrus.FieldLogger, c script.Context) script.State {
-	if !character.HasMeso(l)(c.CharacterId, 800) {
-		return r.NotEnoughMeso(l, c)
+func (r PuroLithHarbor) Validate(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if !character.HasMeso(l, span)(c.CharacterId, 800) {
+		return r.NotEnoughMeso(l, span, c)
 	}
-	return r.Process(l, c)
+	return r.Process(l, span, c)
 }
 
-func (r PuroLithHarbor) NotEnoughMeso(l logrus.FieldLogger, c script.Context) script.State {
+func (r PuroLithHarbor) NotEnoughMeso(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hmm... Are you sure you have ").
 		BlueText().AddText("800").
 		BlackText().AddText(" Mesos? Check your Inventory and make sure you have enough. You must pay the fee or I can't let you get on...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r PuroLithHarbor) Process(l logrus.FieldLogger, c script.Context) script.State {
-	err := character.GainMeso(l)(c.CharacterId, -800)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to complete meso transaction with %d.", c.CharacterId)
-		return nil
-	}
-
-	err = npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, _map.ToRien, 0)
-	if err != nil {
-		l.WithError(err).Errorf("Unable to warp character %d to map %d. Refunding mesos.", c.CharacterId, _map.ToRien)
-		err = character.GainMeso(l)(c.CharacterId, 800)
-		if err != nil {
-			l.WithError(err).Errorf("Error processing refund, %d has lost %d mesos.", c.CharacterId, 800)
-		}
-	}
+func (r PuroLithHarbor) Process(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainMeso(l, span)(c.CharacterId, -800)
+	npc.WarpById(l, span)(c.WorldId, c.ChannelId, c.CharacterId, _map.ToRien, 0)
 	return nil
 }

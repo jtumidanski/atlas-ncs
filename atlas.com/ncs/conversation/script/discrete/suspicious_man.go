@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,17 +18,17 @@ func (r SuspiciousMan) NPCId() uint32 {
 	return npc.SuspiciousMan
 }
 
-func (r SuspiciousMan) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r SuspiciousMan) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hello, ").
 		ShowCharacterName().
 		AddText(". I can exchange your Balrog Leathers.").NewLine().NewLine().
 		OpenItem(0).RedText().AddText("Redeem items").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r SuspiciousMan) Selection(_ int32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Well, okay. These are what you can redeem...").
 			OpenItem(0).ShowItemImage1(item.BalrogsSTRScroll30).ShowItemName2(item.BalrogsSTRScroll30).CloseItem().NewLine().
@@ -42,7 +43,7 @@ func (r SuspiciousMan) Selection(_ int32) script.StateProducer {
 			OpenItem(9).ShowItemImage1(item.BalrogsAvoidabilityScroll30).ShowItemName2(item.BalrogsAvoidabilityScroll30).CloseItem().NewLine().
 			OpenItem(10).ShowItemImage1(item.BalrogsDefenseScroll30).ShowItemName2(item.BalrogsDefenseScroll30).CloseItem().NewLine().
 			OpenItem(11).ShowItemImage1(item.BalrogsTwilightScroll5).ShowItemName2(item.BalrogsTwilightScroll5).CloseItem().NewLine()
-		return script.SendListSelection(l, c, m.String(), r.Redeem)
+		return script.SendListSelection(l, span, c, m.String(), r.Redeem)
 	}
 }
 
@@ -77,34 +78,34 @@ func (r SuspiciousMan) Redeem(selection int32) script.StateProducer {
 }
 
 func (r SuspiciousMan) Validate(itemId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		if !character.CanHold(l)(c.CharacterId, itemId) {
-			return r.MakeRoom(l, c)
+			return r.MakeRoom(l, span, c)
 		}
-		if !character.HasItem(l)(c.CharacterId, item.PieceOfBalrogLeather) {
-			return r.MissingLeather(l, c)
+		if !character.HasItem(l, span)(c.CharacterId, item.PieceOfBalrogLeather) {
+			return r.MissingLeather(l, span, c)
 		}
-		return r.Process(l, c, itemId)
+		return r.Process(l, span, c, itemId)
 	}
 }
 
-func (r SuspiciousMan) Process(l logrus.FieldLogger, c script.Context, itemId uint32) script.State {
-	character.GainItem(l)(c.CharacterId, item.PieceOfBalrogLeather, -1)
-	character.GainItem(l)(c.CharacterId, itemId, 1)
-	return r.Success(l, c)
+func (r SuspiciousMan) Process(l logrus.FieldLogger, span opentracing.Span, c script.Context, itemId uint32) script.State {
+	character.GainItem(l, span)(c.CharacterId, item.PieceOfBalrogLeather, -1)
+	character.GainItem(l, span)(c.CharacterId, itemId, 1)
+	return r.Success(l, span, c)
 }
 
-func (r SuspiciousMan) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r SuspiciousMan) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Thank you for your redemption")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r SuspiciousMan) MissingLeather(l logrus.FieldLogger, c script.Context) script.State {
+func (r SuspiciousMan) MissingLeather(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("You don't have enough leathers.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r SuspiciousMan) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r SuspiciousMan) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Please make room")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

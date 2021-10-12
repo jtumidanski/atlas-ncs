@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,10 +18,10 @@ func (r Parwen) NPCId() uint32 {
 	return npc.Parwen
 }
 
-func (r Parwen) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Parwen) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if quest.IsStarted(l)(c.CharacterId, 3320) || quest.IsCompleted(l)(c.CharacterId, 3320) {
-		return script.WarpById(_map.DransLab, 1)(l, c)
+		return script.WarpById(_map.DransLab, 1)(l, span, c)
 	}
 	m := message.NewBuilder().AddText("uuuuhuk...Why only Ghost are around here?...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

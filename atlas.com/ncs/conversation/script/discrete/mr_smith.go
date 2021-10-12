@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,10 +18,10 @@ func (r MrSmith) NPCId() uint32 {
 	return npc.MrSmith
 }
 
-func (r MrSmith) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrSmith) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	hello := "Um... Hi, I'm Mr. Thunder's apprentice. He's getting up there in age, so he handles most of the heavy-duty work while I handle some of the lighter jobs. What can I do for you?"
 	categories := r.CreateCategories()
-	return refine.NewGenericRefine(l, c, hello, categories)
+	return refine.NewGenericRefine(l, span, c, hello, categories)
 }
 
 func (r MrSmith) CreateCategories() []refine.ListItem {
@@ -172,30 +173,30 @@ func (r MrSmith) DarkClenchRequirements() refine.Requirements {
 	return refine.NewRequirements([]refine.Requirement{{ItemId: item.BronzeClench, Amount: 1}, {ItemId: item.Diamond, Amount: 2}, {ItemId: item.BlackCrystal, Amount: 2}}, refine.SetCost(80000))
 }
 
-func (r MrSmith) MakeRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrSmith) MakeRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Check your inventory for a free slot first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r MrSmith) CannotAfford(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrSmith) CannotAfford(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("I may still be an apprentice, but I do need to earn a living.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r MrSmith) MissingSomething(itemId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("I'm still an apprentice, I don't know if I can substitute other items in yet... Can you please bring ").
 			ShowItemName1(itemId).
 			AddText("?")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r MrSmith) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r MrSmith) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Did that come out right? Come by me again if you have anything for me to practice on.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,9 +18,9 @@ func (r TimeGate) NPCId() uint32 {
 	return npc.TimeGate
 }
 
-func (r TimeGate) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r TimeGate) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !quest.IsCompleted(l)(c.CharacterId, 3718) {
-		return r.NotActiveYet(l, c)
+		return r.NotActiveYet(l, span, c)
 	}
 
 	limit := 0
@@ -32,7 +33,7 @@ func (r TimeGate) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	}
 
 	if limit == 0 {
-		return r.ProveYourValor(l, c)
+		return r.ProveYourValor(l, span, c)
 	}
 
 	warpStrings := []string{"Year 2021 - Average Town Entrance", "Year 2099 - Midnight Harbor Entrance", "Year 2215 - Bombed City Center Retail District", "Year 2216 - Ruined City Intersection", "Year 2230 - Dangerous Tower Lobby", "Year 2503 - Air Battleship Bow"}
@@ -40,20 +41,20 @@ func (r TimeGate) Initial(l logrus.FieldLogger, c script.Context) script.State {
 	for i := 0; i < limit; i++ {
 		m = m.OpenItem(i).AddText(warpStrings[i]).CloseItem().NewLine()
 	}
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
-func (r TimeGate) ProveYourValor(l logrus.FieldLogger, c script.Context) script.State {
+func (r TimeGate) ProveYourValor(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Prove your valor against the ").
 		BlueText().AddText("Guardian Nex").
 		BlackText().AddText(" before unlocking next Neo City maps.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r TimeGate) NotActiveYet(l logrus.FieldLogger, c script.Context) script.State {
+func (r TimeGate) NotActiveYet(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("The time machine has not been activated yet.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r TimeGate) Selection(selection int32) script.StateProducer {
@@ -75,12 +76,12 @@ func (r TimeGate) Selection(selection int32) script.StateProducer {
 }
 
 func (r TimeGate) Warp(mapId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		return script.WarpById(mapId, 1)(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		return script.WarpById(mapId, 1)(l, span, c)
 	}
 }
 
-func (r TimeGate) CompleteYourMission(l logrus.FieldLogger, c script.Context) script.State {
+func (r TimeGate) CompleteYourMission(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Complete your mission first.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

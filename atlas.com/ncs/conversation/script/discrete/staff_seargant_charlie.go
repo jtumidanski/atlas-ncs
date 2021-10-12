@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -19,26 +20,26 @@ func (r StaffSeargantCharlie) NPCId() uint32 {
 	return npc.StaffSeargantCharlie
 }
 
-func (r StaffSeargantCharlie) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.Hello(l, c)
+func (r StaffSeargantCharlie) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.Hello(l, span, c)
 }
 
-func (r StaffSeargantCharlie) Hello(l logrus.FieldLogger, c script.Context) script.State {
+func (r StaffSeargantCharlie) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hey, got a little bit of time? Well, my job is to collect items here and sell them elsewhere, but these days the monsters have become much more hostile so it's been difficult to getting good items ... What do you think? Do you want to do some business with me?")
-	return script.SendNext(l, c, m.String(), r.DealIsSimple)
+	return script.SendNext(l, span, c, m.String(), r.DealIsSimple)
 }
 
-func (r StaffSeargantCharlie) DealIsSimple(l logrus.FieldLogger, c script.Context) script.State {
+func (r StaffSeargantCharlie) DealIsSimple(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("The deal is simple. You get me something I need, I get you something you need. The problem is, I deal with a whole bunch of people, so the items I have to offer may change every time you see me. What do you think? Still want to do it?")
-	return script.SendYesNo(l, c, m.String(), r.Choices, r.ShouldNotBeBad)
+	return script.SendYesNo(l, span, c, m.String(), r.Choices, r.ShouldNotBeBad)
 }
 
-func (r StaffSeargantCharlie) ShouldNotBeBad(l logrus.FieldLogger, c script.Context) script.State {
+func (r StaffSeargantCharlie) ShouldNotBeBad(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hmmm...it shouldn't be a bad deal for you. Come see me at the right time and you may get a much better item to be offered. Anyway, let me know when you have a change of heart.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 var CharliesChoices = []uint32{item.SolidHorn, item.StarPixiesStarpiece, item.LunarPixiesMoonpiece, item.LusterPixiesSunpiece, item.NependeathSeed, item.DarkNependeathSeed, item.JrYetiSkin, item.YetiHorn, item.DarkJrYetiSkin, item.DarkYetiHorn, item.HectorTail, item.WhitePangTail, item.PepeBeak, item.DarkPepeBeak, item.WerewolfToenail, item.LycanthropeToenail, item.FlyEyeWing, item.JrCerebesTooth, item.FirebombFlame, item.CellionTail, item.LionerTail, item.GrupinTail, item.ZombiesLostTooth, item.CerebesTooth, item.BainsSpikeyCollar}
@@ -76,66 +77,66 @@ type CharliesPrize struct {
 	quantity uint32
 }
 
-func (r StaffSeargantCharlie) Choices(l logrus.FieldLogger, c script.Context) script.State {
+func (r StaffSeargantCharlie) Choices(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Ok! First you need to choose the item that you'll trade with. The better the item, the more likely the chance that I'll give you something much nicer in return.").NewLine()
 	for i, choice := range CharliesChoices {
 		m = m.OpenItem(i).ShowItemImage1(choice).AddText("  ").ShowItemName1(choice).CloseItem().NewLine()
 
 	}
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r StaffSeargantCharlie) Selection(selection int32) script.StateProducer {
 	itemId := CharliesChoices[selection]
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Let's see, you want to trade your ").
 			BlueText().AddText("100 ").
 			ShowItemName1(itemId).
 			BlackText().AddText(" with my stuff right? Before trading make sure you have an empty slot available on your use or etc. inventory. Now, do you want to trade with me?")
-		return script.SendYesNo(l, c, m.String(), r.Validate(selection, itemId), r.ShouldNotBeBad)
+		return script.SendYesNo(l, span, c, m.String(), r.Validate(selection, itemId), r.ShouldNotBeBad)
 	}
 }
 
 func (r StaffSeargantCharlie) Validate(selection int32, itemId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasItems(l)(c.CharacterId, itemId, 100) {
-			return r.AreYouSure(itemId)(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasItems(l, span)(c.CharacterId, itemId, 100) {
+			return r.AreYouSure(itemId)(l, span, c)
 		}
 
 		random := rand.Intn(len(CharliesPrizes[selection]))
 		prize := CharliesPrizes[selection][random]
 		if !character.CanHoldAll(l)(c.CharacterId, prize.itemId, prize.quantity) {
-			return r.InventoryFull(l, c)
+			return r.InventoryFull(l, span, c)
 		}
 
-		character.GainItem(l)(c.CharacterId, itemId, -100)
+		character.GainItem(l, span)(c.CharacterId, itemId, -100)
 		character.GainExperience(l)(c.CharacterId, 500)
-		character.GainItem(l)(c.CharacterId, prize.itemId, int32(prize.quantity))
-		return r.WhatDoYouThink(itemId, prize)(l, c)
+		character.GainItem(l, span)(c.CharacterId, prize.itemId, int32(prize.quantity))
+		return r.WhatDoYouThink(itemId, prize)(l, span, c)
 	}
 }
 
 func (r StaffSeargantCharlie) AreYouSure(itemId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Hmmm... are you sure you have ").
 			BlueText().AddText("100 ").
 			ShowItemName1(itemId).
 			BlackText().AddText("? If so, then please check and see if your item inventory is full or not.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
-func (r StaffSeargantCharlie) InventoryFull(l logrus.FieldLogger, c script.Context) script.State {
+func (r StaffSeargantCharlie) InventoryFull(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Your use and etc. inventory seems to be full. You need the free spaces to trade with me! Make room, and then find me.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r StaffSeargantCharlie) WhatDoYouThink(itemId uint32, prize CharliesPrize) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("For your ").
 			BlueText().AddText("100 ").
@@ -144,6 +145,6 @@ func (r StaffSeargantCharlie) WhatDoYouThink(itemId uint32, prize CharliesPrize)
 			BlueText().AddText(fmt.Sprintf("%d ", prize.quantity)).
 			ShowItemName1(prize.itemId).
 			BlackText().AddText(". What do you think? Do you like the items I gave you in return? I plan on being here for a while, so if you gather up more items, I'm always open for a trade ...")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }

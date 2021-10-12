@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,30 +20,30 @@ func (r DemonsDoorwayKerningCity) NPCId() uint32 {
 	return npc.DemonsDoorwayKerningCity
 }
 
-func (r DemonsDoorwayKerningCity) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r DemonsDoorwayKerningCity) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !quest.IsStarted(l)(c.CharacterId, 28219) {
 		m := message.NewBuilder().AddText("The entrance is blocked by a strange force.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 
-	if !character.HasItem(l)(c.CharacterId, item.ValeforsEmblem) {
+	if !character.HasItem(l, span)(c.CharacterId, item.ValeforsEmblem) {
 		m := message.NewBuilder().AddText("he entrance is blocked by a force that can only be lifted by those holding an emblem.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 
 	m := message.NewBuilder().
 		AddText("Would you like to move to ").
 		BlueText().ShowMap(_map.ValeforStrollingPath).
 		BlackText().AddText("?")
-	return script.SendYesNo(l, c, m.String(), r.Process, script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.Process, script.Exit())
 }
 
-func (r DemonsDoorwayKerningCity) Process(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.LargeModelOfACoin) {
-		character.GainItem(l)(c.CharacterId, item.LargeModelOfACoin, -1)
+func (r DemonsDoorwayKerningCity) Process(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasItem(l, span)(c.CharacterId, item.LargeModelOfACoin) {
+		character.GainItem(l, span)(c.CharacterId, item.LargeModelOfACoin, -1)
 	}
-	if character.HasItem(l)(c.CharacterId, item.GoldenFeather) {
-		character.GainItem(l)(c.CharacterId, item.GoldenFeather, -1)
+	if character.HasItem(l, span)(c.CharacterId, item.GoldenFeather) {
+		character.GainItem(l, span)(c.CharacterId, item.GoldenFeather, -1)
 	}
-	return script.WarpById(_map.ValeforStrollingPath, 0)(l, c)
+	return script.WarpById(_map.ValeforStrollingPath, 0)(l, span, c)
 }

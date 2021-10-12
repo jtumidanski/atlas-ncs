@@ -4,6 +4,7 @@ import (
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,6 +16,6 @@ func (r OldManTom) NPCId() uint32 {
 	return npc.OldManTom
 }
 
-func (r OldManTom) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return script.WarpById(_map.HauntedHouseFoyer, 0)(l, c)
+func (r OldManTom) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return script.WarpById(_map.HauntedHouseFoyer, 0)(l, span, c)
 }

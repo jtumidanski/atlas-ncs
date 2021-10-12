@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,50 +18,50 @@ func (r SecondPipeHandle) NPCId() uint32 {
 	return npc.SecondPipeHandle
 }
 
-func (r SecondPipeHandle) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r SecondPipeHandle) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if quest.IsStarted(l)(c.CharacterId, 3339) {
-		return r.Progress(l, c)
+		return r.Progress(l, span, c)
 	}
 	if quest.IsCompleted(l)(c.CharacterId, 3339) {
-		return r.WarpInMap(l, c)
+		return r.WarpInMap(l, span, c)
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }
 
-func (r SecondPipeHandle) WarpInMap(l logrus.FieldLogger, c script.Context) script.State {
-	return script.WarpById(_map.HomeOfTheMissingAlchemist, 1)(l, c)
+func (r SecondPipeHandle) WarpInMap(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return script.WarpById(_map.HomeOfTheMissingAlchemist, 1)(l, span, c)
 }
 
-func (r SecondPipeHandle) Progress(l logrus.FieldLogger, c script.Context) script.State {
+func (r SecondPipeHandle) Progress(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	progress := quest.ProgressInt(l)(c.CharacterId, 23339, 1)
 	if progress == 3 {
-		return r.GetPassword(l, c)
+		return r.GetPassword(l, span, c)
 	} else if progress == 2 {
 		quest.SetProgress(l)(c.CharacterId, 23339, 1, 3)
-		return r.GetPassword(l, c)
+		return r.GetPassword(l, span, c)
 	} else if progress < 3 {
 		quest.SetProgress(l)(c.CharacterId, 23339, 1, 0)
-		return script.Exit()(l, c)
+		return script.Exit()(l, span, c)
 	} else {
-		return r.WarpInMap(l, c)
+		return r.WarpInMap(l, span, c)
 	}
 }
 
-func (r SecondPipeHandle) GetPassword(l logrus.FieldLogger, c script.Context) script.State {
+func (r SecondPipeHandle) GetPassword(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("The pipe reacts as the water starts flowing. A secret compartment with a keypad shows up. ").
 		BlueText().AddText("Password").
 		BlackText().AddText("!")
-	return script.SendGetText(l, c, m.String(), r.Validate)
+	return script.SendGetText(l, span, c, m.String(), r.Validate)
 }
 
 func (r SecondPipeHandle) Validate(text string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		if text != "my love Phyllia" {
 			m := message.NewBuilder().RedText().AddText("Wrong!")
-			return script.SendOk(l, c, m.String())
+			return script.SendOk(l, span, c, m.String())
 		}
 		quest.SetProgress(l)(c.CharacterId, 23339, 1, 4)
-		return r.WarpInMap(l, c)
+		return r.WarpInMap(l, span, c)
 	}
 }

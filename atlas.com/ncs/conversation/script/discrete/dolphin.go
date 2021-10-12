@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,23 +19,23 @@ func (r Dolphin) NPCId() uint32 {
 	return npc.Dolphin
 }
 
-func (r Dolphin) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.DolphinTaxiCoupon) {
+func (r Dolphin) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasItem(l, span)(c.CharacterId, item.DolphinTaxiCoupon) {
 		if c.MapId == _map.PierOnTheBeach {
-			return r.WithTicketInHerbTown(l, c)
+			return r.WithTicketInHerbTown(l, span, c)
 		} else {
-			return r.WithTicketInAquarium(l, c)
+			return r.WithTicketInAquarium(l, span, c)
 		}
 	} else {
 		if c.MapId == _map.PierOnTheBeach {
-			return r.WithoutTicketInHerbTown(l, c)
+			return r.WithoutTicketInHerbTown(l, span, c)
 		} else {
-			return r.WithoutTicketInAquarium(l, c)
+			return r.WithoutTicketInAquarium(l, span, c)
 		}
 	}
 }
 
-func (r Dolphin) WithTicketInHerbTown(l logrus.FieldLogger, c script.Context) script.State {
+func (r Dolphin) WithTicketInHerbTown(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Ocean are all connected to each other. Place you can't reach by foot can easily reached oversea. How about taking ").
 		BlueText().AddText("Dolphin Taxi").
@@ -51,10 +52,10 @@ func (r Dolphin) WithTicketInHerbTown(l logrus.FieldLogger, c script.Context) sc
 		BlackText().AddText(" after paying ").
 		BlueText().AddText("10000 mesos").
 		BlackText().AddText(".").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection(true, _map.Aquarium))
+	return script.SendListSelection(l, span, c, m.String(), r.Selection(true, _map.Aquarium))
 }
 
-func (r Dolphin) WithTicketInAquarium(l logrus.FieldLogger, c script.Context) script.State {
+func (r Dolphin) WithTicketInAquarium(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Ocean are all connected to each other. Place you can't reach by foot can easily reached oversea. How about taking ").
 		BlueText().AddText("Dolphin Taxi").
@@ -71,10 +72,10 @@ func (r Dolphin) WithTicketInAquarium(l logrus.FieldLogger, c script.Context) sc
 		BlackText().AddText(" after paying ").
 		BlueText().AddText("10000 mesos").
 		BlackText().AddText(".").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection(true, _map.HerbTown))
+	return script.SendListSelection(l, span, c, m.String(), r.Selection(true, _map.HerbTown))
 }
 
-func (r Dolphin) WithoutTicketInHerbTown(l logrus.FieldLogger, c script.Context) script.State {
+func (r Dolphin) WithoutTicketInHerbTown(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Ocean are all connected to each other. Place you can't reach by foot can easily reached oversea. How about taking ").
 		BlueText().AddText("Dolphin Taxi").
@@ -91,10 +92,10 @@ func (r Dolphin) WithoutTicketInHerbTown(l logrus.FieldLogger, c script.Context)
 		BlackText().AddText(" after paying ").
 		BlueText().AddText("10000 mesos").
 		BlackText().AddText(".").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection(false, _map.Aquarium))
+	return script.SendListSelection(l, span, c, m.String(), r.Selection(false, _map.Aquarium))
 }
 
-func (r Dolphin) WithoutTicketInAquarium(l logrus.FieldLogger, c script.Context) script.State {
+func (r Dolphin) WithoutTicketInAquarium(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Ocean are all connected to each other. Place you can't reach by foot can easily reached oversea. How about taking ").
 		BlueText().AddText("Dolphin Taxi").
@@ -111,7 +112,7 @@ func (r Dolphin) WithoutTicketInAquarium(l logrus.FieldLogger, c script.Context)
 		BlackText().AddText(" after paying ").
 		BlueText().AddText("10000 mesos").
 		BlackText().AddText(".").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection(false, _map.HerbTown))
+	return script.SendListSelection(l, span, c, m.String(), r.Selection(false, _map.HerbTown))
 }
 
 func (r Dolphin) Selection(hasTicket bool, secondDestination uint32) script.ProcessSelection {
@@ -127,49 +128,43 @@ func (r Dolphin) Selection(hasTicket bool, secondDestination uint32) script.Proc
 }
 
 func (r Dolphin) ValidateSharpUnknown(ticket bool) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !ticket && !character.HasMeso(l)(c.CharacterId, 1000) {
-			return r.NotEnoughMeso(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !ticket && !character.HasMeso(l, span)(c.CharacterId, 1000) {
+			return r.NotEnoughMeso(l, span, c)
 		}
 
-		return r.ProcessSharpUnknown(ticket)(l, c)
+		return r.ProcessSharpUnknown(ticket)(l, span, c)
 	}
 }
 
 func (r Dolphin) ProcessSharpUnknown(ticket bool) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		if ticket {
-			character.GainItem(l)(c.CharacterId, item.DolphinTaxiCoupon, -1)
+			character.GainItem(l, span)(c.CharacterId, item.DolphinTaxiCoupon, -1)
 		} else {
-			err := character.GainMeso(l)(c.CharacterId, -1000)
-			if err != nil {
-				l.WithError(err).Errorf("Unable to process payment for character %d.", c.CharacterId)
-			}
+			character.GainMeso(l, span)(c.CharacterId, -1000)
 		}
-		return script.WarpById(_map.TheSharpUnknown, 2)(l, c)
+		return script.WarpById(_map.TheSharpUnknown, 2)(l, span, c)
 	}
 }
 
-func (r Dolphin) NotEnoughMeso(l logrus.FieldLogger, c script.Context) script.State {
+func (r Dolphin) NotEnoughMeso(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I don't think you have enough money...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Dolphin) ValidateTown(destination uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		if !character.HasMeso(l)(c.CharacterId, 10000) {
-			return r.NotEnoughMeso(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		if !character.HasMeso(l, span)(c.CharacterId, 10000) {
+			return r.NotEnoughMeso(l, span, c)
 		}
-		return r.ProcessTown(destination)(l, c)
+		return r.ProcessTown(destination)(l, span, c)
 	}
 }
 
 func (r Dolphin) ProcessTown(destination uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		err := character.GainMeso(l)(c.CharacterId, -10000)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to process payment for character %d.", c.CharacterId)
-		}
-		return script.WarpById(destination, 0)(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		character.GainMeso(l, span)(c.CharacterId, -10000)
+		return script.WarpById(destination, 0)(l, span, c)
 	}
 }

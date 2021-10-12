@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,7 +17,7 @@ func (r Jano) NPCId() uint32 {
 	return npc.Jano
 }
 
-func (r Jano) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Jano) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	character.ChangeMusic(l)(c.CharacterId, "Bgm14/Ariant")
-	return script.WarpById(_map.Stage1MagikMirror, 3)(l, c)
+	return script.WarpById(_map.Stage1MagikMirror, 3)(l, span, c)
 }

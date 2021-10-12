@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -19,55 +20,55 @@ func (r Bush3) NPCId() uint32 {
 	return npc.Bush3
 }
 
-func (r Bush3) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Bush3) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !quest.IsStarted(l)(c.CharacterId, 2186) {
-		return r.PileOfBoxes(l, c)
+		return r.PileOfBoxes(l, span, c)
 	}
-	return r.DoYouWant(l, c)
+	return r.DoYouWant(l, span, c)
 }
 
-func (r Bush3) PileOfBoxes(l logrus.FieldLogger, c script.Context) script.State {
+func (r Bush3) PileOfBoxes(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Just a pile of boxes, nothing special...")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Bush3) DoYouWant(l logrus.FieldLogger, c script.Context) script.State {
+func (r Bush3) DoYouWant(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Do you want to obtain a glasses?")
-	return script.SendNext(l, c, m.String(), r.Validate)
+	return script.SendNext(l, span, c, m.String(), r.Validate)
 }
 
-func (r Bush3) Validate(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasAnyItem(l)(c.CharacterId, item.AbelsGlasses, item.MiscellaneousGlasses1, item.MiscellaneousGlasses2) {
-		return r.AlreadyHave(l, c)
+func (r Bush3) Validate(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasAnyItem(l, span)(c.CharacterId, item.AbelsGlasses, item.MiscellaneousGlasses1, item.MiscellaneousGlasses2) {
+		return r.AlreadyHave(l, span, c)
 	}
 
 	if character.CanHold(l)(c.CharacterId, item.AbelsGlasses) {
-		return r.NoInventoryRoom(l, c)
+		return r.NoInventoryRoom(l, span, c)
 	}
 
 	random := rand.Intn(3)
 	if random == 0 {
-		character.GainItem(l)(c.CharacterId, item.AbelsGlasses, 1)
+		character.GainItem(l, span)(c.CharacterId, item.AbelsGlasses, 1)
 	} else if random == 1 {
-		character.GainItem(l)(c.CharacterId, item.MiscellaneousGlasses1, 1)
+		character.GainItem(l, span)(c.CharacterId, item.MiscellaneousGlasses1, 1)
 	} else {
-		character.GainItem(l)(c.CharacterId, item.MiscellaneousGlasses2, 1)
+		character.GainItem(l, span)(c.CharacterId, item.MiscellaneousGlasses2, 1)
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }
 
-func (r Bush3) AlreadyHave(l logrus.FieldLogger, c script.Context) script.State {
+func (r Bush3) AlreadyHave(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You ").
 		BlueText().AddText("already have").
 		BlackText().AddText(" the glasses that was here!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Bush3) NoInventoryRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r Bush3) NoInventoryRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Check for a available slot on your ETC inventory.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

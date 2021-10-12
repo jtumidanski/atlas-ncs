@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -74,46 +75,46 @@ func (r HolyStone) Questions() []Question {
 		{prompt: "What's the color of the marble Grendel the Really Old from Ellinia carries with him?", answers: []string{"White", "Orange", "Blue", "Purple", "Green"}, correctIndex: 2},
 	}
 }
-func (r HolyStone) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.NecklaceOfWisdom) {
-		return script.Exit()(l, c)
+func (r HolyStone) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasItem(l, span)(c.CharacterId, item.NecklaceOfWisdom) {
+		return script.Exit()(l, span, c)
 	}
 
-	if character.HasItem(l)(c.CharacterId, item.DarkCrystal) {
-		return r.BringMe(l, c)
+	if character.HasItem(l, span)(c.CharacterId, item.DarkCrystal) {
+		return r.BringMe(l, span, c)
 	}
 
 	if !character.CanHold(l)(c.CharacterId, item.NecklaceOfWisdom) {
-		return r.InventoryRoom(l, c)
+		return r.InventoryRoom(l, span, c)
 	}
 
-	return r.Alright(l, c)
+	return r.Alright(l, span, c)
 }
 
-func (r HolyStone) BringMe(l logrus.FieldLogger, c script.Context) script.State {
+func (r HolyStone) BringMe(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Bring me a ").
 		BlueText().ShowItemName1(item.DarkCrystal).
 		BlackText().AddText(" to proceed with the trial.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r HolyStone) InventoryRoom(l logrus.FieldLogger, c script.Context) script.State {
+func (r HolyStone) InventoryRoom(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Have a free ETC slot available before accepting this trial.")
-	return script.SendNext(l, c, m.String(), script.Exit())
+	return script.SendNext(l, span, c, m.String(), script.Exit())
 }
 
-func (r HolyStone) Alright(l logrus.FieldLogger, c script.Context) script.State {
+func (r HolyStone) Alright(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Alright... I'll be testing out your wisdom here. Answer all the questions correctly, and you will pass the test BUT, if you even lie to me once, then you'll have to start over again ok, here we go.")
-	return script.SendNext(l, c, m.String(), r.TakeCrystal)
+	return script.SendNext(l, span, c, m.String(), r.TakeCrystal)
 }
 
-func (r HolyStone) TakeCrystal(l logrus.FieldLogger, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.DarkCrystal, -1)
+func (r HolyStone) TakeCrystal(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainItem(l, span)(c.CharacterId, item.DarkCrystal, -1)
 
 	questionSet := r.GenerateQuestionSet()
 
-	return r.AskQuestion(questionSet)(l, c)
+	return r.AskQuestion(questionSet)(l, span, c)
 }
 
 func (r HolyStone) GenerateQuestionSet() []uint32 {
@@ -133,14 +134,14 @@ func (r HolyStone) AskQuestion(set []uint32) script.StateProducer {
 	if len(set) == 0 {
 		return script.Exit()
 	}
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		question := r.Questions()[set[0]]
 
 		m := message.NewBuilder().AddText(r.GetHeading(5-len(set)+1) + question.prompt)
 		for i, answer := range question.answers {
 			m = m.OpenItem(i).BlueText().AddText(answer).CloseItem().NewLine()
 		}
-		return script.SendListSelection(l, c, m.String(), r.ProcessAnswer(set))
+		return script.SendListSelection(l, span, c, m.String(), r.ProcessAnswer(set))
 	}
 }
 
@@ -161,29 +162,29 @@ func (r HolyStone) ProcessAnswer(set []uint32) script.ProcessSelection {
 	return func(selection int32) script.StateProducer {
 		question := r.Questions()[set[0]]
 
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			if question.correctIndex != uint32(selection) {
-				return r.Failed(l, c)
+				return r.Failed(l, span, c)
 			}
 
 			if len(set) == 1 {
-				return r.Complete(l, c)
+				return r.Complete(l, span, c)
 			}
-			return r.AskQuestion(set[1:])(l, c)
+			return r.AskQuestion(set[1:])(l, span, c)
 		}
 	}
 }
 
-func (r HolyStone) Failed(l logrus.FieldLogger, c script.Context) script.State {
+func (r HolyStone) Failed(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("You have failed the question.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r HolyStone) Complete(l logrus.FieldLogger, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.NecklaceOfWisdom, 1)
+func (r HolyStone) Complete(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	character.GainItem(l, span)(c.CharacterId, item.NecklaceOfWisdom, 1)
 	m := message.NewBuilder().AddText("Alright. All your answers have been proven as the truth. Your wisdom has been proven.").NewLine().
 		AddText("Take this necklace and go back.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r HolyStone) Contains(questions []uint32, random uint32) bool {

@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,14 +19,14 @@ func (r ThirdEOSRock) NPCId() uint32 {
 	return npc.ThirdEOSRock
 }
 
-func (r ThirdEOSRock) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	if character.HasItem(l)(c.CharacterId, item.EOSRockScroll) {
-		return r.ToNext(l, c)
+func (r ThirdEOSRock) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	if character.HasItem(l, span)(c.CharacterId, item.EOSRockScroll) {
+		return r.ToNext(l, span, c)
 	}
-	return r.NeedRock(l, c)
+	return r.NeedRock(l, span, c)
 }
 
-func (r ThirdEOSRock) ToNext(l logrus.FieldLogger, c script.Context) script.State {
+func (r ThirdEOSRock) ToNext(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You can use ").
 		BlueText().AddText("Eos Rock Scroll").
@@ -34,7 +35,7 @@ func (r ThirdEOSRock) ToNext(l logrus.FieldLogger, c script.Context) script.Stat
 		BlackText().AddText(". Which of these rocks would you like to teleport to?").NewLine().
 		OpenItem(0).BlueText().AddText("Second Eos Rock (71st Floor)").CloseItem().NewLine().
 		OpenItem(1).BlueText().AddText("Fourth Eos Rock (1st Floor)").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r ThirdEOSRock) Selection(selection int32) script.StateProducer {
@@ -47,16 +48,16 @@ func (r ThirdEOSRock) Selection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r ThirdEOSRock) NeedRock(l logrus.FieldLogger, c script.Context) script.State {
+func (r ThirdEOSRock) NeedRock(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("There's a rock that will enable you to teleport to ").
 		BlueText().AddText("Second Eos Rock or Fourth Eos Rock").
 		BlackText().AddText(", but it cannot be activated without the scroll.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 
 }
 
-func (r ThirdEOSRock) Confirm71(l logrus.FieldLogger, c script.Context) script.State {
+func (r ThirdEOSRock) Confirm71(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You can use ").
 		BlueText().AddText("Eos Rock Scroll").
@@ -65,10 +66,10 @@ func (r ThirdEOSRock) Confirm71(l logrus.FieldLogger, c script.Context) script.S
 		BlackText().AddText(". Will you teleport to ").
 		BlueText().AddText("Second Eos Rock").
 		BlackText().AddText(" at the 71st Floor?")
-	return script.SendYesNo(l, c, m.String(), r.Process(_map.EosTower71stFloor), script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.Process(_map.EosTower71stFloor), script.Exit())
 }
 
-func (r ThirdEOSRock) Confirm1(l logrus.FieldLogger, c script.Context) script.State {
+func (r ThirdEOSRock) Confirm1(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("You can use ").
 		BlueText().AddText("Eos Rock Scroll").
@@ -77,12 +78,12 @@ func (r ThirdEOSRock) Confirm1(l logrus.FieldLogger, c script.Context) script.St
 		BlackText().AddText(". Will you teleport to ").
 		BlueText().AddText("Fourth Eos Rock").
 		BlackText().AddText(" at the 1st Floor?")
-	return script.SendYesNo(l, c, m.String(), r.Process(_map.EosTower1stFloor), script.Exit())
+	return script.SendYesNo(l, span, c, m.String(), r.Process(_map.EosTower1stFloor), script.Exit())
 }
 
 func (r ThirdEOSRock) Process(mapId uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
-		character.GainItem(l)(c.CharacterId, item.EOSRockScroll, -1)
-		return script.WarpById(mapId, 3)(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+		character.GainItem(l, span)(c.CharacterId, item.EOSRockScroll, -1)
+		return script.WarpById(mapId, 3)(l, span, c)
 	}
 }

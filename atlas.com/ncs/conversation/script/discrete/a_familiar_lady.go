@@ -24,7 +24,7 @@ func (r AFamiliarLady) Initial(l logrus.FieldLogger, span opentracing.Span, c sc
 		return script.Exit()(l, span, c)
 	}
 
-	if !character.HasItem(l)(c.CharacterId, item.OldFoxsTail) {
+	if !character.HasItem(l, span)(c.CharacterId, item.OldFoxsTail) {
 		return r.LostInTheWoods(l, span, c)
 	}
 
@@ -48,7 +48,7 @@ func (r AFamiliarLady) Confirm(l logrus.FieldLogger, span opentracing.Span, c sc
 }
 
 func (r AFamiliarLady) Process(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.GainItem(l)(c.CharacterId, item.OldFoxsTail, -1)
+	character.GainItem(l, span)(c.CharacterId, item.OldFoxsTail, -1)
 	character.GainFame(l)(c.CharacterId, -5)
 	quest.SetProgress(l)(c.CharacterId, 23647, 1, 1)
 	return r.Success(l, span, c)
