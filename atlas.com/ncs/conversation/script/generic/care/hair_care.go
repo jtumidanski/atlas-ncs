@@ -4,6 +4,7 @@ import (
 	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math"
 	"math/rand"
@@ -57,21 +58,21 @@ func GetRandomHair(l logrus.FieldLogger, c script.Context, maleHair []uint32, fe
 
 func WarnRandomStyle(prompt string, coupon uint32, maleHair []uint32, femaleHair []uint32, choice ChoiceConsumer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			randomSupplier := GetRandomHair(l, c, maleHair, femaleHair)
 			couponProcessor := ProcessCoupon(coupon, choice, SetSingleUse(true))
 			choiceProcessor := couponProcessor(randomSupplier)
-			return script.SendYesNo(l, c, prompt, choiceProcessor(config), no)
+			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
 		}
 	}
 }
 
 func WarnRandomColor(prompt string, choice ChoiceHandlerProducer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			randomSupplier := GetRandomHairColor(l, c)
 			choiceProcessor := choice(randomSupplier)
-			return script.SendYesNo(l, c, prompt, choiceProcessor(config), no)
+			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
 		}
 	}
 }

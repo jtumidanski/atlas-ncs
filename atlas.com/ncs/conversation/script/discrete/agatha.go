@@ -7,6 +7,7 @@ import (
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,14 +19,14 @@ func (r Agatha) NPCId() uint32 {
 	return npc.Agatha
 }
 
-func (r Agatha) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Agatha) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hello, I'm in charge of selling tickets for the ship ride for every destination. Which ticket would you like to purchase?").NewLine().
 		OpenItem(0).BlueText().AddText("Ellinia").CloseItem().NewLine().
 		OpenItem(1).BlueText().AddText("Ludibrium").CloseItem().NewLine().
 		OpenItem(2).BlueText().AddText("Leafre").CloseItem().NewLine().
 		OpenItem(3).BlueText().AddText("Ariant").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r Agatha) Selection(selection int32) script.StateProducer {
@@ -43,7 +44,7 @@ func (r Agatha) Selection(selection int32) script.StateProducer {
 }
 
 func (r Agatha) Explanation(townName string, duration uint32, cost uint32, ticket uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("The ride to ").
 			AddText(townName).
@@ -54,35 +55,35 @@ func (r Agatha) Explanation(townName string, duration uint32, cost uint32, ticke
 			BlackText().AddText(". Are you sure you want to purchase ").
 			BlueText().ShowItemName1(ticket).
 			BlackText().AddText("?")
-		return script.SendYesNo(l, c, m.String(), r.ValidateChoice(ticket, cost), script.Exit())
+		return script.SendYesNo(l, span, c, m.String(), r.ValidateChoice(ticket, cost), script.Exit())
 	}
 }
 
 func (r Agatha) ValidateChoice(ticket uint32, cost uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		if !character.HasMeso(l)(c.CharacterId, cost) || !character.CanHold(l)(c.CharacterId, ticket) {
-			return r.AreYouSure(cost)(l, c)
+			return r.AreYouSure(cost)(l, span, c)
 		}
-		return r.ProcessPurchase(ticket, cost)(l, c)
+		return r.ProcessPurchase(ticket, cost)(l, span, c)
 	}
 }
 
 func (r Agatha) AreYouSure(cost uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText("Are you sure you have ").
 			BlueText().AddText(fmt.Sprintf("%d mesos", cost)).
 			BlackText().AddText("? If so, then I urge you to check you etc. inventory, and see if it's full or not.")
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
 func (r Agatha) ProcessPurchase(ticket uint32, cost uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		err := character.GainMeso(l)(c.CharacterId, -int32(cost))
 		if err != nil {
 			l.WithError(err).Errorf("Unable to process purchase for character %d.", c.CharacterId)
 		}
 		character.GainItem(l)(c.CharacterId, ticket, 1)
-		return script.Exit()(l, c)
+		return script.Exit()(l, span, c)
 	}
 }

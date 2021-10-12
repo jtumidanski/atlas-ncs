@@ -1,8 +1,8 @@
 package producers
 
 import (
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 const topicTokenChangeMap = "TOPIC_CHANGE_MAP_COMMAND"
@@ -15,16 +15,12 @@ type changeMapEvent struct {
 	PortalId    uint32 `json:"portalId"`
 }
 
-type ChangeMapEmitter func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error
+type ChangeMapEmitter func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32)
 
-func ChangeMap(l logrus.FieldLogger) ChangeMapEmitter {
-	producer, _ := ProduceEvent(l, topicTokenChangeMap, SetBrokers([]string{os.Getenv("BOOTSTRAP_SERVERS")}))
-	return produceChangeMap(producer)
-}
-
-func produceChangeMap(producer MessageProducer) ChangeMapEmitter {
-	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
+func ChangeMap(l logrus.FieldLogger, span opentracing.Span) ChangeMapEmitter {
+	producer := ProduceEvent(l, span, topicTokenChangeMap)
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
 		event := &changeMapEvent{WorldId: worldId, ChannelId: channelId, CharacterId: characterId, MapId: mapId, PortalId: portalId}
-		return producer(CreateKey(int(characterId)), event)
+		producer(CreateKey(int(characterId)), event)
 	}
 }

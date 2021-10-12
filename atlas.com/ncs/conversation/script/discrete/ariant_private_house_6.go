@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +18,7 @@ func (r AriantPrivateHouse6) NPCId() uint32 {
 	return npc.AriantPrivateHouse6
 }
 
-func (r AriantPrivateHouse6) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r AriantPrivateHouse6) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if quest.IsStarted(l)(c.CharacterId, 3929) {
 		progress := quest.Progress(l)(c.CharacterId, 3929)
 		slot := 3
@@ -28,5 +29,5 @@ func (r AriantPrivateHouse6) Initial(l logrus.FieldLogger, c script.Context) scr
 			quest.SetProgressString(l)(c.CharacterId, 3929, next)
 		}
 	}
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }

@@ -6,6 +6,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,21 +18,21 @@ func (r Arturo) NPCId() uint32 {
 	return npc.Arturo
 }
 
-func (r Arturo) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Arturo) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Congratulations on sealing the dimensional crack! For all of your hard work, I have a gift for you! Here take this prize.")
-	return script.SendNext(l, c, m.String(), r.Validate)
+	return script.SendNext(l, span, c, m.String(), r.Validate)
 }
 
-func (r Arturo) Validate(l logrus.FieldLogger, c script.Context) script.State {
+func (r Arturo) Validate(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	ok := event.GiveEventReward(l)(c.CharacterId)
 	if !ok {
-		return r.NeedInventorySpace(l, c)
+		return r.NeedInventorySpace(l, span, c)
 	}
-	return script.WarpById(_map.EosTower101stFloor, 0)(l, c)
+	return script.WarpById(_map.EosTower101stFloor, 0)(l, span, c)
 }
 
-func (r Arturo) NeedInventorySpace(l logrus.FieldLogger, c script.Context) script.State {
+func (r Arturo) NeedInventorySpace(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("It seems you don't have a free slot in either your ").
 		RedText().AddText("Equip").
@@ -40,5 +41,5 @@ func (r Arturo) NeedInventorySpace(l logrus.FieldLogger, c script.Context) scrip
 		BlackText().AddText(" or ").
 		RedText().AddText("Etc").
 		BlackText().AddText(" inventories. Please make some room and try again.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

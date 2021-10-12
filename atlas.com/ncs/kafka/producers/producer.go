@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/binary"
 	"encoding/json"
+	"github.com/opentracing/opentracing-go"
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -18,66 +19,45 @@ func CreateKey(key int) []byte {
 	return b
 }
 
-type Config func(c *config)
-
-func SetBrokers(brokers []string) func(c *config) {
-	return func(c *config) {
-		c.brokers = brokers
-	}
-}
-
-type config struct {
-	batchTimeout time.Duration
-	brokers      []string
-}
-
-type MessageProducer func([]byte, interface{}) error
-
-func ProduceEvent(l logrus.FieldLogger, topicToken string, options ...Config) (MessageProducer, error) {
-	c := &config{
-		batchTimeout: 50 * time.Millisecond,
-		brokers: []string{os.Getenv("BOOTSTRAP_SERVERS")},
-	}
-
-	for _, option := range options {
-		option(c)
-	}
-
-	t := topic.GetRegistry().Get(l, topicToken)
-
+func ProduceEvent(l logrus.FieldLogger, span opentracing.Span, topicToken string) func(key []byte, event interface{}) {
+	name := topic.GetRegistry().Get(l, span, topicToken)
 	w := &kafka.Writer{
-		Addr:         kafka.TCP(c.brokers...),
-		Topic:        t,
+		Addr:         kafka.TCP(os.Getenv("BOOTSTRAP_SERVERS")),
+		Topic:        name,
 		Balancer:     &kafka.LeastBytes{},
-		BatchTimeout: c.batchTimeout,
+		BatchTimeout: 50 * time.Millisecond,
 	}
 
-	return produce(l, w), nil
-}
-
-func produce(l logrus.FieldLogger, w *kafka.Writer) MessageProducer {
-	return func(key []byte, event interface{}) error {
+	return func(key []byte, event interface{}) {
 		r, err := json.Marshal(event)
-		l.WithField("message", string(r)).Debugf("Writing message to topic %s.", w.Topic)
+		l.WithField("message", string(r)).Debugf("Writing message to topic %s.", name)
 		if err != nil {
-			l.WithError(err).Errorf("Unable to marshall event for topic %s.", w.Topic)
-			return err
+			l.WithError(err).Fatalf("Unable to marshall event for topic %s.", name)
 		}
 
-		produceMessage := func(attempt int) (bool, error) {
-			err = w.WriteMessages(context.Background(), kafka.Message{Key: key, Value: r})
+		writeMessage := func(attempt int) (bool, error) {
+			m := kafka.Message{Key: key, Value: r}
+			headers := make(map[string]string)
+			err = opentracing.GlobalTracer().Inject(span.Context(), opentracing.TextMap, opentracing.TextMapCarrier(headers))
 			if err != nil {
-				l.WithError(err).Warnf("Unable to produce event on topic %s, will retry.", w.Topic)
+				l.WithError(err).Warnf("Unable to inject OpenTracing information.")
+				return false, err
+			}
+			for k, v := range headers {
+				m.Headers = append(m.Headers, kafka.Header{Key: k, Value: []byte(v)})
+			}
+
+			err = w.WriteMessages(context.Background(), m)
+			if err != nil {
+				l.WithError(err).Warnf("Unable to emit event on topic %s, will retry.", name)
 				return true, err
 			}
 			return false, err
 		}
 
-		err = retry.Try(produceMessage, 10)
+		err = retry.Try(writeMessage, 10)
 		if err != nil {
-			l.WithError(err).Fatalf("Unable to produce event on topic %s.", w.Topic)
-			return err
+			l.WithError(err).Fatalf("Unable to emit event on topic %s.", name)
 		}
-		return nil
 	}
 }

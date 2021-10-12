@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/quest"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math"
 	"math/rand"
@@ -20,8 +21,8 @@ func (r APileOfFlowers) NPCId() uint32 {
 	return npc.APileOfFlowers
 }
 
-func (r APileOfFlowers) Initial(l logrus.FieldLogger, c script.Context) script.State {
-	return r.AwardPrize(l, c)
+func (r APileOfFlowers) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
+	return r.AwardPrize(l, span, c)
 }
 
 type FlowerPrizes struct {
@@ -33,7 +34,7 @@ type FlowerPrize struct {
 	chance uint32
 }
 
-func (r APileOfFlowers) AwardPrize(l logrus.FieldLogger, c script.Context) script.State {
+func (r APileOfFlowers) AwardPrize(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	prizes := r.GetPrizes()
 	gender := character.GetGender(l)(c.CharacterId)
 	prizes = r.FilterOutGenderedItems(gender, prizes)
@@ -55,7 +56,7 @@ func (r APileOfFlowers) AwardPrize(l logrus.FieldLogger, c script.Context) scrip
 		character.GainItem(l)(c.CharacterId, item.PinkAnthurium, 1)
 	}
 	character.GainItem(l)(c.CharacterId, prizes.prizes[pick].itemId, 1)
-	return script.WarpById(_map.Ellinia, 0)(l, c)
+	return script.WarpById(_map.Ellinia, 0)(l, span, c)
 }
 
 func (r APileOfFlowers) GetPrizes() FlowerPrizes {

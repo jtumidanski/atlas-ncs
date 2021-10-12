@@ -6,6 +6,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc/message"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -64,20 +65,20 @@ type Requirement struct {
 	Amount uint16
 }
 
-func NewGenericRefine(l logrus.FieldLogger, c script.Context, hello string, categories []ListItem) script.State {
+func NewGenericRefine(l logrus.FieldLogger, span opentracing.Span, c script.Context, hello string, categories []ListItem) script.State {
 	m := message.NewBuilder().AddText(hello).NewLine()
 	for i, category := range categories {
 		m = m.OpenItem(i).BlueText().AddText(category.ListText).CloseItem().NewLine()
 	}
-	return script.SendListSelection(l, c, m.String(), itemSelection(categories))
+	return script.SendListSelection(l, span, c, m.String(), itemSelection(categories))
 }
 
-func NewSingleCategoryRefine(l logrus.FieldLogger, c script.Context, hello string, choices []RefinementChoice) script.State {
+func NewSingleCategoryRefine(l logrus.FieldLogger, span opentracing.Span, c script.Context, hello string, choices []RefinementChoice) script.State {
 	m := message.NewBuilder().AddText(hello).NewLine()
 	for i, choice := range choices {
 		m = m.OpenItem(i).AddText(choice.ListText).CloseItem().NewLine()
 	}
-	return script.SendListSelection(l, c, m.String(), choiceSelection(choices))
+	return script.SendListSelection(l, span, c, m.String(), choiceSelection(choices))
 }
 
 func itemSelection(items []ListItem) script.ProcessSelection {
@@ -91,12 +92,12 @@ func itemSelection(items []ListItem) script.ProcessSelection {
 }
 
 func PromptCategory(prompt string, choices []RefinementChoice) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText(prompt).NewLine()
 		for i, choice := range choices {
 			m = m.OpenItem(i).AddText(choice.ListText).CloseItem().NewLine()
 		}
-		return script.SendListSelection(l, c, m.String(), choiceSelection(choices))
+		return script.SendListSelection(l, span, c, m.String(), choiceSelection(choices))
 	}
 }
 
@@ -114,12 +115,12 @@ type TerminalState func(config TerminalConfig) script.StateProducer
 
 func HowMany(itemId uint32, requirements Requirements) TerminalState {
 	return func(config TerminalConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			m := message.NewBuilder().
 				AddText("So, you want me to make some ").
 				ShowItemName1(itemId).
 				AddText("s? In that case, how many do you want me to make?")
-			return script.SendGetNumber(l, c, m.String(), quantitySelection(itemId, requirements, config), 1, 1, 100)
+			return script.SendGetNumber(l, span, c, m.String(), quantitySelection(itemId, requirements, config), 1, 1, 100)
 		}
 	}
 }
@@ -137,7 +138,7 @@ func quantitySelection(itemId uint32, requirements Requirements, config Terminal
 }
 
 func confirmQuantity(itemId uint32, amount uint32, requirements Requirements, config TerminalConfig) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("You want me to make ")
 		if amount == 1 {
@@ -152,30 +153,30 @@ func confirmQuantity(itemId uint32, amount uint32, requirements Requirements, co
 		if requirements.cost > 0 {
 			m = m.ShowItemImage2(item.MoneySack).AddText(fmt.Sprintf(" %d meso", requirements.cost*amount))
 		}
-		return script.SendYesNo(l, c, m.String(), validate(itemId, amount, requirements, config), script.Exit())
+		return script.SendYesNo(l, span, c, m.String(), validate(itemId, amount, requirements, config), script.Exit())
 	}
 }
 
 func validate(itemId uint32, amount uint32, requirements Requirements, config TerminalConfig) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		productionAmount := amount * requirements.awardAmount
 		if !character.CanHoldAll(l)(c.CharacterId, itemId, productionAmount) {
-			return config.InventoryError(l, c)
+			return config.InventoryError(l, span, c)
 		}
 		if !character.HasMeso(l)(c.CharacterId, requirements.cost*amount) {
-			return config.MesoError(l, c)
+			return config.MesoError(l, span, c)
 		}
 		for _, req := range requirements.requirements {
 			if !character.HasItems(l)(c.CharacterId, req.ItemId, uint32(req.Amount)*amount) {
-				return config.RequirementError(req.ItemId)(l, c)
+				return config.RequirementError(req.ItemId)(l, span, c)
 			}
 		}
-		return performRefine(itemId, amount, requirements, config)(l, c)
+		return performRefine(itemId, amount, requirements, config)(l, span, c)
 	}
 }
 
 func performRefine(itemId uint32, amount uint32, requirements Requirements, config TerminalConfig) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		err := character.GainMeso(l)(c.CharacterId, -int32(amount*requirements.cost))
 		if err != nil {
 			l.WithError(err).Errorf("Unable to process payment for refine.")
@@ -197,9 +198,9 @@ func performRefine(itemId uint32, amount uint32, requirements Requirements, conf
 			// TODO if a stimulator was used, refinement will produce an average or above item.
 			productionAmount := amount * requirements.awardAmount
 			character.GainItem(l)(c.CharacterId, itemId, int32(productionAmount))
-			return config.Success(l, c)
+			return config.Success(l, span, c)
 		} else {
-			return config.StimulatorError(l, c)
+			return config.StimulatorError(l, span, c)
 		}
 	}
 }
@@ -250,7 +251,7 @@ func CreateRefinementChoice(listTextProvider RefinementListTextProvider, selecti
 	return RefinementChoice{ListText: listTextProvider(), SelectionPrompt: selectionPrompt, Config: config}
 }
 
-func GenericStimulatorError(l logrus.FieldLogger, c script.Context) script.State {
+func GenericStimulatorError(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Whoops, I missed that up. All of your ingredients are gone.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

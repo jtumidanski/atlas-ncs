@@ -3,6 +3,7 @@ package consumers
 import (
 	"atlas-ncs/conversation"
 	"atlas-ncs/kafka/handler"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,9 +21,9 @@ func ContinueNPCConversationCommandCreator() handler.EmptyEventCreator {
 }
 
 func HandleContinueNPCConversationCommand() handler.EventHandler {
-	return func(l logrus.FieldLogger, e interface{}) {
+	return func(l logrus.FieldLogger, span opentracing.Span, e interface{}) {
 		if event, ok := e.(*continueNPCConversationCommand); ok {
-			conversation.Processor(l).Continue(event.CharacterId, event.Mode, event.Type, event.Selection)
+			conversation.Continue(l, span)(event.CharacterId, event.Mode, event.Type, event.Selection)
 		} else {
 			l.Errorf("Unable to cast event provided to handler")
 		}

@@ -2,6 +2,7 @@ package script
 
 import (
 	"atlas-ncs/npc"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,49 +18,40 @@ type Context struct {
 type Script interface {
 	NPCId() uint32
 
-	Initial(l logrus.FieldLogger, c Context) State
+	Initial(l logrus.FieldLogger, span opentracing.Span, c Context) State
 }
 
-type StateProducer func(l logrus.FieldLogger, c Context) State
+type StateProducer func(l logrus.FieldLogger, span opentracing.Span, c Context) State
 
 type ProcessNumber func(selection int32) StateProducer
 
 type ProcessText func(text string) StateProducer
 
-type State func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State
+type State func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State
 
 type ProcessSelection func(selection int32) StateProducer
 
 func Exit() StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.Dispose(l)(c.CharacterId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to dispose conversation.")
-		}
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context) State {
+		npc.Dispose(l, span)(c.CharacterId)
 		return nil
 	}
 }
 
-func SendListSelection(l logrus.FieldLogger, c Context, message string, s ProcessSelection) State {
-	err := npc.SendSimple(l, c.CharacterId, c.NPCId)(message)
-	if err != nil {
-		l.WithError(err).Errorf("Sending list selection for npc %d to character %d.", c.NPCId, c.CharacterId)
-	}
+func SendListSelection(l logrus.FieldLogger, span opentracing.Span, c Context, message string, s ProcessSelection) State {
+	npc.SendSimple(l, span)(c.CharacterId, c.NPCId)(message)
 	return doListSelectionExit(Exit(), s)
 }
 
-func SendListSelectionExit(l logrus.FieldLogger, c Context, message string, s ProcessSelection, exit StateProducer) State {
-	err := npc.SendSimple(l, c.CharacterId, c.NPCId)(message)
-	if err != nil {
-		l.WithError(err).Errorf("Sending list selection for npc %d to character %d.", c.NPCId, c.CharacterId)
-	}
+func SendListSelectionExit(l logrus.FieldLogger, span opentracing.Span, c Context, message string, s ProcessSelection, exit StateProducer) State {
+	npc.SendSimple(l, span)(c.CharacterId, c.NPCId)(message)
 	return doListSelectionExit(exit, s)
 }
 
 func doListSelectionExit(e StateProducer, s ProcessSelection) State {
-	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 0 && theType == 4 {
-			return e(l, c)
+			return e(l, span, c)
 		}
 
 		f := s(selection)
@@ -67,7 +59,7 @@ func doListSelectionExit(e StateProducer, s ProcessSelection) State {
 			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
 			return nil
 		}
-		return f(l, c)
+		return f(l, span, c)
 	}
 }
 
@@ -106,134 +98,125 @@ func sendTalk(l logrus.FieldLogger, c Context, message string, configurations []
 		configuration(baseConfig)
 	}
 
-	err := talkFunc(message, baseConfig.Configurators()...)
-	if err != nil {
-		l.WithError(err).Errorf("Sending next message for npc %d to character %d.", c.NPCId, c.CharacterId)
-	}
+	talkFunc(message, baseConfig.Configurators()...)
 	return do(baseConfig.Exit())
 }
 
-func SendNext(l logrus.FieldLogger, c Context, message string, next StateProducer, configurations ...SendTalkConfigurator) State {
-	return sendTalk(l, c, message, configurations, npc.SendNext(l, c.CharacterId, c.NPCId), doNext(next))
+func SendNext(l logrus.FieldLogger, span opentracing.Span, c Context, message string, next StateProducer, configurations ...SendTalkConfigurator) State {
+	return sendTalk(l, c, message, configurations, npc.SendNext(l, span)(c.CharacterId, c.NPCId), doNext(next))
 }
 
-func SendNextSpeaker(l logrus.FieldLogger, c Context, message string, speaker string, next StateProducer) State {
-	return SendNext(l, c, message, next, AddSendTalkConfigurator(npc.SetSpeaker(speaker)))
+func SendNextSpeaker(l logrus.FieldLogger, span opentracing.Span, c Context, message string, speaker string, next StateProducer) State {
+	return SendNext(l, span, c, message, next, AddSendTalkConfigurator(npc.SetSpeaker(speaker)))
 }
 
-func SendNextExit(l logrus.FieldLogger, c Context, message string, next StateProducer, exit StateProducer) State {
-	return SendNext(l, c, message, next, SetSendTalkExit(exit))
+func SendNextExit(l logrus.FieldLogger, span opentracing.Span, c Context, message string, next StateProducer, exit StateProducer) State {
+	return SendNext(l, span, c, message, next, SetSendTalkExit(exit))
 }
 
 func doNext(next StateProducer) ProcessStateFunc {
 	return func(exit StateProducer) State {
-		return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 			if mode == 255 && theType == 0 {
-				return exit(l, c)
+				return exit(l, span, c)
 			}
-			return next(l, c)
+			return next(l, span, c)
 		}
 	}
 }
 
-func SendNextPrevious(l logrus.FieldLogger, c Context, message string, next StateProducer, previous StateProducer, configurations ...SendTalkConfigurator) State {
-	return sendTalk(l, c, message, configurations, npc.SendNextPrevious(l, c.CharacterId, c.NPCId), doNextPrevious(next, previous))
+func SendNextPrevious(l logrus.FieldLogger, span opentracing.Span, c Context, message string, next StateProducer, previous StateProducer, configurations ...SendTalkConfigurator) State {
+	return sendTalk(l, c, message, configurations, npc.SendNextPrevious(l, span)(c.CharacterId, c.NPCId), doNextPrevious(next, previous))
 }
 
-func SendNextPreviousSpeaker(l logrus.FieldLogger, c Context, message string, speaker string, next StateProducer, previous StateProducer) State {
-	return SendNextPrevious(l, c, message, next, previous, AddSendTalkConfigurator(npc.SetSpeaker(speaker)))
+func SendNextPreviousSpeaker(l logrus.FieldLogger, span opentracing.Span, c Context, message string, speaker string, next StateProducer, previous StateProducer) State {
+	return SendNextPrevious(l, span, c, message, next, previous, AddSendTalkConfigurator(npc.SetSpeaker(speaker)))
 }
 
-func SendNextPreviousExit(l logrus.FieldLogger, c Context, message string, next StateProducer, previous StateProducer, exit StateProducer) State {
-	return SendNextPrevious(l, c, message, next, previous, SetSendTalkExit(exit))
+func SendNextPreviousExit(l logrus.FieldLogger, span opentracing.Span, c Context, message string, next StateProducer, previous StateProducer, exit StateProducer) State {
+	return SendNextPrevious(l, span, c, message, next, previous, SetSendTalkExit(exit))
 }
 
 func doNextPrevious(next StateProducer, previous StateProducer) ProcessStateFunc {
 	return func(exit StateProducer) State {
-		return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 			if mode == 255 && theType == 0 {
-				return exit(l, c)
+				return exit(l, span, c)
 			}
 			if mode == 0 && previous != nil {
-				return previous(l, c)
+				return previous(l, span, c)
 			} else if mode == 1 && next != nil {
-				return next(l, c)
+				return next(l, span, c)
 			}
 			return nil
 		}
 	}
 }
 
-func SendPrevious(l logrus.FieldLogger, c Context, message string, previous StateProducer, configurations ...SendTalkConfigurator) State {
-	return sendTalk(l, c, message, configurations, npc.SendPrevious(l, c.CharacterId, c.NPCId), doPrevious(previous))
+func SendPrevious(l logrus.FieldLogger, span opentracing.Span, c Context, message string, previous StateProducer, configurations ...SendTalkConfigurator) State {
+	return sendTalk(l, c, message, configurations, npc.SendPrevious(l, span)(c.CharacterId, c.NPCId), doPrevious(previous))
 }
 
 func doPrevious(previous StateProducer) ProcessStateFunc {
 	return func(exit StateProducer) State {
-		return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 			if mode == 255 && theType == 0 {
-				return exit(l, c)
+				return exit(l, span, c)
 			}
 			if mode == 0 && previous != nil {
-				return previous(l, c)
+				return previous(l, span, c)
 			}
 			return nil
 		}
 	}
 }
 
-func SendYesNo(l logrus.FieldLogger, c Context, message string, yes StateProducer, no StateProducer, configurations ...SendTalkConfigurator) State {
-	return sendTalk(l, c, message, configurations, npc.SendYesNo(l, c.CharacterId, c.NPCId), doYesNo(yes, no))
+func SendYesNo(l logrus.FieldLogger, span opentracing.Span, c Context, message string, yes StateProducer, no StateProducer, configurations ...SendTalkConfigurator) State {
+	return sendTalk(l, c, message, configurations, npc.SendYesNo(l, span)(c.CharacterId, c.NPCId), doYesNo(yes, no))
 }
 
-func SendYesNoExit(l logrus.FieldLogger, c Context, message string, yes StateProducer, no StateProducer, exit StateProducer) State {
-	return SendYesNo(l, c, message, yes, no, SetSendTalkExit(exit))
+func SendYesNoExit(l logrus.FieldLogger, span opentracing.Span, c Context, message string, yes StateProducer, no StateProducer, exit StateProducer) State {
+	return SendYesNo(l, span, c, message, yes, no, SetSendTalkExit(exit))
 }
 
 func doYesNo(yes StateProducer, no StateProducer) ProcessStateFunc {
 	return func(exit StateProducer) State {
-		return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 			if mode == 255 && theType == 0 {
-				return exit(l, c)
+				return exit(l, span, c)
 			}
 			if mode == 0 && no != nil {
-				return no(l, c)
+				return no(l, span, c)
 			} else if mode == 1 && yes != nil {
-				return yes(l, c)
+				return yes(l, span, c)
 			}
 			return nil
 		}
 	}
 }
 
-func SendOk(l logrus.FieldLogger, c Context, message string, configurations ...SendTalkConfigurator) State {
-	return sendTalk(l, c, message, configurations, npc.SendOk(l, c.CharacterId, c.NPCId), func(exit StateProducer) State { return exit(l, c) })
+func SendOk(l logrus.FieldLogger, span opentracing.Span, c Context, message string, configurations ...SendTalkConfigurator) State {
+	return sendTalk(l, c, message, configurations, npc.SendOk(l, span)(c.CharacterId, c.NPCId), func(exit StateProducer) State { return exit(l, span, c) })
 }
 
-func SendOkTrigger(l logrus.FieldLogger, c Context, message string, next StateProducer) State {
-	return SendOk(l, c, message, SetSendTalkExit(next))
+func SendOkTrigger(l logrus.FieldLogger, span opentracing.Span, c Context, message string, next StateProducer) State {
+	return SendOk(l, span, c, message, SetSendTalkExit(next))
 }
 
-func SendGetNumber(l logrus.FieldLogger, c Context, message string, s ProcessNumber, defaultValue int32, minimumValue int32, maximumValue int32) State {
-	err := npc.SendGetNumber(l, c.CharacterId, c.NPCId)(message, defaultValue, minimumValue, maximumValue)
-	if err != nil {
-		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
-	}
+func SendGetNumber(l logrus.FieldLogger, span opentracing.Span, c Context, message string, s ProcessNumber, defaultValue int32, minimumValue int32, maximumValue int32) State {
+	npc.SendGetNumber(l, span)(c.CharacterId, c.NPCId)(message, defaultValue, minimumValue, maximumValue)
 	return doGetNumberExit(Exit(), s)
 }
 
-func SendGetNumberExit(l logrus.FieldLogger, c Context, message string, s ProcessNumber, e StateProducer, defaultValue int32, minimumValue int32, maximumValue int32) State {
-	err := npc.SendGetNumber(l, c.CharacterId, c.NPCId)(message, defaultValue, minimumValue, maximumValue)
-	if err != nil {
-		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
-	}
+func SendGetNumberExit(l logrus.FieldLogger, span opentracing.Span, c Context, message string, s ProcessNumber, e StateProducer, defaultValue int32, minimumValue int32, maximumValue int32) State {
+	npc.SendGetNumber(l, span)(c.CharacterId, c.NPCId)(message, defaultValue, minimumValue, maximumValue)
 	return doGetNumberExit(e, s)
 }
 
 func doGetNumberExit(e StateProducer, s ProcessNumber) State {
-	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 0 && theType == 3 {
-			return e(l, c)
+			return e(l, span, c)
 		}
 
 		f := s(selection)
@@ -241,26 +224,23 @@ func doGetNumberExit(e StateProducer, s ProcessNumber) State {
 			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
 			return nil
 		}
-		return f(l, c)
+		return f(l, span, c)
 	}
 }
 
-func SendGetText(l logrus.FieldLogger, c Context, message string, s ProcessText) State {
-	return SendGetTextExit(l, c, message, s, Exit())
+func SendGetText(l logrus.FieldLogger, span opentracing.Span, c Context, message string, s ProcessText) State {
+	return SendGetTextExit(l, span, c, message, s, Exit())
 }
 
-func SendGetTextExit(l logrus.FieldLogger, c Context, message string, s ProcessText, e StateProducer) State {
-	err := npc.SendGetText(l, c.CharacterId, c.NPCId)(message)
-	if err != nil {
-		l.WithError(err).Errorf("Sending get number for npc %d to character %d.", c.NPCId, c.CharacterId)
-	}
+func SendGetTextExit(l logrus.FieldLogger, span opentracing.Span, c Context, message string, s ProcessText, e StateProducer) State {
+	npc.SendGetText(l, span)(c.CharacterId, c.NPCId)(message)
 	return doGetTextExit(e, s)
 }
 
 func doGetTextExit(e StateProducer, s ProcessText) State {
-	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 0 && theType == 3 {
-			return e(l, c)
+			return e(l, span, c)
 		}
 
 		//TODO get text somehow
@@ -270,45 +250,42 @@ func doGetTextExit(e StateProducer, s ProcessText) State {
 			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
 			return nil
 		}
-		return f(l, c)
+		return f(l, span, c)
 	}
 }
 
-func SendStyle(l logrus.FieldLogger, c Context, message string, next ProcessSelection, options []uint32) State {
-	err := npc.SendStyle(l, c.CharacterId, c.NPCId)(message, options)
-	if err != nil {
-		l.WithError(err).Errorf("Sending style for npc %d to character %d.", c.NPCId, c.CharacterId)
-	}
+func SendStyle(l logrus.FieldLogger, span opentracing.Span, c Context, message string, next ProcessSelection, options []uint32) State {
+	npc.SendStyle(l, span)(c.CharacterId, c.NPCId)(message, options)
 	return doSendStyleExit(Exit(), next)
 }
 
 func doSendStyleExit(e StateProducer, next ProcessSelection) State {
-	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 0 && theType == 7 {
-			return e(l, c)
+			return e(l, span, c)
 		}
-		return next(selection)(l, c)
+		return next(selection)(l, span, c)
 	}
 }
 
-func SendAcceptDecline(l logrus.FieldLogger, c Context, message string, accept StateProducer, decline StateProducer, configurations ...SendTalkConfigurator) State {
-	return sendTalk(l, c, message, configurations, npc.SendAcceptDecline(l, c.CharacterId, c.NPCId), doAcceptDecline(accept, decline))
+func SendAcceptDecline(l logrus.FieldLogger, span opentracing.Span, c Context, message string, accept StateProducer, decline StateProducer, configurations ...SendTalkConfigurator) State {
+	return sendTalk(l, c, message, configurations, npc.SendAcceptDecline(l, span)(c.CharacterId, c.NPCId), doAcceptDecline(accept, decline))
 }
 
-func SendAcceptDeclineExit(l logrus.FieldLogger, c Context, message string, accept StateProducer, decline StateProducer, exit StateProducer) State {
-	return SendAcceptDecline(l, c, message, accept, decline, SetSendTalkExit(exit))
+func SendAcceptDeclineExit(l logrus.FieldLogger, span opentracing.Span, c Context, message string, accept StateProducer, decline StateProducer, exit StateProducer) State {
+	return SendAcceptDecline(l, span, c, message, accept, decline, SetSendTalkExit(exit))
 }
 
 func doAcceptDecline(accept StateProducer, decline StateProducer) ProcessStateFunc {
 	return func(exit StateProducer) State {
-		return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 			if mode == 255 && theType == 0 {
-				return exit(l, c)
+				return exit(l, span, c)
 			}
 			if mode == 0 && decline != nil {
-				return decline(l, c)
+				return decline(l, span, c)
 			} else if mode == 1 && accept != nil {
-				return accept(l, c)
+				return accept(l, span, c)
 			}
 			return nil
 		}
@@ -324,9 +301,9 @@ func SendDimensionalMirror(l logrus.FieldLogger, c Context, message string, sele
 }
 
 func doDimensionalMirror(e StateProducer, s ProcessSelection) State {
-	return func(l logrus.FieldLogger, c Context, mode byte, theType byte, selection int32) State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context, mode byte, theType byte, selection int32) State {
 		if mode == 0 && theType == 4 {
-			return e(l, c)
+			return e(l, span, c)
 		}
 
 		f := s(selection)
@@ -334,36 +311,27 @@ func doDimensionalMirror(e StateProducer, s ProcessSelection) State {
 			l.Errorf("unhandled selection %d for npc %d.", selection, c.NPCId)
 			return nil
 		}
-		return f(l, c)
+		return f(l, span, c)
 	}
 }
 
 func Warp(mapId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpRandom(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context) State {
+		npc.WarpRandom(l, span)(c.WorldId, c.ChannelId, c.CharacterId, mapId)
+		return Exit()(l, span, c)
 	}
 }
 
 func WarpById(mapId uint32, portalId uint32) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpById(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalId)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context) State {
+		npc.WarpById(l, span)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalId)
+		return Exit()(l, span, c)
 	}
 }
 
 func WarpByName(mapId uint32, portalName string) StateProducer {
-	return func(l logrus.FieldLogger, c Context) State {
-		err := npc.WarpByName(l)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalName)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to warp character %d to %d as a result of a conversation with %d.", c.CharacterId, mapId, c.NPCId)
-		}
-		return Exit()(l, c)
+	return func(l logrus.FieldLogger, span opentracing.Span, c Context) State {
+		npc.WarpByName(l, span)(c.WorldId, c.ChannelId, c.CharacterId, mapId, portalName)
+		return Exit()(l, span, c)
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/item"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +16,7 @@ func (r AceOfHearts) NPCId() uint32 {
 	return npc.AceOfHearts
 }
 
-func (r AceOfHearts) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r AceOfHearts) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Hey adventurer! Keep it a secret, ok? We are currently manufacturing the so-called ").
 		BlueText().ShowItemName1(item.ChaosScroll60).
@@ -33,5 +34,5 @@ func (r AceOfHearts) Initial(l logrus.FieldLogger, c script.Context) script.Stat
 		BlackText().AddText(", ").
 		RedText().AddText("anytime anywhere").
 		BlackText().AddText(".")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }

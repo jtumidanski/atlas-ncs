@@ -7,6 +7,7 @@ import (
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,12 +19,12 @@ func (r AmosTheStrong) NPCId() uint32 {
 	return npc.AmosTheStrong
 }
 
-func (r AmosTheStrong) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("My name is Amos the Strong. What would you like to do?").NewLine().
 		OpenItem(0).BlueText().AddText("Enter the Amorian Challenge!!").CloseItem().NewLine().
 		OpenItem(1).BlueText().AddText("Trade 10 Keys for a Ticket!").CloseItem()
-	return script.SendListSelection(l, c, m.String(), r.Selection)
+	return script.SendListSelection(l, span, c, m.String(), r.Selection)
 }
 
 func (r AmosTheStrong) Selection(selection int32) script.StateProducer {
@@ -36,58 +37,58 @@ func (r AmosTheStrong) Selection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r AmosTheStrong) Enter(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) Enter(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !character.HasItem(l)(c.CharacterId, item.EntranceTicket) {
-		return r.MustHaveTicket(l, c)
+		return r.MustHaveTicket(l, span, c)
 	}
 	m := message.NewBuilder().AddText("So you would like to enter the ").BlueText().AddText("Entrance").BlackText().AddText("?")
-	return script.SendYesNo(l, c, m.String(), r.Process, r.ComeBack)
+	return script.SendYesNo(l, span, c, m.String(), r.Process, r.ComeBack)
 }
 
-func (r AmosTheStrong) MustHaveTicket(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) MustHaveTicket(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("You must have an Entrance Ticket to enter.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r AmosTheStrong) Trade(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) Trade(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if character.HasItem(l)(c.CharacterId, item.EntranceTicket) {
-		return r.AlreadyHave(l, c)
+		return r.AlreadyHave(l, span, c)
 	}
 
 	if !character.HasItems(l)(c.CharacterId, item.LipLockKey, 10) {
-		return r.GetMeKeys(l, c)
+		return r.GetMeKeys(l, span, c)
 	}
 
-	return r.ConfirmExchange(l, c)
+	return r.ConfirmExchange(l, span, c)
 }
 
-func (r AmosTheStrong) ConfirmExchange(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) ConfirmExchange(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("So you would like a Ticket?")
-	return script.SendYesNo(l, c, m.String(), r.Exchange, r.ComeBack)
+	return script.SendYesNo(l, span, c, m.String(), r.Exchange, r.ComeBack)
 }
 
-func (r AmosTheStrong) GetMeKeys(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) GetMeKeys(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Please get me 10 Keys first!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r AmosTheStrong) AlreadyHave(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) AlreadyHave(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("You already have an Entrance Ticket!")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r AmosTheStrong) ComeBack(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) ComeBack(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Ok come back when you're ready.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r AmosTheStrong) Exchange(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) Exchange(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	character.GainItem(l)(c.CharacterId, item.LipLockKey, -10)
 	character.GainItem(l)(c.CharacterId, item.EntranceTicket, 1)
-	return script.Exit()(l, c)
+	return script.Exit()(l, span, c)
 }
 
-func (r AmosTheStrong) Process(l logrus.FieldLogger, c script.Context) script.State {
+func (r AmosTheStrong) Process(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	character.GainItem(l)(c.CharacterId, item.EntranceTicket, -1)
-	return script.WarpById(_map.EntranceOfAmorianChallenge, 0)(l, c)
+	return script.WarpById(_map.EntranceOfAmorianChallenge, 0)(l, span, c)
 }

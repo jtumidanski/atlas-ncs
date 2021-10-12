@@ -8,6 +8,11 @@ import (
 	"strconv"
 )
 
+func InitResource(router *mux.Router, l logrus.FieldLogger) {
+	router.HandleFunc("/script/{npcId}", GetConversation(l)).Methods(http.MethodGet)
+	router.HandleFunc("/conversation/{characterId}", InConversation(l)).Methods(http.MethodGet)
+}
+
 func GetConversation(l logrus.FieldLogger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)

@@ -4,6 +4,7 @@ import (
 	"atlas-ncs/character"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -80,13 +81,13 @@ type ChoiceStateProducer func(config ChoiceConfig) script.StateProducer
 // The Initial state in the generic care providers state machine. This will say hello, and present character with configured
 // care options.
 func Initial(config *Config) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText(config.Hello).NewLine()
 		for i, choice := range config.Choices {
 			m = m.OpenItem(i).BlueText().AddText(choice.ListText).CloseItem().NewLine()
 		}
-		return script.SendListSelection(l, c, m.String(), Selection(config))
+		return script.SendListSelection(l, span, c, m.String(), Selection(config))
 	}
 }
 
@@ -130,26 +131,26 @@ type ChoiceHandlerProducer func(s ChoiceSupplier) ChoiceStateProducer
 
 func ShowChoices(prompt string, s ChoicesSupplier, next ChoiceHandlerProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			choices := s(l, c)
 			if len(choices) == 0 {
 				l.Errorf("Zero choices available for care.")
-				return script.SendOk(l, c, message.NewBuilder().AddText("No styles available.").String())
+				return script.SendOk(l, span, c, message.NewBuilder().AddText("No styles available.").String())
 			}
-			return script.SendStyle(l, c, prompt, ChoiceSelection(config)(choices, next), choices)
+			return script.SendStyle(l, span, c, prompt, ChoiceSelection(config)(choices, next), choices)
 		}
 	}
 }
 
 func ShowChoicesWithNone(prompt string, s ChoicesSupplier, next ChoiceHandlerProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			choices := s(l, c)
 			if len(choices) == 0 {
 				m := message.NewBuilder().AddText(config.MissingCoupon)
-				return script.SendOk(l, c, m.String())
+				return script.SendOk(l, span, c, m.String())
 			}
-			return script.SendStyle(l, c, prompt, ChoiceSelection(config)(choices, next), choices)
+			return script.SendStyle(l, span, c, prompt, ChoiceSelection(config)(choices, next), choices)
 		}
 	}
 }
@@ -199,15 +200,15 @@ func ProcessCoupon(coupon uint32, consume ChoiceConsumer, configurators ...Coupo
 
 	return func(s ChoiceSupplier) ChoiceStateProducer {
 		return func(careConfig ChoiceConfig) script.StateProducer {
-			return func(l logrus.FieldLogger, c script.Context) script.State {
+			return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 				if character.HasItem(l)(c.CharacterId, coupon) {
 					if config.singleUse {
 						character.GainItem(l)(c.CharacterId, coupon, -1)
 					}
 					consume(l, c, s())
-					return Enjoy(careConfig)(l, c)
+					return Enjoy(careConfig)(l, span, c)
 				}
-				return config.fail(s)(careConfig)(l, c)
+				return config.fail(s)(careConfig)(l, span, c)
 			}
 		}
 	}
@@ -215,18 +216,18 @@ func ProcessCoupon(coupon uint32, consume ChoiceConsumer, configurators ...Coupo
 
 // Enjoy is a terminal state which tells the character they should enjoy care provided.
 func Enjoy(config ChoiceConfig) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().AddText(config.Enjoy)
-		return script.SendOk(l, c, m.String())
+		return script.SendOk(l, span, c, m.String())
 	}
 }
 
 // MissingCoupon is a terminal state which tells the character they are missing the coupon needed for care.
 func MissingCoupon(_ ChoiceSupplier) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			m := message.NewBuilder().AddText(config.MissingCoupon)
-			return script.SendOk(l, c, m.String())
+			return script.SendOk(l, span, c, m.String())
 		}
 	}
 }

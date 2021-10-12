@@ -3,6 +3,7 @@ package npc
 import (
 	"atlas-ncs/kafka/producers"
 	"atlas-ncs/map/portal"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -26,9 +27,9 @@ const (
 	SpeakerUnknown2       = "UNKNOWN2"
 )
 
-func Dispose(l logrus.FieldLogger) func(characterId uint32) error {
-	return func(characterId uint32) error {
-		return producers.EnableActions(l)(characterId)
+func Dispose(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) {
+	return func(characterId uint32) {
+		producers.EnableActions(l, span)(characterId)
 	}
 }
 
@@ -38,27 +39,27 @@ func LockUI(l logrus.FieldLogger) func(characterId uint32) {
 	}
 }
 
-func WarpToPortal(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) error {
-	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) error {
-		return producers.ChangeMap(l)(worldId, channelId, characterId, mapId, p())
+func WarpToPortal(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) {
+		producers.ChangeMap(l, span)(worldId, channelId, characterId, mapId, p())
 	}
 }
 
-func WarpRandom(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32) error {
-	return func(worldId byte, channelId byte, characterId uint32, mapId uint32) error {
-		return WarpToPortal(l)(worldId, channelId, characterId, mapId, portal.RandomPortalIdProvider(l)(mapId))
+func WarpRandom(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32) {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32) {
+		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.RandomPortalIdProvider(l)(mapId))
 	}
 }
 
-func WarpById(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
-	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) error {
-		return WarpToPortal(l)(worldId, channelId, characterId, mapId, portal.FixedPortalIdProvider(portalId))
+func WarpById(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
+		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.FixedPortalIdProvider(portalId))
 	}
 }
 
-func WarpByName(l logrus.FieldLogger) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
-	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) error {
-		return WarpToPortal(l)(worldId, channelId, characterId, mapId, portal.ByNamePortalIdProvider(l)(mapId, portalName))
+func WarpByName(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalName string) {
+		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.ByNamePortalIdProvider(l)(mapId, portalName))
 	}
 }
 
@@ -77,12 +78,14 @@ func (c TalkConfig) Speaker() string {
 
 type TalkConfigurator func(config *TalkConfig)
 
-func SendNPCTalk(l logrus.FieldLogger, characterId uint32, npcId uint32, config *TalkConfig) func(message string, configurations ...TalkConfigurator) error {
-	return func(message string, configurations ...TalkConfigurator) error {
-		for _, configuration := range configurations {
-			configuration(config)
+func SendNPCTalk(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32, config *TalkConfig) func(message string, configurations ...TalkConfigurator) {
+	return func(characterId uint32, npcId uint32, config *TalkConfig) func(message string, configurations ...TalkConfigurator) {
+		return func(message string, configurations ...TalkConfigurator) {
+			for _, configuration := range configurations {
+				configuration(config)
+			}
+			producers.NPCTalk(l, span)(characterId, npcId, message, config.MessageType(), config.Speaker())
 		}
-		return producers.NPCTalk(l)(characterId, npcId, message, config.MessageType(), config.Speaker())
 	}
 }
 
@@ -92,51 +95,71 @@ func SetSpeaker(speaker string) TalkConfigurator {
 	}
 }
 
-type TalkFunc func(message string, configurations ...TalkConfigurator) error
+type TalkFunc func(message string, configurations ...TalkConfigurator)
 
-func SendSimple(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeSimple, speaker: SpeakerNPCLeft})
-}
-
-func SendNext(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeNext, speaker: SpeakerNPCLeft})
-}
-
-func SendNextPrevious(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeNextPrevious, speaker: SpeakerNPCLeft})
-}
-
-func SendPrevious(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypePrevious, speaker: SpeakerNPCLeft})
-}
-
-func SendYesNo(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeYesNo, speaker: SpeakerNPCLeft})
-}
-
-func SendOk(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeOk, speaker: SpeakerNPCLeft})
-}
-
-func SendAcceptDecline(l logrus.FieldLogger, characterId uint32, npcId uint32) TalkFunc {
-	return SendNPCTalk(l, characterId, npcId, &TalkConfig{messageType: MessageTypeAcceptDecline, speaker: SpeakerNPCLeft})
-}
-
-func SendGetNumber(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
-	return func(message string, defaultValue int32, minimumValue int32, maximumValue int32) error {
-		return producers.NPCTalkNum(l)(characterId, npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+func SendSimple(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) TalkFunc {
+	return func(characterId uint32, npcId uint32) TalkFunc {
+		return SendNPCTalk(l, span)(characterId, npcId, &TalkConfig{messageType: MessageTypeSimple, speaker: SpeakerNPCLeft})
 	}
 }
 
-func SendGetText(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string) error {
-	return func(message string) error {
-		return producers.NPCTalkText(l)(characterId, npcId, message, MessageTypeText, SpeakerNPCLeft)
+func SendNext(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) TalkFunc {
+	return func(characterId uint32, npcId uint32) TalkFunc {
+		return SendNPCTalk(l, span)(characterId, npcId, &TalkConfig{messageType: MessageTypeNext, speaker: SpeakerNPCLeft})
 	}
 }
 
-func SendStyle(l logrus.FieldLogger, characterId uint32, npcId uint32) func(message string, options []uint32) error {
-	return func(message string, options []uint32) error {
-		return producers.NPCTalkStyle(l)(characterId, npcId, message, options, MessageTypeStyle, SpeakerNPCLeft)
+func SendNextPrevious(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) TalkFunc {
+	return func(characterId uint32, npcId uint32) TalkFunc {
+		return SendNPCTalk(l, span)(characterId, npcId, &TalkConfig{messageType: MessageTypeNextPrevious, speaker: SpeakerNPCLeft})
+	}
+}
+
+func SendPrevious(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) TalkFunc {
+	return func(characterId uint32, npcId uint32) TalkFunc {
+		return SendNPCTalk(l, span)(characterId, npcId, &TalkConfig{messageType: MessageTypePrevious, speaker: SpeakerNPCLeft})
+	}
+}
+
+func SendYesNo(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) TalkFunc {
+	return func(characterId uint32, npcId uint32) TalkFunc {
+		return SendNPCTalk(l, span)(characterId, npcId, &TalkConfig{messageType: MessageTypeYesNo, speaker: SpeakerNPCLeft})
+	}
+}
+
+func SendOk(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) TalkFunc {
+	return func(characterId uint32, npcId uint32) TalkFunc {
+		return SendNPCTalk(l, span)(characterId, npcId, &TalkConfig{messageType: MessageTypeOk, speaker: SpeakerNPCLeft})
+	}
+}
+
+func SendAcceptDecline(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) TalkFunc {
+	return func(characterId uint32, npcId uint32) TalkFunc {
+		return SendNPCTalk(l, span)(characterId, npcId, &TalkConfig{messageType: MessageTypeAcceptDecline, speaker: SpeakerNPCLeft})
+	}
+}
+
+func SendGetNumber(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) {
+	return func(characterId uint32, npcId uint32) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) {
+		return func(message string, defaultValue int32, minimumValue int32, maximumValue int32) {
+			producers.NPCTalkNum(l, span)(characterId, npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+		}
+	}
+}
+
+func SendGetText(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) func(message string) {
+	return func(characterId uint32, npcId uint32) func(message string) {
+		return func(message string) {
+			producers.NPCTalkText(l, span)(characterId, npcId, message, MessageTypeText, SpeakerNPCLeft)
+		}
+	}
+}
+
+func SendStyle(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) func(message string, options []uint32) {
+	return func(characterId uint32, npcId uint32) func(message string, options []uint32) {
+		return func(message string, options []uint32) {
+			producers.NPCTalkStyle(l, span)(characterId, npcId, message, options, MessageTypeStyle, SpeakerNPCLeft)
+		}
 	}
 }
 

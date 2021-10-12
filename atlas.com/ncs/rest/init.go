@@ -1,8 +1,6 @@
 package rest
 
 import (
-	"atlas-ncs/conversation"
-	"atlas-ncs/npc"
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -10,19 +8,21 @@ import (
 	"sync"
 )
 
-func CreateRestService(l *logrus.Logger, ctx context.Context, wg *sync.WaitGroup) {
-	go NewServer(l, ctx, wg, ProduceRoutes)
+type RouteInitializer func(*mux.Router, logrus.FieldLogger)
+
+func CreateService(l *logrus.Logger, ctx context.Context, wg *sync.WaitGroup, basePath string, initializers ...RouteInitializer) {
+	go NewServer(l, ctx, wg, ProduceRoutes(basePath, initializers...))
 }
 
-func ProduceRoutes(l logrus.FieldLogger) http.Handler {
-	router := mux.NewRouter().PathPrefix("/ms/ncs").Subrouter().StrictSlash(true)
-	router.Use(CommonHeader)
+func ProduceRoutes(basePath string, initializers ...RouteInitializer) func(l logrus.FieldLogger) http.Handler {
+	return func(l logrus.FieldLogger) http.Handler {
+		router := mux.NewRouter().PathPrefix(basePath).Subrouter().StrictSlash(true)
+		router.Use(CommonHeader)
 
-	router.HandleFunc("/script/{npcId}", conversation.GetConversation(l)).Methods(http.MethodGet)
-	router.HandleFunc("/conversation/{characterId}", conversation.InConversation(l)).Methods(http.MethodGet)
+		for _, initializer := range initializers {
+			initializer(router, l)
+		}
 
-	r := router.PathPrefix("/speak").Subrouter()
-	r.HandleFunc("", npc.SendSpeech(l)).Methods(http.MethodPost)
-
-	return router
+		return router
+	}
 }

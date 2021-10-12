@@ -2,6 +2,7 @@ package npc
 
 import (
 	"atlas-ncs/json"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -20,6 +21,11 @@ type SpeechAttributes struct {
 	CharacterId uint32 `json:"characterId"`
 	NPCId       uint32 `json:"npcId"`
 	Message     string `json:"message"`
+}
+
+func InitResource(router *mux.Router, l logrus.FieldLogger) {
+	r := router.PathPrefix("/speak").Subrouter()
+	r.HandleFunc("", SendSpeech(l)).Methods(http.MethodPost)
 }
 
 func SendSpeech(l logrus.FieldLogger) http.HandlerFunc {

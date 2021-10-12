@@ -5,6 +5,7 @@ import (
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/item"
 	"atlas-ncs/npc/message"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"math/rand"
 )
@@ -43,11 +44,11 @@ func LensCouponMissing() ChoiceConfigurator {
 
 func WarnRandomFace(prompt string, coupon uint32, male []uint32, female []uint32, choice ChoiceConsumer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			randomSupplier := GetRandomFace(l, c, male, female)
 			couponProcessor := ProcessCoupon(coupon, choice, SetSingleUse(true))
 			choiceProcessor := couponProcessor(randomSupplier)
-			return script.SendYesNo(l, c, prompt, choiceProcessor(config), no)
+			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
 		}
 	}
 }
@@ -81,11 +82,11 @@ func ApplyEyeColor(l logrus.FieldLogger) func(characterId uint32, choices []uint
 
 func WarnRandomLensColor(prompt string, coupon uint32, choice ChoiceConsumer, no script.StateProducer) ChoiceStateProducer {
 	return func(config ChoiceConfig) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			randomSupplier := GetRandomLensColor(l, c)
 			couponProcessor := ProcessCoupon(coupon, choice, SetSingleUse(true))
 			choiceProcessor := couponProcessor(randomSupplier)
-			return script.SendYesNo(l, c, prompt, choiceProcessor(config), no)
+			return script.SendYesNo(l, span, c, prompt, choiceProcessor(config), no)
 		}
 	}
 }

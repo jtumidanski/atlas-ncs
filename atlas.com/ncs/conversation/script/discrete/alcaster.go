@@ -8,6 +8,7 @@ import (
 	"atlas-ncs/npc/message"
 	"atlas-ncs/quest"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,24 +20,24 @@ func (r Alcaster) NPCId() uint32 {
 	return npc.Alcaster
 }
 
-func (r Alcaster) Initial(l logrus.FieldLogger, c script.Context) script.State {
+func (r Alcaster) Initial(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	if !quest.IsCompleted(l)(c.CharacterId, 3035) {
-		return r.HelpMeOut(l, c)
+		return r.HelpMeOut(l, span, c)
 	}
-	return r.ThanksToYou(l, c)
+	return r.ThanksToYou(l, span, c)
 }
 
-func (r Alcaster) HelpMeOut(l logrus.FieldLogger, c script.Context) script.State {
+func (r Alcaster) HelpMeOut(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("If you decide to help me out, then in return, I'll make the item available for sale.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Alcaster) TakeALookAround(l logrus.FieldLogger, c script.Context) script.State {
+func (r Alcaster) TakeALookAround(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("I see. Understand that I have many different items here. Take a look around. I'm only selling these items to you, so I won't be ripping you off in any way shape or form.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
-func (r Alcaster) ThanksToYou(l logrus.FieldLogger, c script.Context) script.State {
+func (r Alcaster) ThanksToYou(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().
 		AddText("Thanks to you ").
 		BlueText().ShowItemName1(item.TheBookOfAncient).
@@ -45,7 +46,7 @@ func (r Alcaster) ThanksToYou(l logrus.FieldLogger, c script.Context) script.Sta
 		OpenItem(1).BlueText().ShowItemName1(item.AllCurePotion).AddText(fmt.Sprintf(" (Price: %d mesos", 400)).CloseItem().NewLine().
 		OpenItem(2).BlueText().ShowItemName1(item.TheMagicRock).AddText(fmt.Sprintf(" (Price: %d mesos", 5000)).CloseItem().NewLine().
 		OpenItem(3).BlueText().ShowItemName1(item.TheSummoningRock).AddText(fmt.Sprintf(" (Price: %d mesos", 5000)).CloseItem()
-	return script.SendListSelectionExit(l, c, m.String(), r.Selection, r.TakeALookAround)
+	return script.SendListSelectionExit(l, span, c, m.String(), r.Selection, r.TakeALookAround)
 }
 
 func (r Alcaster) Selection(selection int32) script.StateProducer {
@@ -63,22 +64,22 @@ func (r Alcaster) Selection(selection int32) script.StateProducer {
 }
 
 func (r Alcaster) Confirm(itemId uint32, cost uint32, use string) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		m := message.NewBuilder().
 			AddText("Is ").
 			BlueText().ShowItemName1(itemId).
 			BlackText().AddText(" really the item that you need? It's the item ").AddText(use).AddText(". It may not be the easiest item to acquire, but I'll give you a good deal on it. It'll cost you ").
 			BlueText().AddText(fmt.Sprintf("%d mesos", cost)).
 			BlackText().AddText(" per item. How many would you like to purchase?")
-		return script.SendGetNumber(l, c, m.String(), r.ConfirmQuantity(itemId, cost), 0, 1, 100)
+		return script.SendGetNumber(l, span, c, m.String(), r.ConfirmQuantity(itemId, cost), 0, 1, 100)
 	}
 }
 
 func (r Alcaster) ConfirmQuantity(itemId uint32, cost uint32) script.ProcessNumber {
 	return func(selection int32) script.StateProducer {
-		return func(l logrus.FieldLogger, c script.Context) script.State {
+		return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 			if selection <= 0 {
-				return r.ICannotSell(l, c)
+				return r.ICannotSell(l, span, c)
 			}
 
 			m := message.NewBuilder().AddText("Are you sure you want to buy ").
@@ -87,24 +88,24 @@ func (r Alcaster) ConfirmQuantity(itemId uint32, cost uint32) script.ProcessNumb
 				ShowItemName1(itemId).AddText(", which will cost you ").
 				RedText().AddText(fmt.Sprintf("%d mesos", cost*uint32(selection))).
 				BlackText().AddText(" in total.")
-			return script.SendYesNo(l, c, m.String(), r.Validate(itemId, cost, uint32(selection)), r.TakeALookAround)
+			return script.SendYesNo(l, span, c, m.String(), r.Validate(itemId, cost, uint32(selection)), r.TakeALookAround)
 		}
 	}
 }
 
-func (r Alcaster) ICannotSell(l logrus.FieldLogger, c script.Context) script.State {
+func (r Alcaster) ICannotSell(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("If you're not going to buy anything, then I've got nothing to sell neither.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
 
 func (r Alcaster) Validate(itemId uint32, cost uint32, quantity uint32) script.StateProducer {
-	return func(l logrus.FieldLogger, c script.Context) script.State {
+	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 		if !character.HasMeso(l)(c.CharacterId, cost*quantity) || !character.CanHoldAll(l)(c.CharacterId, itemId, quantity) {
 			m := message.NewBuilder().
 				AddText("Are you sure you have enough mesos? Please check and see if your etc. or use inventory is full, or if you have at least ").
 				RedText().AddText(fmt.Sprintf("%d", quantity*cost)).
 				BlackText().AddText(" mesos.")
-			return script.SendOk(l, c, m.String())
+			return script.SendOk(l, span, c, m.String())
 		}
 
 		err := character.GainMeso(l)(c.CharacterId, -int32(quantity*cost))
@@ -112,11 +113,11 @@ func (r Alcaster) Validate(itemId uint32, cost uint32, quantity uint32) script.S
 			l.WithError(err).Errorf("Unable to process payment from character %d.", c.CharacterId)
 		}
 		character.GainItem(l)(c.CharacterId, itemId, int32(quantity))
-		return r.Success(l, c)
+		return r.Success(l, span, c)
 	}
 }
 
-func (r Alcaster) Success(l logrus.FieldLogger, c script.Context) script.State {
+func (r Alcaster) Success(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
 	m := message.NewBuilder().AddText("Thank you. If you ever find yourself needing items down the road, make sure to drop by here. I may have gotten old over the years, but I can still make magic items with ease.")
-	return script.SendOk(l, c, m.String())
+	return script.SendOk(l, span, c, m.String())
 }
