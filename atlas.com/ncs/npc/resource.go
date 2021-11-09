@@ -27,7 +27,11 @@ type SpeechAttributes struct {
 
 func InitResource(router *mux.Router, l logrus.FieldLogger) {
 	r := router.PathPrefix("/speak").Subrouter()
-	r.HandleFunc("", rest.RetrieveSpan("send_speech", SendSpeech(l))).Methods(http.MethodPost)
+	r.HandleFunc("", registerSendSpeech(l)).Methods(http.MethodPost)
+}
+
+func registerSendSpeech(l logrus.FieldLogger) http.HandlerFunc {
+	return rest.RetrieveSpan("send_speech", SendSpeech(l))
 }
 
 func SendSpeech(l logrus.FieldLogger) rest.SpanHandler {
