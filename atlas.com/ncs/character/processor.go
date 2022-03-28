@@ -2,6 +2,7 @@ package character
 
 import (
 	"atlas-ncs/job"
+	"atlas-ncs/rest/requests"
 	"errors"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
@@ -10,7 +11,7 @@ import (
 
 func GetCharacterById(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (*Model, error) {
 	return func(characterId uint32) (*Model, error) {
-		cs, err := requestCharacter(l, span)(characterId)
+		cs, err := requestCharacter(characterId)(l, span)
 		if err != nil {
 			return nil, err
 		}
@@ -22,7 +23,7 @@ func GetCharacterById(l logrus.FieldLogger, span opentracing.Span) func(characte
 	}
 }
 
-func makeCharacterAttributes(ca *dataBody) *Model {
+func makeCharacterAttributes(ca requests.DataBody[attributes]) *Model {
 	cid, err := strconv.ParseUint(ca.Id, 10, 32)
 	if err != nil {
 		return nil
@@ -70,15 +71,16 @@ func HasItem(l logrus.FieldLogger, span opentracing.Span) func(characterId uint3
 
 func HasItems(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32, quantity uint32) bool {
 	return func(characterId uint32, itemId uint32, quantity uint32) bool {
-		items, err := requestItemsForCharacter(l, span)(characterId, itemId)
+		items, err := requestItemsForCharacter(characterId, itemId)(l, span)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
 		}
 
 		count := uint32(0)
-		for _, i := range items.Data {
-			count += i.Attributes.Quantity
+		for _, i := range items.DataList() {
+			attr := i.Attributes
+			count += attr.Quantity
 			if count >= quantity {
 				return true
 			}
@@ -90,13 +92,13 @@ func HasItems(l logrus.FieldLogger, span opentracing.Span) func(characterId uint
 
 func HasAnyItem(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, items ...uint32) bool {
 	return func(characterId uint32, items ...uint32) bool {
-		allItems, err := requestAllItemsForCharacter(l, span)(characterId)
+		allItems, err := requestAllItemsForCharacter(characterId)(l, span)
 		if err != nil {
 			l.WithError(err).Errorf("Unable to retrieve inventory items for character %d.", characterId)
 			return false
 		}
 
-		for _, i := range allItems.Data {
+		for _, i := range allItems.DataList() {
 			possibleId, err := strconv.Atoi(i.Id)
 			if err != nil {
 				l.WithError(err).Errorf("Error parsing item id %s.", i.Id)

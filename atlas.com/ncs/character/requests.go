@@ -3,8 +3,6 @@ package character
 import (
 	"atlas-ncs/rest/requests"
 	"fmt"
-	"github.com/opentracing/opentracing-go"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -16,35 +14,14 @@ const (
 	characterItem                  = characterItems + "?itemId=%d"
 )
 
-func requestCharacter(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (*dataContainer, error) {
-	return func(characterId uint32) (*dataContainer, error) {
-		ar := &dataContainer{}
-		err := requests.Get(l, span)(fmt.Sprintf(charactersById, characterId), ar)
-		if err != nil {
-			return nil, err
-		}
-		return ar, nil
-	}
+func requestCharacter(characterId uint32) requests.Request[attributes] {
+	return requests.MakeGetRequest[attributes](fmt.Sprintf(charactersById, characterId))
 }
 
-func requestAllItemsForCharacter(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (*ItemListDataContainer, error) {
-	return func(characterId uint32) (*ItemListDataContainer, error) {
-		ar := &ItemListDataContainer{}
-		err := requests.Get(l, span)(fmt.Sprintf(characterItems, characterId), ar)
-		if err != nil {
-			return nil, err
-		}
-		return ar, nil
-	}
+func requestAllItemsForCharacter(characterId uint32) requests.Request[itemAttributes] {
+	return requests.MakeGetRequest[itemAttributes](fmt.Sprintf(characterItems, characterId))
 }
 
-func requestItemsForCharacter(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32) (*ItemListDataContainer, error) {
-	return func(characterId uint32, itemId uint32) (*ItemListDataContainer, error) {
-	ar := &ItemListDataContainer{}
-	err := requests.Get(l, span)(fmt.Sprintf(characterItem, characterId, itemId), ar)
-	if err != nil {
-		return nil, err
-	}
-	return ar, nil
-	}
+func requestItemsForCharacter(characterId uint32, itemId uint32) requests.Request[itemAttributes] {
+	return requests.MakeGetRequest[itemAttributes](fmt.Sprintf(characterItem, characterId, itemId))
 }
