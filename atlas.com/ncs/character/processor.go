@@ -140,13 +140,13 @@ func CanHoldThese(l logrus.FieldLogger) func(characterId uint32, items ...Item) 
 
 func ChangeJob(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, jobId uint16) {
 	return func(characterId uint32, jobId uint16) {
-		adjustJob(l, span)(characterId, jobId)
+		emitJobAdjustment(l, span)(characterId, jobId)
 	}
 }
 
 func ResetAP(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) {
 	return func(characterId uint32) {
-		resetAP(l, span)(characterId)
+		emitAPReset(l, span)(characterId)
 	}
 }
 
@@ -212,13 +212,13 @@ func HasMesoCriteria(amount uint32) AttributeCriteria {
 
 func GainEquipment(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32) {
 	return func(characterId uint32, itemId uint32) {
-		gainEquipment(l, span)(characterId, itemId)
+		emitEquipmentGain(l, span)(characterId, itemId)
 	}
 }
 
 func GainItem(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32, amount int32) {
 	return func(characterId uint32, itemId uint32, amount int32) {
-		gainItem(l, span)(characterId, itemId, amount)
+		emitItemGain(l, span)(characterId, itemId, amount)
 	}
 }
 
@@ -229,7 +229,7 @@ func GainFame(l logrus.FieldLogger) func(characterId uint32, amount int32) {
 }
 
 func GainMeso(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, amount int32) {
-	adjuster := AdjustMeso(l, span)
+	adjuster := emitMesoAdjustment(l, span)
 	return func(characterId uint32, amount int32) {
 		adjuster(characterId, amount)
 	}

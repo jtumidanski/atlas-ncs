@@ -1,7 +1,6 @@
 package npc
 
 import (
-	"atlas-ncs/kafka/producers"
 	"atlas-ncs/map/portal"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
@@ -29,7 +28,7 @@ const (
 
 func Dispose(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) {
 	return func(characterId uint32) {
-		producers.EnableActions(l, span)(characterId)
+		emitEnableActions(l, span)(characterId)
 	}
 }
 
@@ -41,7 +40,7 @@ func LockUI(l logrus.FieldLogger) func(characterId uint32) {
 
 func WarpToPortal(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) {
-		producers.ChangeMap(l, span)(worldId, channelId, characterId, mapId, p())
+		emitChangeMap(l, span)(worldId, channelId, characterId, mapId, p())
 	}
 }
 
@@ -84,7 +83,7 @@ func SendNPCTalk(l logrus.FieldLogger, span opentracing.Span) func(characterId u
 			for _, configuration := range configurations {
 				configuration(config)
 			}
-			producers.NPCTalk(l, span)(characterId, npcId, message, config.MessageType(), config.Speaker())
+			emitTalk(l, span)(characterId, npcId, message, config.MessageType(), config.Speaker())
 		}
 	}
 }
@@ -142,7 +141,7 @@ func SendAcceptDecline(l logrus.FieldLogger, span opentracing.Span) func(charact
 func SendGetNumber(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) {
 	return func(characterId uint32, npcId uint32) func(message string, defaultValue int32, minimumValue int32, maximumValue int32) {
 		return func(message string, defaultValue int32, minimumValue int32, maximumValue int32) {
-			producers.NPCTalkNum(l, span)(characterId, npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
+			emitTalkNumber(l, span)(characterId, npcId, message, defaultValue, minimumValue, maximumValue, MessageTypeNum, SpeakerNPCLeft)
 		}
 	}
 }
@@ -150,7 +149,7 @@ func SendGetNumber(l logrus.FieldLogger, span opentracing.Span) func(characterId
 func SendGetText(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) func(message string) {
 	return func(characterId uint32, npcId uint32) func(message string) {
 		return func(message string) {
-			producers.NPCTalkText(l, span)(characterId, npcId, message, MessageTypeText, SpeakerNPCLeft)
+			emitTalkText(l, span)(characterId, npcId, message, MessageTypeText, SpeakerNPCLeft)
 		}
 	}
 }
@@ -158,7 +157,7 @@ func SendGetText(l logrus.FieldLogger, span opentracing.Span) func(characterId u
 func SendStyle(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, npcId uint32) func(message string, options []uint32) {
 	return func(characterId uint32, npcId uint32) func(message string, options []uint32) {
 		return func(message string, options []uint32) {
-			producers.NPCTalkStyle(l, span)(characterId, npcId, message, options, MessageTypeStyle, SpeakerNPCLeft)
+			emitTalkStyle(l, span)(characterId, npcId, message, options, MessageTypeStyle, SpeakerNPCLeft)
 		}
 	}
 }

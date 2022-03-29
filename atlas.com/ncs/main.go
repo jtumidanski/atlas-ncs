@@ -2,7 +2,7 @@ package main
 
 import (
 	"atlas-ncs/conversation"
-	"atlas-ncs/kafka/consumers"
+	"atlas-ncs/kafka"
 	"atlas-ncs/logger"
 	"atlas-ncs/npc"
 	"atlas-ncs/rest"
@@ -16,6 +16,7 @@ import (
 )
 
 const serviceName = "atlas-ncs"
+const consumerGroupId = "NPC Conversation Service"
 
 func main() {
 	l := logger.CreateLogger(serviceName)
@@ -35,7 +36,10 @@ func main() {
 		}
 	}(tc)
 
-	consumers.CreateEventConsumers(l, ctx, wg)
+	kafka.CreateConsumers(l, ctx, wg,
+		conversation.StartConsumer(consumerGroupId),
+		conversation.ContinueConsumer(consumerGroupId),
+		conversation.SetReturnTextConsumer(consumerGroupId))
 
 	rest.CreateService(l, ctx, wg, "/ms/ncs", conversation.InitResource, npc.InitResource)
 
