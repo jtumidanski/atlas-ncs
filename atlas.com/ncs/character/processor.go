@@ -3,30 +3,21 @@ package character
 import (
 	"atlas-ncs/job"
 	"atlas-ncs/rest/requests"
-	"errors"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"strconv"
 )
 
-func GetCharacterById(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (*Model, error) {
-	return func(characterId uint32) (*Model, error) {
-		cs, err := requestCharacter(characterId)(l, span)
-		if err != nil {
-			return nil, err
-		}
-		ca := makeCharacterAttributes(cs.Data())
-		if ca == nil {
-			return nil, errors.New("unable to make character attributes")
-		}
-		return ca, nil
+func GetCharacterById(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32) (Model, error) {
+	return func(characterId uint32) (Model, error) {
+		return requests.Provider[attributes, Model](l, span)(requestCharacter(characterId), makeModel)()
 	}
 }
 
-func makeCharacterAttributes(ca requests.DataBody[attributes]) *Model {
+func makeModel(ca requests.DataBody[attributes]) (Model, error) {
 	cid, err := strconv.ParseUint(ca.Id, 10, 32)
 	if err != nil {
-		return nil
+		return Model{}, err
 	}
 	att := ca.Attributes
 	r := Model{
@@ -42,10 +33,10 @@ func makeCharacterAttributes(ca requests.DataBody[attributes]) *Model {
 		hair:         att.Hair,
 		face:         att.Face,
 	}
-	return &r
+	return r, nil
 }
 
-type AttributeCriteria func(*Model) bool
+type AttributeCriteria func(Model) bool
 
 func MeetsCriteria(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, criteria ...AttributeCriteria) bool {
 	return func(characterId uint32, criteria ...AttributeCriteria) bool {
@@ -157,31 +148,31 @@ func IsLevel(l logrus.FieldLogger, span opentracing.Span) func(characterId uint3
 }
 
 func IsLevelCriteria(level byte) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Level() >= level
 	}
 }
 
 func LevelBetweenCriteria(lower byte, upper byte) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Level() > lower && c.Level() < upper
 	}
 }
 
 func HasStrengthCriteria(amount uint16) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Strength() >= amount
 	}
 }
 
 func HasDexterityCriteria(amount uint16) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Dexterity() >= amount
 	}
 }
 
 func HasIntelligenceCriteria(amount uint16) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Intelligence() >= amount
 	}
 }
@@ -193,7 +184,7 @@ func AboveLevel(l logrus.FieldLogger, span opentracing.Span) func(characterId ui
 }
 
 func AboveLevelCriteria(level byte) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Level() > level
 	}
 }
@@ -205,7 +196,7 @@ func HasMeso(l logrus.FieldLogger, span opentracing.Span) func(characterId uint3
 }
 
 func HasMesoCriteria(amount uint32) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Meso() >= amount
 	}
 }
@@ -242,7 +233,7 @@ func IsBeginnerTree(l logrus.FieldLogger, span opentracing.Span) func(characterI
 }
 
 func IsBeginnerTreeCriteria() AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return job.IsA(c.JobId(), job.Beginner, job.Noblesse, job.Legend)
 	}
 }
@@ -254,13 +245,13 @@ func IsJob(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32,
 }
 
 func IsJobCriteria(option uint16) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return job.IsA(c.JobId(), option)
 	}
 }
 
 func IsAJobCriteria(options ...uint16) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return job.IsA(c.JobId(), options...)
 	}
 }
@@ -381,7 +372,7 @@ func IsCygnus(l logrus.FieldLogger, span opentracing.Span) func(characterId uint
 }
 
 func IsCygnusCriteria() AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		//TODO
 		return false
 	}
@@ -394,7 +385,7 @@ func IsJobBranch(l logrus.FieldLogger, span opentracing.Span) func(characterId u
 }
 
 func IsJobBranchCriteria(branch uint32) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		//TODO
 		return false
 	}
@@ -475,7 +466,7 @@ func ChangeMusic(l logrus.FieldLogger) func(characterId uint32, path string) {
 }
 
 func IsLevelBetweenCriteria(lower byte, upper byte) AttributeCriteria {
-	return func(c *Model) bool {
+	return func(c Model) bool {
 		return c.Level() >= lower && c.Level() <= upper
 	}
 }
