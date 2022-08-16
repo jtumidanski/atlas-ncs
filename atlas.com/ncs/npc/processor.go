@@ -2,6 +2,7 @@ package npc
 
 import (
 	"atlas-ncs/map/portal"
+	"atlas-ncs/model"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
@@ -38,8 +39,8 @@ func LockUI(l logrus.FieldLogger) func(characterId uint32) {
 	}
 }
 
-func WarpToPortal(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) {
-	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, p portal.IdProvider) {
+func WarpToPortal(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, p model.IdProvider[uint32]) {
+	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, p model.IdProvider[uint32]) {
 		emitChangeMap(l, span)(worldId, channelId, characterId, mapId, p())
 	}
 }
@@ -52,7 +53,7 @@ func WarpRandom(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, 
 
 func WarpById(l logrus.FieldLogger, span opentracing.Span) func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
 	return func(worldId byte, channelId byte, characterId uint32, mapId uint32, portalId uint32) {
-		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, portal.FixedPortalIdProvider(portalId))
+		WarpToPortal(l, span)(worldId, channelId, characterId, mapId, model.FixedIdProvider(portalId))
 	}
 }
 
