@@ -2,6 +2,7 @@ package discrete
 
 import (
 	"atlas-ncs/character"
+	"atlas-ncs/character/location"
 	"atlas-ncs/conversation/script"
 	"atlas-ncs/item"
 	_map "atlas-ncs/map"
@@ -115,7 +116,7 @@ func (r Shuri) CameBackWithoutIt(l logrus.FieldLogger, span opentracing.Span, c 
 }
 
 func (r Shuri) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.SaveLocation(l)(c.CharacterId, "FLORINA")
+	location.SaveLocation(l, span)(c.CharacterId, "FLORINA")
 	return script.WarpByName(_map.FlorinaBeach, "st00")(l, span, c)
 }
 

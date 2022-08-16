@@ -2,6 +2,7 @@ package discrete
 
 import (
 	"atlas-ncs/character"
+	"atlas-ncs/character/location"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -184,7 +185,7 @@ func (r Spinel) CheckoutMalaysia(mapId uint32, fee int) script.StateProducer {
 
 func (r Spinel) Process(mapId uint32, fee int) script.StateProducer {
 	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-		character.SaveLocation(l)(c.CharacterId, "WORLDTOUR")
+		location.SaveLocation(l, span)(c.CharacterId, "WORLDTOUR")
 		character.GainMeso(l, span)(c.CharacterId, int32(-fee))
 		return script.WarpById(mapId, 0)(l, span, c)
 	}

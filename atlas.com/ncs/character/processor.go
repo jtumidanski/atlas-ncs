@@ -220,9 +220,8 @@ func GainFame(l logrus.FieldLogger) func(characterId uint32, amount int32) {
 }
 
 func GainMeso(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, amount int32) {
-	adjuster := emitMesoAdjustment(l, span)
 	return func(characterId uint32, amount int32) {
-		adjuster(characterId, amount)
+		emitMesoAdjustment(l, span)(characterId, amount)
 	}
 }
 
@@ -253,12 +252,6 @@ func IsJobCriteria(option uint16) AttributeCriteria {
 func IsAJobCriteria(options ...uint16) AttributeCriteria {
 	return func(c Model) bool {
 		return job.IsA(c.JobId(), options...)
-	}
-}
-
-func SaveLocation(l logrus.FieldLogger) func(characterId uint32, location string) {
-	return func(characterId uint32, location string) {
-		//TODO
 	}
 }
 

@@ -2,6 +2,7 @@ package discrete
 
 import (
 	"atlas-ncs/character"
+	"atlas-ncs/character/location"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -63,6 +64,6 @@ func (r Cesar3) Selection(selection int32) script.StateProducer {
 }
 
 func (r Cesar3) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.SaveLocation(l)(c.CharacterId, "MIRROR")
+	location.SaveLocation(l, span)(c.CharacterId, "MIRROR")
 	return script.WarpById(_map.BattleArenaLobby, 3)(l, span, c)
 }

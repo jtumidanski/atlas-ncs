@@ -1,7 +1,7 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
+	"atlas-ncs/character/location"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -46,6 +46,6 @@ func (r Gaga) VeryWell(l logrus.FieldLogger, span opentracing.Span, c script.Con
 }
 
 func (r Gaga) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.SaveLocation(l)(c.CharacterId, "BOSSPQ")
+	location.SaveLocation(l, span)(c.CharacterId, "BOSSPQ")
 	return script.WarpByName(_map.ExclusiveTrainingCenter, "out00")(l, span, c)
 }

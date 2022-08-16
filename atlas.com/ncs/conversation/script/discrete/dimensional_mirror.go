@@ -2,6 +2,7 @@ package discrete
 
 import (
 	"atlas-ncs/character"
+	"atlas-ncs/character/location"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -66,9 +67,9 @@ func (r DimensionalMirror) Selection(selection int32) script.StateProducer {
 	return nil
 }
 
-func (r DimensionalMirror) SaveAndWarpById(location string, mapId uint32, portalId uint32) script.StateProducer {
+func (r DimensionalMirror) SaveAndWarpById(locationName string, mapId uint32, portalId uint32) script.StateProducer {
 	return func(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-		character.SaveLocation(l)(c.CharacterId, location)
+		location.SaveLocation(l, span)(c.CharacterId, locationName)
 		return script.WarpById(mapId, portalId)(l, span, c)
 	}
 }

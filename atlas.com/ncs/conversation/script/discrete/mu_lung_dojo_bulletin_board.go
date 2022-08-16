@@ -1,7 +1,7 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
+	"atlas-ncs/character/location"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -49,7 +49,7 @@ func (r MuLungDojoBulletinBoard) No(l logrus.FieldLogger, span opentracing.Span,
 }
 
 func (r MuLungDojoBulletinBoard) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.SaveLocation(l)(c.CharacterId, "MIRROR")
+	location.SaveLocation(l, span)(c.CharacterId, "MIRROR")
 	return script.WarpById(_map.MuLungDojoEntrance, 4)(l, span, c)
 }
 

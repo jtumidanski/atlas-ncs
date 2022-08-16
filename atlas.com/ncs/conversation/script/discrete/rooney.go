@@ -1,7 +1,7 @@
 package discrete
 
 import (
-	"atlas-ncs/character"
+	"atlas-ncs/character/location"
 	"atlas-ncs/conversation/script"
 	_map "atlas-ncs/map"
 	"atlas-ncs/npc"
@@ -31,6 +31,6 @@ func (r Rooney) Hello(l logrus.FieldLogger, span opentracing.Span, c script.Cont
 }
 
 func (r Rooney) Warp(l logrus.FieldLogger, span opentracing.Span, c script.Context) script.State {
-	character.SaveLocation(l)(c.CharacterId, "HAPPYVILLE")
+	location.SaveLocation(l, span)(c.CharacterId, "HAPPYVILLE")
 	return script.WarpById(_map.Happyville, 0)(l, span, c)
 }
