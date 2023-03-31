@@ -58,7 +58,7 @@ func (r AthenaPierce) AwardFirstJob(l logrus.FieldLogger, span opentracing.Span,
 	}
 
 	character.ChangeJob(l, span)(c.CharacterId, job.Bowman)
-	character.GainEquipment(l, span)(c.CharacterId, item.BeginnerBowmanBow)
+	character.GainItem(l, span)(c.CharacterId, item.BeginnerBowmanBow, 1)
 	character.GainItem(l, span)(c.CharacterId, item.ArrowForBow, 1000)
 	character.ResetAP(l, span)(c.CharacterId)
 

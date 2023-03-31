@@ -201,12 +201,6 @@ func HasMesoCriteria(amount uint32) AttributeCriteria {
 	}
 }
 
-func GainEquipment(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32) {
-	return func(characterId uint32, itemId uint32) {
-		emitEquipmentGain(l, span)(characterId, itemId)
-	}
-}
-
 func GainItem(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32, amount int32) {
 	return func(characterId uint32, itemId uint32, amount int32) {
 		emitItemGain(l, span)(characterId, itemId, amount)

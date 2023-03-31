@@ -20,19 +20,6 @@ func emitMesoAdjustment(l logrus.FieldLogger, span opentracing.Span) func(charac
 	}
 }
 
-type gainEquipmentCommand struct {
-	CharacterId uint32 `json:"characterId"`
-	ItemId      uint32 `json:"itemId"`
-}
-
-func emitEquipmentGain(l logrus.FieldLogger, span opentracing.Span) func(characterId uint32, itemId uint32) {
-	producer := kafka.ProduceEvent(l, span, "TOPIC_CHARACTER_GAIN_EQUIPMENT")
-	return func(characterId uint32, itemId uint32) {
-		e := &gainEquipmentCommand{CharacterId: characterId, ItemId: itemId}
-		producer(kafka.CreateKey(int(characterId)), e)
-	}
-}
-
 type gainItemCommand struct {
 	CharacterId uint32 `json:"characterId"`
 	ItemId      uint32 `json:"itemId"`

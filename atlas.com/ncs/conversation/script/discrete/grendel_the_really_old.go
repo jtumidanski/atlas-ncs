@@ -68,7 +68,7 @@ func (r GrendelTheReallyOld) AwardFirstJob(l logrus.FieldLogger, span opentracin
 	}
 
 	character.ChangeJob(l, span)(c.CharacterId, job.Magician)
-	character.GainEquipment(l, span)(c.CharacterId, item.BeginnerMagicWand)
+	character.GainItem(l, span)(c.CharacterId, item.BeginnerMagicWand, 1)
 	character.ResetAP(l, span)(c.CharacterId)
 
 	m := message.NewBuilder().
